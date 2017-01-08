@@ -1,5 +1,9 @@
 # StudentHub
 
+CI
+---
+[![Build Status](https://travis-ci.org/StudentHubCZ/studenthub-portal.svg?branch=master)](https://travis-ci.org/StudentHubCZ/studenthub-portal)
+
 How to start the StudentHub application
 ---
 
