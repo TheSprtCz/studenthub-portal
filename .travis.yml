@@ -1,0 +1,14 @@
+language: java
+
+jdk:
+  - oraclejdk8
+
+notifications:
+  email:
+    - pipistik.bunciak@gmail.com
+
+branches:
+  only:
+    - master
+
+script: mvn clean install
