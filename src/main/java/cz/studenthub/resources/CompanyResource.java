@@ -16,6 +16,7 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
+import javax.ws.rs.core.UriBuilder;
 
 import cz.studenthub.core.Company;
 import cz.studenthub.db.CompanyDAO;
@@ -48,17 +49,21 @@ public class CompanyResource {
 
   @POST
   @UnitOfWork
-  public Response create(@NotNull @Valid Company company) {
-    companyDao.createOrUpdate(company);
-    if (company.getId() == null)
+  public Response create(@NotNull @Valid Company c) {
+    companyDao.createOrUpdate(c);
+    if (c.getId() == null)
       throw new WebApplicationException(Status.INTERNAL_SERVER_ERROR);
 
-    return Response.ok(company).build();
+    return Response.created(UriBuilder.fromResource(CompanyResource.class).build(c.getId())).entity(c).build();
   }
 
   @PUT
+  @Path("/{id}")
   @UnitOfWork
-  public Response update(@NotNull @Valid Company company) {
+  public Response update(@PathParam("id") LongParam id, @NotNull @Valid Company company) {
+    if (companyDao.findById(id.get()) == null)
+      throw new WebApplicationException(Status.BAD_REQUEST);
+
     companyDao.createOrUpdate(company);
     return Response.ok(company).build();
   }
