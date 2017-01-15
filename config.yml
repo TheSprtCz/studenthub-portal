@@ -2,3 +2,24 @@ logging:
   level: INFO
   loggers:
     cz.studenthub: DEBUG
+
+# database - development conf. (not for prod. usage)
+database:
+  # the name of your JDBC driver
+  driverClass: org.h2.Driver
+
+  # the username
+  user: sa
+
+  # the password
+  password: sa
+
+  # the JDBC URL
+  url: jdbc:h2:~/student-hub
+
+  # the SQL query to run when validating a connection's liveness
+  validationQuery: "/* MyService Health Check */ SELECT 1"
+  
+  # validate schema
+  properties:
+    hibernate.hbm2ddl.auto: create
