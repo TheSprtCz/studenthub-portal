@@ -35,7 +35,7 @@ import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "Companies")
+@Table(name = "Users")
 @NamedQueries({ @NamedQuery(name = "User.findAll", query = "SELECT u FROM User u") })
 public class User implements Principal {
 

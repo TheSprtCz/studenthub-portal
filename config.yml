@@ -3,6 +3,10 @@ logging:
   loggers:
     cz.studenthub: DEBUG
 
+# server
+server:
+  rootPath: /api/
+
 # database - development conf. (not for prod. usage)
 database:
   # the name of your JDBC driver
@@ -22,4 +26,4 @@ database:
   
   # validate schema
   properties:
-    hibernate.hbm2ddl.auto: create
+    hibernate.hbm2ddl.auto: create-drop

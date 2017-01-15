@@ -57,6 +57,11 @@
       <groupId>io.dropwizard</groupId>
       <artifactId>dropwizard-hibernate</artifactId>
     </dependency>
+    <!-- temporary DB -->
+    <dependency>
+      <groupId>com.h2database</groupId>
+      <artifactId>h2</artifactId>
+    </dependency>
   </dependencies>
 
   <build>

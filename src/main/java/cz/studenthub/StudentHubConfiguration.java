@@ -18,4 +18,9 @@ public class StudentHubConfiguration extends Configuration {
   public DataSourceFactory getDataSourceFactory() {
     return database;
   }
+  
+  @JsonProperty("database")
+  public void setDataSourceFactory(DataSourceFactory factory) {
+    this.database = factory;
+  }
 }

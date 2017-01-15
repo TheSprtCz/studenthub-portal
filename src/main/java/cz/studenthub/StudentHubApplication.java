@@ -6,6 +6,8 @@ import cz.studenthub.core.Topic;
 import cz.studenthub.core.TopicApplication;
 import cz.studenthub.core.University;
 import cz.studenthub.core.User;
+import cz.studenthub.db.CompanyDAO;
+import cz.studenthub.resources.CompanyResource;
 import io.dropwizard.Application;
 import io.dropwizard.db.DataSourceFactory;
 import io.dropwizard.hibernate.HibernateBundle;
@@ -46,7 +48,8 @@ public class StudentHubApplication extends Application<StudentHubConfiguration> 
 
   @Override
   public void run(final StudentHubConfiguration configuration, final Environment environment) {
-    // TODO: implement application
+    final CompanyDAO companyDao = new CompanyDAO(hibernate.getSessionFactory());
+    
+    environment.jersey().register(new CompanyResource(companyDao));
   }
-
 }
