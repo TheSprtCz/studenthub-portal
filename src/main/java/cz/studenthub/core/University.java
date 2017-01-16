@@ -31,7 +31,7 @@ import javax.persistence.Table;
 import org.hibernate.validator.constraints.NotEmpty;
 
 @Entity
-@Table(name = "Companies")
+@Table(name = "Universities")
 @NamedQueries({ @NamedQuery(name = "University.findAll", query = "SELECT u FROM University u") })
 public class University {
 

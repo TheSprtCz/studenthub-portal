@@ -34,6 +34,8 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
+import org.hibernate.validator.constraints.NotEmpty;
+
 @Entity
 @Table(name = "Users")
 @NamedQueries({ @NamedQuery(name = "User.findAll", query = "SELECT u FROM User u") })
@@ -45,13 +47,16 @@ public class User implements Principal {
 
   @Column(unique = true, nullable = false)
   private String username;
+  @NotEmpty
   private String password;
 
   @Column(unique = true, nullable = false)
   private String email;
+  @NotEmpty
   private String name;
   private String phone;
 
+  @Nullable
   private Timestamp lastLogin;
 
   /*
@@ -80,14 +85,13 @@ public class User implements Principal {
   public User() {
   }
 
-  public User(String username, String password, String email, String name, String phone, Timestamp lastLogin,
-      Faculty faculty, Company company, Set<UserRole> roles, Set<String> tags) {
+  public User(String username, String password, String email, String name, String phone, Faculty faculty,
+      Company company, Set<UserRole> roles, Set<String> tags) {
     this.username = username;
     this.password = password;
     this.email = email;
     this.name = name;
     this.phone = phone;
-    this.lastLogin = lastLogin;
     this.faculty = faculty;
     this.company = company;
     this.roles = roles;

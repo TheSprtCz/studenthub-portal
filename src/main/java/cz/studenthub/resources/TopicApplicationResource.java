@@ -31,62 +31,62 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriBuilder;
+import javax.ws.rs.core.Response.Status;
 
-import cz.studenthub.core.Company;
-import cz.studenthub.db.CompanyDAO;
+import cz.studenthub.core.TopicApplication;
+import cz.studenthub.db.TopicApplicationDAO;
 import io.dropwizard.hibernate.UnitOfWork;
 import io.dropwizard.jersey.params.LongParam;
 
-@Path("/companies")
+@Path("/applications")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
-public class CompanyResource {
+public class TopicApplicationResource {
 
-  private final CompanyDAO companyDao;
+  private final TopicApplicationDAO appDao;
 
-  public CompanyResource(CompanyDAO companyDao) {
-    this.companyDao = companyDao;
+  public TopicApplicationResource(TopicApplicationDAO appDao) {
+    this.appDao = appDao;
   }
 
   @GET
   @UnitOfWork
-  public List<Company> fetch() {
-    return companyDao.findAll();
+  public List<TopicApplication> fetch() {
+    return appDao.findAll();
   }
 
   @GET
   @Path("/{id}")
   @UnitOfWork
-  public Company findById(@PathParam("id") LongParam id) {
-    return companyDao.findById(id.get());
-  }
-
-  @POST
-  @UnitOfWork
-  public Response create(@NotNull @Valid Company c) {
-    companyDao.createOrUpdate(c);
-    if (c.getId() == null)
-      throw new WebApplicationException(Status.INTERNAL_SERVER_ERROR);
-
-    return Response.created(UriBuilder.fromResource(CompanyResource.class).path("/{id}").build(c.getId())).entity(c).build();
-  }
-
-  @PUT
-  @Path("/{id}")
-  @UnitOfWork
-  public Response update(@PathParam("id") LongParam id, @NotNull @Valid Company company) {
-    company.setId(id.get());
-    companyDao.createOrUpdate(company);
-    return Response.ok(company).build();
+  public TopicApplication findById(@PathParam("id") LongParam id) {
+    return appDao.findById(id.get());
   }
 
   @DELETE
   @Path("/{id}")
   @UnitOfWork
   public Response delete(@PathParam("id") LongParam id) {
-    companyDao.delete(companyDao.findById(id.get()));
+    appDao.delete(appDao.findById(id.get()));
     return Response.noContent().build();
+  }
+
+  @PUT
+  @Path("/{id}")
+  @UnitOfWork
+  public Response update(@PathParam("id") LongParam id, @NotNull @Valid TopicApplication t) {
+    t.setId(id.get());
+    appDao.createOrUpdate(t);
+    return Response.ok(t).build();
+  }
+
+  @POST
+  @UnitOfWork
+  public Response create(@NotNull @Valid TopicApplication t) {
+    appDao.createOrUpdate(t);
+    if (t.getId() == null)
+      throw new WebApplicationException(Status.INTERNAL_SERVER_ERROR);
+
+    return Response.created(UriBuilder.fromResource(TopicApplicationResource.class).path("/{id}").build(t.getId())).entity(t).build();
   }
 }

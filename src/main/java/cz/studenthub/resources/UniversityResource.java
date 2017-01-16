@@ -34,59 +34,59 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriBuilder;
 
-import cz.studenthub.core.Company;
-import cz.studenthub.db.CompanyDAO;
+import cz.studenthub.core.University;
+import cz.studenthub.db.UniversityDAO;
 import io.dropwizard.hibernate.UnitOfWork;
 import io.dropwizard.jersey.params.LongParam;
 
-@Path("/companies")
+@Path("/universities")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
-public class CompanyResource {
+public class UniversityResource {
 
-  private final CompanyDAO companyDao;
+  private final UniversityDAO uniDao;
 
-  public CompanyResource(CompanyDAO companyDao) {
-    this.companyDao = companyDao;
+  public UniversityResource(UniversityDAO uniDao) {
+    this.uniDao = uniDao;
   }
 
   @GET
   @UnitOfWork
-  public List<Company> fetch() {
-    return companyDao.findAll();
+  public List<University> fetch() {
+    return uniDao.findAll();
   }
 
   @GET
   @Path("/{id}")
   @UnitOfWork
-  public Company findById(@PathParam("id") LongParam id) {
-    return companyDao.findById(id.get());
-  }
-
-  @POST
-  @UnitOfWork
-  public Response create(@NotNull @Valid Company c) {
-    companyDao.createOrUpdate(c);
-    if (c.getId() == null)
-      throw new WebApplicationException(Status.INTERNAL_SERVER_ERROR);
-
-    return Response.created(UriBuilder.fromResource(CompanyResource.class).path("/{id}").build(c.getId())).entity(c).build();
-  }
-
-  @PUT
-  @Path("/{id}")
-  @UnitOfWork
-  public Response update(@PathParam("id") LongParam id, @NotNull @Valid Company company) {
-    company.setId(id.get());
-    companyDao.createOrUpdate(company);
-    return Response.ok(company).build();
+  public University findById(@PathParam("id") LongParam id) {
+    return uniDao.findById(id.get());
   }
 
   @DELETE
   @Path("/{id}")
   @UnitOfWork
   public Response delete(@PathParam("id") LongParam id) {
-    companyDao.delete(companyDao.findById(id.get()));
+    uniDao.delete(uniDao.findById(id.get()));
     return Response.noContent().build();
+  }
+
+  @PUT
+  @Path("/{id}")
+  @UnitOfWork
+  public Response update(@PathParam("id") LongParam id, @NotNull @Valid University u) {
+    u.setId(id.get());
+    uniDao.createOrUpdate(u);
+    return Response.ok(u).build();
+  }
+
+  @POST
+  @UnitOfWork
+  public Response create(@NotNull @Valid University u) {
+    uniDao.createOrUpdate(u);
+    if (u.getId() == null)
+      throw new WebApplicationException(Status.INTERNAL_SERVER_ERROR);
+    
+    return Response.created(UriBuilder.fromResource(UniversityResource.class).path("/{id}").build(u.getId())).entity(u).build();
   }
 }
