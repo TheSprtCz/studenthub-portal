@@ -32,6 +32,9 @@ import cz.studenthub.resources.TopicResource;
 import cz.studenthub.resources.UniversityResource;
 import cz.studenthub.resources.UserResource;
 import io.dropwizard.Application;
+import io.dropwizard.configuration.EnvironmentVariableSubstitutor;
+import io.dropwizard.configuration.ResourceConfigurationSourceProvider;
+import io.dropwizard.configuration.SubstitutingSourceProvider;
 import io.dropwizard.db.DataSourceFactory;
 import io.dropwizard.hibernate.HibernateBundle;
 import io.dropwizard.hibernate.UnitOfWorkAwareProxyFactory;
@@ -74,6 +77,11 @@ public class StudentHubApplication extends Application<StudentHubConfiguration> 
   @Override
   public void initialize(final Bootstrap<StudentHubConfiguration> bootstrap) {
     bootstrap.addBundle(hibernate);
+    
+    // 1. load conf. yaml from classpath
+    // 2. enable env. var substitutions
+    bootstrap.setConfigurationSourceProvider(new SubstitutingSourceProvider(new ResourceConfigurationSourceProvider(),
+        new EnvironmentVariableSubstitutor(false)));
   }
 
   @Override
