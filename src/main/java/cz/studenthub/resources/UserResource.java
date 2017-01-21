@@ -34,7 +34,13 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriBuilder;
 
+import org.pac4j.jax.rs.annotations.Pac4JProfile;
+import org.pac4j.jax.rs.annotations.Pac4JSecurity;
+
+import cz.studenthub.auth.StudentHubPasswordEncoder;
+import cz.studenthub.auth.StudentHubProfile;
 import cz.studenthub.core.User;
+import cz.studenthub.core.UserRole;
 import cz.studenthub.db.UserDAO;
 import io.dropwizard.hibernate.UnitOfWork;
 import io.dropwizard.jersey.params.LongParam;
@@ -42,14 +48,15 @@ import io.dropwizard.jersey.params.LongParam;
 @Path("/users")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
+@Pac4JSecurity(authorizers = "isAdmin", clients = "DirectBasicAuthClient")
 public class UserResource {
 
   private final UserDAO userDao;
-  
+
   public UserResource(UserDAO userDao) {
     this.userDao = userDao;
   }
-  
+
   @GET
   @UnitOfWork
   public List<User> fetch() {
@@ -59,8 +66,14 @@ public class UserResource {
   @GET
   @Path("/{id}")
   @UnitOfWork
-  public User findById(@PathParam("id") LongParam id) {
-    return userDao.findById(id.get());
+  @Pac4JSecurity(authorizers = "isAuthenticated", clients = "DirectBasicAuthClient")
+  public User findById(@Pac4JProfile StudentHubProfile profile, @PathParam("id") LongParam id) {
+    // only admin or profile owner is allowed
+    if (id.get().equals(profile.getId()) || profile.getRoles().contains(UserRole.ADMIN.name())) {
+      return userDao.findById(id.get());
+    } else {
+      throw new WebApplicationException(Status.FORBIDDEN);
+    }
   }
 
   @DELETE
@@ -74,21 +87,34 @@ public class UserResource {
   @PUT
   @Path("/{id}")
   @UnitOfWork
-  public Response update(@PathParam("id") LongParam id, @NotNull @Valid User u) {
-    u.setId(id.get());
-    userDao.createOrUpdate(u);
-    return Response.ok(u).build();
+  @Pac4JSecurity(authorizers = "isAuthenticated", clients = "DirectBasicAuthClient")
+  public Response update(@Pac4JProfile StudentHubProfile profile, @PathParam("id") LongParam id,
+      @NotNull @Valid User u) {
+
+    // only admin or profile owner is allowed
+    if (id.get().equals(profile.getId()) || profile.getRoles().contains(UserRole.ADMIN.name())) {
+      u.setId(id.get());
+      userDao.createOrUpdate(u);
+      return Response.ok(u).build();
+    } else {
+      throw new WebApplicationException(Status.FORBIDDEN);
+    }
   }
 
   @POST
   @UnitOfWork
   public Response create(@NotNull @Valid User u) {
-    // TODO hash password, protect sensitive data
+
+    String pwd = new StudentHubPasswordEncoder().encode(u.getPassword());
+    u.setPassword(pwd);
+
+    // TODO send email
     userDao.createOrUpdate(u);
     if (u.getId() == null)
       throw new WebApplicationException(Status.INTERNAL_SERVER_ERROR);
 
-    return Response.created(UriBuilder.fromResource(UserResource.class).path("/{id}").build(u.getId())).entity(u).build();
+    return Response.created(UriBuilder.fromResource(UserResource.class).path("/{id}").build(u.getId())).entity(u)
+        .build();
   }
-  
+
 }

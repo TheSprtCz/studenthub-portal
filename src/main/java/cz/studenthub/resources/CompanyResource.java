@@ -34,6 +34,8 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriBuilder;
 
+import org.pac4j.jax.rs.annotations.Pac4JSecurity;
+
 import cz.studenthub.core.Company;
 import cz.studenthub.db.CompanyDAO;
 import io.dropwizard.hibernate.UnitOfWork;
@@ -42,6 +44,7 @@ import io.dropwizard.jersey.params.LongParam;
 @Path("/companies")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
+@Pac4JSecurity(authorizers = "isAdmin", clients = "DirectBasicAuthClient")
 public class CompanyResource {
 
   private final CompanyDAO companyDao;
@@ -52,6 +55,7 @@ public class CompanyResource {
 
   @GET
   @UnitOfWork
+  @Pac4JSecurity(ignore = true)
   public List<Company> fetch() {
     return companyDao.findAll();
   }
@@ -59,6 +63,7 @@ public class CompanyResource {
   @GET
   @Path("/{id}")
   @UnitOfWork
+  @Pac4JSecurity(ignore = true)
   public Company findById(@PathParam("id") LongParam id) {
     return companyDao.findById(id.get());
   }

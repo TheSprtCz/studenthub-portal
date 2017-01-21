@@ -32,6 +32,9 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
+
+import org.pac4j.jax.rs.annotations.Pac4JSecurity;
+
 import javax.ws.rs.core.UriBuilder;
 
 import cz.studenthub.core.Faculty;
@@ -42,6 +45,7 @@ import io.dropwizard.jersey.params.LongParam;
 @Path("/faculties")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
+@Pac4JSecurity(authorizers = "isAdmin", clients = "DirectBasicAuthClient")
 public class FacultyResource {
 
   private final FacultyDAO facDao;
@@ -52,6 +56,7 @@ public class FacultyResource {
 
   @GET
   @UnitOfWork
+  @Pac4JSecurity(ignore = true)
   public List<Faculty> fetch() {
     return facDao.findAll();
   }
@@ -59,6 +64,7 @@ public class FacultyResource {
   @GET
   @Path("/{id}")
   @UnitOfWork
+  @Pac4JSecurity(ignore = true)
   public Faculty findById(@PathParam("id") LongParam id) {
     return facDao.findById(id.get());
   }

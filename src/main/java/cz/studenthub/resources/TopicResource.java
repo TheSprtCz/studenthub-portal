@@ -32,9 +32,15 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
+
+import org.pac4j.jax.rs.annotations.Pac4JProfile;
+import org.pac4j.jax.rs.annotations.Pac4JSecurity;
+
 import javax.ws.rs.core.UriBuilder;
 
+import cz.studenthub.auth.StudentHubProfile;
 import cz.studenthub.core.Topic;
+import cz.studenthub.core.UserRole;
 import cz.studenthub.db.TopicDAO;
 import io.dropwizard.hibernate.UnitOfWork;
 import io.dropwizard.jersey.params.LongParam;
@@ -42,6 +48,7 @@ import io.dropwizard.jersey.params.LongParam;
 @Path("/topics")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
+@Pac4JSecurity(authorizers = "isAdmin", clients = "DirectBasicAuthClient")
 public class TopicResource {
 
   private final TopicDAO topicDao;
@@ -52,6 +59,7 @@ public class TopicResource {
 
   @GET
   @UnitOfWork
+  @Pac4JSecurity(ignore = true)
   public List<Topic> fetch() {
     return topicDao.findAll();
   }
@@ -59,6 +67,7 @@ public class TopicResource {
   @GET
   @Path("/{id}")
   @UnitOfWork
+  @Pac4JSecurity(ignore = true)
   public Topic findById(@PathParam("id") LongParam id) {
     return topicDao.findById(id.get());
   }
@@ -74,19 +83,29 @@ public class TopicResource {
   @PUT
   @Path("/{id}")
   @UnitOfWork
-  public Response update(@PathParam("id") LongParam id, @NotNull @Valid Topic t) {
-    t.setId(id.get());
-    topicDao.createOrUpdate(t);
-    return Response.ok(t).build();
+  @Pac4JSecurity(authorizers = "isTechLeader", clients = "DirectBasicAuthClient")
+  public Response update(@Pac4JProfile StudentHubProfile profile, @PathParam("id") LongParam id,
+      @NotNull @Valid Topic t) {
+
+    // if user is topic leader or is an admin
+    if (t.getTechLeader().getId().equals(profile.getId()) || profile.getRoles().contains(UserRole.ADMIN.name())) {
+      t.setId(id.get());
+      topicDao.createOrUpdate(t);
+      return Response.ok(t).build();
+    } else {
+      throw new WebApplicationException(Status.FORBIDDEN);
+    }
   }
 
   @POST
   @UnitOfWork
+  @Pac4JSecurity(authorizers = "isTechLeader", clients = "DirectBasicAuthClient")
   public Response create(@NotNull @Valid Topic t) {
     topicDao.createOrUpdate(t);
     if (t.getId() == null)
       throw new WebApplicationException(Status.INTERNAL_SERVER_ERROR);
 
-    return Response.created(UriBuilder.fromResource(TopicResource.class).path("/{id}").build(t.getId())).entity(t).build();
+    return Response.created(UriBuilder.fromResource(TopicResource.class).path("/{id}").build(t.getId())).entity(t)
+        .build();
   }
 }

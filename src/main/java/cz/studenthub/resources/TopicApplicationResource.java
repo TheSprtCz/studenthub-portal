@@ -34,6 +34,8 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.Response.Status;
 
+import org.pac4j.jax.rs.annotations.Pac4JSecurity;
+
 import cz.studenthub.core.TopicApplication;
 import cz.studenthub.db.TopicApplicationDAO;
 import io.dropwizard.hibernate.UnitOfWork;
@@ -42,6 +44,7 @@ import io.dropwizard.jersey.params.LongParam;
 @Path("/applications")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
+@Pac4JSecurity(authorizers = "isAdmin", clients = "DirectBasicAuthClient")
 public class TopicApplicationResource {
 
   private final TopicApplicationDAO appDao;
@@ -87,6 +90,10 @@ public class TopicApplicationResource {
     if (t.getId() == null)
       throw new WebApplicationException(Status.INTERNAL_SERVER_ERROR);
 
-    return Response.created(UriBuilder.fromResource(TopicApplicationResource.class).path("/{id}").build(t.getId())).entity(t).build();
+    return Response.created(UriBuilder.fromResource(TopicApplicationResource.class).path("/{id}").build(t.getId()))
+        .entity(t).build();
   }
+  
+
+  // TODO: new form endpoint(s) to modify (FormClient)
 }
