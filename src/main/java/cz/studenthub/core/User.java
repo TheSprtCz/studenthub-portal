@@ -36,6 +36,9 @@ import javax.persistence.Table;
 
 import org.hibernate.validator.constraints.NotEmpty;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 @Entity
 @Table(name = "Users")
 @NamedQueries({ @NamedQuery(name = "User.findAll", query = "SELECT u FROM User u") })
@@ -47,7 +50,9 @@ public class User implements Principal {
 
   @Column(unique = true, nullable = false)
   private String username;
+  
   @NotEmpty
+  @JsonIgnore
   private String password;
 
   @Column(unique = true, nullable = false)
@@ -73,6 +78,7 @@ public class User implements Principal {
   @ManyToOne
   private Company company;
 
+  @NotEmpty
   @ElementCollection(fetch = FetchType.EAGER)
   private Set<UserRole> roles;
 
@@ -114,10 +120,12 @@ public class User implements Principal {
     this.username = username;
   }
 
+  @JsonIgnore
   public String getPassword() {
     return password;
   }
 
+  @JsonProperty
   public void setPassword(String password) {
     this.password = password;
   }

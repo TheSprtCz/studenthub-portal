@@ -26,6 +26,7 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -33,7 +34,8 @@ import javax.persistence.Table;
 
 import org.hibernate.validator.constraints.NotEmpty;
 
-import cz.studenthub.core.User;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 @Entity
 @Table(name = "Topics")
@@ -53,12 +55,14 @@ public class Topic {
    * TODO: This is a possible data integrity issue (e.g. student can be a
    * leader)
    */
+  @JsonIgnore
   @ManyToOne
   private User techLeader;
 
+  @JsonIgnore
   @Nullable
-  @ManyToOne
-  private User academicSupervisor;
+  @ManyToMany
+  private Set<User> academicSupervisors;
 
   @ElementCollection(fetch = FetchType.EAGER)
   private Set<String> tags;
@@ -72,13 +76,13 @@ public class Topic {
   public Topic() {
   }
 
-  public Topic(String title, String shortAbstract, String description, User techLeader, User academicSupervisor,
+  public Topic(String title, String shortAbstract, String description, User techLeader, Set<User> academicSupervisors,
       Set<String> tags, Set<TopicDegree> degrees) {
     this.title = title;
     this.shortAbstract = shortAbstract;
     this.description = description;
     this.techLeader = techLeader;
-    this.academicSupervisor = academicSupervisor;
+    this.academicSupervisors = academicSupervisors;
     this.tags = tags;
     this.degrees = degrees;
   }
@@ -115,22 +119,30 @@ public class Topic {
     this.description = description;
   }
 
+  @JsonIgnore
   public User getTechLeader() {
     return techLeader;
   }
 
+  @JsonProperty
   public void setTechLeader(User leader) {
     this.techLeader = leader;
   }
 
-  public User getAcademicSupervisor() {
-    return academicSupervisor;
+  @JsonIgnore
+  public Set<User> getAcademicSupervisors() {
+    return academicSupervisors;
   }
 
-  public void setAcademicSupervisor(User academicSupervisor) {
-    this.academicSupervisor = academicSupervisor;
+  @JsonProperty
+  public void setAcademicSupervisor(Set<User> academicSupervisors) {
+    this.academicSupervisors = academicSupervisors;
   }
 
+  public void addAcademicSupervisor(User academicSupervisor) {
+    this.academicSupervisors.add(academicSupervisor);
+  }
+  
   public Set<String> getTags() {
     return tags;
   }

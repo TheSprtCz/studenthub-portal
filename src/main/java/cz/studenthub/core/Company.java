@@ -44,7 +44,7 @@ public class Company {
 
   private String url;
   private String city;
-  
+
   @Enumerated(EnumType.STRING)
   private Country country;
   private String logoUrl;
@@ -52,10 +52,14 @@ public class Company {
   @Enumerated(EnumType.STRING)
   private CompanySize size;
 
+  @Enumerated(EnumType.STRING)
+  private CompanyPlan plan;
+
   public Company() {
   }
 
-  public Company(String name, String url, String city, Country country, String logoUrl, CompanySize size) {
+  public Company(String name, String url, String city, Country country, String logoUrl, CompanySize size,
+      CompanyPlan plan) {
     this.name = name;
     this.url = url;
     this.city = city;
@@ -120,9 +124,17 @@ public class Company {
     this.size = size;
   }
 
+  public CompanyPlan getPlan() {
+    return plan;
+  }
+
+  public void setPlan(CompanyPlan plan) {
+    this.plan = plan;
+  }
+
   @Override
   public int hashCode() {
-    return Objects.hash(id, name, url, city, size);
+    return Objects.hash(id, name, url, city, size, plan);
   }
 
   @Override

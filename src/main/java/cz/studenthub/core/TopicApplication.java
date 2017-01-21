@@ -32,8 +32,6 @@ import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
-import cz.studenthub.core.User;
-
 @Entity
 @Table(name = "TopicApplications")
 @NamedQueries({ @NamedQuery(name = "TopicApplication.findAll", query = "SELECT ta FROM TopicApplication ta") })
@@ -45,6 +43,8 @@ public class TopicApplication {
 
   @ManyToOne
   private Topic topic;
+
+  private String officialAssignment;
 
   @Nullable
   @Enumerated(EnumType.STRING)
@@ -71,9 +71,10 @@ public class TopicApplication {
   public TopicApplication() {
   }
 
-  public TopicApplication(Topic topic, TopicGrade grade, TopicDegree degree, Date thesisFinish, Faculty faculty,
-      User techLeader, User student, User academicSupervisor) {
+  public TopicApplication(Topic topic, String officialAssignment, TopicGrade grade, TopicDegree degree,
+      Date thesisFinish, Faculty faculty, User techLeader, User student, User academicSupervisor) {
     this.topic = topic;
+    this.officialAssignment = officialAssignment;
     this.grade = grade;
     this.degree = degree;
     this.thesisFinish = thesisFinish;
@@ -153,6 +154,14 @@ public class TopicApplication {
 
   public void setAcademicSupervisor(User academicSupervisor) {
     this.academicSupervisor = academicSupervisor;
+  }
+
+  public String getOfficialAssignment() {
+    return officialAssignment;
+  }
+
+  public void setOfficialAssignment(String officialAssignment) {
+    this.officialAssignment = officialAssignment;
   }
 
   @Override
