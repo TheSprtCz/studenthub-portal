@@ -25,6 +25,8 @@ import javax.annotation.Nullable;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -41,7 +43,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 @Entity
 @Table(name = "Users")
-@NamedQueries({ @NamedQuery(name = "User.findAll", query = "SELECT u FROM User u") })
+@NamedQueries({ @NamedQuery(name = "User.findAll", query = "SELECT u FROM User u"),
+    @NamedQuery(name = "User.findByRole", query = "SELECT u FROM User u join u.roles role WHERE role = :role") })
 public class User implements Principal {
 
   @Id
@@ -50,7 +53,7 @@ public class User implements Principal {
 
   @Column(unique = true, nullable = false)
   private String username;
-  
+
   @NotEmpty
   @JsonIgnore
   private String password;
@@ -79,6 +82,7 @@ public class User implements Principal {
   private Company company;
 
   @NotEmpty
+  @Enumerated(EnumType.STRING)
   @ElementCollection(fetch = FetchType.EAGER)
   private Set<UserRole> roles;
 

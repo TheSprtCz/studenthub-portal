@@ -14,45 +14,35 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *******************************************************************************/
-package cz.studenthub.db;
+package cz.studenthub.health;
 
-import java.util.List;
+import com.codahale.metrics.health.HealthCheck;
 
-import org.hibernate.SessionFactory;
-
-import cz.studenthub.core.User;
 import cz.studenthub.core.UserRole;
-import io.dropwizard.hibernate.AbstractDAO;
+import cz.studenthub.db.UserDAO;
+import io.dropwizard.hibernate.UnitOfWork;
 
 /**
- * Data(base) Access Object for User objects.
+ * Simple health check to verify DB connection.
  * 
  * @author sbunciak
  * @since 1.0
  */
-public class UserDAO extends AbstractDAO<User> {
+public class StudentHubHealthCheck extends HealthCheck {
 
-  public UserDAO(SessionFactory sessionFactory) {
-    super(sessionFactory);
+  private UserDAO userDao;
+  
+  public StudentHubHealthCheck(UserDAO userDao) {
+    this.userDao = userDao;
   }
-
-  public User createOrUpdate(User u) {
-    return persist(u);
-  }
-
-  public User findById(Long id) {
-    return get(id);
-  }
-
-  public List<User> findByRole(UserRole role) {
-    return list(namedQuery("User.findByRole").setParameter("role", role));
-  }
-
-  public List<User> findAll() {
-    return list(namedQuery("User.findAll"));
-  }
-
-  public void delete(User u) {
-    currentSession().delete(u);
+  
+  @UnitOfWork
+  @Override
+  protected Result check() throws Exception {
+    if (!userDao.findByRole(UserRole.ADMIN).isEmpty()) {
+      return Result.healthy();  
+    } else {
+      return Result.unhealthy("No ADMIN user found!");
+    }
   }
 }

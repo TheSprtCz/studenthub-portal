@@ -10,6 +10,8 @@ import org.pac4j.jax.rs.jersey.features.Pac4JValueFactoryProvider;
 import org.pac4j.jax.rs.pac4j.JaxRsCallbackUrlResolver;
 import org.pac4j.jax.rs.servlet.features.ServletJaxRsContextFactoryProvider;
 
+import com.codahale.metrics.health.HealthCheck;
+
 import cz.studenthub.auth.HibernateUsernamePasswordAuthenticator;
 import cz.studenthub.auth.StudentHubAuthorizer;
 import cz.studenthub.core.Company;
@@ -25,6 +27,7 @@ import cz.studenthub.db.TopicApplicationDAO;
 import cz.studenthub.db.TopicDAO;
 import cz.studenthub.db.UniversityDAO;
 import cz.studenthub.db.UserDAO;
+import cz.studenthub.health.StudentHubHealthCheck;
 import cz.studenthub.resources.CompanyResource;
 import cz.studenthub.resources.FacultyResource;
 import cz.studenthub.resources.TopicApplicationResource;
@@ -48,7 +51,7 @@ import io.dropwizard.setup.Environment;
  * @since 1.0
  */
 public class StudentHubApplication extends Application<StudentHubConfiguration> {
-  
+
   /*
    * Hibernate bundle initialization
    */
@@ -77,7 +80,7 @@ public class StudentHubApplication extends Application<StudentHubConfiguration> 
   @Override
   public void initialize(final Bootstrap<StudentHubConfiguration> bootstrap) {
     bootstrap.addBundle(hibernate);
-    
+
     // 1. load conf. yaml from classpath
     // 2. enable env. var substitutions
     bootstrap.setConfigurationSourceProvider(new SubstitutingSourceProvider(new ResourceConfigurationSourceProvider(),
@@ -99,7 +102,7 @@ public class StudentHubApplication extends Application<StudentHubConfiguration> 
 
     // enable session manager
     environment.servlets().setSessionHandler(new SessionHandler());
-    
+
     // register resource classes (REST Endpoints)
     environment.jersey().register(new CompanyResource(companyDao));
     environment.jersey().register(new UniversityResource(uniDao));
@@ -108,7 +111,10 @@ public class StudentHubApplication extends Application<StudentHubConfiguration> 
     environment.jersey().register(new TopicResource(topicDao));
     environment.jersey().register(new TopicApplicationResource(taDao));
 
-    // TODO: Healthchecks
+    // healthcheck
+    HealthCheck hc = new UnitOfWorkAwareProxyFactory(hibernate).create(StudentHubHealthCheck.class, UserDAO.class,
+        userDao);
+    environment.healthChecks().register("admin", hc);
   }
 
   private void configurePac4j(Environment environment) {
@@ -122,7 +128,7 @@ public class StudentHubApplication extends Application<StudentHubConfiguration> 
     Config pac4jConfig = new Config("/callback", formClient, basicAuthClient);
     pac4jConfig.getClients().setCallbackUrlResolver(new JaxRsCallbackUrlResolver());
     pac4jConfig.getClients().setDefaultClient(basicAuthClient);
-    
+
     // setup custom authorizers for role based access
     pac4jConfig.addAuthorizer("isAdmin", new StudentHubAuthorizer(UserRole.ADMIN));
     pac4jConfig.addAuthorizer("isStudent", new StudentHubAuthorizer(UserRole.STUDENT));
