@@ -24,8 +24,8 @@ database:
   url: jdbc:h2:~/student-hub
 
   # the SQL query to run when validating a connection's liveness
-  validationQuery: "/* MyService Health Check */ SELECT 1"
+  validationQuery: "SELECT 1"
   
   # validate schema
   properties:
-    hibernate.hbm2ddl.auto: create-drop
+    hibernate.hbm2ddl.auto: validate

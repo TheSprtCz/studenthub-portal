@@ -1,3 +1,19 @@
+/*******************************************************************************
+ *     Copyright (C) 2017  Stefan Bunciak
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *******************************************************************************/
 package cz.studenthub;
 
 import org.eclipse.jetty.server.session.SessionHandler;
@@ -41,6 +57,7 @@ import io.dropwizard.configuration.SubstitutingSourceProvider;
 import io.dropwizard.db.DataSourceFactory;
 import io.dropwizard.hibernate.HibernateBundle;
 import io.dropwizard.hibernate.UnitOfWorkAwareProxyFactory;
+import io.dropwizard.migrations.MigrationsBundle;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 
@@ -85,6 +102,14 @@ public class StudentHubApplication extends Application<StudentHubConfiguration> 
     // 2. enable env. var substitutions
     bootstrap.setConfigurationSourceProvider(new SubstitutingSourceProvider(new ResourceConfigurationSourceProvider(),
         new EnvironmentVariableSubstitutor(false)));
+
+    // enable database migrations
+    bootstrap.addBundle(new MigrationsBundle<StudentHubConfiguration>() {
+      @Override
+      public DataSourceFactory getDataSourceFactory(StudentHubConfiguration configuration) {
+        return configuration.getDataSourceFactory();
+      }
+    });
   }
 
   @Override
