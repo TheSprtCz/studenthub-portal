@@ -20,7 +20,7 @@ To see your applications health enter url `http://localhost:8081/healthcheck`
 How to contribute
 ---
 
-* Write to us at admin@studenthub.cz
+* Write to us at info@studenthub.cz
 * Create a GitHub [issue](https://github.com/StudentHubCZ/studenthub-portal/issues/new)
 * Send a [Pull-Request](https://github.com/StudentHubCZ/studenthub-portal/compare)
 
