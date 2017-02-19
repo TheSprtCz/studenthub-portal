@@ -31,11 +31,10 @@ import org.pac4j.core.credentials.password.PasswordEncoder;
 public class StudentHubPasswordEncoder implements PasswordEncoder {
 
   private static final int DEFAULT_PASSWORD_LENGTH = 64;
-  private static final String ALLOWED_CHARS = "abcdefghijklmnopqrstxyz0123456789";
-  
+  private static final String ALLOWED_CHARS = "abcdefghijklmnopqrstuvwxyz0123456789";
+
   public static final String DEFAULT_SECRET = genSecret();
-  
-  
+
   @Override
   public String encode(String password) {
     return Crypt.crypt(password);
@@ -45,12 +44,12 @@ public class StudentHubPasswordEncoder implements PasswordEncoder {
   public boolean matches(String plainPassword, String encodedPassword) {
     return encodedPassword.equals(Crypt.crypt(plainPassword, encodedPassword));
   }
-  
+
   /*
    * Helper method to generate secret/password
    */
   public static String genSecret() {
-    return RandomStringUtils.random(DEFAULT_PASSWORD_LENGTH, 0, ALLOWED_CHARS.length(), false,
-        false, ALLOWED_CHARS.toCharArray(), new SecureRandom());
+    return RandomStringUtils.random(DEFAULT_PASSWORD_LENGTH, 0, ALLOWED_CHARS.length(), false, false,
+        ALLOWED_CHARS.toCharArray(), new SecureRandom());
   }
 }
