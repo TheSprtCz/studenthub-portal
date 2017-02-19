@@ -69,11 +69,10 @@ public class HibernateUsernamePasswordAuthenticator extends AbstractUsernamePass
   private StudentHubProfile createProfile(User user) {
     StudentHubProfile profile = new StudentHubProfile();
     profile.setId(user.getId());
-    profile.addAttribute("username", user.getUsername());
+    // profile.addAttribute("username", user.getUsername());
     profile.addAttribute("email", user.getEmail());
     profile.addAttribute("display_name", user.getName());
     profile.setRoles(user.getRoles());
-    profile.setRemembered(true);
     return profile;
   }
   

@@ -16,20 +16,25 @@
  *******************************************************************************/
 package cz.studenthub;
 
+import javax.ws.rs.core.HttpHeaders;
+
 import org.eclipse.jetty.server.session.SessionHandler;
 import org.hibernate.SessionFactory;
 import org.pac4j.core.config.Config;
 import org.pac4j.http.client.direct.DirectBasicAuthClient;
-import org.pac4j.http.client.indirect.FormClient;
+import org.pac4j.http.client.direct.DirectFormClient;
+import org.pac4j.http.client.direct.HeaderClient;
 import org.pac4j.jax.rs.features.Pac4JSecurityFeature;
 import org.pac4j.jax.rs.jersey.features.Pac4JValueFactoryProvider;
-import org.pac4j.jax.rs.pac4j.JaxRsCallbackUrlResolver;
 import org.pac4j.jax.rs.servlet.features.ServletJaxRsContextFactoryProvider;
+import org.pac4j.jwt.config.signature.SecretSignatureConfiguration;
+import org.pac4j.jwt.credentials.authenticator.JwtAuthenticator;
 
 import com.codahale.metrics.health.HealthCheck;
 
 import cz.studenthub.auth.HibernateUsernamePasswordAuthenticator;
 import cz.studenthub.auth.StudentHubAuthorizer;
+import cz.studenthub.auth.StudentHubPasswordEncoder;
 import cz.studenthub.core.Company;
 import cz.studenthub.core.Faculty;
 import cz.studenthub.core.Topic;
@@ -46,6 +51,7 @@ import cz.studenthub.db.UserDAO;
 import cz.studenthub.health.StudentHubHealthCheck;
 import cz.studenthub.resources.CompanyResource;
 import cz.studenthub.resources.FacultyResource;
+import cz.studenthub.resources.LoginResource;
 import cz.studenthub.resources.TopicApplicationResource;
 import cz.studenthub.resources.TopicResource;
 import cz.studenthub.resources.UniversityResource;
@@ -137,6 +143,7 @@ public class StudentHubApplication extends Application<StudentHubConfiguration> 
     environment.jersey().register(new UserResource(userDao));
     environment.jersey().register(new TopicResource(topicDao));
     environment.jersey().register(new TopicApplicationResource(taDao));
+    environment.jersey().register(new LoginResource());
 
     // healthcheck
     HealthCheck hc = new UnitOfWorkAwareProxyFactory(hibernate).create(StudentHubHealthCheck.class, UserDAO.class,
@@ -145,15 +152,20 @@ public class StudentHubApplication extends Application<StudentHubConfiguration> 
   }
 
   private void configurePac4j(Environment environment) {
-    // enable transactions in authenticator
-    HibernateUsernamePasswordAuthenticator authenticator = new UnitOfWorkAwareProxyFactory(hibernate)
+    // enable transactions in hibernate authenticator
+    HibernateUsernamePasswordAuthenticator hibernateAuth = new UnitOfWorkAwareProxyFactory(hibernate)
         .create(HibernateUsernamePasswordAuthenticator.class, SessionFactory.class, hibernate.getSessionFactory());
 
-    FormClient formClient = new FormClient("/login", authenticator);
-    DirectBasicAuthClient basicAuthClient = new DirectBasicAuthClient(authenticator);
+    JwtAuthenticator jwtAuth = new JwtAuthenticator();
+    jwtAuth.setSignatureConfiguration(new SecretSignatureConfiguration(StudentHubPasswordEncoder.DEFAULT_SECRET));
+    
+    // create clients (= ways of authenticating)
+    DirectFormClient formClient = new DirectFormClient(hibernateAuth);
+    DirectBasicAuthClient basicAuthClient = new DirectBasicAuthClient(hibernateAuth);
+    HeaderClient jwtClient = new HeaderClient(HttpHeaders.AUTHORIZATION, LoginResource.BEARER_PREFFIX, jwtAuth);
+    jwtClient.setName("jwtClient");
 
-    Config pac4jConfig = new Config("/callback", formClient, basicAuthClient);
-    pac4jConfig.getClients().setCallbackUrlResolver(new JaxRsCallbackUrlResolver());
+    Config pac4jConfig = new Config(formClient, basicAuthClient, jwtClient);
     pac4jConfig.getClients().setDefaultClient(basicAuthClient);
 
     // setup custom authorizers for role based access

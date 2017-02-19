@@ -44,7 +44,7 @@ import io.dropwizard.jersey.params.LongParam;
 @Path("/companies")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
-@Pac4JSecurity(authorizers = "isAdmin", clients = "DirectBasicAuthClient")
+@Pac4JSecurity(authorizers = "isAdmin", clients = { "DirectBasicAuthClient", "jwtClient" })
 public class CompanyResource {
 
   private final CompanyDAO companyDao;
@@ -75,7 +75,8 @@ public class CompanyResource {
     if (c.getId() == null)
       throw new WebApplicationException(Status.INTERNAL_SERVER_ERROR);
 
-    return Response.created(UriBuilder.fromResource(CompanyResource.class).path("/{id}").build(c.getId())).entity(c).build();
+    return Response.created(UriBuilder.fromResource(CompanyResource.class).path("/{id}").build(c.getId())).entity(c)
+        .build();
   }
 
   @PUT

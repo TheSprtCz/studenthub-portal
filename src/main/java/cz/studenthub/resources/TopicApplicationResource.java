@@ -44,7 +44,7 @@ import io.dropwizard.jersey.params.LongParam;
 @Path("/applications")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
-@Pac4JSecurity(authorizers = "isAdmin", clients = "DirectBasicAuthClient")
+@Pac4JSecurity(authorizers = "isAdmin", clients = { "DirectBasicAuthClient", "jwtClient" })
 public class TopicApplicationResource {
 
   private final TopicApplicationDAO appDao;

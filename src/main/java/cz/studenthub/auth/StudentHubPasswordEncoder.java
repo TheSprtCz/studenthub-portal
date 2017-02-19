@@ -16,6 +16,8 @@
  *******************************************************************************/
 package cz.studenthub.auth;
 
+import java.security.SecureRandom;
+
 import org.apache.commons.codec.digest.Crypt;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.pac4j.core.credentials.password.PasswordEncoder;
@@ -28,6 +30,12 @@ import org.pac4j.core.credentials.password.PasswordEncoder;
  */
 public class StudentHubPasswordEncoder implements PasswordEncoder {
 
+  private static final int DEFAULT_PASSWORD_LENGTH = 64;
+  private static final String ALLOWED_CHARS = "abcdefghijklmnopqrstxyz0123456789";
+  
+  public static final String DEFAULT_SECRET = genSecret();
+  
+  
   @Override
   public String encode(String password) {
     return Crypt.crypt(password);
@@ -39,9 +47,10 @@ public class StudentHubPasswordEncoder implements PasswordEncoder {
   }
   
   /*
-   * Helper method to generate temp.password
+   * Helper method to generate secret/password
    */
-  public static String genPassword() {
-    return RandomStringUtils.randomAlphanumeric(32);
+  public static String genSecret() {
+    return RandomStringUtils.random(DEFAULT_PASSWORD_LENGTH, 0, ALLOWED_CHARS.length(), false,
+        false, ALLOWED_CHARS.toCharArray(), new SecureRandom());
   }
 }

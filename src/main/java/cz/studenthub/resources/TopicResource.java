@@ -48,7 +48,7 @@ import io.dropwizard.jersey.params.LongParam;
 @Path("/topics")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
-@Pac4JSecurity(authorizers = "isAdmin", clients = "DirectBasicAuthClient")
+@Pac4JSecurity(authorizers = "isAdmin", clients = { "DirectBasicAuthClient", "jwtClient" })
 public class TopicResource {
 
   private final TopicDAO topicDao;
@@ -83,7 +83,7 @@ public class TopicResource {
   @PUT
   @Path("/{id}")
   @UnitOfWork
-  @Pac4JSecurity(authorizers = "isTechLeader", clients = "DirectBasicAuthClient")
+  @Pac4JSecurity(authorizers = "isTechLeader", clients = { "DirectBasicAuthClient", "jwtClient" })
   public Response update(@Pac4JProfile StudentHubProfile profile, @PathParam("id") LongParam id,
       @NotNull @Valid Topic t) {
 
@@ -99,7 +99,7 @@ public class TopicResource {
 
   @POST
   @UnitOfWork
-  @Pac4JSecurity(authorizers = "isTechLeader", clients = "DirectBasicAuthClient")
+  @Pac4JSecurity(authorizers = "isTechLeader", clients = { "DirectBasicAuthClient", "jwtClient" })
   public Response create(@NotNull @Valid Topic t) {
     topicDao.createOrUpdate(t);
     if (t.getId() == null)

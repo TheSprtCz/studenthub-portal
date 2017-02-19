@@ -48,7 +48,7 @@ import io.dropwizard.jersey.params.LongParam;
 @Path("/users")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
-@Pac4JSecurity(authorizers = "isAdmin", clients = "DirectBasicAuthClient")
+@Pac4JSecurity(authorizers = "isAdmin", clients = { "DirectBasicAuthClient", "jwtClient" })
 public class UserResource {
 
   private final UserDAO userDao;
@@ -66,7 +66,7 @@ public class UserResource {
   @GET
   @Path("/{id}")
   @UnitOfWork
-  @Pac4JSecurity(authorizers = "isAuthenticated", clients = "DirectBasicAuthClient")
+  @Pac4JSecurity(authorizers = "isAuthenticated", clients = { "DirectBasicAuthClient", "jwtClient" })
   public User findById(@Pac4JProfile StudentHubProfile profile, @PathParam("id") LongParam id) {
     // only admin or profile owner is allowed
     if (id.get().equals(profile.getId()) || profile.getRoles().contains(UserRole.ADMIN.name())) {
@@ -87,7 +87,7 @@ public class UserResource {
   @PUT
   @Path("/{id}")
   @UnitOfWork
-  @Pac4JSecurity(authorizers = "isAuthenticated", clients = "DirectBasicAuthClient")
+  @Pac4JSecurity(authorizers = "isAuthenticated", clients = { "DirectBasicAuthClient", "jwtClient" })
   public Response update(@Pac4JProfile StudentHubProfile profile, @PathParam("id") LongParam id,
       @NotNull @Valid User u) {
 

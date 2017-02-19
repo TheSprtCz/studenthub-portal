@@ -45,7 +45,7 @@ import io.dropwizard.jersey.params.LongParam;
 @Path("/faculties")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
-@Pac4JSecurity(authorizers = "isAdmin", clients = "DirectBasicAuthClient")
+@Pac4JSecurity(authorizers = "isAdmin", clients = { "DirectBasicAuthClient", "jwtClient" })
 public class FacultyResource {
 
   private final FacultyDAO facDao;
