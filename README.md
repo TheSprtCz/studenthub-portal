@@ -8,8 +8,8 @@ How to start the StudentHub application
 ---
 
 1. Run `mvn clean package` to build your application
-1. Populate DB schema with `java -jar target/portal-1.0-SNAPSHOT.jar db migrate config.yml`
-1. Start application with `java -jar target/portal-1.0-SNAPSHOT.jar server config.yml`
+1. Populate DB schema with `java -jar studenthub-portal/target/studenthub-portal-1.0-SNAPSHOT.jar db migrate config.yml`
+1. Start application with `java -jar studenthub-portal/target/studenthub-portal-1.0-SNAPSHOT.jar server config.yml`
 1. To check that your application is running enter url `http://localhost:8080`
 
 Health Check

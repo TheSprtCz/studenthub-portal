@@ -1,5 +1,7 @@
-# Maven files
-target/
+#
+# Maven
+#
+**/target/
 pom.xml.tag
 pom.xml.releaseBackup
 pom.xml.versionsBackup
@@ -7,13 +9,13 @@ pom.xml.next
 release.properties
 dependency-reduced-pom.xml
 buildNumber.properties
-.mvn/timing.properties
+**/.mvn/timing.properties
 
 # Compiled class files
 *.class
 
 # Mobile Tools for Java (J2ME)
-.mtj.tmp/
+**/.mtj.tmp/
 
 # Package Files #
 *.jar
@@ -29,7 +31,27 @@ hs_err_pid*
 # Eclipse files
 .classpath
 .project
-.settings/
+**/.settings/
 
 # Seed file
 seed.sql
+
+#
+# Node.js
+#
+
+# dependencies
+**/node_modules/**
+
+# testing
+**/coverage/
+
+# production
+**/build/
+
+# misc
+.DS_Store
+.env
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*

@@ -104,7 +104,7 @@ public class StudentHubApplication extends Application<StudentHubConfiguration> 
   @Override
   public void initialize(final Bootstrap<StudentHubConfiguration> bootstrap) {
     bootstrap.addBundle(hibernate);
-    bootstrap.addBundle(new AssetsBundle("/webapp/", "/", "index.html"));
+    bootstrap.addBundle(new AssetsBundle("/assets/", "/", "index.html"));
 
     // 1. load conf. yaml from classpath
     // 2. enable env. var substitutions
