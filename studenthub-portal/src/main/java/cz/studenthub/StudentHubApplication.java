@@ -19,6 +19,7 @@ package cz.studenthub;
 import javax.ws.rs.core.HttpHeaders;
 
 import org.eclipse.jetty.server.session.SessionHandler;
+import org.eclipse.jetty.servlet.ErrorPageErrorHandler;
 import org.hibernate.SessionFactory;
 import org.pac4j.core.config.Config;
 import org.pac4j.http.client.direct.DirectBasicAuthClient;
@@ -145,6 +146,13 @@ public class StudentHubApplication extends Application<StudentHubConfiguration> 
     environment.jersey().register(new TopicApplicationResource(taDao));
     environment.jersey().register(new LoginResource());
 
+    // since routing is achieved on client side we need to catch 404 and
+    // redirect to index.html - handle 404 on client as well (this makes SPA
+    // routing possible)
+    final ErrorPageErrorHandler epeh = new ErrorPageErrorHandler();
+    epeh.addErrorPage(404, "/index.html");
+    environment.getApplicationContext().setErrorHandler(epeh);
+
     // healthcheck
     HealthCheck hc = new UnitOfWorkAwareProxyFactory(hibernate).create(StudentHubHealthCheck.class, UserDAO.class,
         userDao);
@@ -158,7 +166,7 @@ public class StudentHubApplication extends Application<StudentHubConfiguration> 
 
     JwtAuthenticator jwtAuth = new JwtAuthenticator();
     jwtAuth.setSignatureConfiguration(new SecretSignatureConfiguration(StudentHubPasswordEncoder.DEFAULT_SECRET));
-    
+
     // create clients (= ways of authenticating)
     DirectFormClient formClient = new DirectFormClient(hibernateAuth);
     DirectBasicAuthClient basicAuthClient = new DirectBasicAuthClient(hibernateAuth);
