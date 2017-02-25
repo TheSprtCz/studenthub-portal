@@ -6,7 +6,6 @@ You can find the most recent version of this guide [here](https://github.com/fac
 ## Table of Contents
 
 - [Updating to New Releases](#updating-to-new-releases)
-- [Sending Feedback](#sending-feedback)
 - [Folder Structure](#folder-structure)
 - [Available Scripts](#available-scripts)
   - [npm start](#npm-start)
@@ -88,29 +87,29 @@ In most cases bumping the `react-scripts` version in `package.json` and running 
 
 We commit to keeping the breaking changes minimal so you can upgrade `react-scripts` painlessly.
 
-## Sending Feedback
-
-We are always open to [your feedback](https://github.com/facebookincubator/create-react-app/issues).
-
 ## Folder Structure
 
 After creation, your project should look like this:
 
 ```
-my-app/
+studenthub-ui/
   README.md
   node_modules/
   package.json
+  pom.xml
   public/
     index.html
     favicon.ico
+    ...
   src/
-    App.css
+    components/*
+    views/*
+    test/*
     App.js
-    App.test.js
-    index.css
+    AppRouter.js
+    Auth.js
+    style.css
     index.js
-    logo.svg
 ```
 
 For the project to build, **these files must exist with exact filenames**:

@@ -29,7 +29,7 @@ const Auth = {
       }
     }
 
-    console.log(settings);
+    // console.log(settings);
     const that = this;
     $.ajax(settings).done(function ( data, textStatus, jqXHR) {
       var header = jqXHR.getResponseHeader("Authorization");

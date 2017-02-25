@@ -1,8 +1,9 @@
 import React from 'react';
-import { NavLink } from 'react-router-dom';
+import Auth from '../Auth.js';
+import { NavLink, withRouter } from 'react-router-dom';
 
-function NavBar() {
-  return (
+// we need to re-render NavBar when route changes
+const NavBar = withRouter(() => (
     <nav className="navbar navbar-default navbar-fixed-top">
     <div className="container">
       <div className="navbar-header">
@@ -15,17 +16,28 @@ function NavBar() {
       </div>
       <div className="collapse navbar-collapse" id="myNavbar">
         <ul className="nav navbar-nav navbar-right text-uppercase">
-          <li><NavLink activeClassName="active" to="/">Home</NavLink></li>
-          <li><NavLink activeClassName="active" to="/my-topics">My Topics</NavLink></li>
-          <li><NavLink activeClassName="active" to="/users">Users</NavLink></li>
-          <li><NavLink activeClassName="active" to="/unis">Universities</NavLink></li>
-          <li><NavLink activeClassName="active" to="/companies">Companies</NavLink></li>
-          <li><NavLink activeClassName="active" to="/login">Sign In</NavLink></li>
+          {Auth.isAuthenticated() ? <li><NavLink activeClassName="active" to="/my-topics">My Topics</NavLink></li> : ''}
+          {Auth.hasRole("ADMIN") || Auth.hasRole("COMPANY_REP") ? <li><NavLink activeClassName="active" to="/users">Users</NavLink></li> : ''}
+          {Auth.hasRole("ADMIN") ? <li><NavLink activeClassName="active" to="/universities">Universities</NavLink></li> : ''}
+          {Auth.hasRole("ADMIN") ? <li><NavLink activeClassName="active" to="/organisations">Organisations</NavLink></li> : ''}
+          {/* <li><NavLink activeClassName="active" to="/login"><AuthButton/></NavLink></li> */}
+          <li><NavLink activeClassName="active" to="/profile"><AuthButton/></NavLink></li>
         </ul>
       </div>
     </div>
     </nav>
-  );
-}
+))
+
+// 'push' from router.history
+const AuthButton = withRouter(({ push }) => (
+  Auth.isAuthenticated() ? (
+    <span>
+      <i className="fa fa-user-circle" aria-hidden="true"></i>
+      { Auth.getUserInfo().display_name }
+    </span>
+  ) : (
+    <span>Sign In</span>
+  )
+))
 
 export default NavBar;

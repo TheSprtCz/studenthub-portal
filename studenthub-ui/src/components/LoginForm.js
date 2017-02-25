@@ -39,11 +39,14 @@ class LoginForm extends React.Component {
 
     return (
       <div>
-        <p>You must log in to view the page at {from.pathname}</p>
-        <form id='loginForm'>
-          <input type="text" name="username" onChange={this.handleChange} />
-          <input type="password" name="password" onChange={this.handleChange} />
-          <button onClick={this.handleSubmit}>Log in</button>
+        {/* <p>You must log in to view the page at {from.pathname}</p> */}
+        <h2 className='form-signin-heading text-center'>Please sign in</h2>
+        <form id='loginForm' className='form-signin'>
+          <label htmlFor="inputUsername" className="sr-only">Email address</label>
+          <input type="email" name="username" id="inputUsername" className="form-control" placeholder="Email address" required autoFocus onChange={this.handleChange} />
+          <label htmlFor="inputPassword" className="sr-only">Password</label>
+          <input type="password" id="inputPassword" name="password" className='form-control' placeholder="Password" required onChange={this.handleChange} />
+          <button className='btn btn-lg btn-primary btn-block' type='submit' onClick={this.handleSubmit}>Sign in</button>
         </form>
       </div>
     )

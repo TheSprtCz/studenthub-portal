@@ -26,36 +26,36 @@
           <installDirectory>target</installDirectory>
         </configuration>
         <executions>
-        <!-- install node & npm -->
-        <execution>
-          <id>install node and npm</id>
-          <goals>
-            <goal>install-node-and-npm</goal>
-          </goals>
-          <configuration>
-            <nodeVersion>${node.js.version}</nodeVersion>
-          </configuration>
-        </execution>
-        <!-- install dependencies -->
-        <execution>
-          <id>npm install</id>
-          <goals>
-            <goal>npm</goal>
-          </goals>
-          <configuration>
-            <arguments>install</arguments>
-          </configuration>
-        </execution>
-        <!-- build distribution -->
-        <execution>
-          <id>npm build</id>
-          <goals>
-            <goal>npm</goal>
-          </goals>
-          <configuration>
-            <arguments>run build</arguments>
-          </configuration>
-        </execution>
+          <!-- install node & npm -->
+          <execution>
+            <id>install node and npm</id>
+            <goals>
+              <goal>install-node-and-npm</goal>
+            </goals>
+            <configuration>
+              <nodeVersion>${node.js.version}</nodeVersion>
+            </configuration>
+          </execution>
+          <!-- install dependencies -->
+          <execution>
+            <id>npm install</id>
+            <goals>
+              <goal>npm</goal>
+            </goals>
+            <configuration>
+              <arguments>install</arguments>
+            </configuration>
+          </execution>
+          <!-- build distribution -->
+          <execution>
+            <id>npm build</id>
+            <goals>
+              <goal>npm</goal>
+            </goals>
+            <configuration>
+              <arguments>run build</arguments>
+            </configuration>
+          </execution>
         </executions>
       </plugin>
       <plugin>

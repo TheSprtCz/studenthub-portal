@@ -4,6 +4,7 @@ import React from 'react';
 // "import" jquery
 //const $ = window.$;
 
+
 const TopicDetailView = ({ match }) => (
   <div>
     <h3>ID: {match.params.id}</h3>
