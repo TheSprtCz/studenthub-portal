@@ -11,6 +11,7 @@
     "react": "^15.4.2",
     "react-dom": "^15.4.2",
     "react-router-dom": "^4.0.0-beta.6",
+    "react-toolbox": "^2.0.0-beta.7",
     "toastr": "^2.1.2"
   },
   "scripts": {
