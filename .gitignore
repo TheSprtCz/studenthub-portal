@@ -33,9 +33,6 @@ hs_err_pid*
 .project
 **/.settings/
 
-# Seed file
-seed.sql
-
 #
 # Node.js
 #
