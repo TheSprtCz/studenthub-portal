@@ -85,6 +85,22 @@
   <build>
     <plugins>
       <plugin>
+        <groupId>com.sebastian-daschner</groupId>
+        <artifactId>jaxrs-analyzer-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <goals>
+              <goal>analyze-jaxrs</goal>
+            </goals>
+            <configuration>
+              <backend>swagger</backend>
+              <deployedDomain>localhost:8080</deployedDomain>
+              <resourcesDir>../api-docs</resourcesDir>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
         <artifactId>maven-shade-plugin</artifactId>
         <configuration>
           <createDependencyReducedPom>true</createDependencyReducedPom>
