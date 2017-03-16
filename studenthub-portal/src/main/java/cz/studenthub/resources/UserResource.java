@@ -95,25 +95,35 @@ public class UserResource {
   @DELETE
   @Path("/{id}")
   @UnitOfWork
-  public Response delete(@Pac4JProfile StudentHubProfile profile, @PathParam("id") LongParam id) {
+  public Response delete(@Pac4JProfile StudentHubProfile profile, @PathParam("id") LongParam idParam) {
+ 
+    Long id = idParam.get();
+    User user = userDao.findById(id);
+    if (user == null)
+      throw new WebApplicationException(Status.NOT_FOUND);
+
     // only admin or profile owner is allowed
-    if (id.get().equals(Long.valueOf(profile.getId())) || profile.getRoles().contains(UserRole.ADMIN.name())) {
-      userDao.delete(userDao.findById(id.get()));
+    if (id.equals(Long.valueOf(profile.getId())) || profile.getRoles().contains(UserRole.ADMIN.name())) {
+      userDao.delete(user);
       return Response.noContent().build();
     } else {
       throw new WebApplicationException(Status.FORBIDDEN);
     }
+
   }
 
   @PUT
   @Path("/{id}")
   @UnitOfWork
-  public Response update(@Pac4JProfile StudentHubProfile profile, @PathParam("id") LongParam id,
+  @Pac4JSecurity(authorizers = "isAuthenticated", clients = { "DirectBasicAuthClient", "jwtClient" })
+  public Response update(@Pac4JProfile StudentHubProfile profile, @PathParam("id") LongParam idParam,
       @NotNull @Valid User user) {
+    Long id = idParam.get();
+    if (userDao.findById(id) == null)
+      throw new WebApplicationException(Status.NOT_FOUND);
 
-    // only admin or profile owner is allowed
-    if (id.get().equals(Long.valueOf(profile.getId())) || profile.getRoles().contains(UserRole.ADMIN.name())) {
-      user.setId(id.get());
+    if (id.equals(Long.valueOf(profile.getId())) || profile.getRoles().contains(UserRole.ADMIN.name())) {
+      user.setId(id);
       userDao.createOrUpdate(user);
       return Response.ok(user).build();
     } else {

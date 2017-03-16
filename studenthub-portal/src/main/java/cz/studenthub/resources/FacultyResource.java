@@ -81,16 +81,25 @@ public class FacultyResource {
   @DELETE
   @Path("/{id}")
   @UnitOfWork
-  public Response delete(@PathParam("id") LongParam id) {
-    facDao.delete(facDao.findById(id.get()));
+  public Response delete(@PathParam("id") LongParam idParam) {
+    Long id = idParam.get();
+    Faculty faculty = facDao.findById(id);
+    if (faculty == null)
+      throw new WebApplicationException(Status.NOT_FOUND);
+
+    facDao.delete(faculty);
     return Response.noContent().build();
   }
 
   @PUT
   @Path("/{id}")
   @UnitOfWork
-  public Response update(@PathParam("id") LongParam id, @NotNull @Valid Faculty faculty) {
-    faculty.setId(id.get());
+  public Response update(@PathParam("id") LongParam idParam, @NotNull @Valid Faculty faculty) {
+    Long id = idParam.get();
+    if (facDao.findById(id) == null)
+      throw new WebApplicationException(Status.NOT_FOUND);
+
+    faculty.setId(id);
     facDao.createOrUpdate(faculty);
     return Response.ok(faculty).build();
   }
