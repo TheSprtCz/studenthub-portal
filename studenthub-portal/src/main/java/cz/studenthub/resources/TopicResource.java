@@ -87,8 +87,8 @@ public class TopicResource {
   public Response update(@Pac4JProfile StudentHubProfile profile, @PathParam("id") LongParam id,
       @NotNull @Valid Topic t) {
 
-    // if user is topic leader or is an admin
-    if (t.getTechLeader().getId().equals(profile.getId()) || profile.getRoles().contains(UserRole.ADMIN.name())) {
+    // if user is topic creator or is an admin
+    if (t.getCreator().getId().equals(profile.getId()) || profile.getRoles().contains(UserRole.ADMIN.name())) {
       t.setId(id.get());
       topicDao.createOrUpdate(t);
       return Response.ok(t).build();

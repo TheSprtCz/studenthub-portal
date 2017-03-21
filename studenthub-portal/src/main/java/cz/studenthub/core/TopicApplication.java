@@ -34,7 +34,11 @@ import javax.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "TopicApplications")
-@NamedQueries({ @NamedQuery(name = "TopicApplication.findAll", query = "SELECT ta FROM TopicApplication ta") })
+@NamedQueries({ @NamedQuery(name = "TopicApplication.findAll", query = "SELECT app FROM TopicApplication app"),
+  @NamedQuery(name = "TopicApplication.findByFaculty", query = "SELECT app FROM TopicApplication app WHERE app.faculty = :faculty"),
+  @NamedQuery(name = "TopicApplication.findByTopic", query = "SELECT app FROM TopicApplication app WHERE app.topic = :topic"),
+  @NamedQuery(name = "TopicApplication.findByStudent", query = "SELECT app FROM TopicApplication app WHERE app.student = :student"),
+  @NamedQuery(name = "TopicApplication.findBySupervisor", query = "SELECT app FROM TopicApplication app WHERE app.academicSupervisor = :supervisor") })
 public class TopicApplication {
 
   @Id
@@ -54,6 +58,7 @@ public class TopicApplication {
   private TopicDegree degree;
 
   private Date thesisFinish;
+  private Date thesisStart;
 
   @NotNull
   @ManyToOne
@@ -72,12 +77,13 @@ public class TopicApplication {
   }
 
   public TopicApplication(Topic topic, String officialAssignment, TopicGrade grade, TopicDegree degree,
-      Date thesisFinish, Faculty faculty, User techLeader, User student, User academicSupervisor) {
+      Date thesisFinish, Date thesisStart, Faculty faculty, User techLeader, User student, User academicSupervisor) {
     this.topic = topic;
     this.officialAssignment = officialAssignment;
     this.grade = grade;
     this.degree = degree;
     this.thesisFinish = thesisFinish;
+    this.thesisStart = thesisStart;
     this.faculty = faculty;
     this.techLeader = techLeader;
     this.student = student;
@@ -122,6 +128,14 @@ public class TopicApplication {
 
   public void setThesisFinish(Date thesisFinish) {
     this.thesisFinish = thesisFinish;
+  }
+
+  public Date getThesisStarted() {
+    return thesisStart;
+  }
+
+  public void setThesisStarted(Date thesisStarted) {
+    this.thesisStart = thesisStarted;
   }
 
   public Faculty getFaculty() {

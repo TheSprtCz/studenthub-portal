@@ -36,6 +36,7 @@
             <column name="GRADE" type="VARCHAR(255)"/>
             <column name="OFFICIALASSIGNMENT" type="LONGVARCHAR"/>
             <column name="THESISFINISH" type="TIMESTAMP"/>
+            <column name="THESISSTART" type="TIMESTAMP"/>
             <column name="ACADEMICSUPERVISOR_ID" type="BIGINT(19)"/>
             <column name="FACULTY_ID" type="BIGINT(19)">
                 <constraints nullable="false"/>
@@ -55,7 +56,7 @@
             <column name="TITLE" type="VARCHAR(255)">
                 <constraints nullable="false"/>
             </column>
-            <column name="TECHLEADER_ID" type="BIGINT(19)"/>
+            <column name="CREATOR_ID" type="BIGINT(19)"/>
         </createTable>
     </changeSet>
     <changeSet author="sbunciak (generated)" id="1485077755684-5" objectQuotingStrategy="QUOTE_ALL_OBJECTS">
@@ -158,7 +159,7 @@
     </changeSet>
     <changeSet author="sbunciak (generated)" id="1485077755684-17" objectQuotingStrategy="QUOTE_ALL_OBJECTS">
         <createIndex catalogName="STUDENT-HUB" indexName="FK91J0Q1L9VRV33ABQQTIDVL9QR_INDEX_9" schemaName="PUBLIC" tableName="TOPICS">
-            <column name="TECHLEADER_ID"/>
+            <column name="CREATOR_ID"/>
         </createIndex>
     </changeSet>
     <changeSet author="sbunciak (generated)" id="1485077755684-18" objectQuotingStrategy="QUOTE_ALL_OBJECTS">
@@ -226,7 +227,7 @@
         <addForeignKeyConstraint baseColumnNames="TOPIC_ID" baseTableCatalogName="STUDENT-HUB" baseTableName="TOPICS_USERS" baseTableSchemaName="PUBLIC" constraintName="FK8TL27XUIJ7JGBCUPVICHJJX1P" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="ID" referencedTableCatalogName="STUDENT-HUB" referencedTableName="TOPICS" referencedTableSchemaName="PUBLIC"/>
     </changeSet>
     <changeSet author="sbunciak (generated)" id="1485077755684-32" objectQuotingStrategy="QUOTE_ALL_OBJECTS">
-        <addForeignKeyConstraint baseColumnNames="TECHLEADER_ID" baseTableCatalogName="STUDENT-HUB" baseTableName="TOPICS" baseTableSchemaName="PUBLIC" constraintName="FK91J0Q1L9VRV33ABQQTIDVL9QR" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="ID" referencedTableCatalogName="STUDENT-HUB" referencedTableName="USERS" referencedTableSchemaName="PUBLIC"/>
+        <addForeignKeyConstraint baseColumnNames="CREATOR_ID" baseTableCatalogName="STUDENT-HUB" baseTableName="TOPICS" baseTableSchemaName="PUBLIC" constraintName="FK91J0Q1L9VRV33ABQQTIDVL9QR" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="ID" referencedTableCatalogName="STUDENT-HUB" referencedTableName="USERS" referencedTableSchemaName="PUBLIC"/>
     </changeSet>
     <changeSet author="sbunciak (generated)" id="1485077755684-33" objectQuotingStrategy="QUOTE_ALL_OBJECTS">
         <addForeignKeyConstraint baseColumnNames="ACADEMICSUPERVISORS_ID" baseTableCatalogName="STUDENT-HUB" baseTableName="TOPICS_USERS" baseTableSchemaName="PUBLIC" constraintName="FKAYRERQLGCOB2IVTLYC38FSITC" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="ID" referencedTableCatalogName="STUDENT-HUB" referencedTableName="USERS" referencedTableSchemaName="PUBLIC"/>

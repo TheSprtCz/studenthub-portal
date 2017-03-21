@@ -39,7 +39,11 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 @Entity
 @Table(name = "Topics")
-@NamedQueries({ @NamedQuery(name = "Topic.findAll", query = "SELECT t FROM Topic t") })
+@NamedQueries({ @NamedQuery(name = "Topic.findAll", query = "SELECT topic FROM Topic topic"),
+  @NamedQuery(name = "Topic.findByCreator", query = "SELECT topic FROM Topic topic WHERE topic.creator = :creator"),
+  @NamedQuery(name = "Topic.findBySupervisor", query = "SELECT topic FROM Topic topic join topic.academicSupervisors supervisor WHERE supervisor = :supervisor"),
+  @NamedQuery(name = "Topic.findByTag", query = "SELECT topic FROM Topic topic join topic.tags tag WHERE tag = :tag"),
+  @NamedQuery(name = "Topic.findByCompany", query = "SELECT topic FROM Topic topic WHERE topic.creator.company = :company") })
 public class Topic {
 
   @Id
@@ -57,7 +61,7 @@ public class Topic {
    */
   @JsonIgnore
   @ManyToOne
-  private User techLeader;
+  private User creator;
 
   @JsonIgnore
   @Nullable
@@ -76,12 +80,12 @@ public class Topic {
   public Topic() {
   }
 
-  public Topic(String title, String shortAbstract, String description, User techLeader, Set<User> academicSupervisors,
+  public Topic(String title, String shortAbstract, String description, User creator, Set<User> academicSupervisors,
       Set<String> tags, Set<TopicDegree> degrees) {
     this.title = title;
     this.shortAbstract = shortAbstract;
     this.description = description;
-    this.techLeader = techLeader;
+    this.creator = creator;
     this.academicSupervisors = academicSupervisors;
     this.tags = tags;
     this.degrees = degrees;
@@ -120,13 +124,13 @@ public class Topic {
   }
 
   @JsonIgnore
-  public User getTechLeader() {
-    return techLeader;
+  public User getCreator() {
+    return creator;
   }
 
   @JsonProperty
-  public void setTechLeader(User leader) {
-    this.techLeader = leader;
+  public void setCreator(User leader) {
+    this.creator = leader;
   }
 
   @JsonIgnore

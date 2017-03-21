@@ -20,7 +20,10 @@ import java.util.List;
 
 import org.hibernate.SessionFactory;
 
+import cz.studenthub.core.Faculty;
+import cz.studenthub.core.Topic;
 import cz.studenthub.core.TopicApplication;
+import cz.studenthub.core.User;
 import io.dropwizard.hibernate.AbstractDAO;
 
 /**
@@ -45,6 +48,22 @@ public class TopicApplicationDAO extends AbstractDAO<TopicApplication> {
 
   public List<TopicApplication> findAll() {
     return list(namedQuery("TopicApplication.findAll"));
+  }
+
+  public List<TopicApplication> findByFaculty(Faculty faculty) {
+    return list(namedQuery("TopicApplication.findByFaculty").setParameter("faculty", faculty));
+  }
+
+  public List<TopicApplication> findByTopic(Topic topic) {
+    return list(namedQuery("TopicApplication.findByTopic").setParameter("topic", topic));
+  }
+
+  public List<TopicApplication> findByStudent(User student) {
+    return list(namedQuery("TopicApplication.findByStudent").setParameter("student", student));
+  }
+
+  public List<TopicApplication> findBySupervisor(User supervisor) {
+    return list(namedQuery("TopicApplication.findBySupervisor").setParameter("supervisor", supervisor));
   }
 
   public void delete(TopicApplication ta) {

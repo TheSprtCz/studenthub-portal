@@ -35,8 +35,8 @@ public class UniversityDAO extends AbstractDAO<University> {
     super(sessionFactory);
   }
 
-  public University createOrUpdate(University u) {
-    return persist(u);
+  public University createOrUpdate(University university) {
+    return persist(university);
   }
 
   public University findById(Long id) {
@@ -47,7 +47,7 @@ public class UniversityDAO extends AbstractDAO<University> {
     return list(namedQuery("University.findAll"));
   }
 
-  public void delete(University u) {
-    currentSession().delete(u);
+  public void delete(University university) {
+    currentSession().delete(university);
   }
 }

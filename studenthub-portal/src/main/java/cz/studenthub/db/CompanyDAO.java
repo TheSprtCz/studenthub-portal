@@ -35,8 +35,8 @@ public class CompanyDAO extends AbstractDAO<Company> {
     super(sessionFactory);
   }
 
-  public Company createOrUpdate(Company c) {
-    return persist(c);
+  public Company createOrUpdate(Company company) {
+    return persist(company);
   }
   
   public Company findById(Long id) {
@@ -47,7 +47,8 @@ public class CompanyDAO extends AbstractDAO<Company> {
     return list(namedQuery("Company.findAll"));
   }
   
-  public void delete(Company c) {
-    currentSession().delete(c);
+  public void delete(Company company) {
+    currentSession().delete(company);
   }
+
 }

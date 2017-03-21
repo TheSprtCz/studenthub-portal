@@ -21,6 +21,7 @@ import java.util.List;
 import org.hibernate.SessionFactory;
 
 import cz.studenthub.core.Faculty;
+import cz.studenthub.core.University;
 import io.dropwizard.hibernate.AbstractDAO;
 
 /**
@@ -35,8 +36,8 @@ public class FacultyDAO extends AbstractDAO<Faculty> {
     super(sessionFactory);
   }
 
-  public Faculty createOrUpdate(Faculty f) {
-    return persist(f);
+  public Faculty createOrUpdate(Faculty faculty) {
+    return persist(faculty);
   }
 
   public Faculty findById(Long id) {
@@ -47,7 +48,11 @@ public class FacultyDAO extends AbstractDAO<Faculty> {
     return list(namedQuery("Faculty.findAll"));
   }
 
-  public void delete(Faculty f) {
-    currentSession().delete(f);
+  public List<Faculty> findAllByUniversity(University university) {
+    return list(namedQuery("Faculty.findByUniversity").setParameter("university", university));
+  }
+
+  public void delete(Faculty faculty) {
+    currentSession().delete(faculty);
   }
 }

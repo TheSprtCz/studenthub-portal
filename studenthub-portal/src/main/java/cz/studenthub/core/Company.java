@@ -32,7 +32,7 @@ import org.hibernate.validator.constraints.NotEmpty;
 
 @Entity
 @Table(name = "Companies")
-@NamedQueries({ @NamedQuery(name = "Company.findAll", query = "SELECT c FROM Company c") })
+@NamedQueries({ @NamedQuery(name = "Company.findAll", query = "SELECT company FROM Company company") })
 public class Company {
 
   @Id
