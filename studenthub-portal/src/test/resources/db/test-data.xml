@@ -1,0 +1,899 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+    <changeSet author="phala (generated)" id="1489653927422-18" objectQuotingStrategy="QUOTE_ALL_OBJECTS">
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="COMPANIES">
+            <column name="ID" valueNumeric="2"/>
+            <column name="CITY" value="Bratislava"/>
+            <column name="COUNTRY" value="SK"/>
+            <column name="LOGOURL" value="c2.com/logo.jpg"/>
+            <column name="NAME" value="Company Two"/>
+            <column name="PLAN" value="TIER_2"/>
+            <column name="SIZE" value="MEDIUM"/>
+            <column name="URL" value="www.c2.com"/>
+        </insert>
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="COMPANIES">
+            <column name="ID" valueNumeric="1"/>
+            <column name="CITY" value="Brno"/>
+            <column name="COUNTRY" value="CZ"/>
+            <column name="LOGOURL" value="c1.com/logo.png"/>
+            <column name="NAME" value="Company One"/>
+            <column name="PLAN" value="TIER_3"/>
+            <column name="SIZE" value="CORPORATE"/>
+            <column name="URL" value="www.c1.com"/>
+        </insert>
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="COMPANIES">
+            <column name="ID" valueNumeric="3"/>
+            <column name="CITY" value="Prague"/>
+            <column name="COUNTRY" value="CZ"/>
+            <column name="LOGOURL" value="c3.com/img.jpg"/>
+            <column name="NAME" value="Company Three"/>
+            <column name="PLAN" value="TIER_3"/>
+            <column name="SIZE" value="SMALL"/>
+            <column name="URL" value="www.c3.com"/>
+        </insert>
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="COMPANIES">
+            <column name="ID" valueNumeric="4"/>
+            <column name="CITY" value="Brno"/>
+            <column name="COUNTRY" value="CZ"/>
+            <column name="LOGOURL" value="c4.com/picture.jpg"/>
+            <column name="NAME" value="Company Four"/>
+            <column name="PLAN" value="TIER_1"/>
+            <column name="SIZE" value="STARTUP"/>
+            <column name="URL" value="www.c4.com"/>
+        </insert>
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="COMPANIES">
+            <column name="ID" valueNumeric="5"/>
+            <column name="CITY" value="Prague"/>
+            <column name="COUNTRY" value="CZ"/>
+            <column name="LOGOURL" value="c5.com/us.jpg"/>
+            <column name="NAME" value="Company Five"/>
+            <column name="PLAN" value="TIER_3"/>
+            <column name="SIZE" value="MEDIUM"/>
+            <column name="URL" value="www.c5.com"/>
+        </insert>
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="COMPANIES">
+            <column name="ID" valueNumeric="6"/>
+            <column name="CITY" value="Olomouc"/>
+            <column name="COUNTRY" value="CZ"/>
+            <column name="LOGOURL" value="c6.com/us.gif"/>
+            <column name="NAME" value="Company Six"/>
+            <column name="PLAN" value="TIER_2"/>
+            <column name="SIZE" value="CORPORATE"/>
+            <column name="URL" value="www.c6.com"/>
+        </insert>
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="COMPANIES">
+            <column name="ID" valueNumeric="7"/>
+            <column name="CITY" value="Trencin"/>
+            <column name="COUNTRY" value="SK"/>
+            <column name="LOGOURL" value="c7.com/img.png"/>
+            <column name="NAME" value="Company Seven"/>
+            <column name="PLAN" value="TIER_3"/>
+            <column name="SIZE" value="MEDIUM"/>
+            <column name="URL" value="www.c7.com"/>
+        </insert>
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="COMPANIES">
+            <column name="ID" valueNumeric="8"/>
+            <column name="CITY" value="Myjava"/>
+            <column name="COUNTRY" value="SK"/>
+            <column name="LOGOURL" value="c8.com/logo.jpg"/>
+            <column name="NAME" value="Company Eight"/>
+            <column name="PLAN" value="TIER_1"/>
+            <column name="SIZE" value="STARTUP"/>
+            <column name="URL" value="www.c8.com"/>
+        </insert>
+    </changeSet>
+    
+    <changeSet author="phala (generated)" id="1489653927422-25" objectQuotingStrategy="QUOTE_ALL_OBJECTS">
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="UNIVERSITIES">
+            <column name="ID" valueNumeric="1"/>
+            <column name="CITY" value="Brno"/>
+            <column name="COUNTRY" value="CZ"/>
+            <column name="LOGOURL" value="www.muni.cz/img.png"/>
+            <column name="NAME" value="Masaryk University"/>
+            <column name="URL" value="www.muni.cz"/>
+        </insert>
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="UNIVERSITIES">
+            <column name="ID" valueNumeric="3"/>
+            <column name="CITY" value="Praha"/>
+            <column name="COUNTRY" value="CZ"/>
+            <column name="LOGOURL" value="www.cvut.cz/image.jpg"/>
+            <column name="NAME" value="Czech Technical University"/>
+            <column name="URL" value="www.cvut.cz"/>
+        </insert>
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="UNIVERSITIES">
+            <column name="ID" valueNumeric="4"/>
+            <column name="CITY" value="Bratislava"/>
+            <column name="COUNTRY" value="SK"/>
+            <column name="LOGOURL" value="www.stuba.sk/logo.jpg"/>
+            <column name="NAME" value="Slovak Technical University"/>
+            <column name="URL" value="www.stuba.sk"/>
+        </insert>
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="UNIVERSITIES">
+            <column name="ID" valueNumeric="5"/>
+            <column name="CITY" value="Bratislava"/>
+            <column name="COUNTRY" value="SK"/>
+            <column name="LOGOURL" value="www.uniba.sk/logo.gif"/>
+            <column name="NAME" value="Comenius University in Bratislava"/>
+            <column name="URL" value="uniba.sk"/>
+        </insert>
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="UNIVERSITIES">
+            <column name="ID" valueNumeric="2"/>
+            <column name="CITY" value="Brno"/>
+            <column name="COUNTRY" value="CZ"/>
+            <column name="LOGOURL" value="www.vut.cz/logo.png"/>
+            <column name="NAME" value="Brno University of Technology"/>
+            <column name="URL" value="www.vut.cz"/>
+        </insert>
+    </changeSet>
+    <changeSet author="phala (generated)" id="1489653927422-19" objectQuotingStrategy="QUOTE_ALL_OBJECTS">
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="FACULTIES">
+            <column name="ID" valueNumeric="1"/>
+            <column name="NAME" value="Faculty of Informatics"/>
+            <column name="UNIVERSITY_ID" valueNumeric="1"/>
+        </insert>
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="FACULTIES">
+            <column name="ID" valueNumeric="2"/>
+            <column name="NAME" value="Faculty of Arts"/>
+            <column name="UNIVERSITY_ID" valueNumeric="1"/>
+        </insert>
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="FACULTIES">
+            <column name="ID" valueNumeric="3"/>
+            <column name="NAME" value="Faculty of Medicine"/>
+            <column name="UNIVERSITY_ID" valueNumeric="1"/>
+        </insert>
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="FACULTIES">
+            <column name="ID" valueNumeric="4"/>
+            <column name="NAME" value="Faculty of Law"/>
+            <column name="UNIVERSITY_ID" valueNumeric="1"/>
+        </insert>
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="FACULTIES">
+            <column name="ID" valueNumeric="5"/>
+            <column name="NAME" value="Faculty of Information Technology"/>
+            <column name="UNIVERSITY_ID" valueNumeric="2"/>
+        </insert>
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="FACULTIES">
+            <column name="ID" valueNumeric="6"/>
+            <column name="NAME" value="Faculty of Electrical Engineering and Communication"/>
+            <column name="UNIVERSITY_ID" valueNumeric="2"/>
+        </insert>
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="FACULTIES">
+            <column name="ID" valueNumeric="7"/>
+            <column name="NAME" value="Faculty of Chemistry"/>
+            <column name="UNIVERSITY_ID" valueNumeric="2"/>
+        </insert>
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="FACULTIES">
+            <column name="ID" valueNumeric="8"/>
+            <column name="NAME" value="Faculty of Electrical Engineering"/>
+            <column name="UNIVERSITY_ID" valueNumeric="3"/>
+        </insert>
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="FACULTIES">
+            <column name="ID" valueNumeric="9"/>
+            <column name="NAME" value="Faculty of Mechanical Engineering"/>
+            <column name="UNIVERSITY_ID" valueNumeric="3"/>
+        </insert>
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="FACULTIES">
+            <column name="ID" valueNumeric="10"/>
+            <column name="NAME" value="Faculty of Architecture"/>
+            <column name="UNIVERSITY_ID" valueNumeric="3"/>
+        </insert>
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="FACULTIES">
+            <column name="ID" valueNumeric="11"/>
+            <column name="NAME" value="Faculty of Electrical Engineering and Information Technology"/>
+            <column name="UNIVERSITY_ID" valueNumeric="4"/>
+        </insert>
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="FACULTIES">
+            <column name="ID" valueNumeric="12"/>
+            <column name="NAME" value="Faculty of Chemical and Food Technology"/>
+            <column name="UNIVERSITY_ID" valueNumeric="4"/>
+        </insert>
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="FACULTIES">
+            <column name="ID" valueNumeric="13"/>
+            <column name="NAME" value="Faculty of Civil Engineering"/>
+            <column name="UNIVERSITY_ID" valueNumeric="4"/>
+        </insert>
+    </changeSet>
+    <changeSet author="phala (generated)" id="1489653927422-28" objectQuotingStrategy="QUOTE_ALL_OBJECTS">
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="USERS">
+            <column name="ID" valueNumeric="15"/>
+            <column name="EMAIL" value="student4@example.com"/>
+            <column name="LASTLOGIN" valueDate="2016-09-05 02:00:00.0"/>
+            <column name="NAME" value="Student Four"/>
+            <column name="PASSWORD" value="$6$Zw7J1cpP$wFZmokksM1HUYJe.McUolV67XTBbLcapYc.dyn0thGhLInuFZA3TSO4iNNQKC2JAJyx7gkBDw/Vimyy2HLisD1"/>
+            <column name="PHONE" value="568 426 377"/>
+            <column name="USERNAME" value="student4"/>
+            <column name="COMPANY_ID"/>
+            <column name="FACULTY_ID" valueNumeric="2"/>
+        </insert>
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="USERS">
+            <column name="ID" valueNumeric="16"/>
+            <column name="EMAIL" value="rep1@example.com"/>
+            <column name="LASTLOGIN" valueDate="2016-05-06 02:00:00.0"/>
+            <column name="NAME" value="Rep One"/>
+            <column name="PASSWORD" value="$6$q7RXtghS$bf1/9H2B5eJp8Zgsibu2yKFVgNJqgAn2tH3s9sVZG8sLFMxq8wb4HLygorbj5CEs/ZtGid1l373jz6L/8pbgM1"/>
+            <column name="PHONE" value="154 798 416"/>
+            <column name="USERNAME" value="rep1"/>
+            <column name="COMPANY_ID" valueNumeric="1"/>
+            <column name="FACULTY_ID"/>
+        </insert>
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="USERS">
+            <column name="ID" valueNumeric="17"/>
+            <column name="EMAIL" value="rep2@example.com"/>
+            <column name="LASTLOGIN" valueDate="2016-04-27 02:00:00.0"/>
+            <column name="NAME" value="Rep Two"/>
+            <column name="PASSWORD" value="$6$3EuJ0sr3$8GrzJS/rc1bsRKJZsbSFj9b5LK.y04GyliiFROnY.zrcrwwNIvBte5nr0AbzEMvWdsyl/TbEU0LA5HGJ/nMiT/"/>
+            <column name="PHONE" value="871 423 698"/>
+            <column name="USERNAME" value="rep2"/>
+            <column name="COMPANY_ID" valueNumeric="8"/>
+            <column name="FACULTY_ID"/>
+        </insert>
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="USERS">
+            <column name="ID" valueNumeric="18"/>
+            <column name="EMAIL" value="rep3@example.com"/>
+            <column name="LASTLOGIN" valueDate="2017-01-27 01:00:00.0"/>
+            <column name="NAME" value="Rep Three"/>
+            <column name="PASSWORD" value="$6$nWdIFcdv$C9A3qq/3NJRLb40EW.sAPfxyas3pM8UHs1nZGUuZAT5uhUgca1KIGE6L0Mj4czTq.bijscMH0k1ecHOT0Mf820"/>
+            <column name="PHONE" value="234 156 774"/>
+            <column name="USERNAME" value="rep3"/>
+            <column name="COMPANY_ID" valueNumeric="7"/>
+            <column name="FACULTY_ID"/>
+        </insert>
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="USERS">
+            <column name="ID" valueNumeric="1"/>
+            <column name="EMAIL" value="admin@example.com"/>
+            <column name="LASTLOGIN" valueDate="2016-02-17 01:00:00.0"/>
+            <column name="NAME" value="Admin One"/>
+            <column name="PASSWORD" value="$6$utr8Ibd0$83l4Rv.4m4QCdNy4jt5aDO9fC8mYpG6.Z3zPD.6azhSto6lfyNAIcJkE8cg2jjDhKDsiSdLrSkCTLo/xglEzi."/>
+            <column name="PHONE" value="123 456 789"/>
+            <column name="USERNAME" value="admin"/>
+            <column name="COMPANY_ID"/>
+            <column name="FACULTY_ID"/>
+        </insert>
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="USERS">
+            <column name="ID" valueNumeric="3"/>
+            <column name="EMAIL" value="supervisor2@example.com"/>
+            <column name="LASTLOGIN" valueDate="2016-02-18 01:00:00.0"/>
+            <column name="NAME" value="Supervisor Two"/>
+            <column name="PASSWORD" value="$6$bZPyLHPu$2.bGh4zh6ppPgtm.Y0CkSN.5GnMpfZBuLzIEPFxTNeeHHw/aBf7YlN5RyEeGxFd1fRIBoYGMU31dXF6H3TTtM0"/>
+            <column name="PHONE" value="147 875 369"/>
+            <column name="USERNAME" value="supervisor2"/>
+            <column name="COMPANY_ID"/>
+            <column name="FACULTY_ID" valueNumeric="5"/>
+        </insert>
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="USERS">
+            <column name="ID" valueNumeric="2"/>
+            <column name="EMAIL" value="supervisor1@example.com"/>
+            <column name="LASTLOGIN" valueDate="2017-03-19 01:00:00.0"/>
+            <column name="NAME" value="Supervisor One"/>
+            <column name="PASSWORD" value="$6$iySNKy2E$3/82Sfl.ibWtzFjwZFkVkSzTgqiFN9jthdK8Bqzs4niyZD2dH8rfrSY5XsoyHVMLCxfMSoDB3b/TGohEKCriU/"/>
+            <column name="PHONE" value="258 457 987"/>
+            <column name="USERNAME" value="supervisor1"/>
+            <column name="COMPANY_ID"/>
+            <column name="FACULTY_ID" valueNumeric="1"/>
+        </insert>
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="USERS">
+            <column name="ID" valueNumeric="4"/>
+            <column name="EMAIL" value="supervisor3@example.com"/>
+            <column name="LASTLOGIN" valueDate="2017-03-05 01:00:00.0"/>
+            <column name="NAME" value="Supervisor Three"/>
+            <column name="PASSWORD" value="$6$65CuDyzH$Asi4dJ1EWYP1xX5nUK4o3JAdf1xLyrG8jV.SSOH/1WzC7xhm3OGVeH2PPkJpGD6l3.uJEvYbuC4DpK66WJOXq0"/>
+            <column name="PHONE" value="268 745 137"/>
+            <column name="USERNAME" value="supervisor3"/>
+            <column name="COMPANY_ID"/>
+            <column name="FACULTY_ID" valueNumeric="8"/>
+        </insert>
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="USERS">
+            <column name="ID" valueNumeric="5"/>
+            <column name="EMAIL" value="supervisor4@example.com"/>
+            <column name="LASTLOGIN" valueDate="2017-02-04 01:00:00.0"/>
+            <column name="NAME" value="Supervisor Four"/>
+            <column name="PASSWORD" value="$6$kUh.Ng3H$BGTBzzA4aPd73rgCBXBm/28mX5B4Pdd1iuLEBmshHt2QSbCCwbGkPsdrrvuNoFt3i9I9IYatMTF79oP/hIrL8/"/>
+            <column name="PHONE" value="349 879 152"/>
+            <column name="USERNAME" value="supervisor4"/>
+            <column name="COMPANY_ID"/>
+            <column name="FACULTY_ID" valueNumeric="2"/>
+        </insert>
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="USERS">
+            <column name="ID" valueNumeric="6"/>
+            <column name="EMAIL" value="supervisor5@example.com"/>
+            <column name="LASTLOGIN" valueDate="2016-07-25 02:00:00.0"/>
+            <column name="NAME" value="Supervisor Five"/>
+            <column name="PASSWORD" value="$6$WBQNLMey$rEkjh.O3gSoH6kFbjNrs1KcLh4XLR5reOhce8Rh3CBQBQvLTOfWNM8DHZDf86K.zwvagepkcxvDVcHjz7Ue.o1"/>
+            <column name="PHONE" value="777 888 999"/>
+            <column name="USERNAME" value="supervisor5"/>
+            <column name="COMPANY_ID"/>
+            <column name="FACULTY_ID" valueNumeric="2"/>
+        </insert>
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="USERS">
+            <column name="ID" valueNumeric="7"/>
+            <column name="EMAIL" value="supervisor6@example.com"/>
+            <column name="LASTLOGIN" valueDate="2016-10-23 02:00:00.0"/>
+            <column name="NAME" value="Supervisor Six"/>
+            <column name="PASSWORD" value="$6$nq3l/DO4$1UIfm9Nr5s88E5p5M1mQba2UjTzMLqBAi2QaBORusihIR9ce2XJngToswL/GY8cEM3.KYEwePZOh24W8KLXcj0"/>
+            <column name="PHONE" value="111 222 333"/>
+            <column name="USERNAME" value="supervisor6"/>
+            <column name="COMPANY_ID"/>
+            <column name="FACULTY_ID" valueNumeric="6"/>
+        </insert>
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="USERS">
+            <column name="ID" valueNumeric="8"/>
+            <column name="EMAIL" value="leader1@example.com"/>
+            <column name="LASTLOGIN" valueDate="2017-01-09 01:00:00.0"/>
+            <column name="NAME" value="Leader One"/>
+            <column name="PASSWORD" value="$6$SzG6.ehL$cDf/ZxKuMfAfiuZPN3IwA6R.Fsx3lvkcdF7gcwEeaVgjVtSt0PLwYGLRd/UkLKtpP3nu1ycHlmH9rc6M/Yie.1"/>
+            <column name="PHONE" value="875 687 149"/>
+            <column name="USERNAME" value="leader1"/>
+            <column name="COMPANY_ID" valueNumeric="1"/>
+            <column name="FACULTY_ID"/>
+        </insert>
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="USERS">
+            <column name="ID" valueNumeric="9"/>
+            <column name="EMAIL" value="leader2@example.com"/>
+            <column name="LASTLOGIN" valueDate="2016-12-08 01:00:00.0"/>
+            <column name="NAME" value="Leader Two"/>
+            <column name="PASSWORD" value="$6$Ck6kbUkM$JhnoEuZ0X/r/i20aSDyXxunFYxVy.v9MY0LSpHPJMgZX83CVCdduvD6PT0riapLVzyyAMnpWFjkqtGXkwSnDr1"/>
+            <column name="PHONE" value="578 962 759"/>
+            <column name="USERNAME" value="leader2"/>
+            <column name="COMPANY_ID" valueNumeric="5"/>
+            <column name="FACULTY_ID"/>
+        </insert>
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="USERS">
+            <column name="ID" valueNumeric="10"/>
+            <column name="EMAIL" value="leader3@example.com"/>
+            <column name="LASTLOGIN" valueDate="2017-01-14 01:00:00.0"/>
+            <column name="NAME" value="Leader Three"/>
+            <column name="PASSWORD" value="$6$j2qkUC2G$f4LJk34219hldZWbLOQkXD20Kym1pTz2ZkzsW9U5jf0uDpiJOIAVexGlGggcz7Nr8YrKStBU7Tm9OkoG8/yOg/"/>
+            <column name="PHONE" value="872 697 159"/>
+            <column name="USERNAME" value="leader3"/>
+            <column name="COMPANY_ID" valueNumeric="6"/>
+            <column name="FACULTY_ID"/>
+        </insert>
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="USERS">
+            <column name="ID" valueNumeric="11"/>
+            <column name="EMAIL" value="leader4@example.com"/>
+            <column name="LASTLOGIN" valueDate="2016-12-25 01:00:00.0"/>
+            <column name="NAME" value="Leader Four"/>
+            <column name="PASSWORD" value="$6$43unELp.$FRVJ1FL/LzoWA9k1CqHhrCt1F24dlbSLOEk/u2OLBeYBdlCJIYMosssQUiyMR1dbq0./yPub.SKGnB030D71Q0"/>
+            <column name="PHONE" value="246 789 982"/>
+            <column name="USERNAME" value="leader4"/>
+            <column name="COMPANY_ID" valueNumeric="2"/>
+            <column name="FACULTY_ID"/>
+        </insert>
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="USERS">
+            <column name="ID" valueNumeric="12"/>
+            <column name="EMAIL" value="student1@example.com"/>
+            <column name="LASTLOGIN" valueDate="2016-08-26 02:00:00.0"/>
+            <column name="NAME" value="Student One"/>
+            <column name="PASSWORD" value="$6$xA0T8PbY$QCC5xQnJDbJI1MFMx1KkoP195yVZbKBqNF/e9Ttq1UdHsq/oQ5Fp0LCyqi3ElHRSte9VyXFH2G2dKBhGmK2DJ."/>
+            <column name="PHONE" value="654 712 354"/>
+            <column name="USERNAME" value="student1"/>
+            <column name="COMPANY_ID"/>
+            <column name="FACULTY_ID" valueNumeric="1"/>
+        </insert>
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="USERS">
+            <column name="ID" valueNumeric="13"/>
+            <column name="EMAIL" value="student2@example.com"/>
+            <column name="LASTLOGIN" valueDate="2017-03-15 01:00:00.0"/>
+            <column name="NAME" value="Student Two"/>
+            <column name="PASSWORD" value="$6$PDPFiINo$QKrYu8VIG5BO3YGu96z3bumL8B3LSUuMaRo0iKw16nrmccs0rt6TCKXPvsF5zE6QhzezVoA7oqpyQBF03RV7T/"/>
+            <column name="PHONE" value="498 752 858"/>
+            <column name="USERNAME" value="student2"/>
+            <column name="COMPANY_ID"/>
+            <column name="FACULTY_ID" valueNumeric="5"/>
+        </insert>
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="USERS">
+            <column name="ID" valueNumeric="14"/>
+            <column name="EMAIL" value="student3@example.com"/>
+            <column name="LASTLOGIN" valueDate="2016-12-01 01:00:00.0"/>
+            <column name="NAME" value="Student Three"/>
+            <column name="PASSWORD" value="$6$LGoay3L2$xfMrfr6fsD2sok4l1nWRYSVO1Dzwt1G2l9q/3FLm95MYiKxc.lTPjH7UYRERVMdH4wCIx69BbU80hmBpQmJvm0"/>
+            <column name="PHONE" value="568 426 377"/>
+            <column name="USERNAME" value="student3"/>
+            <column name="COMPANY_ID"/>
+            <column name="FACULTY_ID" valueNumeric="1"/>
+        </insert>
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="USERS">
+            <column name="ID" valueNumeric="19"/>
+            <column name="EMAIL" value="superadmin@example.com"/>
+            <column name="LASTLOGIN" valueDate="2016-11-05 01:00:00.0"/>
+            <column name="NAME" value="Super Admin"/>
+            <column name="PASSWORD" value="$6$UMtqjjBp$6t7ZYd9I.itX5HCv5xbVftBpAS248VHe241lj8cw6Yfj3JfWbTXNcXwXdGkShO.00UHWqrTXcFCUDAx.xh6FA."/>
+            <column name="PHONE" value="463 147 891"/>
+            <column name="USERNAME" value="superadmin"/>
+            <column name="COMPANY_ID"/>
+            <column name="FACULTY_ID"/>
+        </insert>
+    </changeSet>
+    <changeSet author="phala (generated)" id="1489653927422-26" objectQuotingStrategy="QUOTE_ALL_OBJECTS">
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="USER_ROLES">
+            <column name="USER_ID" valueNumeric="1"/>
+            <column name="ROLES" value="ADMIN"/>
+        </insert>
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="USER_ROLES">
+            <column name="USER_ID" valueNumeric="2"/>
+            <column name="ROLES" value="AC_SUPERVISOR"/>
+        </insert>
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="USER_ROLES">
+            <column name="USER_ID" valueNumeric="3"/>
+            <column name="ROLES" value="AC_SUPERVISOR"/>
+        </insert>
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="USER_ROLES">
+            <column name="USER_ID" valueNumeric="4"/>
+            <column name="ROLES" value="AC_SUPERVISOR"/>
+        </insert>
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="USER_ROLES">
+            <column name="USER_ID" valueNumeric="5"/>
+            <column name="ROLES" value="AC_SUPERVISOR"/>
+        </insert>
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="USER_ROLES">
+            <column name="USER_ID" valueNumeric="6"/>
+            <column name="ROLES" value="AC_SUPERVISOR"/>
+        </insert>
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="USER_ROLES">
+            <column name="USER_ID" valueNumeric="7"/>
+            <column name="ROLES" value="AC_SUPERVISOR"/>
+        </insert>
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="USER_ROLES">
+            <column name="USER_ID" valueNumeric="8"/>
+            <column name="ROLES" value="TECH_LEADER"/>
+        </insert>
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="USER_ROLES">
+            <column name="USER_ID" valueNumeric="9"/>
+            <column name="ROLES" value="TECH_LEADER"/>
+        </insert>
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="USER_ROLES">
+            <column name="USER_ID" valueNumeric="10"/>
+            <column name="ROLES" value="TECH_LEADER"/>
+        </insert>
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="USER_ROLES">
+            <column name="USER_ID" valueNumeric="11"/>
+            <column name="ROLES" value="TECH_LEADER"/>
+        </insert>
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="USER_ROLES">
+            <column name="USER_ID" valueNumeric="12"/>
+            <column name="ROLES" value="STUDENT"/>
+        </insert>
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="USER_ROLES">
+            <column name="USER_ID" valueNumeric="13"/>
+            <column name="ROLES" value="STUDENT"/>
+        </insert>
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="USER_ROLES">
+            <column name="USER_ID" valueNumeric="14"/>
+            <column name="ROLES" value="STUDENT"/>
+        </insert>
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="USER_ROLES">
+            <column name="USER_ID" valueNumeric="15"/>
+            <column name="ROLES" value="STUDENT"/>
+        </insert>
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="USER_ROLES">
+            <column name="USER_ID" valueNumeric="16"/>
+            <column name="ROLES" value="COMPANY_REP"/>
+        </insert>
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="USER_ROLES">
+            <column name="USER_ID" valueNumeric="17"/>
+            <column name="ROLES" value="COMPANY_REP"/>
+        </insert>
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="USER_ROLES">
+            <column name="USER_ID" valueNumeric="18"/>
+            <column name="ROLES" value="COMPANY_REP"/>
+        </insert>
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="USER_ROLES">
+            <column name="USER_ID" valueNumeric="19"/>
+            <column name="ROLES" value="TECH_LEADER"/>
+        </insert>
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="USER_ROLES">
+            <column name="USER_ID" valueNumeric="19"/>
+            <column name="ROLES" value="STUDENT"/>
+        </insert>
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="USER_ROLES">
+            <column name="USER_ID" valueNumeric="19"/>
+            <column name="ROLES" value="AC_SUPERVISOR"/>
+        </insert>
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="USER_ROLES">
+            <column name="USER_ID" valueNumeric="19"/>
+            <column name="ROLES" value="COMPANY_REP"/>
+        </insert>
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="USER_ROLES">
+            <column name="USER_ID" valueNumeric="19"/>
+            <column name="ROLES" value="ADMIN"/>
+        </insert>
+    </changeSet>
+    <changeSet author="phala (generated)" id="1489653927422-27" objectQuotingStrategy="QUOTE_ALL_OBJECTS">
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="USER_TAGS">
+            <column name="USER_ID" valueNumeric="2"/>
+            <column name="TAGS" value="Java"/>
+        </insert>
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="USER_TAGS">
+            <column name="USER_ID" valueNumeric="2"/>
+            <column name="TAGS" value="MU"/>
+        </insert>
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="USER_TAGS">
+            <column name="USER_ID" valueNumeric="2"/>
+            <column name="TAGS" value="Ruby"/>
+        </insert>
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="USER_TAGS">
+            <column name="USER_ID" valueNumeric="3"/>
+            <column name="TAGS" value="Python"/>
+        </insert>
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="USER_TAGS">
+            <column name="USER_ID" valueNumeric="4"/>
+            <column name="TAGS" value="C#"/>
+        </insert>
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="USER_TAGS">
+            <column name="USER_ID" valueNumeric="4"/>
+            <column name="TAGS" value="Java"/>
+        </insert>
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="USER_TAGS">
+            <column name="USER_ID" valueNumeric="4"/>
+            <column name="TAGS" value="C"/>
+        </insert>
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="USER_TAGS">
+            <column name="USER_ID" valueNumeric="4"/>
+            <column name="TAGS" value="Python"/>
+        </insert>
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="USER_TAGS">
+            <column name="USER_ID" valueNumeric="5"/>
+            <column name="TAGS" value="Basic"/>
+        </insert>
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="USER_TAGS">
+            <column name="USER_ID" valueNumeric="5"/>
+            <column name="TAGS" value="Bash"/>
+        </insert>
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="USER_TAGS">
+            <column name="USER_ID" valueNumeric="6"/>
+            <column name="TAGS" value="Java"/>
+        </insert>
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="USER_TAGS">
+            <column name="USER_ID" valueNumeric="6"/>
+            <column name="TAGS" value="Bash"/>
+        </insert>
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="USER_TAGS">
+            <column name="USER_ID" valueNumeric="7"/>
+            <column name="TAGS" value="C++"/>
+        </insert>
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="USER_TAGS">
+            <column name="USER_ID" valueNumeric="7"/>
+            <column name="TAGS" value="JavaScript"/>
+        </insert>
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="USER_TAGS">
+            <column name="USER_ID" valueNumeric="7"/>
+            <column name="TAGS" value="React"/>
+        </insert>
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="USER_TAGS">
+            <column name="USER_ID" valueNumeric="8"/>
+            <column name="TAGS" value="C++"/>
+        </insert>
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="USER_TAGS">
+            <column name="USER_ID" valueNumeric="8"/>
+            <column name="TAGS" value="Oracle"/>
+        </insert>
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="USER_TAGS">
+            <column name="USER_ID" valueNumeric="8"/>
+            <column name="TAGS" value="Ruby"/>
+        </insert>
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="USER_TAGS">
+            <column name="USER_ID" valueNumeric="9"/>
+            <column name="TAGS" value="C#"/>
+        </insert>
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="USER_TAGS">
+            <column name="USER_ID" valueNumeric="9"/>
+            <column name="TAGS" value="Oracle"/>
+        </insert>
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="USER_TAGS">
+            <column name="USER_ID" valueNumeric="9"/>
+            <column name="TAGS" value="Ruby"/>
+        </insert>
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="USER_TAGS">
+            <column name="USER_ID" valueNumeric="10"/>
+            <column name="TAGS" value="Java"/>
+        </insert>
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="USER_TAGS">
+            <column name="USER_ID" valueNumeric="10"/>
+            <column name="TAGS" value="Python"/>
+        </insert>
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="USER_TAGS">
+            <column name="USER_ID" valueNumeric="11"/>
+            <column name="TAGS" value="Basic"/>
+        </insert>
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="USER_TAGS">
+            <column name="USER_ID" valueNumeric="11"/>
+            <column name="TAGS" value="Ruby"/>
+        </insert>
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="USER_TAGS">
+            <column name="USER_ID" valueNumeric="12"/>
+            <column name="TAGS" value="JavaScript"/>
+        </insert>
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="USER_TAGS">
+            <column name="USER_ID" valueNumeric="12"/>
+            <column name="TAGS" value="MU"/>
+        </insert>
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="USER_TAGS">
+            <column name="USER_ID" valueNumeric="12"/>
+            <column name="TAGS" value="React"/>
+        </insert>
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="USER_TAGS">
+            <column name="USER_ID" valueNumeric="13"/>
+            <column name="TAGS" value="C"/>
+        </insert>
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="USER_TAGS">
+            <column name="USER_ID" valueNumeric="13"/>
+            <column name="TAGS" value="Oracle"/>
+        </insert>
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="USER_TAGS">
+            <column name="USER_ID" valueNumeric="13"/>
+            <column name="TAGS" value="Python"/>
+        </insert>
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="USER_TAGS">
+            <column name="USER_ID" valueNumeric="14"/>
+            <column name="TAGS" value="C#"/>
+        </insert>
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="USER_TAGS">
+            <column name="USER_ID" valueNumeric="14"/>
+            <column name="TAGS" value="C++"/>
+        </insert>
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="USER_TAGS">
+            <column name="USER_ID" valueNumeric="14"/>
+            <column name="TAGS" value="C"/>
+        </insert>
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="USER_TAGS">
+            <column name="USER_ID" valueNumeric="15"/>
+            <column name="TAGS" value="W3C"/>
+        </insert>
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="USER_TAGS">
+            <column name="USER_ID" valueNumeric="15"/>
+            <column name="TAGS" value="Ruby"/>
+        </insert>
+    </changeSet>
+    <changeSet author="phala (generated)" id="1489653927422-23" objectQuotingStrategy="QUOTE_ALL_OBJECTS">
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="TOPICS">
+            <column name="ID" valueNumeric="2"/>
+            <column name="DESCRIPTION" value="REST endpoints"/>
+            <column name="SHORTABSTRACT" value="Simple app using Dropwizard stack"/>
+            <column name="TITLE" value="Dropwizard"/>
+            <column name="CREATOR_ID" valueNumeric="11"/>
+        </insert>
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="TOPICS">
+            <column name="ID" valueNumeric="3"/>
+            <column name="DESCRIPTION" value="Eclipse"/>
+            <column name="SHORTABSTRACT" value="Create custom eclipse plugin"/>
+            <column name="TITLE" value="Eclipse plugin"/>
+            <column name="CREATOR_ID" valueNumeric="10"/>
+        </insert>
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="TOPICS">
+            <column name="ID" valueNumeric="4"/>
+            <column name="DESCRIPTION" value="JavaScript &amp; React"/>
+            <column name="SHORTABSTRACT" value="Create nice and functional UI"/>
+            <column name="TITLE" value="React UI"/>
+            <column name="CREATOR_ID" valueNumeric="9"/>
+        </insert>
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="TOPICS">
+            <column name="ID" valueNumeric="1"/>
+            <column name="DESCRIPTION" value="Laser melon cutter"/>
+            <column name="SHORTABSTRACT" value="Create simple laser melon cutter"/>
+            <column name="TITLE" value="Melon cutter"/>
+            <column name="CREATOR_ID" valueNumeric="9"/>
+        </insert>
+    </changeSet>
+     <changeSet author="phala (generated)" id="1489653927422-20" objectQuotingStrategy="QUOTE_ALL_OBJECTS">
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="TOPIC_DEGREES">
+            <column name="TOPIC_ID" valueNumeric="2"/>
+            <column name="DEGREES" valueNumeric="0"/>
+        </insert>
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="TOPIC_DEGREES">
+            <column name="TOPIC_ID" valueNumeric="2"/>
+            <column name="DEGREES" valueNumeric="1"/>
+        </insert>
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="TOPIC_DEGREES">
+            <column name="TOPIC_ID" valueNumeric="3"/>
+            <column name="DEGREES" valueNumeric="2"/>
+        </insert>
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="TOPIC_DEGREES">
+            <column name="TOPIC_ID" valueNumeric="3"/>
+            <column name="DEGREES" valueNumeric="1"/>
+        </insert>
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="TOPIC_DEGREES">
+            <column name="TOPIC_ID" valueNumeric="4"/>
+            <column name="DEGREES" valueNumeric="0"/>
+        </insert>
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="TOPIC_DEGREES">
+            <column name="TOPIC_ID" valueNumeric="4"/>
+            <column name="DEGREES" valueNumeric="3"/>
+        </insert>
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="TOPIC_DEGREES">
+            <column name="TOPIC_ID" valueNumeric="1"/>
+            <column name="DEGREES" valueNumeric="2"/>
+        </insert>
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="TOPIC_DEGREES">
+            <column name="TOPIC_ID" valueNumeric="1"/>
+            <column name="DEGREES" valueNumeric="3"/>
+        </insert>
+    </changeSet>
+    <changeSet author="phala (generated)" id="1489653927422-21" objectQuotingStrategy="QUOTE_ALL_OBJECTS">
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="TOPIC_TAGS">
+            <column name="TOPIC_ID" valueNumeric="2"/>
+            <column name="TAGS" value="Java"/>
+        </insert>
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="TOPIC_TAGS">
+            <column name="TOPIC_ID" valueNumeric="2"/>
+            <column name="TAGS" value="REST"/>
+        </insert>
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="TOPIC_TAGS">
+            <column name="TOPIC_ID" valueNumeric="2"/>
+            <column name="TAGS" value="Web"/>
+        </insert>
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="TOPIC_TAGS">
+            <column name="TOPIC_ID" valueNumeric="3"/>
+            <column name="TAGS" value="Java"/>
+        </insert>
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="TOPIC_TAGS">
+            <column name="TOPIC_ID" valueNumeric="3"/>
+            <column name="TAGS" value="Maven"/>
+        </insert>
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="TOPIC_TAGS">
+            <column name="TOPIC_ID" valueNumeric="3"/>
+            <column name="TAGS" value="C"/>
+        </insert>
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="TOPIC_TAGS">
+            <column name="TOPIC_ID" valueNumeric="4"/>
+            <column name="TAGS" value="Web"/>
+        </insert>
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="TOPIC_TAGS">
+            <column name="TOPIC_ID" valueNumeric="4"/>
+            <column name="TAGS" value="JavaScript"/>
+        </insert>
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="TOPIC_TAGS">
+            <column name="TOPIC_ID" valueNumeric="1"/>
+            <column name="TAGS" value="C"/>
+        </insert>
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="TOPIC_TAGS">
+            <column name="TOPIC_ID" valueNumeric="1"/>
+            <column name="TAGS" value="Laser"/>
+        </insert>
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="TOPIC_TAGS">
+            <column name="TOPIC_ID" valueNumeric="1"/>
+            <column name="TAGS" value="Assembler"/>
+        </insert>
+    </changeSet>
+    <changeSet author="phala (generated)" id="1489653927422-24" objectQuotingStrategy="QUOTE_ALL_OBJECTS">
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="TOPICS_USERS">
+            <column name="TOPIC_ID" valueNumeric="1"/>
+            <column name="ACADEMICSUPERVISORS_ID" valueNumeric="3"/>
+        </insert>
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="TOPICS_USERS">
+            <column name="TOPIC_ID" valueNumeric="1"/>
+            <column name="ACADEMICSUPERVISORS_ID" valueNumeric="4"/>
+        </insert>
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="TOPICS_USERS">
+            <column name="TOPIC_ID" valueNumeric="1"/>
+            <column name="ACADEMICSUPERVISORS_ID" valueNumeric="6"/>
+        </insert>
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="TOPICS_USERS">
+            <column name="TOPIC_ID" valueNumeric="2"/>
+            <column name="ACADEMICSUPERVISORS_ID" valueNumeric="7"/>
+        </insert>
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="TOPICS_USERS">
+            <column name="TOPIC_ID" valueNumeric="2"/>
+            <column name="ACADEMICSUPERVISORS_ID" valueNumeric="5"/>
+        </insert>
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="TOPICS_USERS">
+            <column name="TOPIC_ID" valueNumeric="2"/>
+            <column name="ACADEMICSUPERVISORS_ID" valueNumeric="2"/>
+        </insert>
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="TOPICS_USERS">
+            <column name="TOPIC_ID" valueNumeric="3"/>
+            <column name="ACADEMICSUPERVISORS_ID" valueNumeric="5"/>
+        </insert>
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="TOPICS_USERS">
+            <column name="TOPIC_ID" valueNumeric="3"/>
+            <column name="ACADEMICSUPERVISORS_ID" valueNumeric="7"/>
+        </insert>
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="TOPICS_USERS">
+            <column name="TOPIC_ID" valueNumeric="3"/>
+            <column name="ACADEMICSUPERVISORS_ID" valueNumeric="4"/>
+        </insert>
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="TOPICS_USERS">
+            <column name="TOPIC_ID" valueNumeric="4"/>
+            <column name="ACADEMICSUPERVISORS_ID" valueNumeric="6"/>
+        </insert>
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="TOPICS_USERS">
+            <column name="TOPIC_ID" valueNumeric="4"/>
+            <column name="ACADEMICSUPERVISORS_ID" valueNumeric="3"/>
+        </insert>
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="TOPICS_USERS">
+            <column name="TOPIC_ID" valueNumeric="4"/>
+            <column name="ACADEMICSUPERVISORS_ID" valueNumeric="2"/>
+        </insert>
+    </changeSet>
+    <changeSet author="phala (generated)" id="1489653927422-22" objectQuotingStrategy="QUOTE_ALL_OBJECTS">
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="TOPICAPPLICATIONS">
+            <column name="ID" valueNumeric="1"/>
+            <column name="DEGREE" value="PhD"/>
+            <column name="GRADE"/>
+            <column name="OFFICIALASSIGNMENT" value="Melon cutter suitable for household use"/>
+            <column name="THESISFINISH"/>
+            <column name="ACADEMICSUPERVISOR_ID" valueNumeric="6"/>
+            <column name="FACULTY_ID" valueNumeric="2"/>
+            <column name="STUDENT_ID" valueNumeric="12"/>
+            <column name="TECHLEADER_ID" valueNumeric="8"/>
+            <column name="TOPIC_ID" valueNumeric="1"/>
+            <column name="THESISSTART" valueDate="2016-09-17 02:00:00.0"/>
+        </insert>
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="TOPICAPPLICATIONS">
+            <column name="ID" valueNumeric="2"/>
+            <column name="DEGREE" value="MASTER"/>
+            <column name="GRADE" value="F"/>
+            <column name="OFFICIALASSIGNMENT" value="Melon cutter for industrial use"/>
+            <column name="THESISFINISH" valueDate="2017-02-18 01:00:00.0"/>
+            <column name="ACADEMICSUPERVISOR_ID" valueNumeric="3"/>
+            <column name="FACULTY_ID" valueNumeric="5"/>
+            <column name="STUDENT_ID" valueNumeric="13"/>
+            <column name="TECHLEADER_ID" valueNumeric="9"/>
+            <column name="TOPIC_ID" valueNumeric="1"/>
+            <column name="THESISSTART" valueDate="2016-09-15 02:00:00.0"/>
+        </insert>
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="TOPICAPPLICATIONS">
+            <column name="ID" valueNumeric="3"/>
+            <column name="DEGREE" value="PhD"/>
+            <column name="GRADE"/>
+            <column name="OFFICIALASSIGNMENT" value="Laser melon cutter using 20 W laser"/>
+            <column name="THESISFINISH"/>
+            <column name="ACADEMICSUPERVISOR_ID" valueNumeric="4"/>
+            <column name="FACULTY_ID" valueNumeric="8"/>
+            <column name="STUDENT_ID" valueNumeric="13"/>
+            <column name="TECHLEADER_ID" valueNumeric="8"/>
+            <column name="TOPIC_ID" valueNumeric="1"/>
+            <column name="THESISSTART"/>
+        </insert>
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="TOPICAPPLICATIONS">
+            <column name="ID" valueNumeric="4"/>
+            <column name="DEGREE" value="BACHELOR"/>
+            <column name="GRADE" value="A"/>
+            <column name="OFFICIALASSIGNMENT" value="Static HTML page generator, powered by markdown"/>
+            <column name="THESISFINISH" valueDate="2017-03-17 01:00:00.0"/>
+            <column name="ACADEMICSUPERVISOR_ID" valueNumeric="2"/>
+            <column name="FACULTY_ID" valueNumeric="1"/>
+            <column name="STUDENT_ID" valueNumeric="14"/>
+            <column name="TECHLEADER_ID" valueNumeric="11"/>
+            <column name="TOPIC_ID" valueNumeric="2"/>
+            <column name="THESISSTART" valueDate="2016-10-02 02:00:00.0"/>
+        </insert>
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="TOPICAPPLICATIONS">
+            <column name="ID" valueNumeric="5"/>
+            <column name="DEGREE" value="HIGH_SCHOOL"/>
+            <column name="GRADE"/>
+            <column name="OFFICIALASSIGNMENT" value="Infinite Pi digits generator"/>
+            <column name="THESISFINISH"/>
+            <column name="ACADEMICSUPERVISOR_ID" valueNumeric="7"/>
+            <column name="FACULTY_ID" valueNumeric="6"/>
+            <column name="STUDENT_ID" valueNumeric="15"/>
+            <column name="TECHLEADER_ID" valueNumeric="11"/>
+            <column name="TOPIC_ID" valueNumeric="2"/>
+            <column name="THESISSTART"/>
+        </insert>
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="TOPICAPPLICATIONS">
+            <column name="ID" valueNumeric="6"/>
+            <column name="DEGREE" value="MASTER"/>
+            <column name="GRADE"/>
+            <column name="OFFICIALASSIGNMENT" value=".JSX editor plugin"/>
+            <column name="THESISFINISH"/>
+            <column name="ACADEMICSUPERVISOR_ID" valueNumeric="5"/>
+            <column name="FACULTY_ID" valueNumeric="2"/>
+            <column name="STUDENT_ID" valueNumeric="14"/>
+            <column name="TECHLEADER_ID" valueNumeric="10"/>
+            <column name="TOPIC_ID" valueNumeric="3"/>
+            <column name="THESISSTART" valueDate="2017-03-05 01:00:00.0"/>
+        </insert>
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="TOPICAPPLICATIONS">
+            <column name="ID" valueNumeric="7"/>
+            <column name="DEGREE" value="HIGH_SCHOOL"/>
+            <column name="GRADE"/>
+            <column name="OFFICIALASSIGNMENT" value="UI for thesis management system "/>
+            <column name="THESISFINISH"/>
+            <column name="ACADEMICSUPERVISOR_ID" valueNumeric="2"/>
+            <column name="FACULTY_ID" valueNumeric="1"/>
+            <column name="STUDENT_ID" valueNumeric="13"/>
+            <column name="TECHLEADER_ID" valueNumeric="9"/>
+            <column name="TOPIC_ID" valueNumeric="4"/>
+            <column name="THESISSTART" valueDate="2017-04-10 02:00:00.0"/>
+        </insert>
+    </changeSet>
+</databaseChangeLog>
