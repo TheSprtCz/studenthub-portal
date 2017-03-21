@@ -31,7 +31,8 @@ import org.hibernate.validator.constraints.NotEmpty;
 
 @Entity
 @Table(name = "Faculties")
-@NamedQueries({ @NamedQuery(name = "Faculty.findAll", query = "SELECT f FROM Faculty f") })
+@NamedQueries({ @NamedQuery(name = "Faculty.findAll", query = "SELECT faculty FROM Faculty faculty"),
+  @NamedQuery(name = "Faculty.findByUniversity", query = "SELECT faculty FROM Faculty faculty WHERE faculty.university = :university") })
 public class Faculty {
 
   @Id

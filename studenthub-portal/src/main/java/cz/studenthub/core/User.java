@@ -43,8 +43,12 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 @Entity
 @Table(name = "Users")
-@NamedQueries({ @NamedQuery(name = "User.findAll", query = "SELECT u FROM User u"),
-    @NamedQuery(name = "User.findByRole", query = "SELECT u FROM User u join u.roles role WHERE role = :role") })
+@NamedQueries({ @NamedQuery(name = "User.findAll", query = "SELECT user FROM User user"),
+    @NamedQuery(name = "User.findByRole", query = "SELECT user FROM User user join user.roles role WHERE role = :role"),
+    @NamedQuery(name = "User.findByCompany", query = "SELECT user FROM User user WHERE user.company = :company"),
+    @NamedQuery(name = "User.findByRoleAndFaculty", query = "SELECT user FROM User user join user.roles role WHERE user.faculty = :faculty and role = :role"),
+    @NamedQuery(name = "User.findByRoleAndCompany", query = "SELECT user FROM User user join user.roles role WHERE user.company = :company and role = :role"),
+    @NamedQuery(name = "User.findByTag", query = "SELECT user FROM User user join user.tags tag WHERE tag = :tag") })
 public class User implements Principal {
 
   @Id

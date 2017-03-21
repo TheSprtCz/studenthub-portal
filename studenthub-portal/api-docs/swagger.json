@@ -1166,6 +1166,9 @@
                 "thesisFinish":{
                     "type":"object"
                 },
+                "thesisStarted":{
+                    "type":"object"
+                },
                 "topic":{
                     "$ref":"#/definitions/Topic"
                 }

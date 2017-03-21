@@ -20,6 +20,8 @@ import java.util.List;
 
 import org.hibernate.SessionFactory;
 
+import cz.studenthub.core.Company;
+import cz.studenthub.core.Faculty;
 import cz.studenthub.core.User;
 import cz.studenthub.core.UserRole;
 import io.dropwizard.hibernate.AbstractDAO;
@@ -46,6 +48,22 @@ public class UserDAO extends AbstractDAO<User> {
 
   public List<User> findByRole(UserRole role) {
     return list(namedQuery("User.findByRole").setParameter("role", role));
+  }
+
+  public List<User> findByCompany(Company company) {
+    return list(namedQuery("User.findByCompany").setParameter("company", company));
+  }
+
+  public List<User> findByTag(String tag) {
+    return list(namedQuery("User.findByTag").setParameter("tag", tag));
+  }
+
+  public List<User> findByRoleAndFaculty(UserRole role, Faculty faculty) {
+    return list(namedQuery("User.findByRoleAndFaculty").setParameter("faculty", faculty).setParameter("role", role));
+  }
+
+  public List<User> findByRoleAndCompany(UserRole role, Company company) {
+    return list(namedQuery("User.findByRoleAndCompany").setParameter("company", company).setParameter("role", role));
   }
 
   public List<User> findAll() {

@@ -20,7 +20,9 @@ import java.util.List;
 
 import org.hibernate.SessionFactory;
 
+import cz.studenthub.core.Company;
 import cz.studenthub.core.Topic;
+import cz.studenthub.core.User;
 import io.dropwizard.hibernate.AbstractDAO;
 
 /**
@@ -35,19 +37,35 @@ public class TopicDAO extends AbstractDAO<Topic> {
     super(sessionFactory);
   }
 
-  public Topic createOrUpdate(Topic t) {
-    return persist(t);
+  public Topic createOrUpdate(Topic topic) {
+    return persist(topic);
   }
 
   public Topic findById(Long id) {
     return get(id);
   }
 
+  public List<Topic> findBySupervisor(User supervisor) {
+    return list(namedQuery("Topic.findBySupervisor").setParameter("supervisor", supervisor));
+  }
+
+  public List<Topic> findByCreator(User creator) {
+    return list(namedQuery("Topic.findByCreator").setParameter("creator", creator));
+  }
+
+  public List<Topic> findByTag(String tag) {
+    return list(namedQuery("Topic.findByTag").setParameter("tag", tag));
+  }
+
+  public List<Topic> findByCompany(Company company) {
+    return list(namedQuery("Topic.findByCompany").setParameter("company", company));
+  }
+
   public List<Topic> findAll() {
     return list(namedQuery("Topic.findAll"));
   }
 
-  public void delete(Topic t) {
-    currentSession().delete(t);
+  public void delete(Topic topic) {
+    currentSession().delete(topic);
   }
 }
