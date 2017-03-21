@@ -54,6 +54,7 @@ public class TopicApplication {
   private TopicDegree degree;
 
   private Date thesisFinish;
+  private Date thesisStart;
 
   @NotNull
   @ManyToOne
@@ -72,12 +73,13 @@ public class TopicApplication {
   }
 
   public TopicApplication(Topic topic, String officialAssignment, TopicGrade grade, TopicDegree degree,
-      Date thesisFinish, Faculty faculty, User techLeader, User student, User academicSupervisor) {
+      Date thesisFinish, Date thesisStart, Faculty faculty, User techLeader, User student, User academicSupervisor) {
     this.topic = topic;
     this.officialAssignment = officialAssignment;
     this.grade = grade;
     this.degree = degree;
     this.thesisFinish = thesisFinish;
+    this.thesisStart = thesisStart;
     this.faculty = faculty;
     this.techLeader = techLeader;
     this.student = student;
@@ -122,6 +124,14 @@ public class TopicApplication {
 
   public void setThesisFinish(Date thesisFinish) {
     this.thesisFinish = thesisFinish;
+  }
+
+  public Date getThesisStarted() {
+    return thesisStart;
+  }
+
+  public void setThesisStarted(Date thesisStarted) {
+    this.thesisStart = thesisStarted;
   }
 
   public Faculty getFaculty() {

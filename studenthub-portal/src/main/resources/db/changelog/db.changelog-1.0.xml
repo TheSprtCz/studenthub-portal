@@ -36,6 +36,7 @@
             <column name="GRADE" type="VARCHAR(255)"/>
             <column name="OFFICIALASSIGNMENT" type="LONGVARCHAR"/>
             <column name="THESISFINISH" type="TIMESTAMP"/>
+            <column name="THESISSTART" type="TIMESTAMP"/>
             <column name="ACADEMICSUPERVISOR_ID" type="BIGINT(19)"/>
             <column name="FACULTY_ID" type="BIGINT(19)">
                 <constraints nullable="false"/>
