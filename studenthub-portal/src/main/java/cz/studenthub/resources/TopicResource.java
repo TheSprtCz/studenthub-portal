@@ -81,20 +81,7 @@ public class TopicResource {
   @Pac4JSecurity(ignore = true)
   public List<Topic> fetch(@Min(0) @DefaultValue("0") @QueryParam("start") IntParam startParam,
       @Min(0) @DefaultValue("0") @QueryParam("size") IntParam sizeParam) {
-
-    ArrayList<Topic> topics = new ArrayList<Topic>(topicDao.findAll());
-    int start = startParam.get();
-    int size = sizeParam.get();
-    int topicSize = topics.size();
-    if (start > topicSize)
-      start = 0;
-
-    int remaining = topicSize - start;
-
-    if (size > remaining || size == 0)
-      size = remaining;
-
-    return topics.subList(start, start + size);
+    return paging(topicDao.findAll(), startParam.get(), sizeParam.get());
   }
 
   @GET
@@ -166,5 +153,29 @@ public class TopicResource {
       throw new WebApplicationException(Status.NOT_FOUND);
 
     return appDao.findByTopic(topic);
+  }
+
+
+  @GET
+  @Path("/search")
+  @UnitOfWork
+  @Pac4JSecurity(ignore = true)
+  public List<Topic> search(@NotNull @QueryParam("text") String text, @Min(0) @DefaultValue("0") @QueryParam("start") IntParam startParam,
+      @Min(0) @DefaultValue("0") @QueryParam("size") IntParam sizeParam) {
+    return paging(topicDao.search(text), startParam.get(), sizeParam.get());
+  }
+
+  public List<Topic> paging(List<Topic> list, int start, int size) {
+    ArrayList<Topic> topics = new ArrayList<Topic>(list);
+    int topicSize = topics.size();
+    if (start > topicSize)
+      start = 0;
+
+    int remaining = topicSize - start;
+
+    if (size > remaining || size == 0)
+      size = remaining;
+
+    return topics.subList(start, start + size);
   }
 }
