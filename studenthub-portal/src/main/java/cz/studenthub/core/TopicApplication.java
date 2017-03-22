@@ -38,6 +38,7 @@ import javax.validation.constraints.NotNull;
   @NamedQuery(name = "TopicApplication.findByFaculty", query = "SELECT app FROM TopicApplication app WHERE app.faculty = :faculty"),
   @NamedQuery(name = "TopicApplication.findByTopic", query = "SELECT app FROM TopicApplication app WHERE app.topic = :topic"),
   @NamedQuery(name = "TopicApplication.findByStudent", query = "SELECT app FROM TopicApplication app WHERE app.student = :student"),
+  @NamedQuery(name = "TopicApplication.findByLeader", query = "SELECT app FROM TopicApplication app WHERE app.techLeader = :leader"),
   @NamedQuery(name = "TopicApplication.findBySupervisor", query = "SELECT app FROM TopicApplication app WHERE app.academicSupervisor = :supervisor") })
 public class TopicApplication {
 

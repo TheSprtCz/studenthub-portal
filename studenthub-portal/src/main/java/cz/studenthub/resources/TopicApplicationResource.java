@@ -77,21 +77,21 @@ public class TopicApplicationResource {
   @PUT
   @Path("/{id}")
   @UnitOfWork
-  public Response update(@PathParam("id") LongParam id, @NotNull @Valid TopicApplication t) {
-    t.setId(id.get());
-    appDao.createOrUpdate(t);
-    return Response.ok(t).build();
+  public Response update(@PathParam("id") LongParam id, @NotNull @Valid TopicApplication app) {
+    app.setId(id.get());
+    appDao.createOrUpdate(app);
+    return Response.ok(app).build();
   }
 
   @POST
   @UnitOfWork
-  public Response create(@NotNull @Valid TopicApplication t) {
-    appDao.createOrUpdate(t);
-    if (t.getId() == null)
+  public Response create(@NotNull @Valid TopicApplication app) {
+    appDao.createOrUpdate(app);
+    if (app.getId() == null)
       throw new WebApplicationException(Status.INTERNAL_SERVER_ERROR);
 
-    return Response.created(UriBuilder.fromResource(TopicApplicationResource.class).path("/{id}").build(t.getId()))
-        .entity(t).build();
+    return Response.created(UriBuilder.fromResource(TopicApplicationResource.class).path("/{id}").build(app.getId()))
+        .entity(app).build();
   }
   
 

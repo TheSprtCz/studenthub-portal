@@ -53,6 +53,7 @@ import cz.studenthub.health.StudentHubHealthCheck;
 import cz.studenthub.resources.CompanyResource;
 import cz.studenthub.resources.FacultyResource;
 import cz.studenthub.resources.LoginResource;
+import cz.studenthub.resources.TagResource;
 import cz.studenthub.resources.TopicApplicationResource;
 import cz.studenthub.resources.TopicResource;
 import cz.studenthub.resources.UniversityResource;
@@ -138,13 +139,14 @@ public class StudentHubApplication extends Application<StudentHubConfiguration> 
     environment.servlets().setSessionHandler(new SessionHandler());
 
     // register resource classes (REST Endpoints)
-    environment.jersey().register(new CompanyResource(companyDao));
-    environment.jersey().register(new UniversityResource(uniDao));
-    environment.jersey().register(new FacultyResource(facDao));
-    environment.jersey().register(new UserResource(userDao));
-    environment.jersey().register(new TopicResource(topicDao));
+    environment.jersey().register(new CompanyResource(companyDao, userDao, topicDao));
+    environment.jersey().register(new UniversityResource(uniDao, facDao));
+    environment.jersey().register(new FacultyResource(facDao, userDao));
+    environment.jersey().register(new UserResource(userDao, topicDao, taDao));
+    environment.jersey().register(new TopicResource(topicDao, taDao));
     environment.jersey().register(new TopicApplicationResource(taDao));
     environment.jersey().register(new LoginResource());
+    environment.jersey().register(new TagResource(userDao, topicDao));
 
     // since routing is achieved on client side we need to catch 404 and
     // redirect to index.html - handle 404 on client as well (this makes SPA
