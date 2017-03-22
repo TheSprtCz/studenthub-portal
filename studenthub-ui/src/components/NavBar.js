@@ -1,6 +1,6 @@
 import React from 'react';
 import Auth from '../Auth.js';
-import { NavLink, withRouter } from 'react-router-dom';
+import { Link, NavLink, withRouter } from 'react-router-dom';
 
 // we need to re-render NavBar when route changes
 const NavBar = withRouter(() => (
@@ -12,7 +12,7 @@ const NavBar = withRouter(() => (
           <span className="icon-bar"></span>
           <span className="icon-bar"></span>
         </button>
-        <NavLink activeClassName="active" to="/" className="navbar-brand"><img src="/img/logo.jpg" alt="Student Hub" /></NavLink>
+        <NavLink activeClassName="active" to="/" className="navbar-brand"><img src="/logotype.png" alt="Student Hub" /></NavLink>
       </div>
       <div className="collapse navbar-collapse" id="myNavbar">
         <ul className="nav navbar-nav navbar-right text-uppercase">
@@ -21,7 +21,7 @@ const NavBar = withRouter(() => (
           {Auth.hasRole("ADMIN") ? <li><NavLink activeClassName="active" to="/universities">Universities</NavLink></li> : ''}
           {Auth.hasRole("ADMIN") ? <li><NavLink activeClassName="active" to="/organisations">Organisations</NavLink></li> : ''}
           {/* <li><NavLink activeClassName="active" to="/login"><AuthButton/></NavLink></li> */}
-          <li><NavLink activeClassName="active" to="/profile"><AuthButton/></NavLink></li>
+          <li><Link to="/profile"><AuthButton/></Link></li>
         </ul>
       </div>
     </div>
@@ -29,7 +29,7 @@ const NavBar = withRouter(() => (
 ))
 
 // 'push' from router.history
-const AuthButton = withRouter(({ push }) => (
+const AuthButton = withRouter(({ history }) => (
   Auth.isAuthenticated() ? (
     <span>
       <i className="fa fa-user-circle" aria-hidden="true"></i>

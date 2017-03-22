@@ -2,8 +2,8 @@ import React from 'react';
 import { withRouter } from 'react-router-dom';
 import Auth from '../Auth.js';
 
-const LogoutButton = withRouter(({ push }) => (
-  <button onClick={() => { Auth.signout(() => push('/')) }}>Sign out</button>
+const LogoutButton = withRouter(({ history }) => (
+  <button onClick={() => { Auth.signout(() => history.push('/')) }}>Sign out</button>
 ))
 
 // profile page
