@@ -39,8 +39,12 @@ import org.pac4j.jax.rs.annotations.Pac4JSecurity;
 
 import cz.studenthub.auth.StudentHubPasswordEncoder;
 import cz.studenthub.auth.StudentHubProfile;
+import cz.studenthub.core.Topic;
+import cz.studenthub.core.TopicApplication;
 import cz.studenthub.core.User;
 import cz.studenthub.core.UserRole;
+import cz.studenthub.db.TopicApplicationDAO;
+import cz.studenthub.db.TopicDAO;
 import cz.studenthub.db.UserDAO;
 import io.dropwizard.hibernate.UnitOfWork;
 import io.dropwizard.jersey.params.LongParam;
@@ -52,9 +56,13 @@ import io.dropwizard.jersey.params.LongParam;
 public class UserResource {
 
   private final UserDAO userDao;
+  private final TopicApplicationDAO appDao;
+  private final TopicDAO topicDao;
 
-  public UserResource(UserDAO userDao) {
+  public UserResource(UserDAO userDao, TopicDAO topicDao, TopicApplicationDAO taDao) {
     this.userDao = userDao;
+    this.appDao = taDao;
+    this.topicDao = topicDao;
   }
 
   @GET
@@ -89,13 +97,13 @@ public class UserResource {
   @UnitOfWork
   @Pac4JSecurity(authorizers = "isAuthenticated", clients = { "DirectBasicAuthClient", "jwtClient" })
   public Response update(@Pac4JProfile StudentHubProfile profile, @PathParam("id") LongParam id,
-      @NotNull @Valid User u) {
+      @NotNull @Valid User user) {
 
     // only admin or profile owner is allowed
     if (id.get().equals(profile.getId()) || profile.getRoles().contains(UserRole.ADMIN.name())) {
-      u.setId(id.get());
-      userDao.createOrUpdate(u);
-      return Response.ok(u).build();
+      user.setId(id.get());
+      userDao.createOrUpdate(user);
+      return Response.ok(user).build();
     } else {
       throw new WebApplicationException(Status.FORBIDDEN);
     }
@@ -103,18 +111,99 @@ public class UserResource {
 
   @POST
   @UnitOfWork
-  public Response create(@NotNull @Valid User u) {
+  public Response create(@NotNull @Valid User user) {
 
-    String pwd = new StudentHubPasswordEncoder().encode(u.getPassword());
-    u.setPassword(pwd);
+    String pwd = new StudentHubPasswordEncoder().encode(user.getPassword());
+    user.setPassword(pwd);
 
     // TODO send email
-    userDao.createOrUpdate(u);
-    if (u.getId() == null)
+    userDao.createOrUpdate(user);
+    if (user.getId() == null)
       throw new WebApplicationException(Status.INTERNAL_SERVER_ERROR);
 
-    return Response.created(UriBuilder.fromResource(UserResource.class).path("/{id}").build(u.getId())).entity(u)
+    return Response.created(UriBuilder.fromResource(UserResource.class).path("/{id}").build(user.getId())).entity(user)
         .build();
   }
 
+  @GET
+  @Path("/{id}/applications")
+  @UnitOfWork
+  @Pac4JSecurity(authorizers = "isAuthenticated", clients = { "DirectBasicAuthClient", "jwtClient" })
+  public List<TopicApplication> fetchApplications(@Pac4JProfile StudentHubProfile profile, @PathParam("id") LongParam id) {
+    User user = userDao.findById(id.get());
+    if (user == null)
+      throw new WebApplicationException(Status.NOT_FOUND);
+
+    if (id.get().equals(profile.getId()) || profile.getRoles().contains(UserRole.ADMIN.name())) {
+      return appDao.findByStudent(user);
+    }
+    else {
+      throw new WebApplicationException(Status.FORBIDDEN);
+    }
+  }
+
+  @GET
+  @Path("/{id}/leadApplications")
+  @UnitOfWork
+  @Pac4JSecurity(authorizers = "isAuthenticated", clients = { "DirectBasicAuthClient", "jwtClient" })
+  public List<TopicApplication> fetchLeadTopics(@Pac4JProfile StudentHubProfile profile, @PathParam("id") LongParam id) {
+    User user = userDao.findById(id.get());
+    if (user == null)
+      throw new WebApplicationException(Status.NOT_FOUND);
+
+    return appDao.findByLeader(user);
+  }
+
+  @GET
+  @Path("/{id}/ownedTopics")
+  @UnitOfWork
+  @Pac4JSecurity(authorizers = "isAuthenticated", clients = { "DirectBasicAuthClient", "jwtClient" })
+  public List<Topic> fetchOwnedTopics(@Pac4JProfile StudentHubProfile profile, @PathParam("id") LongParam id) {
+    User user = userDao.findById(id.get());
+    if (user == null)
+      throw new WebApplicationException(Status.NOT_FOUND);
+
+    if (id.get().equals(profile.getId()) || profile.getRoles().contains(UserRole.ADMIN.name())) {
+      return topicDao.findByCreator(user);
+    }
+    else {
+      throw new WebApplicationException(Status.FORBIDDEN);
+    }
+
+  }
+
+  @GET
+  @Path("/{id}/supervisedTopics")
+  @UnitOfWork
+  @Pac4JSecurity(authorizers = "isAuthenticated", clients = { "DirectBasicAuthClient", "jwtClient" })
+  public List<Topic> fetchSupervisedTopics(@Pac4JProfile StudentHubProfile profile, @PathParam("id") LongParam id) {
+    User user = userDao.findById(id.get());
+    if (user == null)
+      throw new WebApplicationException(Status.NOT_FOUND);
+
+    if (id.get().equals(profile.getId()) || profile.getRoles().contains(UserRole.ADMIN.name())) {
+      return topicDao.findBySupervisor(user);
+    }
+    else {
+      throw new WebApplicationException(Status.FORBIDDEN);
+    }
+
+  }
+
+  @GET
+  @Path("/{id}/supervisedApplications")
+  @UnitOfWork
+  @Pac4JSecurity(authorizers = "isAuthenticated", clients = { "DirectBasicAuthClient", "jwtClient" })
+  public List<TopicApplication> fetchSupervisedApplications(@Pac4JProfile StudentHubProfile profile, @PathParam("id") LongParam id) {
+    User user = userDao.findById(id.get());
+    if (user == null)
+      throw new WebApplicationException(Status.NOT_FOUND);
+
+    if (id.get().equals(profile.getId()) || profile.getRoles().contains(UserRole.ADMIN.name())) {
+      return appDao.findBySupervisor(user);
+    }
+    else {
+      throw new WebApplicationException(Status.FORBIDDEN);
+    }
+  }
 }

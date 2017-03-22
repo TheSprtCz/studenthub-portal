@@ -37,7 +37,9 @@ import org.pac4j.jax.rs.annotations.Pac4JSecurity;
 
 import javax.ws.rs.core.UriBuilder;
 
+import cz.studenthub.core.Faculty;
 import cz.studenthub.core.University;
+import cz.studenthub.db.FacultyDAO;
 import cz.studenthub.db.UniversityDAO;
 import io.dropwizard.hibernate.UnitOfWork;
 import io.dropwizard.jersey.params.LongParam;
@@ -49,9 +51,11 @@ import io.dropwizard.jersey.params.LongParam;
 public class UniversityResource {
 
   private final UniversityDAO uniDao;
+  private final FacultyDAO facDao;
 
-  public UniversityResource(UniversityDAO uniDao) {
+  public UniversityResource(UniversityDAO uniDao, FacultyDAO facDao) {
     this.uniDao = uniDao;
+    this.facDao = facDao;
   }
 
   @GET
@@ -80,19 +84,32 @@ public class UniversityResource {
   @PUT
   @Path("/{id}")
   @UnitOfWork
-  public Response update(@PathParam("id") LongParam id, @NotNull @Valid University u) {
-    u.setId(id.get());
-    uniDao.createOrUpdate(u);
-    return Response.ok(u).build();
+  public Response update(@PathParam("id") LongParam id, @NotNull @Valid University university) {
+    university.setId(id.get());
+    uniDao.createOrUpdate(university);
+    return Response.ok(university).build();
   }
 
   @POST
   @UnitOfWork
-  public Response create(@NotNull @Valid University u) {
-    uniDao.createOrUpdate(u);
-    if (u.getId() == null)
+  public Response create(@NotNull @Valid University university) {
+    uniDao.createOrUpdate(university);
+    if (university.getId() == null)
       throw new WebApplicationException(Status.INTERNAL_SERVER_ERROR);
     
-    return Response.created(UriBuilder.fromResource(UniversityResource.class).path("/{id}").build(u.getId())).entity(u).build();
+    return Response.created(UriBuilder.fromResource(UniversityResource.class).path("/{id}").build(university.getId())).entity(university).build();
   }
+
+  @GET
+  @Path("/{id}/faculties")
+  @UnitOfWork
+  @Pac4JSecurity(ignore = true)
+  public List<Faculty> fetchFaculties(@PathParam("id") LongParam id) {
+    University university = uniDao.findById(id.get());
+    if (university == null)
+      throw new WebApplicationException(Status.NOT_FOUND);
+
+    return facDao.findAllByUniversity(university);
+  }
+
 }

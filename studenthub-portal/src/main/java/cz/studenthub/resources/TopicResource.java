@@ -16,18 +16,22 @@
  *******************************************************************************/
 package cz.studenthub.resources;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -40,9 +44,12 @@ import javax.ws.rs.core.UriBuilder;
 
 import cz.studenthub.auth.StudentHubProfile;
 import cz.studenthub.core.Topic;
+import cz.studenthub.core.TopicApplication;
 import cz.studenthub.core.UserRole;
+import cz.studenthub.db.TopicApplicationDAO;
 import cz.studenthub.db.TopicDAO;
 import io.dropwizard.hibernate.UnitOfWork;
+import io.dropwizard.jersey.params.IntParam;
 import io.dropwizard.jersey.params.LongParam;
 
 @Path("/topics")
@@ -52,16 +59,30 @@ import io.dropwizard.jersey.params.LongParam;
 public class TopicResource {
 
   private final TopicDAO topicDao;
+  private final TopicApplicationDAO appDao;
 
-  public TopicResource(TopicDAO topicDao) {
+  public TopicResource(TopicDAO topicDao, TopicApplicationDAO taDao) {
     this.topicDao = topicDao;
+    this.appDao = taDao;
   }
 
   @GET
   @UnitOfWork
   @Pac4JSecurity(ignore = true)
-  public List<Topic> fetch() {
-    return topicDao.findAll();
+  public List<Topic> fetch(@Min(0) @DefaultValue("0") @QueryParam("start") IntParam startParam, @Min(0) @DefaultValue("0") @QueryParam("size") IntParam sizeParam) {
+    ArrayList<Topic> topics = new ArrayList<Topic>(topicDao.findAll()); //15,0,5
+    Integer start = startParam.get();
+    Integer size = sizeParam.get();
+    Integer topicSize = topics.size();
+    if (start > topicSize)
+      start = 0;
+
+    Integer remaining = topicSize - start;
+
+    if (size > remaining || size == 0)
+      size = remaining;
+
+    return topics.subList(start, start + size);
   }
 
   @GET
@@ -85,13 +106,13 @@ public class TopicResource {
   @UnitOfWork
   @Pac4JSecurity(authorizers = "isTechLeader", clients = { "DirectBasicAuthClient", "jwtClient" })
   public Response update(@Pac4JProfile StudentHubProfile profile, @PathParam("id") LongParam id,
-      @NotNull @Valid Topic t) {
+      @NotNull @Valid Topic topic) {
 
     // if user is topic creator or is an admin
-    if (t.getCreator().getId().equals(profile.getId()) || profile.getRoles().contains(UserRole.ADMIN.name())) {
-      t.setId(id.get());
-      topicDao.createOrUpdate(t);
-      return Response.ok(t).build();
+    if (topic.getCreator().getId().equals(profile.getId()) || profile.getRoles().contains(UserRole.ADMIN.name())) {
+      topic.setId(id.get());
+      topicDao.createOrUpdate(topic);
+      return Response.ok(topic).build();
     } else {
       throw new WebApplicationException(Status.FORBIDDEN);
     }
@@ -100,12 +121,24 @@ public class TopicResource {
   @POST
   @UnitOfWork
   @Pac4JSecurity(authorizers = "isTechLeader", clients = { "DirectBasicAuthClient", "jwtClient" })
-  public Response create(@NotNull @Valid Topic t) {
-    topicDao.createOrUpdate(t);
-    if (t.getId() == null)
+  public Response create(@NotNull @Valid Topic topic) {
+    topicDao.createOrUpdate(topic);
+    if (topic.getId() == null)
       throw new WebApplicationException(Status.INTERNAL_SERVER_ERROR);
 
-    return Response.created(UriBuilder.fromResource(TopicResource.class).path("/{id}").build(t.getId())).entity(t)
+    return Response.created(UriBuilder.fromResource(TopicResource.class).path("/{id}").build(topic.getId())).entity(topic)
         .build();
+  }
+
+  @GET
+  @Path("/{id}/applications")
+  @UnitOfWork
+  @Pac4JSecurity(ignore = true)
+  public List<TopicApplication> fetchSupervisedTopics(@PathParam("id") LongParam id) {
+    Topic topic = topicDao.findById(id.get());
+    if (topic == null)
+      throw new WebApplicationException(Status.NOT_FOUND);
+
+    return appDao.findByTopic(topic);
   }
 }

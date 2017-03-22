@@ -37,7 +37,12 @@ import javax.ws.rs.core.UriBuilder;
 import org.pac4j.jax.rs.annotations.Pac4JSecurity;
 
 import cz.studenthub.core.Company;
+import cz.studenthub.core.Topic;
+import cz.studenthub.core.User;
+import cz.studenthub.core.UserRole;
 import cz.studenthub.db.CompanyDAO;
+import cz.studenthub.db.TopicDAO;
+import cz.studenthub.db.UserDAO;
 import io.dropwizard.hibernate.UnitOfWork;
 import io.dropwizard.jersey.params.LongParam;
 
@@ -48,9 +53,13 @@ import io.dropwizard.jersey.params.LongParam;
 public class CompanyResource {
 
   private final CompanyDAO companyDao;
+  private final UserDAO userDao;
+  private final TopicDAO topicDao;
 
-  public CompanyResource(CompanyDAO companyDao) {
+  public CompanyResource(CompanyDAO companyDao, UserDAO userDao, TopicDAO topicDao) {
     this.companyDao = companyDao;
+    this.userDao = userDao;
+    this.topicDao = topicDao;
   }
 
   @GET
@@ -70,12 +79,12 @@ public class CompanyResource {
 
   @POST
   @UnitOfWork
-  public Response create(@NotNull @Valid Company c) {
-    companyDao.createOrUpdate(c);
-    if (c.getId() == null)
+  public Response create(@NotNull @Valid Company company) {
+    Company returned = companyDao.createOrUpdate(company);
+    if (returned.getId() == null)
       throw new WebApplicationException(Status.INTERNAL_SERVER_ERROR);
 
-    return Response.created(UriBuilder.fromResource(CompanyResource.class).path("/{id}").build(c.getId())).entity(c)
+    return Response.created(UriBuilder.fromResource(CompanyResource.class).path("/{id}").build(company.getId())).entity(company)
         .build();
   }
 
@@ -95,4 +104,29 @@ public class CompanyResource {
     companyDao.delete(companyDao.findById(id.get()));
     return Response.noContent().build();
   }
+
+  @GET
+  @Path("/{id}/leaders")
+  @UnitOfWork
+  @Pac4JSecurity(ignore = true)
+  public List<User> fetchLeaders(@PathParam("id") LongParam id) {
+    Company company = companyDao.findById(id.get());
+    if (company == null)
+      throw new WebApplicationException(Status.NOT_FOUND);
+
+    return userDao.findByRoleAndCompany(UserRole.TECH_LEADER, company);
+  }
+
+  @GET
+  @Path("/{id}/topics")
+  @UnitOfWork
+  @Pac4JSecurity(ignore = true)
+  public List<Topic> fetchTopics(@PathParam("id") LongParam id) {
+    Company company = companyDao.findById(id.get());
+    if (company == null)
+      throw new WebApplicationException(Status.NOT_FOUND);
+
+    return topicDao.findByCompany(company);
+  }
+
 }

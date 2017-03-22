@@ -38,7 +38,10 @@ import org.pac4j.jax.rs.annotations.Pac4JSecurity;
 import javax.ws.rs.core.UriBuilder;
 
 import cz.studenthub.core.Faculty;
+import cz.studenthub.core.User;
+import cz.studenthub.core.UserRole;
 import cz.studenthub.db.FacultyDAO;
+import cz.studenthub.db.UserDAO;
 import io.dropwizard.hibernate.UnitOfWork;
 import io.dropwizard.jersey.params.LongParam;
 
@@ -49,9 +52,11 @@ import io.dropwizard.jersey.params.LongParam;
 public class FacultyResource {
 
   private final FacultyDAO facDao;
+  private final UserDAO userDao;
 
-  public FacultyResource(FacultyDAO facDao) {
+  public FacultyResource(FacultyDAO facDao, UserDAO userDao) {
     this.facDao = facDao;
+    this.userDao = userDao;
   }
 
   @GET
@@ -80,19 +85,44 @@ public class FacultyResource {
   @PUT
   @Path("/{id}")
   @UnitOfWork
-  public Response update(@PathParam("id") LongParam id, @NotNull @Valid Faculty f) {
-    f.setId(id.get());
-    facDao.createOrUpdate(f);
-    return Response.ok(f).build();
+  public Response update(@PathParam("id") LongParam id, @NotNull @Valid Faculty faculty) {
+    faculty.setId(id.get());
+    facDao.createOrUpdate(faculty);
+    return Response.ok(faculty).build();
   }
 
   @POST
   @UnitOfWork
-  public Response create(@NotNull @Valid Faculty f) {
-    facDao.createOrUpdate(f);
-    if (f.getId() == null)
+  public Response create(@NotNull @Valid Faculty faculty) {
+    facDao.createOrUpdate(faculty);
+    if (faculty.getId() == null)
       throw new WebApplicationException(Status.INTERNAL_SERVER_ERROR);
 
-    return Response.created(UriBuilder.fromResource(FacultyResource.class).path("/{id}").build(f.getId())).entity(f).build();
+    return Response.created(UriBuilder.fromResource(FacultyResource.class).path("/{id}").build(faculty.getId())).entity(faculty).build();
   }
+
+  @GET
+  @Path("/{id}/students")
+  @UnitOfWork
+  @Pac4JSecurity(ignore = true)
+  public List<User> fetchStudents(@PathParam("id") LongParam id) {
+    Faculty faculty = facDao.findById(id.get());
+    if (faculty == null)
+      throw new WebApplicationException(Status.NOT_FOUND);
+
+    return userDao.findByRoleAndFaculty(UserRole.STUDENT, faculty);
+  }
+
+  @GET
+  @Path("/{id}/supervisors")
+  @UnitOfWork
+  @Pac4JSecurity(ignore = true)
+  public List<User> fetchSupervisors(@PathParam("id") LongParam id) {
+    Faculty faculty = facDao.findById(id.get());
+    if (faculty == null)
+      throw new WebApplicationException(Status.NOT_FOUND);
+
+    return userDao.findByRoleAndFaculty(UserRole.AC_SUPERVISOR, faculty);
+  }
+
 }
