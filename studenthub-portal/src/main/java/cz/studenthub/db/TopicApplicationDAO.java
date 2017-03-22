@@ -62,6 +62,10 @@ public class TopicApplicationDAO extends AbstractDAO<TopicApplication> {
     return list(namedQuery("TopicApplication.findByStudent").setParameter("student", student));
   }
 
+  public List<TopicApplication> findByLeader(User leader) {
+    return list(namedQuery("TopicApplication.findByLeader").setParameter("leader", leader));
+  }
+
   public List<TopicApplication> findBySupervisor(User supervisor) {
     return list(namedQuery("TopicApplication.findBySupervisor").setParameter("supervisor", supervisor));
   }
