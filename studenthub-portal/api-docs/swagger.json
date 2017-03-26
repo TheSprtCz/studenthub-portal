@@ -118,7 +118,7 @@
                         "in":"body",
                         "required":true,
                         "schema":{
-                            "$ref":"#/definitions/TopicApplication"
+                            "$ref":"#/definitions/StudentHubProfile"
                         }
                     }
                 ],
@@ -129,6 +129,11 @@
                         },
                         "schema":{
                             "$ref":"#/definitions/TopicApplication"
+                        }
+                    },
+                    "403":{
+                        "description":"Forbidden",
+                        "headers":{
                         }
                     }
                 }
@@ -336,6 +341,78 @@
                 }
             }
         },
+        "/companies/{id}/leaders":{
+            "get":{
+                "consumes":[
+                    "application/json"
+                ],
+                "produces":[
+                    "application/json"
+                ],
+                "parameters":[
+                    {
+                        "type":"string",
+                        "name":"id",
+                        "in":"path",
+                        "required":true
+                    }
+                ],
+                "responses":{
+                    "200":{
+                        "description":"OK",
+                        "headers":{
+                        },
+                        "schema":{
+                            "type":"array",
+                            "items":{
+                                "$ref":"#/definitions/User"
+                            }
+                        }
+                    },
+                    "404":{
+                        "description":"Not Found",
+                        "headers":{
+                        }
+                    }
+                }
+            }
+        },
+        "/companies/{id}/topics":{
+            "get":{
+                "consumes":[
+                    "application/json"
+                ],
+                "produces":[
+                    "application/json"
+                ],
+                "parameters":[
+                    {
+                        "type":"string",
+                        "name":"id",
+                        "in":"path",
+                        "required":true
+                    }
+                ],
+                "responses":{
+                    "200":{
+                        "description":"OK",
+                        "headers":{
+                        },
+                        "schema":{
+                            "type":"array",
+                            "items":{
+                                "$ref":"#/definitions/Topic"
+                            }
+                        }
+                    },
+                    "404":{
+                        "description":"Not Found",
+                        "headers":{
+                        }
+                    }
+                }
+            }
+        },
         "/faculties":{
             "get":{
                 "consumes":[
@@ -482,6 +559,138 @@
                 }
             }
         },
+        "/faculties/{id}/students":{
+            "get":{
+                "consumes":[
+                    "application/json"
+                ],
+                "produces":[
+                    "application/json"
+                ],
+                "parameters":[
+                    {
+                        "type":"string",
+                        "name":"id",
+                        "in":"path",
+                        "required":true
+                    }
+                ],
+                "responses":{
+                    "200":{
+                        "description":"OK",
+                        "headers":{
+                        },
+                        "schema":{
+                            "type":"array",
+                            "items":{
+                                "$ref":"#/definitions/User"
+                            }
+                        }
+                    },
+                    "404":{
+                        "description":"Not Found",
+                        "headers":{
+                        }
+                    }
+                }
+            }
+        },
+        "/faculties/{id}/supervisors":{
+            "get":{
+                "consumes":[
+                    "application/json"
+                ],
+                "produces":[
+                    "application/json"
+                ],
+                "parameters":[
+                    {
+                        "type":"string",
+                        "name":"id",
+                        "in":"path",
+                        "required":true
+                    }
+                ],
+                "responses":{
+                    "200":{
+                        "description":"OK",
+                        "headers":{
+                        },
+                        "schema":{
+                            "type":"array",
+                            "items":{
+                                "$ref":"#/definitions/User"
+                            }
+                        }
+                    },
+                    "404":{
+                        "description":"Not Found",
+                        "headers":{
+                        }
+                    }
+                }
+            }
+        },
+        "/tags/{tag}/topics":{
+            "get":{
+                "consumes":[
+                ],
+                "produces":[
+                    "application/json"
+                ],
+                "parameters":[
+                    {
+                        "type":"string",
+                        "name":"tag",
+                        "in":"path",
+                        "required":true
+                    }
+                ],
+                "responses":{
+                    "200":{
+                        "description":"OK",
+                        "headers":{
+                        },
+                        "schema":{
+                            "type":"array",
+                            "items":{
+                                "$ref":"#/definitions/Topic"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/tags/{tag}/users":{
+            "get":{
+                "consumes":[
+                ],
+                "produces":[
+                    "application/json"
+                ],
+                "parameters":[
+                    {
+                        "type":"string",
+                        "name":"tag",
+                        "in":"path",
+                        "required":true
+                    }
+                ],
+                "responses":{
+                    "200":{
+                        "description":"OK",
+                        "headers":{
+                        },
+                        "schema":{
+                            "type":"array",
+                            "items":{
+                                "$ref":"#/definitions/User"
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/topics":{
             "get":{
                 "consumes":[
@@ -491,6 +700,20 @@
                     "application/json"
                 ],
                 "parameters":[
+                    {
+                        "type":"string",
+                        "name":"size",
+                        "in":"query",
+                        "required":false,
+                        "default":"0"
+                    },
+                    {
+                        "type":"string",
+                        "name":"start",
+                        "in":"query",
+                        "required":false,
+                        "default":"0"
+                    }
                 ],
                 "responses":{
                     "200":{
@@ -627,6 +850,42 @@
                 "responses":{
                     "204":{
                         "description":"No Content",
+                        "headers":{
+                        }
+                    }
+                }
+            }
+        },
+        "/topics/{id}/applications":{
+            "get":{
+                "consumes":[
+                    "application/json"
+                ],
+                "produces":[
+                    "application/json"
+                ],
+                "parameters":[
+                    {
+                        "type":"string",
+                        "name":"id",
+                        "in":"path",
+                        "required":true
+                    }
+                ],
+                "responses":{
+                    "200":{
+                        "description":"OK",
+                        "headers":{
+                        },
+                        "schema":{
+                            "type":"array",
+                            "items":{
+                                "$ref":"#/definitions/TopicApplication"
+                            }
+                        }
+                    },
+                    "404":{
+                        "description":"Not Found",
                         "headers":{
                         }
                     }
@@ -779,6 +1038,42 @@
                 }
             }
         },
+        "/universities/{id}/faculties":{
+            "get":{
+                "consumes":[
+                    "application/json"
+                ],
+                "produces":[
+                    "application/json"
+                ],
+                "parameters":[
+                    {
+                        "type":"string",
+                        "name":"id",
+                        "in":"path",
+                        "required":true
+                    }
+                ],
+                "responses":{
+                    "200":{
+                        "description":"OK",
+                        "headers":{
+                        },
+                        "schema":{
+                            "type":"array",
+                            "items":{
+                                "$ref":"#/definitions/Faculty"
+                            }
+                        }
+                    },
+                    "404":{
+                        "description":"Not Found",
+                        "headers":{
+                        }
+                    }
+                }
+            }
+        },
         "/users":{
             "get":{
                 "consumes":[
@@ -802,7 +1097,9 @@
                         }
                     }
                 }
-            },
+            }
+        },
+        "/users/signUp":{
             "post":{
                 "consumes":[
                     "application/json"
@@ -932,11 +1229,244 @@
                         "name":"id",
                         "in":"path",
                         "required":true
+                    },
+                    {
+                        "name":"body",
+                        "in":"body",
+                        "required":true,
+                        "schema":{
+                            "$ref":"#/definitions/StudentHubProfile"
+                        }
                     }
                 ],
                 "responses":{
                     "204":{
                         "description":"No Content",
+                        "headers":{
+                        }
+                    },
+                    "403":{
+                        "description":"Forbidden",
+                        "headers":{
+                        }
+                    }
+                }
+            }
+        },
+        "/users/{id}/applications":{
+            "get":{
+                "consumes":[
+                    "application/json"
+                ],
+                "produces":[
+                    "application/json"
+                ],
+                "parameters":[
+                    {
+                        "type":"string",
+                        "name":"id",
+                        "in":"path",
+                        "required":true
+                    },
+                    {
+                        "name":"body",
+                        "in":"body",
+                        "required":true,
+                        "schema":{
+                            "$ref":"#/definitions/StudentHubProfile"
+                        }
+                    }
+                ],
+                "responses":{
+                    "200":{
+                        "description":"OK",
+                        "headers":{
+                        },
+                        "schema":{
+                            "type":"array",
+                            "items":{
+                                "$ref":"#/definitions/TopicApplication"
+                            }
+                        }
+                    },
+                    "403":{
+                        "description":"Forbidden",
+                        "headers":{
+                        }
+                    }
+                }
+            }
+        },
+        "/users/{id}/leadApplications":{
+            "get":{
+                "consumes":[
+                    "application/json"
+                ],
+                "produces":[
+                    "application/json"
+                ],
+                "parameters":[
+                    {
+                        "type":"string",
+                        "name":"id",
+                        "in":"path",
+                        "required":true
+                    },
+                    {
+                        "name":"body",
+                        "in":"body",
+                        "required":true,
+                        "schema":{
+                            "$ref":"#/definitions/StudentHubProfile"
+                        }
+                    }
+                ],
+                "responses":{
+                    "200":{
+                        "description":"OK",
+                        "headers":{
+                        },
+                        "schema":{
+                            "type":"array",
+                            "items":{
+                                "$ref":"#/definitions/TopicApplication"
+                            }
+                        }
+                    },
+                    "403":{
+                        "description":"Forbidden",
+                        "headers":{
+                        }
+                    }
+                }
+            }
+        },
+        "/users/{id}/ownedTopics":{
+            "get":{
+                "consumes":[
+                    "application/json"
+                ],
+                "produces":[
+                    "application/json"
+                ],
+                "parameters":[
+                    {
+                        "type":"string",
+                        "name":"id",
+                        "in":"path",
+                        "required":true
+                    },
+                    {
+                        "name":"body",
+                        "in":"body",
+                        "required":true,
+                        "schema":{
+                            "$ref":"#/definitions/StudentHubProfile"
+                        }
+                    }
+                ],
+                "responses":{
+                    "200":{
+                        "description":"OK",
+                        "headers":{
+                        },
+                        "schema":{
+                            "type":"array",
+                            "items":{
+                                "$ref":"#/definitions/Topic"
+                            }
+                        }
+                    },
+                    "403":{
+                        "description":"Forbidden",
+                        "headers":{
+                        }
+                    }
+                }
+            }
+        },
+        "/users/{id}/supervisedApplications":{
+            "get":{
+                "consumes":[
+                    "application/json"
+                ],
+                "produces":[
+                    "application/json"
+                ],
+                "parameters":[
+                    {
+                        "type":"string",
+                        "name":"id",
+                        "in":"path",
+                        "required":true
+                    },
+                    {
+                        "name":"body",
+                        "in":"body",
+                        "required":true,
+                        "schema":{
+                            "$ref":"#/definitions/StudentHubProfile"
+                        }
+                    }
+                ],
+                "responses":{
+                    "200":{
+                        "description":"OK",
+                        "headers":{
+                        },
+                        "schema":{
+                            "type":"array",
+                            "items":{
+                                "$ref":"#/definitions/TopicApplication"
+                            }
+                        }
+                    },
+                    "403":{
+                        "description":"Forbidden",
+                        "headers":{
+                        }
+                    }
+                }
+            }
+        },
+        "/users/{id}/supervisedTopics":{
+            "get":{
+                "consumes":[
+                    "application/json"
+                ],
+                "produces":[
+                    "application/json"
+                ],
+                "parameters":[
+                    {
+                        "type":"string",
+                        "name":"id",
+                        "in":"path",
+                        "required":true
+                    },
+                    {
+                        "name":"body",
+                        "in":"body",
+                        "required":true,
+                        "schema":{
+                            "$ref":"#/definitions/StudentHubProfile"
+                        }
+                    }
+                ],
+                "responses":{
+                    "200":{
+                        "description":"OK",
+                        "headers":{
+                        },
+                        "schema":{
+                            "type":"array",
+                            "items":{
+                                "$ref":"#/definitions/Topic"
+                            }
+                        }
+                    },
+                    "403":{
+                        "description":"Forbidden",
                         "headers":{
                         }
                     }
