@@ -16,6 +16,14 @@
  *******************************************************************************/
 package cz.studenthub.resources;
 
+import static cz.studenthub.auth.Consts.ADMIN;
+import static cz.studenthub.auth.Consts.AUTHENTICATED;
+import static cz.studenthub.auth.Consts.BASIC_AUTH;
+import static cz.studenthub.auth.Consts.JWT_AUTH;
+import static cz.studenthub.auth.Consts.STUDENT;
+import static cz.studenthub.auth.Consts.SUPERVISOR;
+import static cz.studenthub.auth.Consts.TECH_LEADER;
+
 import java.util.List;
 
 import javax.validation.Valid;
@@ -52,7 +60,7 @@ import io.dropwizard.jersey.params.LongParam;
 @Path("/users")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
-@Pac4JSecurity(authorizers = "isAdmin", clients = { "DirectBasicAuthClient", "jwtClient" })
+@Pac4JSecurity(authorizers = AUTHENTICATED, clients = { BASIC_AUTH, JWT_AUTH })
 public class UserResource {
 
   private final UserDAO userDao;
@@ -67,6 +75,7 @@ public class UserResource {
 
   @GET
   @UnitOfWork
+  @Pac4JSecurity(authorizers = ADMIN, clients = { BASIC_AUTH, JWT_AUTH })
   public List<User> fetch() {
     return userDao.findAll();
   }
@@ -74,10 +83,9 @@ public class UserResource {
   @GET
   @Path("/{id}")
   @UnitOfWork
-  @Pac4JSecurity(authorizers = "isAuthenticated", clients = { "DirectBasicAuthClient", "jwtClient" })
   public User findById(@Pac4JProfile StudentHubProfile profile, @PathParam("id") LongParam id) {
     // only admin or profile owner is allowed
-    if (id.get().equals(profile.getId()) || profile.getRoles().contains(UserRole.ADMIN.name())) {
+    if (id.get().equals(Long.valueOf(profile.getId())) || profile.getRoles().contains(UserRole.ADMIN.name())) {
       return userDao.findById(id.get());
     } else {
       throw new WebApplicationException(Status.FORBIDDEN);
@@ -87,20 +95,24 @@ public class UserResource {
   @DELETE
   @Path("/{id}")
   @UnitOfWork
-  public Response delete(@PathParam("id") LongParam id) {
-    userDao.delete(userDao.findById(id.get()));
-    return Response.noContent().build();
+  public Response delete(@Pac4JProfile StudentHubProfile profile, @PathParam("id") LongParam id) {
+    // only admin or profile owner is allowed
+    if (id.get().equals(Long.valueOf(profile.getId())) || profile.getRoles().contains(UserRole.ADMIN.name())) {
+      userDao.delete(userDao.findById(id.get()));
+      return Response.noContent().build();
+    } else {
+      throw new WebApplicationException(Status.FORBIDDEN);
+    }
   }
 
   @PUT
   @Path("/{id}")
   @UnitOfWork
-  @Pac4JSecurity(authorizers = "isAuthenticated", clients = { "DirectBasicAuthClient", "jwtClient" })
   public Response update(@Pac4JProfile StudentHubProfile profile, @PathParam("id") LongParam id,
       @NotNull @Valid User user) {
 
     // only admin or profile owner is allowed
-    if (id.get().equals(profile.getId()) || profile.getRoles().contains(UserRole.ADMIN.name())) {
+    if (id.get().equals(Long.valueOf(profile.getId())) || profile.getRoles().contains(UserRole.ADMIN.name())) {
       user.setId(id.get());
       userDao.createOrUpdate(user);
       return Response.ok(user).build();
@@ -109,14 +121,19 @@ public class UserResource {
     }
   }
 
+  /*
+   * Endpoint for public sign up
+   */
   @POST
+  @Path("/signUp")
   @UnitOfWork
-  public Response create(@NotNull @Valid User user) {
+  @Pac4JSecurity(ignore = true)
+  public Response signUp(@NotNull @Valid User user) {
 
     String pwd = new StudentHubPasswordEncoder().encode(user.getPassword());
     user.setPassword(pwd);
 
-    // TODO send email
+    // TODO send conf. email
     userDao.createOrUpdate(user);
     if (user.getId() == null)
       throw new WebApplicationException(Status.INTERNAL_SERVER_ERROR);
@@ -128,16 +145,14 @@ public class UserResource {
   @GET
   @Path("/{id}/applications")
   @UnitOfWork
-  @Pac4JSecurity(authorizers = "isAuthenticated", clients = { "DirectBasicAuthClient", "jwtClient" })
-  public List<TopicApplication> fetchApplications(@Pac4JProfile StudentHubProfile profile, @PathParam("id") LongParam id) {
-    User user = userDao.findById(id.get());
-    if (user == null)
-      throw new WebApplicationException(Status.NOT_FOUND);
+  @Pac4JSecurity(authorizers = STUDENT, clients = { BASIC_AUTH, JWT_AUTH })
+  public List<TopicApplication> fetchApplications(@Pac4JProfile StudentHubProfile profile,
+      @PathParam("id") LongParam id) {
 
-    if (id.get().equals(profile.getId()) || profile.getRoles().contains(UserRole.ADMIN.name())) {
+    User user = userDao.findById(id.get());
+    if (id.get().equals(Long.valueOf(profile.getId())) || profile.getRoles().contains(UserRole.ADMIN.name())) {
       return appDao.findByStudent(user);
-    }
-    else {
+    } else {
       throw new WebApplicationException(Status.FORBIDDEN);
     }
   }
@@ -145,64 +160,54 @@ public class UserResource {
   @GET
   @Path("/{id}/leadApplications")
   @UnitOfWork
-  @Pac4JSecurity(authorizers = "isAuthenticated", clients = { "DirectBasicAuthClient", "jwtClient" })
-  public List<TopicApplication> fetchLeadTopics(@Pac4JProfile StudentHubProfile profile, @PathParam("id") LongParam id) {
-    User user = userDao.findById(id.get());
-    if (user == null)
-      throw new WebApplicationException(Status.NOT_FOUND);
+  @Pac4JSecurity(authorizers = TECH_LEADER, clients = { BASIC_AUTH, JWT_AUTH })
+  public List<TopicApplication> fetchLeadApps(@Pac4JProfile StudentHubProfile profile, @PathParam("id") LongParam id) {
 
-    return appDao.findByLeader(user);
+    User user = userDao.findById(id.get());
+    if (id.get().equals(Long.valueOf(profile.getId())) || profile.getRoles().contains(UserRole.ADMIN.name())) {
+      return appDao.findByLeader(user);
+    } else {
+      throw new WebApplicationException(Status.FORBIDDEN);
+    }
   }
 
   @GET
   @Path("/{id}/ownedTopics")
   @UnitOfWork
-  @Pac4JSecurity(authorizers = "isAuthenticated", clients = { "DirectBasicAuthClient", "jwtClient" })
+  @Pac4JSecurity(authorizers = TECH_LEADER, clients = { BASIC_AUTH, JWT_AUTH })
   public List<Topic> fetchOwnedTopics(@Pac4JProfile StudentHubProfile profile, @PathParam("id") LongParam id) {
     User user = userDao.findById(id.get());
-    if (user == null)
-      throw new WebApplicationException(Status.NOT_FOUND);
-
-    if (id.get().equals(profile.getId()) || profile.getRoles().contains(UserRole.ADMIN.name())) {
+    if (id.get().equals(Long.valueOf(profile.getId())) || profile.getRoles().contains(UserRole.ADMIN.name())) {
       return topicDao.findByCreator(user);
-    }
-    else {
+    } else {
       throw new WebApplicationException(Status.FORBIDDEN);
     }
-
   }
 
   @GET
   @Path("/{id}/supervisedTopics")
   @UnitOfWork
-  @Pac4JSecurity(authorizers = "isAuthenticated", clients = { "DirectBasicAuthClient", "jwtClient" })
+  @Pac4JSecurity(authorizers = SUPERVISOR, clients = { BASIC_AUTH, JWT_AUTH })
   public List<Topic> fetchSupervisedTopics(@Pac4JProfile StudentHubProfile profile, @PathParam("id") LongParam id) {
     User user = userDao.findById(id.get());
-    if (user == null)
-      throw new WebApplicationException(Status.NOT_FOUND);
-
-    if (id.get().equals(profile.getId()) || profile.getRoles().contains(UserRole.ADMIN.name())) {
+    if (id.get().equals(Long.valueOf(profile.getId())) || profile.getRoles().contains(UserRole.ADMIN.name())) {
       return topicDao.findBySupervisor(user);
-    }
-    else {
+    } else {
       throw new WebApplicationException(Status.FORBIDDEN);
     }
-
   }
 
   @GET
   @Path("/{id}/supervisedApplications")
   @UnitOfWork
-  @Pac4JSecurity(authorizers = "isAuthenticated", clients = { "DirectBasicAuthClient", "jwtClient" })
-  public List<TopicApplication> fetchSupervisedApplications(@Pac4JProfile StudentHubProfile profile, @PathParam("id") LongParam id) {
-    User user = userDao.findById(id.get());
-    if (user == null)
-      throw new WebApplicationException(Status.NOT_FOUND);
+  @Pac4JSecurity(authorizers = SUPERVISOR, clients = { BASIC_AUTH, JWT_AUTH })
+  public List<TopicApplication> fetchSupervisedApplications(@Pac4JProfile StudentHubProfile profile,
+      @PathParam("id") LongParam id) {
 
-    if (id.get().equals(profile.getId()) || profile.getRoles().contains(UserRole.ADMIN.name())) {
+    User user = userDao.findById(id.get());
+    if (id.get().equals(Long.valueOf(profile.getId())) || profile.getRoles().contains(UserRole.ADMIN.name())) {
       return appDao.findBySupervisor(user);
-    }
-    else {
+    } else {
       throw new WebApplicationException(Status.FORBIDDEN);
     }
   }

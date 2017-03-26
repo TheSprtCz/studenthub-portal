@@ -16,6 +16,14 @@
  *******************************************************************************/
 package cz.studenthub;
 
+import static cz.studenthub.auth.Consts.ADMIN;
+import static cz.studenthub.auth.Consts.BASIC_AUTH;
+import static cz.studenthub.auth.Consts.COMPANY_REP;
+import static cz.studenthub.auth.Consts.JWT_AUTH;
+import static cz.studenthub.auth.Consts.STUDENT;
+import static cz.studenthub.auth.Consts.SUPERVISOR;
+import static cz.studenthub.auth.Consts.TECH_LEADER;
+
 import javax.ws.rs.core.HttpHeaders;
 
 import org.eclipse.jetty.server.session.SessionHandler;
@@ -172,18 +180,19 @@ public class StudentHubApplication extends Application<StudentHubConfiguration> 
     // create clients (= ways of authenticating)
     DirectFormClient formClient = new DirectFormClient(hibernateAuth);
     DirectBasicAuthClient basicAuthClient = new DirectBasicAuthClient(hibernateAuth);
+    basicAuthClient.setName(BASIC_AUTH);
     HeaderClient jwtClient = new HeaderClient(HttpHeaders.AUTHORIZATION, LoginResource.BEARER_PREFFIX, jwtAuth);
-    jwtClient.setName("jwtClient");
+    jwtClient.setName(JWT_AUTH);
 
     Config pac4jConfig = new Config(formClient, basicAuthClient, jwtClient);
     pac4jConfig.getClients().setDefaultClient(basicAuthClient);
 
     // setup custom authorizers for role based access
-    pac4jConfig.addAuthorizer("isAdmin", new StudentHubAuthorizer(UserRole.ADMIN));
-    pac4jConfig.addAuthorizer("isStudent", new StudentHubAuthorizer(UserRole.STUDENT));
-    pac4jConfig.addAuthorizer("isTechLeader", new StudentHubAuthorizer(UserRole.TECH_LEADER));
-    pac4jConfig.addAuthorizer("isCompanyRep", new StudentHubAuthorizer(UserRole.COMPANY_REP));
-    pac4jConfig.addAuthorizer("isSupervisor", new StudentHubAuthorizer(UserRole.AC_SUPERVISOR));
+    pac4jConfig.addAuthorizer(ADMIN, new StudentHubAuthorizer(UserRole.ADMIN));
+    pac4jConfig.addAuthorizer(STUDENT, new StudentHubAuthorizer(UserRole.STUDENT));
+    pac4jConfig.addAuthorizer(TECH_LEADER, new StudentHubAuthorizer(UserRole.TECH_LEADER));
+    pac4jConfig.addAuthorizer(COMPANY_REP, new StudentHubAuthorizer(UserRole.COMPANY_REP));
+    pac4jConfig.addAuthorizer(SUPERVISOR, new StudentHubAuthorizer(UserRole.AC_SUPERVISOR));
 
     environment.jersey().register(new ServletJaxRsContextFactoryProvider(pac4jConfig));
     environment.jersey().register(new Pac4JSecurityFeature(pac4jConfig));

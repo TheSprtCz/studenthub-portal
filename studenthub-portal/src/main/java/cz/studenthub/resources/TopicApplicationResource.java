@@ -16,6 +16,12 @@
  *******************************************************************************/
 package cz.studenthub.resources;
 
+import static cz.studenthub.auth.Consts.ADMIN;
+import static cz.studenthub.auth.Consts.AUTHENTICATED;
+import static cz.studenthub.auth.Consts.BASIC_AUTH;
+import static cz.studenthub.auth.Consts.JWT_AUTH;
+import static cz.studenthub.auth.Consts.STUDENT;
+
 import java.util.List;
 
 import javax.validation.Valid;
@@ -31,12 +37,15 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.Response.Status;
+import javax.ws.rs.core.UriBuilder;
 
+import org.pac4j.jax.rs.annotations.Pac4JProfile;
 import org.pac4j.jax.rs.annotations.Pac4JSecurity;
 
+import cz.studenthub.auth.StudentHubProfile;
 import cz.studenthub.core.TopicApplication;
+import cz.studenthub.core.UserRole;
 import cz.studenthub.db.TopicApplicationDAO;
 import io.dropwizard.hibernate.UnitOfWork;
 import io.dropwizard.jersey.params.LongParam;
@@ -44,7 +53,7 @@ import io.dropwizard.jersey.params.LongParam;
 @Path("/applications")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
-@Pac4JSecurity(authorizers = "isAdmin", clients = { "DirectBasicAuthClient", "jwtClient" })
+@Pac4JSecurity(authorizers = AUTHENTICATED, clients = { BASIC_AUTH, JWT_AUTH })
 public class TopicApplicationResource {
 
   private final TopicApplicationDAO appDao;
@@ -55,6 +64,7 @@ public class TopicApplicationResource {
 
   @GET
   @UnitOfWork
+  @Pac4JSecurity(authorizers = ADMIN, clients = { BASIC_AUTH, JWT_AUTH })
   public List<TopicApplication> fetch() {
     return appDao.findAll();
   }
@@ -69,6 +79,7 @@ public class TopicApplicationResource {
   @DELETE
   @Path("/{id}")
   @UnitOfWork
+  @Pac4JSecurity(authorizers = ADMIN, clients = { BASIC_AUTH, JWT_AUTH })
   public Response delete(@PathParam("id") LongParam id) {
     appDao.delete(appDao.findById(id.get()));
     return Response.noContent().build();
@@ -77,23 +88,31 @@ public class TopicApplicationResource {
   @PUT
   @Path("/{id}")
   @UnitOfWork
-  public Response update(@PathParam("id") LongParam id, @NotNull @Valid TopicApplication app) {
-    app.setId(id.get());
-    appDao.createOrUpdate(app);
-    return Response.ok(app).build();
+  public Response update(@Pac4JProfile StudentHubProfile profile, @PathParam("id") LongParam id,
+      @NotNull @Valid TopicApplication app) {
+    // allow topic creator/leader, assigned student, topic supervisor, admin
+    Long userId = Long.valueOf(profile.getId());
+    if (app.getTechLeader().getId().equals(userId) || app.getStudent().getId().equals(userId)
+        || app.getAcademicSupervisor().getId().equals(userId) || profile.getRoles().contains(UserRole.ADMIN.name())) {
+      app.setId(id.get());
+      appDao.createOrUpdate(app);
+      return Response.ok(app).build();
+    } else {
+      throw new WebApplicationException(Status.FORBIDDEN);
+    }
   }
 
   @POST
   @UnitOfWork
+  @Pac4JSecurity(authorizers = STUDENT, clients = { BASIC_AUTH, JWT_AUTH })
   public Response create(@NotNull @Valid TopicApplication app) {
     appDao.createOrUpdate(app);
     if (app.getId() == null)
       throw new WebApplicationException(Status.INTERNAL_SERVER_ERROR);
 
+    // TODO: notify topic creator and supervisor(s)
+
     return Response.created(UriBuilder.fromResource(TopicApplicationResource.class).path("/{id}").build(app.getId()))
         .entity(app).build();
   }
-  
-
-  // TODO: new form endpoint(s) to modify (FormClient)
 }

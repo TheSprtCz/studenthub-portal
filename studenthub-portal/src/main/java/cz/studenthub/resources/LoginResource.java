@@ -16,6 +16,8 @@
  *******************************************************************************/
 package cz.studenthub.resources;
 
+import static cz.studenthub.auth.Consts.AUTHENTICATED;
+
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.WebApplicationException;
@@ -68,10 +70,9 @@ public class LoginResource {
   @POST
   @UnitOfWork
   @Path("/login")
-  @Pac4JSecurity(authorizers = "isAuthenticated", clients = "DirectFormClient")
+  @Pac4JSecurity(authorizers = AUTHENTICATED, clients = "DirectFormClient")
   public Response authenticateUser(@Pac4JProfile StudentHubProfile profile) {
     try {
-
       // Generate random 256-bit (32-byte) shared secret
       String sharedSecret = StudentHubPasswordEncoder.DEFAULT_SECRET;
 
@@ -80,7 +81,8 @@ public class LoginResource {
           new SecretSignatureConfiguration(sharedSecret));
       String token = generator.generate(profile);
 
-      // TODO: expiration?
+      // TODO: expiration
+      // TODO: login timestamp
       // update last login timestamp
       // User u = userDao.findByEmail(profile.getEmail());
       // u.setLastLogin(new Timestamp(System.currentTimeMillis()));

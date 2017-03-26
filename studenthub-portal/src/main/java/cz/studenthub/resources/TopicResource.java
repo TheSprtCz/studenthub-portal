@@ -16,6 +16,12 @@
  *******************************************************************************/
 package cz.studenthub.resources;
 
+import static cz.studenthub.auth.Consts.ADMIN;
+import static cz.studenthub.auth.Consts.AUTHENTICATED;
+import static cz.studenthub.auth.Consts.BASIC_AUTH;
+import static cz.studenthub.auth.Consts.JWT_AUTH;
+import static cz.studenthub.auth.Consts.TECH_LEADER;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,11 +42,10 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
+import javax.ws.rs.core.UriBuilder;
 
 import org.pac4j.jax.rs.annotations.Pac4JProfile;
 import org.pac4j.jax.rs.annotations.Pac4JSecurity;
-
-import javax.ws.rs.core.UriBuilder;
 
 import cz.studenthub.auth.StudentHubProfile;
 import cz.studenthub.core.Topic;
@@ -55,7 +60,7 @@ import io.dropwizard.jersey.params.LongParam;
 @Path("/topics")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
-@Pac4JSecurity(authorizers = "isAdmin", clients = { "DirectBasicAuthClient", "jwtClient" })
+@Pac4JSecurity(authorizers = ADMIN, clients = { BASIC_AUTH, JWT_AUTH })
 public class TopicResource {
 
   private final TopicDAO topicDao;
@@ -69,15 +74,17 @@ public class TopicResource {
   @GET
   @UnitOfWork
   @Pac4JSecurity(ignore = true)
-  public List<Topic> fetch(@Min(0) @DefaultValue("0") @QueryParam("start") IntParam startParam, @Min(0) @DefaultValue("0") @QueryParam("size") IntParam sizeParam) {
-    ArrayList<Topic> topics = new ArrayList<Topic>(topicDao.findAll()); //15,0,5
-    Integer start = startParam.get();
-    Integer size = sizeParam.get();
-    Integer topicSize = topics.size();
+  public List<Topic> fetch(@Min(0) @DefaultValue("0") @QueryParam("start") IntParam startParam,
+      @Min(0) @DefaultValue("0") @QueryParam("size") IntParam sizeParam) {
+
+    ArrayList<Topic> topics = new ArrayList<Topic>(topicDao.findAll());
+    int start = startParam.get();
+    int size = sizeParam.get();
+    int topicSize = topics.size();
     if (start > topicSize)
       start = 0;
 
-    Integer remaining = topicSize - start;
+    int remaining = topicSize - start;
 
     if (size > remaining || size == 0)
       size = remaining;
@@ -104,12 +111,14 @@ public class TopicResource {
   @PUT
   @Path("/{id}")
   @UnitOfWork
-  @Pac4JSecurity(authorizers = "isTechLeader", clients = { "DirectBasicAuthClient", "jwtClient" })
+  @Pac4JSecurity(authorizers = TECH_LEADER, clients = { BASIC_AUTH, JWT_AUTH })
   public Response update(@Pac4JProfile StudentHubProfile profile, @PathParam("id") LongParam id,
       @NotNull @Valid Topic topic) {
 
     // if user is topic creator or is an admin
-    if (topic.getCreator().getId().equals(profile.getId()) || profile.getRoles().contains(UserRole.ADMIN.name())) {
+    if (topic.getCreator().getId().equals(Long.valueOf(profile.getId()))
+        || profile.getRoles().contains(UserRole.ADMIN.name())) {
+
       topic.setId(id.get());
       topicDao.createOrUpdate(topic);
       return Response.ok(topic).build();
@@ -120,20 +129,20 @@ public class TopicResource {
 
   @POST
   @UnitOfWork
-  @Pac4JSecurity(authorizers = "isTechLeader", clients = { "DirectBasicAuthClient", "jwtClient" })
+  @Pac4JSecurity(authorizers = TECH_LEADER, clients = { BASIC_AUTH, JWT_AUTH })
   public Response create(@NotNull @Valid Topic topic) {
     topicDao.createOrUpdate(topic);
     if (topic.getId() == null)
       throw new WebApplicationException(Status.INTERNAL_SERVER_ERROR);
 
-    return Response.created(UriBuilder.fromResource(TopicResource.class).path("/{id}").build(topic.getId())).entity(topic)
-        .build();
+    return Response.created(UriBuilder.fromResource(TopicResource.class).path("/{id}").build(topic.getId()))
+        .entity(topic).build();
   }
 
   @GET
   @Path("/{id}/applications")
   @UnitOfWork
-  @Pac4JSecurity(ignore = true)
+  @Pac4JSecurity(authorizers = AUTHENTICATED, clients = { BASIC_AUTH, JWT_AUTH })
   public List<TopicApplication> fetchSupervisedTopics(@PathParam("id") LongParam id) {
     Topic topic = topicDao.findById(id.get());
     if (topic == null)

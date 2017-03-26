@@ -16,6 +16,11 @@
  *******************************************************************************/
 package cz.studenthub.resources;
 
+import static cz.studenthub.auth.Consts.ADMIN;
+import static cz.studenthub.auth.Consts.AUTHENTICATED;
+import static cz.studenthub.auth.Consts.BASIC_AUTH;
+import static cz.studenthub.auth.Consts.JWT_AUTH;
+
 import java.util.List;
 
 import javax.validation.Valid;
@@ -49,7 +54,7 @@ import io.dropwizard.jersey.params.LongParam;
 @Path("/companies")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
-@Pac4JSecurity(authorizers = "isAdmin", clients = { "DirectBasicAuthClient", "jwtClient" })
+@Pac4JSecurity(authorizers = ADMIN, clients = { BASIC_AUTH, JWT_AUTH })
 public class CompanyResource {
 
   private final CompanyDAO companyDao;
@@ -84,8 +89,8 @@ public class CompanyResource {
     if (returned.getId() == null)
       throw new WebApplicationException(Status.INTERNAL_SERVER_ERROR);
 
-    return Response.created(UriBuilder.fromResource(CompanyResource.class).path("/{id}").build(company.getId())).entity(company)
-        .build();
+    return Response.created(UriBuilder.fromResource(CompanyResource.class).path("/{id}").build(company.getId()))
+        .entity(company).build();
   }
 
   @PUT
@@ -108,7 +113,7 @@ public class CompanyResource {
   @GET
   @Path("/{id}/leaders")
   @UnitOfWork
-  @Pac4JSecurity(ignore = true)
+  @Pac4JSecurity(authorizers = AUTHENTICATED, clients = { BASIC_AUTH, JWT_AUTH })
   public List<User> fetchLeaders(@PathParam("id") LongParam id) {
     Company company = companyDao.findById(id.get());
     if (company == null)

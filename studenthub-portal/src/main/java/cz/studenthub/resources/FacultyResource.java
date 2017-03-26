@@ -16,6 +16,11 @@
  *******************************************************************************/
 package cz.studenthub.resources;
 
+import static cz.studenthub.auth.Consts.ADMIN;
+import static cz.studenthub.auth.Consts.AUTHENTICATED;
+import static cz.studenthub.auth.Consts.BASIC_AUTH;
+import static cz.studenthub.auth.Consts.JWT_AUTH;
+
 import java.util.List;
 
 import javax.validation.Valid;
@@ -32,10 +37,9 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
+import javax.ws.rs.core.UriBuilder;
 
 import org.pac4j.jax.rs.annotations.Pac4JSecurity;
-
-import javax.ws.rs.core.UriBuilder;
 
 import cz.studenthub.core.Faculty;
 import cz.studenthub.core.User;
@@ -48,7 +52,7 @@ import io.dropwizard.jersey.params.LongParam;
 @Path("/faculties")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
-@Pac4JSecurity(authorizers = "isAdmin", clients = { "DirectBasicAuthClient", "jwtClient" })
+@Pac4JSecurity(authorizers = ADMIN, clients = { BASIC_AUTH, JWT_AUTH })
 public class FacultyResource {
 
   private final FacultyDAO facDao;
@@ -98,13 +102,14 @@ public class FacultyResource {
     if (faculty.getId() == null)
       throw new WebApplicationException(Status.INTERNAL_SERVER_ERROR);
 
-    return Response.created(UriBuilder.fromResource(FacultyResource.class).path("/{id}").build(faculty.getId())).entity(faculty).build();
+    return Response.created(UriBuilder.fromResource(FacultyResource.class).path("/{id}").build(faculty.getId()))
+        .entity(faculty).build();
   }
 
   @GET
   @Path("/{id}/students")
   @UnitOfWork
-  @Pac4JSecurity(ignore = true)
+  @Pac4JSecurity(authorizers = AUTHENTICATED, clients = { BASIC_AUTH, JWT_AUTH })
   public List<User> fetchStudents(@PathParam("id") LongParam id) {
     Faculty faculty = facDao.findById(id.get());
     if (faculty == null)
@@ -116,7 +121,7 @@ public class FacultyResource {
   @GET
   @Path("/{id}/supervisors")
   @UnitOfWork
-  @Pac4JSecurity(ignore = true)
+  @Pac4JSecurity(authorizers = AUTHENTICATED, clients = { BASIC_AUTH, JWT_AUTH })
   public List<User> fetchSupervisors(@PathParam("id") LongParam id) {
     Faculty faculty = facDao.findById(id.get());
     if (faculty == null)

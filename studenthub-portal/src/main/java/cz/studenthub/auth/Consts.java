@@ -14,29 +14,27 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *******************************************************************************/
-package cz.studenthub;
+package cz.studenthub.auth;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
+public final class Consts {
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
-import io.dropwizard.Configuration;
-import io.dropwizard.db.DataSourceFactory;
-
-public class StudentHubConfiguration extends Configuration {
-
-  @Valid
-  @NotNull
-  private DataSourceFactory database = new DataSourceFactory();
-
-  @JsonProperty("database")
-  public DataSourceFactory getDataSourceFactory() {
-    return database;
+  private Consts() {
+    // do not allow init
   }
 
-  @JsonProperty("database")
-  public void setDataSourceFactory(DataSourceFactory factory) {
-    this.database = factory;
-  }
+  /*
+   * Roles
+   */
+  public static final String ADMIN = "isAdmin";
+  public static final String STUDENT = "isStudent";
+  public static final String TECH_LEADER = "isTechLeader";
+  public static final String COMPANY_REP = "isCompanyRep";
+  public static final String SUPERVISOR = "isSupervisor";
+  public static final String AUTHENTICATED = "isAuthenticated";
+  /*
+   * Clients
+   */
+  public static final String BASIC_AUTH = "DirectBasicAuthClient";
+  public static final String JWT_AUTH = "jwtClient";
+  public static final String[] EVERY_AUTH = new String[] {BASIC_AUTH, JWT_AUTH};
 }

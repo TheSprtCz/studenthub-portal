@@ -16,6 +16,10 @@
  *******************************************************************************/
 package cz.studenthub.resources;
 
+import static cz.studenthub.auth.Consts.ADMIN;
+import static cz.studenthub.auth.Consts.BASIC_AUTH;
+import static cz.studenthub.auth.Consts.JWT_AUTH;
+
 import java.util.List;
 
 import javax.validation.Valid;
@@ -32,10 +36,9 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
+import javax.ws.rs.core.UriBuilder;
 
 import org.pac4j.jax.rs.annotations.Pac4JSecurity;
-
-import javax.ws.rs.core.UriBuilder;
 
 import cz.studenthub.core.Faculty;
 import cz.studenthub.core.University;
@@ -47,7 +50,7 @@ import io.dropwizard.jersey.params.LongParam;
 @Path("/universities")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
-@Pac4JSecurity(authorizers = "isAdmin", clients = { "DirectBasicAuthClient", "jwtClient" })
+@Pac4JSecurity(authorizers = ADMIN, clients = { BASIC_AUTH, JWT_AUTH })
 public class UniversityResource {
 
   private final UniversityDAO uniDao;
@@ -96,8 +99,9 @@ public class UniversityResource {
     uniDao.createOrUpdate(university);
     if (university.getId() == null)
       throw new WebApplicationException(Status.INTERNAL_SERVER_ERROR);
-    
-    return Response.created(UriBuilder.fromResource(UniversityResource.class).path("/{id}").build(university.getId())).entity(university).build();
+
+    return Response.created(UriBuilder.fromResource(UniversityResource.class).path("/{id}").build(university.getId()))
+        .entity(university).build();
   }
 
   @GET
