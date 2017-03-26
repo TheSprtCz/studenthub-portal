@@ -100,7 +100,7 @@
             <phase>package</phase>
             <configuration>
               <backend>swagger</backend>
-              <deployedDomain>localhost:8080</deployedDomain>
+              <deployedDomain>localhost:8080/api</deployedDomain>
               <resourcesDir>../api-docs</resourcesDir>
             </configuration>
           </execution>
