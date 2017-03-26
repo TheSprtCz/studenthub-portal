@@ -97,6 +97,7 @@
             <goals>
               <goal>analyze-jaxrs</goal>
             </goals>
+            <phase>package</phase>
             <configuration>
               <backend>swagger</backend>
               <deployedDomain>localhost:8080</deployedDomain>
