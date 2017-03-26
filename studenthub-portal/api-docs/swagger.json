@@ -5,7 +5,7 @@
         "version":"1.0-SNAPSHOT",
         "title":"studenthub-portal"
     },
-    "host":"localhost:8080",
+    "host":"localhost:8080/api",
     "basePath":"/",
     "schemes":[
         "http"
@@ -886,6 +886,39 @@
                     },
                     "404":{
                         "description":"Not Found",
+                        "headers":{
+                        }
+                    }
+                }
+            }
+        },
+        "/topics/{id}/supervise":{
+            "put":{
+                "consumes":[
+                    "application/json"
+                ],
+                "produces":[
+                    "application/json"
+                ],
+                "parameters":[
+                    {
+                        "type":"string",
+                        "name":"id",
+                        "in":"path",
+                        "required":true
+                    },
+                    {
+                        "name":"body",
+                        "in":"body",
+                        "required":true,
+                        "schema":{
+                            "$ref":"#/definitions/StudentHubProfile"
+                        }
+                    }
+                ],
+                "responses":{
+                    "200":{
+                        "description":"OK",
                         "headers":{
                         }
                     }

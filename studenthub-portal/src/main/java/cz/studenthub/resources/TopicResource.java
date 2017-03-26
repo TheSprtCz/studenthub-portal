@@ -20,6 +20,7 @@ import static cz.studenthub.auth.Consts.ADMIN;
 import static cz.studenthub.auth.Consts.AUTHENTICATED;
 import static cz.studenthub.auth.Consts.BASIC_AUTH;
 import static cz.studenthub.auth.Consts.JWT_AUTH;
+import static cz.studenthub.auth.Consts.SUPERVISOR;
 import static cz.studenthub.auth.Consts.TECH_LEADER;
 
 import java.util.ArrayList;
@@ -50,9 +51,11 @@ import org.pac4j.jax.rs.annotations.Pac4JSecurity;
 import cz.studenthub.auth.StudentHubProfile;
 import cz.studenthub.core.Topic;
 import cz.studenthub.core.TopicApplication;
+import cz.studenthub.core.User;
 import cz.studenthub.core.UserRole;
 import cz.studenthub.db.TopicApplicationDAO;
 import cz.studenthub.db.TopicDAO;
+import cz.studenthub.db.UserDAO;
 import io.dropwizard.hibernate.UnitOfWork;
 import io.dropwizard.jersey.params.IntParam;
 import io.dropwizard.jersey.params.LongParam;
@@ -63,10 +66,12 @@ import io.dropwizard.jersey.params.LongParam;
 @Pac4JSecurity(authorizers = ADMIN, clients = { BASIC_AUTH, JWT_AUTH })
 public class TopicResource {
 
+  private final UserDAO userDao;
   private final TopicDAO topicDao;
   private final TopicApplicationDAO appDao;
 
-  public TopicResource(TopicDAO topicDao, TopicApplicationDAO taDao) {
+  public TopicResource(TopicDAO topicDao, TopicApplicationDAO taDao, UserDAO userDao) {
+    this.userDao = userDao;
     this.topicDao = topicDao;
     this.appDao = taDao;
   }
@@ -137,6 +142,18 @@ public class TopicResource {
 
     return Response.created(UriBuilder.fromResource(TopicResource.class).path("/{id}").build(topic.getId()))
         .entity(topic).build();
+  }
+
+  @PUT
+  @Path("/{id}/supervise")
+  @UnitOfWork
+  @Pac4JSecurity(authorizers = SUPERVISOR, clients = { BASIC_AUTH, JWT_AUTH })
+  public Response superviseTopic(@Pac4JProfile StudentHubProfile profile, @PathParam("id") LongParam id) {
+    Topic topic = topicDao.findById(id.get());
+    User supervisor = userDao.findById(Long.valueOf(profile.getId()));
+    topic.getAcademicSupervisors().add(supervisor);
+    topicDao.createOrUpdate(topic);
+    return Response.ok().build();
   }
 
   @GET
