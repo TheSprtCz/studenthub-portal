@@ -766,6 +766,51 @@
                 }
             }
         },
+        "/topics/search":{
+            "get":{
+                "consumes":[
+                    "application/json"
+                ],
+                "produces":[
+                    "application/json"
+                ],
+                "parameters":[
+                    {
+                        "type":"string",
+                        "name":"size",
+                        "in":"query",
+                        "required":false,
+                        "default":"0"
+                    },
+                    {
+                        "type":"string",
+                        "name":"start",
+                        "in":"query",
+                        "required":false,
+                        "default":"0"
+                    },
+                    {
+                        "type":"string",
+                        "name":"text",
+                        "in":"query",
+                        "required":true
+                    }
+                ],
+                "responses":{
+                    "200":{
+                        "description":"OK",
+                        "headers":{
+                        },
+                        "schema":{
+                            "type":"array",
+                            "items":{
+                                "$ref":"#/definitions/Topic"
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/topics/{id}":{
             "get":{
                 "consumes":[
