@@ -152,7 +152,7 @@ public class StudentHubApplication extends Application<StudentHubConfiguration> 
     environment.jersey().register(new FacultyResource(facDao, userDao));
     environment.jersey().register(new UserResource(userDao, topicDao, taDao));
     environment.jersey().register(new TopicResource(topicDao, taDao, userDao));
-    environment.jersey().register(new TopicApplicationResource(taDao));
+    environment.jersey().register(new TopicApplicationResource(taDao, userDao));
     environment.jersey().register(new LoginResource());
     environment.jersey().register(new TagResource(userDao, topicDao));
 

@@ -25,6 +25,7 @@ import static cz.studenthub.auth.Consts.TECH_LEADER;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
@@ -122,7 +123,9 @@ public class TopicResource {
   @POST
   @UnitOfWork
   @Pac4JSecurity(authorizers = TECH_LEADER, clients = { BASIC_AUTH, JWT_AUTH })
-  public Response create(@NotNull @Valid Topic topic) {
+  public Response create(@Pac4JProfile StudentHubProfile profile, @NotNull @Valid Topic topic) {
+    User creator = userDao.findById(Long.valueOf(profile.getId()));
+    topic.setCreator(creator);
     topicDao.createOrUpdate(topic);
     if (topic.getId() == null)
       throw new WebApplicationException(Status.INTERNAL_SERVER_ERROR);
@@ -140,7 +143,7 @@ public class TopicResource {
     User supervisor = userDao.findById(Long.valueOf(profile.getId()));
     topic.getAcademicSupervisors().add(supervisor);
     topicDao.createOrUpdate(topic);
-    return Response.ok().build();
+    return Response.ok(topic).build();
   }
 
   @GET
@@ -155,12 +158,34 @@ public class TopicResource {
     return appDao.findByTopic(topic);
   }
 
+  /*
+   * We don't want to publicly expose info about creator/supervisors we need
+   * separate endpoints
+   */
+  @GET
+  @Path("/{id}/supervisors")
+  @UnitOfWork
+  @Pac4JSecurity(authorizers = AUTHENTICATED, clients = { BASIC_AUTH, JWT_AUTH })
+  public Set<User> getTopicSupervisors(@PathParam("id") LongParam id) {
+    Topic topic = topicDao.findById(id.get());
+    return topic.getAcademicSupervisors();
+  }
+
+  @GET
+  @Path("/{id}/creator")
+  @UnitOfWork
+  @Pac4JSecurity(authorizers = AUTHENTICATED, clients = { BASIC_AUTH, JWT_AUTH })
+  public User getTopicCreator(@PathParam("id") LongParam id) {
+    Topic topic = topicDao.findById(id.get());
+    return topic.getCreator();
+  }
 
   @GET
   @Path("/search")
   @UnitOfWork
   @Pac4JSecurity(ignore = true)
-  public List<Topic> search(@NotNull @QueryParam("text") String text, @Min(0) @DefaultValue("0") @QueryParam("start") IntParam startParam,
+  public List<Topic> search(@NotNull @QueryParam("text") String text,
+      @Min(0) @DefaultValue("0") @QueryParam("start") IntParam startParam,
       @Min(0) @DefaultValue("0") @QueryParam("size") IntParam sizeParam) {
     return paging(topicDao.search(text), startParam.get(), sizeParam.get());
   }

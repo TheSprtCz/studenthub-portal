@@ -45,8 +45,10 @@ import org.pac4j.jax.rs.annotations.Pac4JSecurity;
 
 import cz.studenthub.auth.StudentHubProfile;
 import cz.studenthub.core.TopicApplication;
+import cz.studenthub.core.User;
 import cz.studenthub.core.UserRole;
 import cz.studenthub.db.TopicApplicationDAO;
+import cz.studenthub.db.UserDAO;
 import io.dropwizard.hibernate.UnitOfWork;
 import io.dropwizard.jersey.params.LongParam;
 
@@ -57,9 +59,11 @@ import io.dropwizard.jersey.params.LongParam;
 public class TopicApplicationResource {
 
   private final TopicApplicationDAO appDao;
+  private final UserDAO userDao;
 
-  public TopicApplicationResource(TopicApplicationDAO appDao) {
+  public TopicApplicationResource(TopicApplicationDAO appDao, UserDAO userDao) {
     this.appDao = appDao;
+    this.userDao = userDao;
   }
 
   @GET
@@ -105,7 +109,9 @@ public class TopicApplicationResource {
   @POST
   @UnitOfWork
   @Pac4JSecurity(authorizers = STUDENT, clients = { BASIC_AUTH, JWT_AUTH })
-  public Response create(@NotNull @Valid TopicApplication app) {
+  public Response create(@Pac4JProfile StudentHubProfile profile, @NotNull @Valid TopicApplication app) {
+    User student = userDao.findById(Long.valueOf(profile.getId()));
+    app.setStudent(student);
     appDao.createOrUpdate(app);
     if (app.getId() == null)
       throw new WebApplicationException(Status.INTERNAL_SERVER_ERROR);

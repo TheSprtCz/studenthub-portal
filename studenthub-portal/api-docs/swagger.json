@@ -742,7 +742,7 @@
                         "in":"body",
                         "required":true,
                         "schema":{
-                            "$ref":"#/definitions/Topic"
+                            "$ref":"#/definitions/StudentHubProfile"
                         }
                     }
                 ],
@@ -937,6 +937,34 @@
                 }
             }
         },
+        "/topics/{id}/creator":{
+            "get":{
+                "consumes":[
+                    "application/json"
+                ],
+                "produces":[
+                    "application/json"
+                ],
+                "parameters":[
+                    {
+                        "type":"string",
+                        "name":"id",
+                        "in":"path",
+                        "required":true
+                    }
+                ],
+                "responses":{
+                    "200":{
+                        "description":"OK",
+                        "headers":{
+                        },
+                        "schema":{
+                            "$ref":"#/definitions/User"
+                        }
+                    }
+                }
+            }
+        },
         "/topics/{id}/supervise":{
             "put":{
                 "consumes":[
@@ -965,6 +993,40 @@
                     "200":{
                         "description":"OK",
                         "headers":{
+                        },
+                        "schema":{
+                            "$ref":"#/definitions/Topic"
+                        }
+                    }
+                }
+            }
+        },
+        "/topics/{id}/supervisors":{
+            "get":{
+                "consumes":[
+                    "application/json"
+                ],
+                "produces":[
+                    "application/json"
+                ],
+                "parameters":[
+                    {
+                        "type":"string",
+                        "name":"id",
+                        "in":"path",
+                        "required":true
+                    }
+                ],
+                "responses":{
+                    "200":{
+                        "description":"OK",
+                        "headers":{
+                        },
+                        "schema":{
+                            "type":"array",
+                            "items":{
+                                "$ref":"#/definitions/User"
+                            }
                         }
                     }
                 }
