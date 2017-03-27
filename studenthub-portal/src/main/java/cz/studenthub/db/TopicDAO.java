@@ -18,8 +18,10 @@ package cz.studenthub.db;
 
 import java.util.List;
 
+import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
-
+import org.hibernate.criterion.Restrictions;
+import org.hibernate.persister.collection.CollectionPropertyNames;
 import cz.studenthub.core.Company;
 import cz.studenthub.core.Topic;
 import cz.studenthub.core.User;
@@ -63,6 +65,17 @@ public class TopicDAO extends AbstractDAO<Topic> {
 
   public List<Topic> findAll() {
     return list(namedQuery("Topic.findAll"));
+  }
+
+  public List<Topic> search(String text) {
+    String pattern = "%" + text + "%";
+    Criteria criteria = criteria().createAlias("tags", "tag")
+        .add(Restrictions.or(Restrictions.ilike("title", pattern), Restrictions.ilike("shortAbstract", pattern),
+            Restrictions.ilike("description", pattern),
+            Restrictions.eq("tag." + CollectionPropertyNames.COLLECTION_ELEMENTS, text).ignoreCase()))
+        .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+
+    return list(criteria);
   }
 
   public void delete(Topic topic) {
