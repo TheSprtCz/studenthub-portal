@@ -1,265 +1,213 @@
 <?xml version="1.1" encoding="UTF-8" standalone="no"?>
 <databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
-    <changeSet author="sbunciak (generated)" id="1485077755684-1" objectQuotingStrategy="QUOTE_ALL_OBJECTS">
-        <createTable catalogName="STUDENT-HUB" schemaName="PUBLIC" tableName="COMPANIES">
-            <column autoIncrement="true" name="ID" type="BIGINT(19)">
-                <constraints primaryKey="true" primaryKeyName="CONSTRAINT_5"/>
+    <changeSet author="phala (generated)" id="1490799716747-1" objectQuotingStrategy="QUOTE_ALL_OBJECTS">
+        <createSequence catalogName="studenthub" schemaName="public" sequenceName="companies_id_seq"/>
+    </changeSet>
+    <changeSet author="phala (generated)" id="1490799716747-2" objectQuotingStrategy="QUOTE_ALL_OBJECTS">
+        <createSequence catalogName="studenthub" schemaName="public" sequenceName="faculties_id_seq"/>
+    </changeSet>
+    <changeSet author="phala (generated)" id="1490799716747-3" objectQuotingStrategy="QUOTE_ALL_OBJECTS">
+        <createSequence catalogName="studenthub" schemaName="public" sequenceName="topicapplications_id_seq"/>
+    </changeSet>
+    <changeSet author="phala (generated)" id="1490799716747-4" objectQuotingStrategy="QUOTE_ALL_OBJECTS">
+        <createSequence catalogName="studenthub" schemaName="public" sequenceName="topics_id_seq"/>
+    </changeSet>
+    <changeSet author="phala (generated)" id="1490799716747-5" objectQuotingStrategy="QUOTE_ALL_OBJECTS">
+        <createSequence catalogName="studenthub" schemaName="public" sequenceName="universities_id_seq"/>
+    </changeSet>
+    <changeSet author="phala (generated)" id="1490799716747-6" objectQuotingStrategy="QUOTE_ALL_OBJECTS">
+        <createSequence catalogName="studenthub" schemaName="public" sequenceName="users_id_seq"/>
+    </changeSet>
+    <changeSet author="phala (generated)" id="1490799716747-7" objectQuotingStrategy="QUOTE_ALL_OBJECTS">
+        <createTable catalogName="studenthub" schemaName="public" tableName="companies">
+            <column autoIncrement="true" name="id" type="BIGSERIAL">
+                <constraints primaryKey="true" primaryKeyName="constraint_5"/>
             </column>
-            <column name="CITY" type="VARCHAR(255)"/>
-            <column name="COUNTRY" type="VARCHAR(255)"/>
-            <column name="LOGOURL" type="VARCHAR(255)"/>
-            <column name="NAME" type="VARCHAR(255)">
+            <column name="city" type="VARCHAR(255)"/>
+            <column name="country" type="VARCHAR(255)"/>
+            <column name="logourl" type="VARCHAR(255)"/>
+            <column name="name" type="VARCHAR(255)">
                 <constraints nullable="false"/>
             </column>
-            <column name="PLAN" type="VARCHAR(255)"/>
-            <column name="SIZE" type="VARCHAR(255)"/>
-            <column name="URL" type="VARCHAR(255)"/>
+            <column name="plan" type="VARCHAR(255)"/>
+            <column name="size" type="VARCHAR(255)"/>
+            <column name="url" type="VARCHAR(255)"/>
         </createTable>
     </changeSet>
-    <changeSet author="sbunciak (generated)" id="1485077755684-2" objectQuotingStrategy="QUOTE_ALL_OBJECTS">
-        <createTable catalogName="STUDENT-HUB" schemaName="PUBLIC" tableName="FACULTIES">
-            <column autoIncrement="true" name="ID" type="BIGINT(19)">
-                <constraints primaryKey="true" primaryKeyName="CONSTRAINT_58"/>
+    <changeSet author="phala (generated)" id="1490799716747-8" objectQuotingStrategy="QUOTE_ALL_OBJECTS">
+        <createTable catalogName="studenthub" schemaName="public" tableName="faculties">
+            <column autoIncrement="true" name="id" type="BIGSERIAL">
+                <constraints primaryKey="true" primaryKeyName="faculties_pkey"/>
             </column>
-            <column name="NAME" type="VARCHAR(255)">
+            <column name="name" type="VARCHAR(255)">
                 <constraints nullable="false"/>
             </column>
-            <column name="UNIVERSITY_ID" type="BIGINT(19)"/>
+            <column name="university_id" type="BIGINT"/>
         </createTable>
     </changeSet>
-    <changeSet author="sbunciak (generated)" id="1485077755684-3" objectQuotingStrategy="QUOTE_ALL_OBJECTS">
-        <createTable catalogName="STUDENT-HUB" schemaName="PUBLIC" tableName="TOPICAPPLICATIONS">
-            <column autoIncrement="true" name="ID" type="BIGINT(19)">
-                <constraints primaryKey="true" primaryKeyName="CONSTRAINT_B"/>
-            </column>
-            <column name="DEGREE" type="VARCHAR(255)"/>
-            <column name="GRADE" type="VARCHAR(255)"/>
-            <column name="OFFICIALASSIGNMENT" type="LONGVARCHAR"/>
-            <column name="THESISFINISH" type="TIMESTAMP"/>
-            <column name="THESISSTART" type="TIMESTAMP"/>
-            <column name="ACADEMICSUPERVISOR_ID" type="BIGINT(19)"/>
-            <column name="FACULTY_ID" type="BIGINT(19)">
+    <changeSet author="phala (generated)" id="1490799716747-9" objectQuotingStrategy="QUOTE_ALL_OBJECTS">
+        <createTable catalogName="studenthub" schemaName="public" tableName="topic_degrees">
+            <column name="topic_id" type="BIGINT">
                 <constraints nullable="false"/>
             </column>
-            <column name="STUDENT_ID" type="BIGINT(19)"/>
-            <column name="TECHLEADER_ID" type="BIGINT(19)"/>
-            <column name="TOPIC_ID" type="BIGINT(19)"/>
+            <column name="degrees" type="INT"/>
         </createTable>
     </changeSet>
-    <changeSet author="sbunciak (generated)" id="1485077755684-4" objectQuotingStrategy="QUOTE_ALL_OBJECTS">
-        <createTable catalogName="STUDENT-HUB" schemaName="PUBLIC" tableName="TOPICS">
-            <column autoIncrement="true" name="ID" type="BIGINT(19)">
-                <constraints primaryKey="true" primaryKeyName="CONSTRAINT_9"/>
-            </column>
-            <column name="DESCRIPTION" type="LONGVARCHAR"/>
-            <column name="SHORTABSTRACT" type="VARCHAR(255)"/>
-            <column name="TITLE" type="VARCHAR(255)">
+    <changeSet author="phala (generated)" id="1490799716747-10" objectQuotingStrategy="QUOTE_ALL_OBJECTS">
+        <createTable catalogName="studenthub" schemaName="public" tableName="topic_tags">
+            <column name="topic_id" type="BIGINT">
                 <constraints nullable="false"/>
             </column>
-            <column name="CREATOR_ID" type="BIGINT(19)"/>
+            <column name="tags" type="VARCHAR(255)"/>
         </createTable>
     </changeSet>
-    <changeSet author="sbunciak (generated)" id="1485077755684-5" objectQuotingStrategy="QUOTE_ALL_OBJECTS">
-        <createTable catalogName="STUDENT-HUB" schemaName="PUBLIC" tableName="TOPICS_USERS">
-            <column name="TOPIC_ID" type="BIGINT(19)">
+    <changeSet author="phala (generated)" id="1490799716747-11" objectQuotingStrategy="QUOTE_ALL_OBJECTS">
+        <createTable catalogName="studenthub" schemaName="public" tableName="topicapplications">
+            <column autoIncrement="true" name="id" type="BIGSERIAL">
+                <constraints primaryKey="true" primaryKeyName="topicapplications_pkey"/>
+            </column>
+            <column name="degree" type="VARCHAR(255)"/>
+            <column name="grade" type="VARCHAR(1)"/>
+            <column name="officialassignment" type="TEXT"/>
+            <column name="thesisfinish" type="TIMESTAMP(6) WITHOUT TIME ZONE"/>
+            <column name="thesisstart" type="TIMESTAMP(6) WITHOUT TIME ZONE"/>
+            <column name="academicsupervisor_id" type="BIGINT"/>
+            <column name="faculty_id" type="BIGINT">
                 <constraints nullable="false"/>
             </column>
-            <column name="ACADEMICSUPERVISORS_ID" type="BIGINT(19)">
+            <column name="student_id" type="BIGINT"/>
+            <column name="techleader_id" type="BIGINT"/>
+            <column name="topic_id" type="BIGINT"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="phala (generated)" id="1490799716747-12" objectQuotingStrategy="QUOTE_ALL_OBJECTS">
+        <createTable catalogName="studenthub" schemaName="public" tableName="topics">
+            <column autoIncrement="true" name="id" type="BIGSERIAL">
+                <constraints primaryKey="true" primaryKeyName="topics_pkey"/>
+            </column>
+            <column name="description" type="TEXT"/>
+            <column name="shortabstract" type="VARCHAR(255)"/>
+            <column name="title" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="creator_id" type="BIGINT"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="phala (generated)" id="1490799716747-13" objectQuotingStrategy="QUOTE_ALL_OBJECTS">
+        <createTable catalogName="studenthub" schemaName="public" tableName="topics_users">
+            <column name="topic_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="academicsupervisors_id" type="BIGINT">
                 <constraints nullable="false"/>
             </column>
         </createTable>
     </changeSet>
-    <changeSet author="sbunciak (generated)" id="1485077755684-6" objectQuotingStrategy="QUOTE_ALL_OBJECTS">
-        <createTable catalogName="STUDENT-HUB" schemaName="PUBLIC" tableName="TOPIC_DEGREES">
-            <column name="TOPIC_ID" type="BIGINT(19)">
+    <changeSet author="phala (generated)" id="1490799716747-14" objectQuotingStrategy="QUOTE_ALL_OBJECTS">
+        <createTable catalogName="studenthub" schemaName="public" tableName="universities">
+            <column autoIncrement="true" name="id" type="BIGSERIAL">
+                <constraints primaryKey="true" primaryKeyName="universities_pkey"/>
+            </column>
+            <column name="city" type="VARCHAR(255)"/>
+            <column name="country" type="VARCHAR(255)"/>
+            <column name="logourl" type="VARCHAR(255)"/>
+            <column name="name" type="VARCHAR(255)">
                 <constraints nullable="false"/>
             </column>
-            <column name="DEGREES" type="INT(10)"/>
+            <column name="url" type="VARCHAR(255)"/>
         </createTable>
     </changeSet>
-    <changeSet author="sbunciak (generated)" id="1485077755684-7" objectQuotingStrategy="QUOTE_ALL_OBJECTS">
-        <createTable catalogName="STUDENT-HUB" schemaName="PUBLIC" tableName="TOPIC_TAGS">
-            <column name="TOPIC_ID" type="BIGINT(19)">
+    <changeSet author="phala (generated)" id="1490799716747-15" objectQuotingStrategy="QUOTE_ALL_OBJECTS">
+        <createTable catalogName="studenthub" schemaName="public" tableName="user_roles">
+            <column name="user_id" type="BIGINT">
                 <constraints nullable="false"/>
             </column>
-            <column name="TAGS" type="VARCHAR(255)"/>
+            <column name="roles" type="VARCHAR(255)"/>
         </createTable>
     </changeSet>
-    <changeSet author="sbunciak (generated)" id="1485077755684-8" objectQuotingStrategy="QUOTE_ALL_OBJECTS">
-        <createTable catalogName="STUDENT-HUB" schemaName="PUBLIC" tableName="UNIVERSITIES">
-            <column autoIncrement="true" name="ID" type="BIGINT(19)">
-                <constraints primaryKey="true" primaryKeyName="CONSTRAINT_E"/>
-            </column>
-            <column name="CITY" type="VARCHAR(255)"/>
-            <column name="COUNTRY" type="VARCHAR(255)"/>
-            <column name="LOGOURL" type="VARCHAR(255)"/>
-            <column name="NAME" type="VARCHAR(255)">
+    <changeSet author="phala (generated)" id="1490799716747-16" objectQuotingStrategy="QUOTE_ALL_OBJECTS">
+        <createTable catalogName="studenthub" schemaName="public" tableName="user_tags">
+            <column name="user_id" type="BIGINT">
                 <constraints nullable="false"/>
             </column>
-            <column name="URL" type="VARCHAR(255)"/>
+            <column name="tags" type="VARCHAR(255)"/>
         </createTable>
     </changeSet>
-    <changeSet author="sbunciak (generated)" id="1485077755684-9" objectQuotingStrategy="QUOTE_ALL_OBJECTS">
-        <createTable catalogName="STUDENT-HUB" schemaName="PUBLIC" tableName="USERS">
-            <column autoIncrement="true" name="ID" type="BIGINT(19)">
-                <constraints primaryKey="true" primaryKeyName="CONSTRAINT_4"/>
+    <changeSet author="phala (generated)" id="1490799716747-17" objectQuotingStrategy="QUOTE_ALL_OBJECTS">
+        <createTable catalogName="studenthub" schemaName="public" tableName="users">
+            <column autoIncrement="true" name="id" type="BIGSERIAL">
+                <constraints primaryKey="true" primaryKeyName="users_pkey"/>
             </column>
-            <column name="EMAIL" type="VARCHAR(255)">
+            <column name="email" type="VARCHAR(255)">
                 <constraints nullable="false"/>
             </column>
-            <column name="LASTLOGIN" type="TIMESTAMP"/>
-            <column name="NAME" type="VARCHAR(255)">
+            <column name="lastlogin" type="TIMESTAMP(6) WITHOUT TIME ZONE"/>
+            <column name="name" type="VARCHAR(255)">
                 <constraints nullable="false"/>
             </column>
-            <column name="PASSWORD" type="VARCHAR(255)">
+            <column name="password" type="VARCHAR(255)">
                 <constraints nullable="false"/>
             </column>
-            <column name="PHONE" type="VARCHAR(255)"/>
-            <column name="USERNAME" type="VARCHAR(255)">
+            <column name="phone" type="VARCHAR(255)"/>
+            <column name="username" type="VARCHAR(255)">
                 <constraints nullable="false"/>
             </column>
-            <column name="COMPANY_ID" type="BIGINT(19)"/>
-            <column name="FACULTY_ID" type="BIGINT(19)"/>
+            <column name="company_id" type="BIGINT"/>
+            <column name="faculty_id" type="BIGINT"/>
         </createTable>
     </changeSet>
-    <changeSet author="sbunciak (generated)" id="1485077755684-10" objectQuotingStrategy="QUOTE_ALL_OBJECTS">
-        <createTable catalogName="STUDENT-HUB" schemaName="PUBLIC" tableName="USER_ROLES">
-            <column name="USER_ID" type="BIGINT(19)">
-                <constraints nullable="false"/>
-            </column>
-            <column name="ROLES" type="VARCHAR(255)"/>
-        </createTable>
+    <changeSet author="phala (generated)" id="1490799716747-18" objectQuotingStrategy="QUOTE_ALL_OBJECTS">
+        <addPrimaryKey catalogName="studenthub" columnNames="topic_id, academicsupervisors_id" constraintName="topics_users_pkey" schemaName="public" tableName="topics_users"/>
     </changeSet>
-    <changeSet author="sbunciak (generated)" id="1485077755684-11" objectQuotingStrategy="QUOTE_ALL_OBJECTS">
-        <createTable catalogName="STUDENT-HUB" schemaName="PUBLIC" tableName="USER_TAGS">
-            <column name="USER_ID" type="BIGINT(19)">
-                <constraints nullable="false"/>
-            </column>
-            <column name="TAGS" type="VARCHAR(255)"/>
-        </createTable>
+    <changeSet author="phala (generated)" id="1490799716747-19" objectQuotingStrategy="QUOTE_ALL_OBJECTS">
+        <addUniqueConstraint catalogName="studenthub" columnNames="username" constraintName="uk_23y4gd49ajvbqgl3psjsvhff6" schemaName="public" tableName="users"/>
     </changeSet>
-    <changeSet author="sbunciak (generated)" id="1485077755684-12" objectQuotingStrategy="QUOTE_ALL_OBJECTS">
-        <addPrimaryKey catalogName="STUDENT-HUB" columnNames="TOPIC_ID, ACADEMICSUPERVISORS_ID" constraintName="CONSTRAINT_1" schemaName="PUBLIC" tableName="TOPICS_USERS"/>
+    <changeSet author="phala (generated)" id="1490799716747-20" objectQuotingStrategy="QUOTE_ALL_OBJECTS">
+        <addUniqueConstraint catalogName="studenthub" columnNames="email" constraintName="uk_ncoa9bfasrql0x4nhmh1plxxy" schemaName="public" tableName="users"/>
     </changeSet>
-    <changeSet author="sbunciak (generated)" id="1485077755684-13" objectQuotingStrategy="QUOTE_ALL_OBJECTS">
-        <addUniqueConstraint catalogName="STUDENT-HUB" columnNames="USERNAME" constraintName="UK_23Y4GD49AJVBQGL3PSJSVHFF6" schemaName="PUBLIC" tableName="USERS"/>
+    <changeSet author="phala (generated)" id="1490799716747-21" objectQuotingStrategy="QUOTE_ALL_OBJECTS">
+        <addForeignKeyConstraint baseColumnNames="faculty_id" baseTableCatalogName="studenthub" baseTableName="users" baseTableSchemaName="public" constraintName="fk5aolvsnrulsfimxs1y9pqkehf" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableCatalogName="studenthub" referencedTableName="faculties" referencedTableSchemaName="public"/>
     </changeSet>
-    <changeSet author="sbunciak (generated)" id="1485077755684-14" objectQuotingStrategy="QUOTE_ALL_OBJECTS">
-        <addUniqueConstraint catalogName="STUDENT-HUB" columnNames="EMAIL" constraintName="UK_NCOA9BFASRQL0X4NHMH1PLXXY" schemaName="PUBLIC" tableName="USERS"/>
+    <changeSet author="phala (generated)" id="1490799716747-22" objectQuotingStrategy="QUOTE_ALL_OBJECTS">
+        <addForeignKeyConstraint baseColumnNames="user_id" baseTableCatalogName="studenthub" baseTableName="user_roles" baseTableSchemaName="public" constraintName="fk5jomdmamtww9tntv3dgro711a" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableCatalogName="studenthub" referencedTableName="users" referencedTableSchemaName="public"/>
     </changeSet>
-    <changeSet author="sbunciak (generated)" id="1485077755684-15" objectQuotingStrategy="QUOTE_ALL_OBJECTS">
-        <createIndex catalogName="STUDENT-HUB" indexName="FK5AOLVSNRULSFIMXS1Y9PQKEHF_INDEX_4" schemaName="PUBLIC" tableName="USERS">
-            <column name="FACULTY_ID"/>
-        </createIndex>
+    <changeSet author="phala (generated)" id="1490799716747-23" objectQuotingStrategy="QUOTE_ALL_OBJECTS">
+        <addForeignKeyConstraint baseColumnNames="creator_id" baseTableCatalogName="studenthub" baseTableName="topics" baseTableSchemaName="public" constraintName="fk6xems514wsewyugbc19l840sk" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableCatalogName="studenthub" referencedTableName="users" referencedTableSchemaName="public"/>
     </changeSet>
-    <changeSet author="sbunciak (generated)" id="1485077755684-16" objectQuotingStrategy="QUOTE_ALL_OBJECTS">
-        <createIndex catalogName="STUDENT-HUB" indexName="FK5JOMDMAMTWW9TNTV3DGRO711A_INDEX_C" schemaName="PUBLIC" tableName="USER_ROLES">
-            <column name="USER_ID"/>
-        </createIndex>
+    <changeSet author="phala (generated)" id="1490799716747-24" objectQuotingStrategy="QUOTE_ALL_OBJECTS">
+        <addForeignKeyConstraint baseColumnNames="topic_id" baseTableCatalogName="studenthub" baseTableName="topics_users" baseTableSchemaName="public" constraintName="fk8tl27xuij7jgbcupvichjjx1p" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableCatalogName="studenthub" referencedTableName="topics" referencedTableSchemaName="public"/>
     </changeSet>
-    <changeSet author="sbunciak (generated)" id="1485077755684-17" objectQuotingStrategy="QUOTE_ALL_OBJECTS">
-        <createIndex catalogName="STUDENT-HUB" indexName="FK91J0Q1L9VRV33ABQQTIDVL9QR_INDEX_9" schemaName="PUBLIC" tableName="TOPICS">
-            <column name="CREATOR_ID"/>
-        </createIndex>
+    <changeSet author="phala (generated)" id="1490799716747-25" objectQuotingStrategy="QUOTE_ALL_OBJECTS">
+        <addForeignKeyConstraint baseColumnNames="academicsupervisors_id" baseTableCatalogName="studenthub" baseTableName="topics_users" baseTableSchemaName="public" constraintName="fkayrerqlgcob2ivtlyc38fsitc" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableCatalogName="studenthub" referencedTableName="users" referencedTableSchemaName="public"/>
     </changeSet>
-    <changeSet author="sbunciak (generated)" id="1485077755684-18" objectQuotingStrategy="QUOTE_ALL_OBJECTS">
-        <createIndex catalogName="STUDENT-HUB" indexName="FKAYRERQLGCOB2IVTLYC38FSITC_INDEX_1" schemaName="PUBLIC" tableName="TOPICS_USERS">
-            <column name="ACADEMICSUPERVISORS_ID"/>
-        </createIndex>
+    <changeSet author="phala (generated)" id="1490799716747-26" objectQuotingStrategy="QUOTE_ALL_OBJECTS">
+        <addForeignKeyConstraint baseColumnNames="academicsupervisor_id" baseTableCatalogName="studenthub" baseTableName="topicapplications" baseTableSchemaName="public" constraintName="fkbm2weoaaacr3xur7n9wdw4ijy" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableCatalogName="studenthub" referencedTableName="users" referencedTableSchemaName="public"/>
     </changeSet>
-    <changeSet author="sbunciak (generated)" id="1485077755684-19" objectQuotingStrategy="QUOTE_ALL_OBJECTS">
-        <createIndex catalogName="STUDENT-HUB" indexName="FKBM2WEOAAACR3XUR7N9WDW4IJY_INDEX_B" schemaName="PUBLIC" tableName="TOPICAPPLICATIONS">
-            <column name="ACADEMICSUPERVISOR_ID"/>
-        </createIndex>
+    <changeSet author="phala (generated)" id="1490799716747-27" objectQuotingStrategy="QUOTE_ALL_OBJECTS">
+        <addForeignKeyConstraint baseColumnNames="faculty_id" baseTableCatalogName="studenthub" baseTableName="topicapplications" baseTableSchemaName="public" constraintName="fkbrl003w841tv48et4vrdrwrqg" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableCatalogName="studenthub" referencedTableName="faculties" referencedTableSchemaName="public"/>
     </changeSet>
-    <changeSet author="sbunciak (generated)" id="1485077755684-20" objectQuotingStrategy="QUOTE_ALL_OBJECTS">
-        <createIndex catalogName="STUDENT-HUB" indexName="FKBRL003W841TV48ET4VRDRWRQG_INDEX_B" schemaName="PUBLIC" tableName="TOPICAPPLICATIONS">
-            <column name="FACULTY_ID"/>
-        </createIndex>
+    <changeSet author="phala (generated)" id="1490799716747-28" objectQuotingStrategy="QUOTE_ALL_OBJECTS">
+        <addForeignKeyConstraint baseColumnNames="user_id" baseTableCatalogName="studenthub" baseTableName="user_tags" baseTableSchemaName="public" constraintName="fki4g14759y17yab655w1bgp4rm" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableCatalogName="studenthub" referencedTableName="users" referencedTableSchemaName="public"/>
     </changeSet>
-    <changeSet author="sbunciak (generated)" id="1485077755684-21" objectQuotingStrategy="QUOTE_ALL_OBJECTS">
-        <createIndex catalogName="STUDENT-HUB" indexName="FKI4G14759Y17YAB655W1BGP4RM_INDEX_B" schemaName="PUBLIC" tableName="USER_TAGS">
-            <column name="USER_ID"/>
-        </createIndex>
+    <changeSet author="phala (generated)" id="1490799716747-29" objectQuotingStrategy="QUOTE_ALL_OBJECTS">
+        <addForeignKeyConstraint baseColumnNames="university_id" baseTableCatalogName="studenthub" baseTableName="faculties" baseTableSchemaName="public" constraintName="fkia0jky708onkbca0anbl10dp5" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableCatalogName="studenthub" referencedTableName="universities" referencedTableSchemaName="public"/>
     </changeSet>
-    <changeSet author="sbunciak (generated)" id="1485077755684-22" objectQuotingStrategy="QUOTE_ALL_OBJECTS">
-        <createIndex catalogName="STUDENT-HUB" indexName="FKIA0JKY708ONKBCA0ANBL10DP5_INDEX_5" schemaName="PUBLIC" tableName="FACULTIES">
-            <column name="UNIVERSITY_ID"/>
-        </createIndex>
+    <changeSet author="phala (generated)" id="1490799716747-30" objectQuotingStrategy="QUOTE_ALL_OBJECTS">
+        <addForeignKeyConstraint baseColumnNames="topic_id" baseTableCatalogName="studenthub" baseTableName="topic_degrees" baseTableSchemaName="public" constraintName="fkls1i9mdx6fgb4q291cp2sefg4" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableCatalogName="studenthub" referencedTableName="topics" referencedTableSchemaName="public"/>
     </changeSet>
-    <changeSet author="sbunciak (generated)" id="1485077755684-23" objectQuotingStrategy="QUOTE_ALL_OBJECTS">
-        <createIndex catalogName="STUDENT-HUB" indexName="FKLS1I9MDX6FGB4Q291CP2SEFG4_INDEX_B" schemaName="PUBLIC" tableName="TOPIC_DEGREES">
-            <column name="TOPIC_ID"/>
-        </createIndex>
+    <changeSet author="phala (generated)" id="1490799716747-31" objectQuotingStrategy="QUOTE_ALL_OBJECTS">
+        <addForeignKeyConstraint baseColumnNames="topic_id" baseTableCatalogName="studenthub" baseTableName="topicapplications" baseTableSchemaName="public" constraintName="fkmdsdlwba7jqa8fj5imcbcv0bi" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableCatalogName="studenthub" referencedTableName="topics" referencedTableSchemaName="public"/>
     </changeSet>
-    <changeSet author="sbunciak (generated)" id="1485077755684-24" objectQuotingStrategy="QUOTE_ALL_OBJECTS">
-        <createIndex catalogName="STUDENT-HUB" indexName="FKMDSDLWBA7JQA8FJ5IMCBCV0BI_INDEX_B" schemaName="PUBLIC" tableName="TOPICAPPLICATIONS">
-            <column name="TOPIC_ID"/>
-        </createIndex>
+    <changeSet author="phala (generated)" id="1490799716747-32" objectQuotingStrategy="QUOTE_ALL_OBJECTS">
+        <addForeignKeyConstraint baseColumnNames="topic_id" baseTableCatalogName="studenthub" baseTableName="topic_tags" baseTableSchemaName="public" constraintName="fkolrr4uficcjmp6327mw4244t6" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableCatalogName="studenthub" referencedTableName="topics" referencedTableSchemaName="public"/>
     </changeSet>
-    <changeSet author="sbunciak (generated)" id="1485077755684-25" objectQuotingStrategy="QUOTE_ALL_OBJECTS">
-        <createIndex catalogName="STUDENT-HUB" indexName="FKOLRR4UFICCJMP6327MW4244T6_INDEX_E" schemaName="PUBLIC" tableName="TOPIC_TAGS">
-            <column name="TOPIC_ID"/>
-        </createIndex>
+    <changeSet author="phala (generated)" id="1490799716747-33" objectQuotingStrategy="QUOTE_ALL_OBJECTS">
+        <addForeignKeyConstraint baseColumnNames="student_id" baseTableCatalogName="studenthub" baseTableName="topicapplications" baseTableSchemaName="public" constraintName="fkp4fj9l3renicmx26dv9ex1rv0" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableCatalogName="studenthub" referencedTableName="users" referencedTableSchemaName="public"/>
     </changeSet>
-    <changeSet author="sbunciak (generated)" id="1485077755684-26" objectQuotingStrategy="QUOTE_ALL_OBJECTS">
-        <createIndex catalogName="STUDENT-HUB" indexName="FKP4FJ9L3RENICMX26DV9EX1RV0_INDEX_B" schemaName="PUBLIC" tableName="TOPICAPPLICATIONS">
-            <column name="STUDENT_ID"/>
-        </createIndex>
+    <changeSet author="phala (generated)" id="1490799716747-34" objectQuotingStrategy="QUOTE_ALL_OBJECTS">
+        <addForeignKeyConstraint baseColumnNames="company_id" baseTableCatalogName="studenthub" baseTableName="users" baseTableSchemaName="public" constraintName="fkqfg0pbnbv8iyd5may5o9fmcs" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableCatalogName="studenthub" referencedTableName="companies" referencedTableSchemaName="public"/>
     </changeSet>
-    <changeSet author="sbunciak (generated)" id="1485077755684-27" objectQuotingStrategy="QUOTE_ALL_OBJECTS">
-        <createIndex catalogName="STUDENT-HUB" indexName="FKQFG0PBNBV8IYD5MAY5O9FMCS_INDEX_4" schemaName="PUBLIC" tableName="USERS">
-            <column name="COMPANY_ID"/>
-        </createIndex>
-    </changeSet>
-    <changeSet author="sbunciak (generated)" id="1485077755684-28" objectQuotingStrategy="QUOTE_ALL_OBJECTS">
-        <createIndex catalogName="STUDENT-HUB" indexName="FKTETXHWL3BQGLXCP0TJQI54S12_INDEX_B" schemaName="PUBLIC" tableName="TOPICAPPLICATIONS">
-            <column name="TECHLEADER_ID"/>
-        </createIndex>
-    </changeSet>
-    <changeSet author="sbunciak (generated)" id="1485077755684-29" objectQuotingStrategy="QUOTE_ALL_OBJECTS">
-        <addForeignKeyConstraint baseColumnNames="FACULTY_ID" baseTableCatalogName="STUDENT-HUB" baseTableName="USERS" baseTableSchemaName="PUBLIC" constraintName="FK5AOLVSNRULSFIMXS1Y9PQKEHF" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="ID" referencedTableCatalogName="STUDENT-HUB" referencedTableName="FACULTIES" referencedTableSchemaName="PUBLIC"/>
-    </changeSet>
-    <changeSet author="sbunciak (generated)" id="1485077755684-30" objectQuotingStrategy="QUOTE_ALL_OBJECTS">
-        <addForeignKeyConstraint baseColumnNames="USER_ID" baseTableCatalogName="STUDENT-HUB" baseTableName="USER_ROLES" baseTableSchemaName="PUBLIC" constraintName="FK5JOMDMAMTWW9TNTV3DGRO711A" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="ID" referencedTableCatalogName="STUDENT-HUB" referencedTableName="USERS" referencedTableSchemaName="PUBLIC"/>
-    </changeSet>
-    <changeSet author="sbunciak (generated)" id="1485077755684-31" objectQuotingStrategy="QUOTE_ALL_OBJECTS">
-        <addForeignKeyConstraint baseColumnNames="TOPIC_ID" baseTableCatalogName="STUDENT-HUB" baseTableName="TOPICS_USERS" baseTableSchemaName="PUBLIC" constraintName="FK8TL27XUIJ7JGBCUPVICHJJX1P" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="ID" referencedTableCatalogName="STUDENT-HUB" referencedTableName="TOPICS" referencedTableSchemaName="PUBLIC"/>
-    </changeSet>
-    <changeSet author="sbunciak (generated)" id="1485077755684-32" objectQuotingStrategy="QUOTE_ALL_OBJECTS">
-        <addForeignKeyConstraint baseColumnNames="CREATOR_ID" baseTableCatalogName="STUDENT-HUB" baseTableName="TOPICS" baseTableSchemaName="PUBLIC" constraintName="FK91J0Q1L9VRV33ABQQTIDVL9QR" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="ID" referencedTableCatalogName="STUDENT-HUB" referencedTableName="USERS" referencedTableSchemaName="PUBLIC"/>
-    </changeSet>
-    <changeSet author="sbunciak (generated)" id="1485077755684-33" objectQuotingStrategy="QUOTE_ALL_OBJECTS">
-        <addForeignKeyConstraint baseColumnNames="ACADEMICSUPERVISORS_ID" baseTableCatalogName="STUDENT-HUB" baseTableName="TOPICS_USERS" baseTableSchemaName="PUBLIC" constraintName="FKAYRERQLGCOB2IVTLYC38FSITC" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="ID" referencedTableCatalogName="STUDENT-HUB" referencedTableName="USERS" referencedTableSchemaName="PUBLIC"/>
-    </changeSet>
-    <changeSet author="sbunciak (generated)" id="1485077755684-34" objectQuotingStrategy="QUOTE_ALL_OBJECTS">
-        <addForeignKeyConstraint baseColumnNames="ACADEMICSUPERVISOR_ID" baseTableCatalogName="STUDENT-HUB" baseTableName="TOPICAPPLICATIONS" baseTableSchemaName="PUBLIC" constraintName="FKBM2WEOAAACR3XUR7N9WDW4IJY" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="ID" referencedTableCatalogName="STUDENT-HUB" referencedTableName="USERS" referencedTableSchemaName="PUBLIC"/>
-    </changeSet>
-    <changeSet author="sbunciak (generated)" id="1485077755684-35" objectQuotingStrategy="QUOTE_ALL_OBJECTS">
-        <addForeignKeyConstraint baseColumnNames="FACULTY_ID" baseTableCatalogName="STUDENT-HUB" baseTableName="TOPICAPPLICATIONS" baseTableSchemaName="PUBLIC" constraintName="FKBRL003W841TV48ET4VRDRWRQG" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="ID" referencedTableCatalogName="STUDENT-HUB" referencedTableName="FACULTIES" referencedTableSchemaName="PUBLIC"/>
-    </changeSet>
-    <changeSet author="sbunciak (generated)" id="1485077755684-36" objectQuotingStrategy="QUOTE_ALL_OBJECTS">
-        <addForeignKeyConstraint baseColumnNames="USER_ID" baseTableCatalogName="STUDENT-HUB" baseTableName="USER_TAGS" baseTableSchemaName="PUBLIC" constraintName="FKI4G14759Y17YAB655W1BGP4RM" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="ID" referencedTableCatalogName="STUDENT-HUB" referencedTableName="USERS" referencedTableSchemaName="PUBLIC"/>
-    </changeSet>
-    <changeSet author="sbunciak (generated)" id="1485077755684-37" objectQuotingStrategy="QUOTE_ALL_OBJECTS">
-        <addForeignKeyConstraint baseColumnNames="UNIVERSITY_ID" baseTableCatalogName="STUDENT-HUB" baseTableName="FACULTIES" baseTableSchemaName="PUBLIC" constraintName="FKIA0JKY708ONKBCA0ANBL10DP5" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="ID" referencedTableCatalogName="STUDENT-HUB" referencedTableName="UNIVERSITIES" referencedTableSchemaName="PUBLIC"/>
-    </changeSet>
-    <changeSet author="sbunciak (generated)" id="1485077755684-38" objectQuotingStrategy="QUOTE_ALL_OBJECTS">
-        <addForeignKeyConstraint baseColumnNames="TOPIC_ID" baseTableCatalogName="STUDENT-HUB" baseTableName="TOPIC_DEGREES" baseTableSchemaName="PUBLIC" constraintName="FKLS1I9MDX6FGB4Q291CP2SEFG4" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="ID" referencedTableCatalogName="STUDENT-HUB" referencedTableName="TOPICS" referencedTableSchemaName="PUBLIC"/>
-    </changeSet>
-    <changeSet author="sbunciak (generated)" id="1485077755684-39" objectQuotingStrategy="QUOTE_ALL_OBJECTS">
-        <addForeignKeyConstraint baseColumnNames="TOPIC_ID" baseTableCatalogName="STUDENT-HUB" baseTableName="TOPICAPPLICATIONS" baseTableSchemaName="PUBLIC" constraintName="FKMDSDLWBA7JQA8FJ5IMCBCV0BI" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="ID" referencedTableCatalogName="STUDENT-HUB" referencedTableName="TOPICS" referencedTableSchemaName="PUBLIC"/>
-    </changeSet>
-    <changeSet author="sbunciak (generated)" id="1485077755684-40" objectQuotingStrategy="QUOTE_ALL_OBJECTS">
-        <addForeignKeyConstraint baseColumnNames="TOPIC_ID" baseTableCatalogName="STUDENT-HUB" baseTableName="TOPIC_TAGS" baseTableSchemaName="PUBLIC" constraintName="FKOLRR4UFICCJMP6327MW4244T6" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="ID" referencedTableCatalogName="STUDENT-HUB" referencedTableName="TOPICS" referencedTableSchemaName="PUBLIC"/>
-    </changeSet>
-    <changeSet author="sbunciak (generated)" id="1485077755684-41" objectQuotingStrategy="QUOTE_ALL_OBJECTS">
-        <addForeignKeyConstraint baseColumnNames="STUDENT_ID" baseTableCatalogName="STUDENT-HUB" baseTableName="TOPICAPPLICATIONS" baseTableSchemaName="PUBLIC" constraintName="FKP4FJ9L3RENICMX26DV9EX1RV0" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="ID" referencedTableCatalogName="STUDENT-HUB" referencedTableName="USERS" referencedTableSchemaName="PUBLIC"/>
-    </changeSet>
-    <changeSet author="sbunciak (generated)" id="1485077755684-42" objectQuotingStrategy="QUOTE_ALL_OBJECTS">
-        <addForeignKeyConstraint baseColumnNames="COMPANY_ID" baseTableCatalogName="STUDENT-HUB" baseTableName="USERS" baseTableSchemaName="PUBLIC" constraintName="FKQFG0PBNBV8IYD5MAY5O9FMCS" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="ID" referencedTableCatalogName="STUDENT-HUB" referencedTableName="COMPANIES" referencedTableSchemaName="PUBLIC"/>
-    </changeSet>
-    <changeSet author="sbunciak (generated)" id="1485077755684-43" objectQuotingStrategy="QUOTE_ALL_OBJECTS">
-        <addForeignKeyConstraint baseColumnNames="TECHLEADER_ID" baseTableCatalogName="STUDENT-HUB" baseTableName="TOPICAPPLICATIONS" baseTableSchemaName="PUBLIC" constraintName="FKTETXHWL3BQGLXCP0TJQI54S12" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="ID" referencedTableCatalogName="STUDENT-HUB" referencedTableName="USERS" referencedTableSchemaName="PUBLIC"/>
+    <changeSet author="phala (generated)" id="1490799716747-35" objectQuotingStrategy="QUOTE_ALL_OBJECTS">
+        <addForeignKeyConstraint baseColumnNames="techleader_id" baseTableCatalogName="studenthub" baseTableName="topicapplications" baseTableSchemaName="public" constraintName="fktetxhwl3bqglxcp0tjqi54s12" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableCatalogName="studenthub" referencedTableName="users" referencedTableSchemaName="public"/>
     </changeSet>
 </databaseChangeLog>
