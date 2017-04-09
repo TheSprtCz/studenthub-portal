@@ -896,4 +896,48 @@
             <column name="THESISSTART" valueDate="2017-04-10 02:00:00.0"/>
         </insert>
     </changeSet>
+    <changeSet author="phala (generated)" id="1492005380103-22" objectQuotingStrategy="QUOTE_ALL_OBJECTS">
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="TASKS">
+            <column name="ID" valueNumeric="1"/>
+            <column name="COMPLETED" valueBoolean="true"/>
+            <column name="DEADLINE" valueDate="2016-11-25 01:00:00.0"/>
+            <column name="TITLE" value="Reduce size"/>
+            <column name="APPLICATION_ID" valueNumeric="1"/>
+        </insert>
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="TASKS">
+            <column name="ID" valueNumeric="2"/>
+            <column name="COMPLETED" valueBoolean="false"/>
+            <column name="DEADLINE" valueDate="2017-02-07 01:00:00.0"/>
+            <column name="TITLE" value="Update software"/>
+            <column name="APPLICATION_ID" valueNumeric="1"/>
+        </insert>
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="TASKS">
+            <column name="ID" valueNumeric="3"/>
+            <column name="COMPLETED" valueBoolean="true"/>
+            <column name="DEADLINE" valueDate="2017-01-30 01:00:00.0"/>
+            <column name="TITLE" value="Test yellow melons"/>
+            <column name="APPLICATION_ID" valueNumeric="1"/>
+        </insert>
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="TASKS">
+            <column name="ID" valueNumeric="4"/>
+            <column name="COMPLETED" valueBoolean="true"/>
+            <column name="DEADLINE" valueDate="2016-12-31 01:00:00.0"/>
+            <column name="TITLE" value="Upgrade to better laser"/>
+            <column name="APPLICATION_ID" valueNumeric="3"/>
+        </insert>
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="TASKS">
+            <column name="ID" valueNumeric="5"/>
+            <column name="COMPLETED" valueBoolean="false"/>
+            <column name="DEADLINE" valueDate="2016-11-12 01:00:00.0"/>
+            <column name="TITLE" value="Add support for GFM"/>
+            <column name="APPLICATION_ID" valueNumeric="4"/>
+        </insert>
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="TASKS">
+            <column name="ID" valueNumeric="6"/>
+            <column name="COMPLETED" valueBoolean="false"/>
+            <column name="DEADLINE" valueDate="2017-05-18 02:00:00.0"/>
+            <column name="TITLE" value="Create prototype"/>
+            <column name="APPLICATION_ID" valueNumeric="6"/>
+        </insert>
+    </changeSet>
 </databaseChangeLog>

@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 
 import cz.studenthub.core.Company;
 import cz.studenthub.core.Faculty;
+import cz.studenthub.core.Task;
 import cz.studenthub.core.Topic;
 import cz.studenthub.core.TopicApplication;
 import cz.studenthub.core.University;
@@ -34,7 +35,8 @@ public abstract class AbstractDAOTest {
                                                               .addEntityClass(Company.class)
                                                               .addEntityClass(Faculty.class)
                                                               .addEntityClass(University.class)
-                                                              .addEntityClass(TopicApplication.class).build();
+                                                              .addEntityClass(TopicApplication.class)
+                                                              .addEntityClass(Task.class).build();
 
   protected Logger LOG = LoggerFactory.getLogger(AbstractDAOTest.class);
   @Before

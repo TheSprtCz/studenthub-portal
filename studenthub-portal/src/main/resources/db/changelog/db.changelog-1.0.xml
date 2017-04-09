@@ -156,6 +156,21 @@
             <column name="faculty_id" type="BIGINT"/>
         </createTable>
     </changeSet>
+    <changeSet author="phala (generated)" id="1492066089219-3">
+        <createTable catalogName="studenthub" schemaName="public" tableName="tasks">
+            <column autoIncrement="true" name="id" type="BIGSERIAL">
+                <constraints primaryKey="true" primaryKeyName="tasks_pkey"/>
+            </column>
+            <column name="completed" type="BOOLEAN">
+                <constraints nullable="false"/>
+            </column>
+            <column name="deadline" type="TIMESTAMP(6) WITHOUT TIME ZONE"/>
+            <column name="title" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="application_id" type="BIGINT"/>
+        </createTable>
+    </changeSet>
     <changeSet author="phala (generated)" id="1490799716747-18" objectQuotingStrategy="QUOTE_ALL_OBJECTS">
         <addPrimaryKey catalogName="studenthub" columnNames="topic_id, academicsupervisors_id" constraintName="topics_users_pkey" schemaName="public" tableName="topics_users"/>
     </changeSet>
@@ -203,6 +218,9 @@
     </changeSet>
     <changeSet author="phala (generated)" id="1490799716747-33" objectQuotingStrategy="QUOTE_ALL_OBJECTS">
         <addForeignKeyConstraint baseColumnNames="student_id" baseTableCatalogName="studenthub" baseTableName="topicapplications" baseTableSchemaName="public" constraintName="fkp4fj9l3renicmx26dv9ex1rv0" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableCatalogName="studenthub" referencedTableName="users" referencedTableSchemaName="public"/>
+    </changeSet>
+    <changeSet author="phala (generated)" id="1492066089219-30">
+        <addForeignKeyConstraint baseColumnNames="application_id" baseTableCatalogName="studenthub" baseTableName="tasks" baseTableSchemaName="public" constraintName="fkpftkfrxc9ovrpjj2o05p3a6jk" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableCatalogName="studenthub" referencedTableName="topicapplications" referencedTableSchemaName="public"/>
     </changeSet>
     <changeSet author="phala (generated)" id="1490799716747-34" objectQuotingStrategy="QUOTE_ALL_OBJECTS">
         <addForeignKeyConstraint baseColumnNames="company_id" baseTableCatalogName="studenthub" baseTableName="users" baseTableSchemaName="public" constraintName="fkqfg0pbnbv8iyd5may5o9fmcs" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableCatalogName="studenthub" referencedTableName="companies" referencedTableSchemaName="public"/>
