@@ -79,16 +79,25 @@ public class UniversityResource {
   @DELETE
   @Path("/{id}")
   @UnitOfWork
-  public Response delete(@PathParam("id") LongParam id) {
-    uniDao.delete(uniDao.findById(id.get()));
+  public Response delete(@PathParam("id") LongParam idParam) {
+    Long id = idParam.get();
+    University university = uniDao.findById(id);
+    if (university == null)
+      throw new WebApplicationException(Status.NOT_FOUND);
+
+    uniDao.delete(university);
     return Response.noContent().build();
   }
 
   @PUT
   @Path("/{id}")
   @UnitOfWork
-  public Response update(@PathParam("id") LongParam id, @NotNull @Valid University university) {
-    university.setId(id.get());
+  public Response update(@PathParam("id") LongParam idParam, @NotNull @Valid University university) {
+    Long id = idParam.get();
+    if (uniDao.findById(id) == null)
+      throw new WebApplicationException(Status.NOT_FOUND);
+
+    university.setId(id);
     uniDao.createOrUpdate(university);
     return Response.ok(university).build();
   }

@@ -96,8 +96,12 @@ public class CompanyResource {
   @PUT
   @Path("/{id}")
   @UnitOfWork
-  public Response update(@PathParam("id") LongParam id, @NotNull @Valid Company company) {
-    company.setId(id.get());
+  public Response update(@PathParam("id") LongParam idParam, @NotNull @Valid Company company) {
+    Long id = idParam.get();
+    if (companyDao.findById(id) == null) 
+      throw new WebApplicationException(Status.NOT_FOUND);
+
+    company.setId(id);
     companyDao.createOrUpdate(company);
     return Response.ok(company).build();
   }
@@ -105,8 +109,13 @@ public class CompanyResource {
   @DELETE
   @Path("/{id}")
   @UnitOfWork
-  public Response delete(@PathParam("id") LongParam id) {
-    companyDao.delete(companyDao.findById(id.get()));
+  public Response delete(@PathParam("id") LongParam idParam) {
+    Long id = idParam.get();
+    Company company = companyDao.findById(id);
+    if (company == null) 
+      throw new WebApplicationException(Status.NOT_FOUND);
+
+    companyDao.delete(company);
     return Response.noContent().build();
   }
 

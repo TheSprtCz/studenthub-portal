@@ -84,21 +84,31 @@ public class TopicApplicationResource {
   @Path("/{id}")
   @UnitOfWork
   @Pac4JSecurity(authorizers = ADMIN, clients = { BASIC_AUTH, JWT_AUTH })
-  public Response delete(@PathParam("id") LongParam id) {
-    appDao.delete(appDao.findById(id.get()));
+  public Response delete(@PathParam("id") LongParam idParam) {
+    Long id = idParam.get();
+    TopicApplication app = appDao.findById(id);
+    if (app == null)
+      throw new WebApplicationException(Status.NOT_FOUND);
+
+    appDao.delete(app);
     return Response.noContent().build();
   }
 
   @PUT
   @Path("/{id}")
   @UnitOfWork
-  public Response update(@Pac4JProfile StudentHubProfile profile, @PathParam("id") LongParam id,
+  public Response update(@Pac4JProfile StudentHubProfile profile, @PathParam("id") LongParam idParam,
       @NotNull @Valid TopicApplication app) {
+    
+    long id = idParam.get();
+    if (appDao.findById(id) == null)
+      throw new WebApplicationException(Status.NOT_FOUND);
+
     // allow topic creator/leader, assigned student, topic supervisor, admin
     Long userId = Long.valueOf(profile.getId());
     if (app.getTechLeader().getId().equals(userId) || app.getStudent().getId().equals(userId)
         || app.getAcademicSupervisor().getId().equals(userId) || profile.getRoles().contains(UserRole.ADMIN.name())) {
-      app.setId(id.get());
+      app.setId(id);
       appDao.createOrUpdate(app);
       return Response.ok(app).build();
     } else {

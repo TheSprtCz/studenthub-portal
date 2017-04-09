@@ -96,8 +96,13 @@ public class TopicResource {
   @DELETE
   @Path("/{id}")
   @UnitOfWork
-  public Response delete(@PathParam("id") LongParam id) {
-    topicDao.delete(topicDao.findById(id.get()));
+  public Response delete(@PathParam("id") LongParam idParam) {
+    Long id = idParam.get();
+    Topic topic = topicDao.findById(id);
+    if (topic == null)
+      throw new WebApplicationException(Status.NOT_FOUND);
+
+    topicDao.delete(topic);
     return Response.noContent().build();
   }
 
@@ -105,14 +110,18 @@ public class TopicResource {
   @Path("/{id}")
   @UnitOfWork
   @Pac4JSecurity(authorizers = TECH_LEADER, clients = { BASIC_AUTH, JWT_AUTH })
-  public Response update(@Pac4JProfile StudentHubProfile profile, @PathParam("id") LongParam id,
+  public Response update(@Pac4JProfile StudentHubProfile profile, @PathParam("id") LongParam idParam,
       @NotNull @Valid Topic topic) {
+
+    Long id = idParam.get();
+    if (topicDao.findById(id) == null)
+      throw new WebApplicationException(Status.NOT_FOUND);
 
     // if user is topic creator or is an admin
     if (topic.getCreator().getId().equals(Long.valueOf(profile.getId()))
         || profile.getRoles().contains(UserRole.ADMIN.name())) {
 
-      topic.setId(id.get());
+      topic.setId(id);
       topicDao.createOrUpdate(topic);
       return Response.ok(topic).build();
     } else {
