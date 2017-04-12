@@ -28,7 +28,7 @@ import liquibase.resource.ClassLoaderResourceAccessor;
 
 public abstract class AbstractDAOTest {
   @ClassRule
-  public static DAOTestRule database = DAOTestRule.newBuilder().setHbm2DdlAuto("")
+  public static DAOTestRule database = DAOTestRule.newBuilder().setHbm2DdlAuto("update")
                                                               .addEntityClass(Topic.class)
                                                               .addEntityClass(User.class)
                                                               .addEntityClass(Company.class)
