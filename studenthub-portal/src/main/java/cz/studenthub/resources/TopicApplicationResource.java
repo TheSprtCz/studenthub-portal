@@ -105,13 +105,14 @@ public class TopicApplicationResource {
       @NotNull @Valid TopicApplication app) {
     
     long id = idParam.get();
-    if (appDao.findById(id) == null)
+    TopicApplication oldApp = appDao.findById(id);
+    if (oldApp == null)
       throw new WebApplicationException(Status.NOT_FOUND);
 
     // allow topic creator/leader, assigned student, topic supervisor, admin
     Long userId = Long.valueOf(profile.getId());
-    if (app.getTechLeader().getId().equals(userId) || app.getStudent().getId().equals(userId)
-        || app.getAcademicSupervisor().getId().equals(userId) || profile.getRoles().contains(UserRole.ADMIN.name())) {
+    if (oldApp.getTechLeader().getId().equals(userId) || oldApp.getStudent().getId().equals(userId)
+        || oldApp.getAcademicSupervisor().getId().equals(userId) || profile.getRoles().contains(UserRole.ADMIN.name())) {
       app.setId(id);
       appDao.createOrUpdate(app);
       return Response.ok(app).build();
