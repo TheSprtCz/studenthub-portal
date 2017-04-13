@@ -44,9 +44,11 @@ import org.pac4j.jax.rs.annotations.Pac4JProfile;
 import org.pac4j.jax.rs.annotations.Pac4JSecurity;
 
 import cz.studenthub.auth.StudentHubProfile;
+import cz.studenthub.core.Task;
 import cz.studenthub.core.TopicApplication;
 import cz.studenthub.core.User;
 import cz.studenthub.core.UserRole;
+import cz.studenthub.db.TaskDAO;
 import cz.studenthub.db.TopicApplicationDAO;
 import cz.studenthub.db.UserDAO;
 import io.dropwizard.hibernate.UnitOfWork;
@@ -60,10 +62,12 @@ public class TopicApplicationResource {
 
   private final TopicApplicationDAO appDao;
   private final UserDAO userDao;
+  private final TaskDAO taskDao;
 
-  public TopicApplicationResource(TopicApplicationDAO appDao, UserDAO userDao) {
+  public TopicApplicationResource(TopicApplicationDAO appDao, UserDAO userDao, TaskDAO taskDao) {
     this.appDao = appDao;
     this.userDao = userDao;
+    this.taskDao = taskDao;
   }
 
   @GET
@@ -131,4 +135,90 @@ public class TopicApplicationResource {
     return Response.created(UriBuilder.fromResource(TopicApplicationResource.class).path("/{id}").build(app.getId()))
         .entity(app).build();
   }
+
+  /*
+   * Task endpoints
+   */
+
+  @GET
+  @Path("/{id}/tasks")
+  @UnitOfWork
+  public List<Task> getTasksByApplication(@PathParam("id") LongParam id, @Pac4JProfile StudentHubProfile profile) {
+    TopicApplication app = appDao.findById(id.get());
+    // allow only app student, leader and/or supervisor
+    if (isAllowedToAccessTask(app, profile)) {
+      return taskDao.findByTopicApplication(app);
+    } else {
+      throw new WebApplicationException(Status.FORBIDDEN);
+    }
+  }
+
+  @GET
+  @Path("/{id}/tasks/{tid}")
+  @UnitOfWork
+  public Task getTaskById(@PathParam("tid") LongParam id) {
+    return taskDao.findById(id.get());
+  }
+
+  @POST
+  @Path("/{id}/tasks")
+  @UnitOfWork
+  public Response createTask(@PathParam("id") LongParam id, @NotNull @Valid Task task,
+      @Pac4JProfile StudentHubProfile profile) {
+
+    TopicApplication app = appDao.findById(id.get());
+    // allow only app student, leader and/or supervisor
+    if (!isAllowedToAccessTask(app, profile))
+      throw new WebApplicationException(Status.FORBIDDEN);
+
+    task.setApplication(app);
+    taskDao.createOrUpdate(task);
+
+    if (task.getId() == null)
+      throw new WebApplicationException(Status.INTERNAL_SERVER_ERROR);
+
+    return Response.created(
+        UriBuilder.fromResource(TopicApplicationResource.class).path("/{id}/tasks/{tid}").build(id.get(), task.getId()))
+        .entity(task).build();
+  }
+
+  @PUT
+  @Path("/{id}/tasks/{tid}")
+  @UnitOfWork
+  public Response updateTask(@PathParam("id") LongParam id, @PathParam("tid") LongParam taskId,
+      @NotNull @Valid Task task, @Pac4JProfile StudentHubProfile profile) {
+
+    TopicApplication app = appDao.findById(id.get());
+
+    // allow only app student, leader and/or supervisor
+    if (!isAllowedToAccessTask(app, profile))
+      throw new WebApplicationException(Status.FORBIDDEN);
+
+    task.setId(taskId.get());
+    taskDao.createOrUpdate(task);
+    return Response.ok(task).build();
+  }
+
+  @DELETE
+  @Path("/{id}/tasks/{tid}")
+  @UnitOfWork
+  public Response deleteTask(@PathParam("id") LongParam id, @PathParam("tid") LongParam taskId,
+      @Pac4JProfile StudentHubProfile profile) {
+    
+    TopicApplication app = appDao.findById(id.get());
+
+    // allow only app student, leader and/or supervisor
+    if (!isAllowedToAccessTask(app, profile))
+      throw new WebApplicationException(Status.FORBIDDEN);
+
+    taskDao.delete(taskDao.findById(id.get()));
+    return Response.noContent().build();
+  }
+
+  private boolean isAllowedToAccessTask(TopicApplication app, StudentHubProfile profile) {
+    Long profileId = Long.valueOf(profile.getId());
+    return app.getAcademicSupervisor().getId().equals(profileId) || app.getStudent().getId().equals(profileId)
+        || app.getTechLeader().getId().equals(profileId) || profile.getRoles().contains(UserRole.ADMIN.name());
+  }
+
 }

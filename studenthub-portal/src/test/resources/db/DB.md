@@ -107,3 +107,13 @@ Test Database contains these entries:
 | 6   | 3     | .JSX editor plugin                                  | ----- | MASTER     | IN_PROGRESS | ------------ | 5.3.2017      | 2       | 10         | 14      | 5          |
 | 7   | 4     | UI for thesis management system                     | B     | HIGH_SCHOOL| FINISHED    | 10.4.2017    | 18.12.2016    | 1       | 9          | 13      | 2          |
 
+## Tasks
+
+| id  | application | title                              | deadline   | completed |
+| --- | ----------- | ---------------------------------- | ---------- | --------- |
+| 1   | 1           | Reduce size                        | 25.11.2016 | true      |
+| 2   | 1           | Update software                    | 7.2.2017   | false     |
+| 3   | 1           | Test yellow melons                 | 30.1.2017  | true      |
+| 4   | 3           | Upgrade to better laser            | 31.12.2016 | true      |
+| 5   | 4           | Add support for GFM                | 12.11.2016 | false     |
+| 6   | 6           | Create prototype                   | 18.5.2017  | false     |
