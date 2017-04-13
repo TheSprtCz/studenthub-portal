@@ -114,11 +114,12 @@ public class TopicResource {
       @NotNull @Valid Topic topic) {
 
     Long id = idParam.get();
-    if (topicDao.findById(id) == null)
+    Topic oldTopic = topicDao.findById(id);
+    if (oldTopic == null)
       throw new WebApplicationException(Status.NOT_FOUND);
 
     // if user is topic creator or is an admin
-    if (topic.getCreator().getId().equals(Long.valueOf(profile.getId()))
+    if (oldTopic.getCreator().getId().equals(Long.valueOf(profile.getId()))
         || profile.getRoles().contains(UserRole.ADMIN.name())) {
 
       topic.setId(id);
