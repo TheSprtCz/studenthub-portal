@@ -1,9 +1,24 @@
 # logging
 logging:
+
+  # Permit DEBUG, INFO, WARN and ERROR messages to be logged by appenders.
   level: INFO
+
+  # Override hibernate logs treshold
   loggers:
-    cz.studenthub: DEBUG
-    org.pac4j: DEBUG
+    org.hibernate:
+      level: WARN
+
+  appenders:
+    - type: console
+    - type: file
+      threshold: INFO
+      logFormat: "%-6level [%d{HH:mm:ss.SSS}] [%t] %logger{5} - %X{code} %msg %n"
+      currentLogFilename: /tmp/studenthub.log
+      archivedLogFilenamePattern: /tmp/studenthub-%d{yyyy-MM-dd}-%i.log.gz
+      archivedFileCount: 5
+      timeZone: UTC
+      maxFileSize: 10MB
 
 # server
 server:
