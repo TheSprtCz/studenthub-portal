@@ -98,14 +98,14 @@ public class UniversityResource {
       throw new WebApplicationException(Status.NOT_FOUND);
 
     university.setId(id);
-    uniDao.createOrUpdate(university);
+    uniDao.update(university);
     return Response.ok(university).build();
   }
 
   @POST
   @UnitOfWork
   public Response create(@NotNull @Valid University university) {
-    uniDao.createOrUpdate(university);
+    uniDao.create(university);
     if (university.getId() == null)
       throw new WebApplicationException(Status.INTERNAL_SERVER_ERROR);
 

@@ -39,7 +39,12 @@ public class TopicDAO extends AbstractDAO<Topic> {
     super(sessionFactory);
   }
 
-  public Topic createOrUpdate(Topic topic) {
+  public Topic update(Topic topic) {
+    currentSession().clear();
+    return persist(topic);
+  }
+  
+  public Topic create(Topic topic) {
     return persist(topic);
   }
 

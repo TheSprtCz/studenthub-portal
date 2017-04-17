@@ -124,7 +124,7 @@ public class UserResource {
 
     if (id.equals(Long.valueOf(profile.getId())) || profile.getRoles().contains(UserRole.ADMIN.name())) {
       user.setId(id);
-      userDao.createOrUpdate(user);
+      userDao.update(user);
       return Response.ok(user).build();
     } else {
       throw new WebApplicationException(Status.FORBIDDEN);
@@ -144,7 +144,7 @@ public class UserResource {
     user.setPassword(pwd);
 
     // TODO send conf. email
-    userDao.createOrUpdate(user);
+    userDao.create(user);
     if (user.getId() == null)
       throw new WebApplicationException(Status.INTERNAL_SERVER_ERROR);
 

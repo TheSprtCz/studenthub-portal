@@ -25,7 +25,7 @@ public class CompanyDAOTest extends AbstractDAOTest {
     Company company = new Company("New", "www.nothing.eu", "Liberec", Country.CZ, "www.nothing.eu/logo.png",
         CompanySize.SMALL, CompanyPlan.TIER_2);
     inRollbackTransaction(() -> {
-      Company created = companyDAO.createOrUpdate(company);
+      Company created = companyDAO.create(company);
       List<Company> companies = companyDAO.findAll();
       assertNotNull(created.getId());
       assertEquals(company, created);

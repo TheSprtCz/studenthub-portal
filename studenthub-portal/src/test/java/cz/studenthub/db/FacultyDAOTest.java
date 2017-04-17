@@ -26,7 +26,7 @@ public class FacultyDAOTest extends AbstractDAOTest {
       University uni = uniDAO.findById((long) 2);
       Faculty faculty = new Faculty("New", uni);
 
-      Faculty created = facDAO.createOrUpdate(faculty);
+      Faculty created = facDAO.create(faculty);
       assertNotNull(created.getId());
       assertEquals(faculty, created);
       assertEquals(14, facDAO.findAll().size());

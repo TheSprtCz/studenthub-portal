@@ -34,8 +34,13 @@ public class UniversityDAO extends AbstractDAO<University> {
   public UniversityDAO(SessionFactory sessionFactory) {
     super(sessionFactory);
   }
+  
+  public University update(University university) {
+    currentSession().clear();
+    return persist(university);
+  }
 
-  public University createOrUpdate(University university) {
+  public University create(University university) {
     return persist(university);
   }
 

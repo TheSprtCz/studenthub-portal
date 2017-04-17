@@ -36,7 +36,12 @@ public class FacultyDAO extends AbstractDAO<Faculty> {
     super(sessionFactory);
   }
 
-  public Faculty createOrUpdate(Faculty faculty) {
+  public Faculty update(Faculty faculty) {
+    currentSession().clear();
+    return persist(faculty);
+  }
+  
+  public Faculty create(Faculty faculty) {
     return persist(faculty);
   }
 

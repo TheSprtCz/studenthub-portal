@@ -37,7 +37,7 @@ public class TopicApplicationDAOTest extends AbstractDAOTest {
 
       TopicApplication app = new TopicApplication(topic, "test", TopicGrade.A, TopicDegree.HIGH_SCHOOL, new Date(),
           new Date(), faculty, user, user, user);
-      TopicApplication created = appDAO.createOrUpdate(app);
+      TopicApplication created = appDAO.create(app);
 
       assertNotNull(created.getId());
       assertEquals(app, created);

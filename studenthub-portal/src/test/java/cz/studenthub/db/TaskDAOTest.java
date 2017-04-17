@@ -29,7 +29,7 @@ public class TaskDAOTest extends AbstractDAOTest {
     inRollbackTransaction(() -> {
       TopicApplication app = appDao.findById((long) 1);
       Task task = new Task("Create Use case diagram", false, null, app);
-      Task created = taskDao.createOrUpdate(task);
+      Task created = taskDao.create(task);
       assertNotNull(task.getId());
       assertEquals(task, created);
       assertEquals(4, taskDao.findByTopicApplication(app).size());

@@ -100,14 +100,14 @@ public class FacultyResource {
       throw new WebApplicationException(Status.NOT_FOUND);
 
     faculty.setId(id);
-    facDao.createOrUpdate(faculty);
+    facDao.update(faculty);
     return Response.ok(faculty).build();
   }
 
   @POST
   @UnitOfWork
   public Response create(@NotNull @Valid Faculty faculty) {
-    facDao.createOrUpdate(faculty);
+    facDao.create(faculty);
     if (faculty.getId() == null)
       throw new WebApplicationException(Status.INTERNAL_SERVER_ERROR);
 

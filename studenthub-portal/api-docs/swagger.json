@@ -48,7 +48,7 @@
                         "in":"body",
                         "required":true,
                         "schema":{
-                            "$ref":"#/definitions/TopicApplication"
+                            "$ref":"#/definitions/StudentHubProfile"
                         }
                     }
                 ],
@@ -135,6 +135,11 @@
                         "description":"Forbidden",
                         "headers":{
                         }
+                    },
+                    "404":{
+                        "description":"Not Found",
+                        "headers":{
+                        }
                     }
                 }
             },
@@ -156,6 +161,217 @@
                 "responses":{
                     "204":{
                         "description":"No Content",
+                        "headers":{
+                        }
+                    },
+                    "404":{
+                        "description":"Not Found",
+                        "headers":{
+                        }
+                    }
+                }
+            }
+        },
+        "/applications/{id}/tasks":{
+            "get":{
+                "consumes":[
+                    "application/json"
+                ],
+                "produces":[
+                    "application/json"
+                ],
+                "parameters":[
+                    {
+                        "type":"string",
+                        "name":"id",
+                        "in":"path",
+                        "required":true
+                    },
+                    {
+                        "name":"body",
+                        "in":"body",
+                        "required":true,
+                        "schema":{
+                            "$ref":"#/definitions/StudentHubProfile"
+                        }
+                    }
+                ],
+                "responses":{
+                    "200":{
+                        "description":"OK",
+                        "headers":{
+                        },
+                        "schema":{
+                            "type":"array",
+                            "items":{
+                                "$ref":"#/definitions/Task"
+                            }
+                        }
+                    },
+                    "403":{
+                        "description":"Forbidden",
+                        "headers":{
+                        }
+                    }
+                }
+            },
+            "post":{
+                "consumes":[
+                    "application/json"
+                ],
+                "produces":[
+                    "application/json"
+                ],
+                "parameters":[
+                    {
+                        "type":"string",
+                        "name":"id",
+                        "in":"path",
+                        "required":true
+                    },
+                    {
+                        "name":"body",
+                        "in":"body",
+                        "required":true,
+                        "schema":{
+                            "$ref":"#/definitions/Task"
+                        }
+                    }
+                ],
+                "responses":{
+                    "201":{
+                        "description":"Created",
+                        "headers":{
+                            "Location":{
+                                "type":"string"
+                            }
+                        },
+                        "schema":{
+                            "$ref":"#/definitions/Task"
+                        }
+                    },
+                    "403":{
+                        "description":"Forbidden",
+                        "headers":{
+                        }
+                    },
+                    "500":{
+                        "description":"Internal Server Error",
+                        "headers":{
+                        }
+                    }
+                }
+            }
+        },
+        "/applications/{id}/tasks/{tid}":{
+            "get":{
+                "consumes":[
+                    "application/json"
+                ],
+                "produces":[
+                    "application/json"
+                ],
+                "parameters":[
+                    {
+                        "type":"string",
+                        "name":"tid",
+                        "in":"path",
+                        "required":true
+                    }
+                ],
+                "responses":{
+                    "200":{
+                        "description":"OK",
+                        "headers":{
+                        },
+                        "schema":{
+                            "$ref":"#/definitions/Task"
+                        }
+                    }
+                }
+            },
+            "put":{
+                "consumes":[
+                    "application/json"
+                ],
+                "produces":[
+                    "application/json"
+                ],
+                "parameters":[
+                    {
+                        "type":"string",
+                        "name":"id",
+                        "in":"path",
+                        "required":true
+                    },
+                    {
+                        "type":"string",
+                        "name":"tid",
+                        "in":"path",
+                        "required":true
+                    },
+                    {
+                        "name":"body",
+                        "in":"body",
+                        "required":true,
+                        "schema":{
+                            "$ref":"#/definitions/Task"
+                        }
+                    }
+                ],
+                "responses":{
+                    "200":{
+                        "description":"OK",
+                        "headers":{
+                        },
+                        "schema":{
+                            "$ref":"#/definitions/Task"
+                        }
+                    },
+                    "403":{
+                        "description":"Forbidden",
+                        "headers":{
+                        }
+                    }
+                }
+            },
+            "delete":{
+                "consumes":[
+                    "application/json"
+                ],
+                "produces":[
+                    "application/json"
+                ],
+                "parameters":[
+                    {
+                        "type":"string",
+                        "name":"id",
+                        "in":"path",
+                        "required":true
+                    },
+                    {
+                        "type":"string",
+                        "name":"tid",
+                        "in":"path",
+                        "required":true
+                    },
+                    {
+                        "name":"body",
+                        "in":"body",
+                        "required":true,
+                        "schema":{
+                            "$ref":"#/definitions/StudentHubProfile"
+                        }
+                    }
+                ],
+                "responses":{
+                    "204":{
+                        "description":"No Content",
+                        "headers":{
+                        }
+                    },
+                    "403":{
+                        "description":"Forbidden",
                         "headers":{
                         }
                     }
@@ -314,6 +530,11 @@
                         "schema":{
                             "$ref":"#/definitions/Company"
                         }
+                    },
+                    "404":{
+                        "description":"Not Found",
+                        "headers":{
+                        }
                     }
                 }
             },
@@ -335,6 +556,11 @@
                 "responses":{
                     "204":{
                         "description":"No Content",
+                        "headers":{
+                        }
+                    },
+                    "404":{
+                        "description":"Not Found",
                         "headers":{
                         }
                     }
@@ -532,6 +758,11 @@
                         "schema":{
                             "$ref":"#/definitions/Faculty"
                         }
+                    },
+                    "404":{
+                        "description":"Not Found",
+                        "headers":{
+                        }
                     }
                 }
             },
@@ -553,6 +784,11 @@
                 "responses":{
                     "204":{
                         "description":"No Content",
+                        "headers":{
+                        }
+                    },
+                    "404":{
+                        "description":"Not Found",
                         "headers":{
                         }
                     }
@@ -874,6 +1110,11 @@
                         "description":"Forbidden",
                         "headers":{
                         }
+                    },
+                    "404":{
+                        "description":"Not Found",
+                        "headers":{
+                        }
                     }
                 }
             },
@@ -895,6 +1136,11 @@
                 "responses":{
                     "204":{
                         "description":"No Content",
+                        "headers":{
+                        }
+                    },
+                    "404":{
+                        "description":"Not Found",
                         "headers":{
                         }
                     }
@@ -1151,6 +1397,11 @@
                         "schema":{
                             "$ref":"#/definitions/University"
                         }
+                    },
+                    "404":{
+                        "description":"Not Found",
+                        "headers":{
+                        }
                     }
                 }
             },
@@ -1172,6 +1423,11 @@
                 "responses":{
                     "204":{
                         "description":"No Content",
+                        "headers":{
+                        }
+                    },
+                    "404":{
+                        "description":"Not Found",
                         "headers":{
                         }
                     }
@@ -1353,6 +1609,11 @@
                         "description":"Forbidden",
                         "headers":{
                         }
+                    },
+                    "404":{
+                        "description":"Not Found",
+                        "headers":{
+                        }
                     }
                 }
             },
@@ -1387,6 +1648,11 @@
                     },
                     "403":{
                         "description":"Forbidden",
+                        "headers":{
+                        }
+                    },
+                    "404":{
+                        "description":"Not Found",
                         "headers":{
                         }
                     }
@@ -1758,6 +2024,25 @@
                     "type":"string"
                 },
                 "username":{
+                    "type":"string"
+                }
+            }
+        },
+        "Task":{
+            "properties":{
+                "application":{
+                    "$ref":"#/definitions/TopicApplication"
+                },
+                "completed":{
+                    "type":"boolean"
+                },
+                "deadline":{
+                    "type":"object"
+                },
+                "id":{
+                    "type":"integer"
+                },
+                "title":{
                     "type":"string"
                 }
             }

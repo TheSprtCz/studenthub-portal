@@ -36,7 +36,7 @@ public class TopicDAOTest extends AbstractDAOTest {
       degrees.add(TopicDegree.MASTER);
 
       Topic topic = new Topic("Topic", "short", "description", user, null, null, degrees);
-      Topic created = topicDAO.createOrUpdate(topic);
+      Topic created = topicDAO.create(topic);
       assertNotNull(created.getId());
       assertEquals(topic, created);
       assertEquals(5, topicDAO.findAll().size());

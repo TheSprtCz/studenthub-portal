@@ -36,7 +36,7 @@ public class UserDAOTest extends AbstractDAOTest {
       roles.add(UserRole.ADMIN);
 
       User user = new User("test", "test", "email@mail.me", "Test Tester", "000 222 555", faculty, null, roles, null);
-      User created = userDAO.createOrUpdate(user);
+      User created = userDAO.create(user);
       assertNotNull(created.getId());
       assertEquals(user, created);
       assertEquals(20, userDAO.findAll().size());

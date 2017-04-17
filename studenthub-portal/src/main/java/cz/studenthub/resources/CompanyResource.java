@@ -85,7 +85,7 @@ public class CompanyResource {
   @POST
   @UnitOfWork
   public Response create(@NotNull @Valid Company company) {
-    Company returned = companyDao.createOrUpdate(company);
+    Company returned = companyDao.create(company);
     if (returned.getId() == null)
       throw new WebApplicationException(Status.INTERNAL_SERVER_ERROR);
 
@@ -102,7 +102,7 @@ public class CompanyResource {
       throw new WebApplicationException(Status.NOT_FOUND);
 
     company.setId(id);
-    companyDao.createOrUpdate(company);
+    companyDao.update(company);
     return Response.ok(company).build();
   }
 

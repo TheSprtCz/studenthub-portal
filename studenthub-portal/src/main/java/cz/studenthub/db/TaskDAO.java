@@ -14,7 +14,12 @@ public class TaskDAO extends AbstractDAO<Task> {
     super(sessionFactory);
   }
 
-  public Task createOrUpdate(Task t) {
+  public Task update(Task t) {
+    currentSession().clear();
+    return persist(t);
+  }
+  
+  public Task create(Task t) {
     return persist(t);
   }
   

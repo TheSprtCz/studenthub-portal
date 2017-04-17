@@ -37,8 +37,13 @@ public class UserDAO extends AbstractDAO<User> {
   public UserDAO(SessionFactory sessionFactory) {
     super(sessionFactory);
   }
+  
+  public User update(User u) {
+    currentSession().clear();
+    return persist(u);
+  }
 
-  public User createOrUpdate(User u) {
+  public User create(User u) {
     return persist(u);
   }
 

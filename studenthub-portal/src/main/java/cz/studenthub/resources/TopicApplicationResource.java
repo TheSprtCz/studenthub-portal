@@ -114,7 +114,7 @@ public class TopicApplicationResource {
     if (oldApp.getTechLeader().getId().equals(userId) || oldApp.getStudent().getId().equals(userId)
         || oldApp.getAcademicSupervisor().getId().equals(userId) || profile.getRoles().contains(UserRole.ADMIN.name())) {
       app.setId(id);
-      appDao.createOrUpdate(app);
+      appDao.update(app);
       return Response.ok(app).build();
     } else {
       throw new WebApplicationException(Status.FORBIDDEN);
@@ -127,7 +127,7 @@ public class TopicApplicationResource {
   public Response create(@Pac4JProfile StudentHubProfile profile, @NotNull @Valid TopicApplication app) {
     User student = userDao.findById(Long.valueOf(profile.getId()));
     app.setStudent(student);
-    appDao.createOrUpdate(app);
+    appDao.create(app);
     if (app.getId() == null)
       throw new WebApplicationException(Status.INTERNAL_SERVER_ERROR);
 
@@ -173,7 +173,7 @@ public class TopicApplicationResource {
       throw new WebApplicationException(Status.FORBIDDEN);
 
     task.setApplication(app);
-    taskDao.createOrUpdate(task);
+    taskDao.create(task);
 
     if (task.getId() == null)
       throw new WebApplicationException(Status.INTERNAL_SERVER_ERROR);
@@ -196,7 +196,7 @@ public class TopicApplicationResource {
       throw new WebApplicationException(Status.FORBIDDEN);
 
     task.setId(taskId.get());
-    taskDao.createOrUpdate(task);
+    taskDao.update(task);
     return Response.ok(task).build();
   }
 

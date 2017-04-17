@@ -38,7 +38,12 @@ public class TopicApplicationDAO extends AbstractDAO<TopicApplication> {
     super(sessionFactory);
   }
 
-  public TopicApplication createOrUpdate(TopicApplication ta) {
+  public TopicApplication update(TopicApplication ta) {
+    currentSession().clear();
+    return persist(ta);
+  }
+  
+  public TopicApplication create(TopicApplication ta) {
     return persist(ta);
   }
 

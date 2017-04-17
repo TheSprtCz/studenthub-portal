@@ -123,7 +123,7 @@ public class TopicResource {
         || profile.getRoles().contains(UserRole.ADMIN.name())) {
 
       topic.setId(id);
-      topicDao.createOrUpdate(topic);
+      topicDao.update(topic);
       return Response.ok(topic).build();
     } else {
       throw new WebApplicationException(Status.FORBIDDEN);
@@ -136,7 +136,7 @@ public class TopicResource {
   public Response create(@Pac4JProfile StudentHubProfile profile, @NotNull @Valid Topic topic) {
     User creator = userDao.findById(Long.valueOf(profile.getId()));
     topic.setCreator(creator);
-    topicDao.createOrUpdate(topic);
+    topicDao.create(topic);
     if (topic.getId() == null)
       throw new WebApplicationException(Status.INTERNAL_SERVER_ERROR);
 
@@ -152,7 +152,7 @@ public class TopicResource {
     Topic topic = topicDao.findById(id.get());
     User supervisor = userDao.findById(Long.valueOf(profile.getId()));
     topic.getAcademicSupervisors().add(supervisor);
-    topicDao.createOrUpdate(topic);
+    topicDao.update(topic);
     return Response.ok(topic).build();
   }
 

@@ -35,7 +35,12 @@ public class CompanyDAO extends AbstractDAO<Company> {
     super(sessionFactory);
   }
 
-  public Company createOrUpdate(Company company) {
+  public Company update(Company company) {
+    currentSession().clear();
+    return persist(company);
+  }
+  
+  public Company create(Company company) {
     return persist(company);
   }
   

@@ -22,7 +22,7 @@ public class UniversityDAOTest extends AbstractDAOTest {
   public void createUniversity() {
     University uni = new University("BUT", "www.nothing.com", "Brno", Country.CZ, "/img.jpg");
     inRollbackTransaction(() -> {
-      University created = uniDAO.createOrUpdate(uni);
+      University created = uniDAO.create(uni);
       List<University> universities = uniDAO.findAll();
       assertNotNull(created.getId());
       assertEquals(uni, created);
