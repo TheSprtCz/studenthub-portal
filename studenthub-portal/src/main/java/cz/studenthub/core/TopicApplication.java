@@ -46,6 +46,7 @@ public class TopicApplication {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
+  @NotNull
   @ManyToOne
   private Topic topic;
 
@@ -68,6 +69,7 @@ public class TopicApplication {
   @ManyToOne
   private User techLeader;
 
+  @NotNull
   @ManyToOne
   private User student;
 

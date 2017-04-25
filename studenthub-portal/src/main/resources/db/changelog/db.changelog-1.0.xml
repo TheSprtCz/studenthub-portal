@@ -42,7 +42,9 @@
             <column name="name" type="VARCHAR(255)">
                 <constraints nullable="false"/>
             </column>
-            <column name="university_id" type="BIGINT"/>
+            <column name="university_id" type="BIGINT">
+                 <constraints nullable="false"/>
+            </column>
         </createTable>
     </changeSet>
     <changeSet author="phala (generated)" id="1490799716747-9" objectQuotingStrategy="QUOTE_ALL_OBJECTS">
@@ -75,9 +77,13 @@
             <column name="faculty_id" type="BIGINT">
                 <constraints nullable="false"/>
             </column>
-            <column name="student_id" type="BIGINT"/>
+            <column name="student_id" type="BIGINT">
+                 <constraints nullable="false"/>
+            </column>
             <column name="techleader_id" type="BIGINT"/>
-            <column name="topic_id" type="BIGINT"/>
+            <column name="topic_id" type="BIGINT">
+                 <constraints nullable="false"/>
+            </column>
         </createTable>
     </changeSet>
     <changeSet author="phala (generated)" id="1490799716747-12" objectQuotingStrategy="QUOTE_ALL_OBJECTS">
@@ -170,7 +176,9 @@
             <column name="title" type="VARCHAR(255)">
                 <constraints nullable="false"/>
             </column>
-            <column name="application_id" type="BIGINT"/>
+            <column name="application_id" type="BIGINT">
+                 <constraints nullable="false"/>
+            </column>
         </createTable>
     </changeSet>
     <changeSet author="phala (generated)" id="1490799716747-18" objectQuotingStrategy="QUOTE_ALL_OBJECTS">
