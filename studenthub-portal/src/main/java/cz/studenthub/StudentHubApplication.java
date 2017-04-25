@@ -203,4 +203,8 @@ public class StudentHubApplication extends Application<StudentHubConfiguration> 
     environment.jersey().register(new Pac4JSecurityFeature(pac4jConfig));
     environment.jersey().register(new Pac4JValueFactoryProvider.Binder());
   }
+
+  public SessionFactory getSessionFactory() {
+    return hibernate.getSessionFactory();
+  }
 }

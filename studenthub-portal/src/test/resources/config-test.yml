@@ -1,0 +1,34 @@
+# logging
+logging:
+  level: INFO
+  loggers:
+    cz.studenthub: DEBUG
+    org.pac4j: DEBUG
+
+# server
+server:
+  rootPath: /api/
+  applicationConnectors:
+    - type: http
+      port: 8085
+
+# database - development conf. (not for prod. usage)
+database:
+  # the name of your JDBC driver
+  driverClass: org.h2.Driver
+
+  # the username
+  user: sa
+
+  # the password
+  password: sa
+
+  # the JDBC URL
+  url: jdbc:h2:mem:student-hub
+
+  # the SQL query to run when validating a connection's liveness
+  validationQuery: "SELECT 1"
+  
+  # validate schema
+  properties:
+    hibernate.hbm2ddl.auto: update
