@@ -120,8 +120,8 @@
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
           <includes>
-            <include>cz.studenthub.suites.DAOTestSuite.java</include>
-            <include>cz.studenthub.suites.IntegrationTestSuite.java</include>
+            <include>cz.studenthub.DAOTestSuite.java</include>
+            <include>cz.studenthub.IntegrationTestSuite.java</include>
           </includes>
         </configuration>
       </plugin>

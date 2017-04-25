@@ -10,23 +10,26 @@ import java.util.List;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import cz.studenthub.DAOTestSuite;
 import cz.studenthub.core.Task;
 import cz.studenthub.core.TopicApplication;
+import io.dropwizard.testing.junit.DAOTestRule;
 
-public class TaskDAOTest extends AbstractDAOTest {
+public class TaskDAOTest {
 
+  public static final DAOTestRule DATABASE = DAOTestSuite.database;
   private static TaskDAO taskDao;
   private static TopicApplicationDAO appDao;
 
   @BeforeClass
   public static void setUp() {
-    taskDao = new TaskDAO(database.getSessionFactory());
-    appDao = new TopicApplicationDAO(database.getSessionFactory());
+    taskDao = new TaskDAO(DATABASE.getSessionFactory());
+    appDao = new TopicApplicationDAO(DATABASE.getSessionFactory());
   }
 
   @Test
   public void createTask() {
-    inRollbackTransaction(() -> {
+    DAOTestSuite.inRollbackTransaction(() -> {
       TopicApplication app = appDao.findById((long) 1);
       Task task = new Task("Create Use case diagram", false, null, app);
       Task created = taskDao.create(task);
@@ -38,7 +41,7 @@ public class TaskDAOTest extends AbstractDAOTest {
 
   @Test
   public void listTasksByApplication() {
-    database.inTransaction(() -> {
+    DATABASE.inTransaction(() -> {
       TopicApplication app = appDao.findById((long) 1);
       List<Task> tasks = taskDao.findByTopicApplication(app);
       assertEquals(3, tasks.size());
@@ -47,7 +50,7 @@ public class TaskDAOTest extends AbstractDAOTest {
 
   @Test
   public void fetchTask() {
-    database.inTransaction(() -> {
+    DATABASE.inTransaction(() -> {
       Task task = taskDao.findById((long) 4);
       assertEquals((long) 3, (long) task.getApplication().getId());
       assertTrue(task.isCompleted());
@@ -56,7 +59,7 @@ public class TaskDAOTest extends AbstractDAOTest {
 
   @Test
   public void deleteTask() {
-    inRollbackTransaction(() -> {
+    DAOTestSuite.inRollbackTransaction(() -> {
       Task task = taskDao.findById((long) 1);
       taskDao.delete(task);
 

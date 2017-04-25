@@ -6,25 +6,29 @@ import java.util.List;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
+
+import cz.studenthub.DAOTestSuite;
 import cz.studenthub.core.Company;
 import cz.studenthub.core.CompanyPlan;
 import cz.studenthub.core.CompanySize;
 import cz.studenthub.core.Country;
+import io.dropwizard.testing.junit.DAOTestRule;
 
-public class CompanyDAOTest extends AbstractDAOTest {
+public class CompanyDAOTest {
 
+  public static final DAOTestRule DATABASE = DAOTestSuite.database;
   private static CompanyDAO companyDAO;
 
   @BeforeClass
   public static void setUp() {
-    companyDAO = new CompanyDAO(database.getSessionFactory());
+    companyDAO = new CompanyDAO(DATABASE.getSessionFactory());
   }
 
   @Test
   public void createCompany() {
     Company company = new Company("New", "www.nothing.eu", "Liberec", Country.CZ, "www.nothing.eu/logo.png",
         CompanySize.SMALL, CompanyPlan.TIER_2);
-    inRollbackTransaction(() -> {
+    DAOTestSuite.inRollbackTransaction(() -> {
       Company created = companyDAO.create(company);
       List<Company> companies = companyDAO.findAll();
       assertNotNull(created.getId());
@@ -35,7 +39,7 @@ public class CompanyDAOTest extends AbstractDAOTest {
 
   @Test
   public void fetchCompany() {
-    Company company = database.inTransaction(() -> {
+    Company company = DATABASE.inTransaction(() -> {
       return companyDAO.findById((long) 1);
     });
 
@@ -47,7 +51,7 @@ public class CompanyDAOTest extends AbstractDAOTest {
 
   @Test
   public void listAllCompanies() {
-    List<Company> companies = database.inTransaction(() -> {
+    List<Company> companies = DATABASE.inTransaction(() -> {
       return companyDAO.findAll();
     });
     assertNotNull(companies);
@@ -56,7 +60,7 @@ public class CompanyDAOTest extends AbstractDAOTest {
 
   @Test
   public void removeCompany() {
-    inRollbackTransaction(() -> {
+    DAOTestSuite.inRollbackTransaction(() -> {
       Company company = companyDAO.findById((long) 3);
       companyDAO.delete(company);
       List<Company> companies = companyDAO.findAll();

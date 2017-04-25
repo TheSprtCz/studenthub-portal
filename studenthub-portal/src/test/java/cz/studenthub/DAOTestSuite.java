@@ -1,12 +1,17 @@
-package cz.studenthub.db;
+package cz.studenthub;
 
 import java.util.concurrent.Callable;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
-import org.junit.Before;
 import org.junit.ClassRule;
+import org.junit.rules.ExternalResource;
+import org.junit.rules.RuleChain;
+import org.junit.rules.TestRule;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
+import org.junit.runners.Suite.SuiteClasses;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,6 +22,13 @@ import cz.studenthub.core.Topic;
 import cz.studenthub.core.TopicApplication;
 import cz.studenthub.core.University;
 import cz.studenthub.core.User;
+import cz.studenthub.db.CompanyDAOTest;
+import cz.studenthub.db.FacultyDAOTest;
+import cz.studenthub.db.TaskDAOTest;
+import cz.studenthub.db.TopicApplicationDAOTest;
+import cz.studenthub.db.TopicDAOTest;
+import cz.studenthub.db.UniversityDAOTest;
+import cz.studenthub.db.UserDAOTest;
 import io.dropwizard.testing.junit.DAOTestRule;
 import liquibase.Contexts;
 import liquibase.Liquibase;
@@ -27,20 +39,35 @@ import liquibase.exception.DatabaseException;
 import liquibase.exception.LiquibaseException;
 import liquibase.resource.ClassLoaderResourceAccessor;
 
-public abstract class AbstractDAOTest {
-  @ClassRule
-  public static DAOTestRule database = DAOTestRule.newBuilder().setHbm2DdlAuto("update")
-                                                              .addEntityClass(Topic.class)
-                                                              .addEntityClass(User.class)
-                                                              .addEntityClass(Company.class)
-                                                              .addEntityClass(Faculty.class)
-                                                              .addEntityClass(University.class)
-                                                              .addEntityClass(TopicApplication.class)
-                                                              .addEntityClass(Task.class).build();
+@RunWith(Suite.class)
+@SuiteClasses({ CompanyDAOTest.class, FacultyDAOTest.class, TaskDAOTest.class, TopicApplicationDAOTest.class,
+   TopicDAOTest.class, UniversityDAOTest.class, UserDAOTest.class})
+public class DAOTestSuite {
 
-  protected Logger LOG = LoggerFactory.getLogger(AbstractDAOTest.class);
-  @Before
-  public void migrateDatabase() {
+  public static DAOTestRule database;
+  public static ExternalResource resource;
+  protected static Logger LOG = LoggerFactory.getLogger(DAOTestSuite.class);
+
+  @ClassRule
+  public static TestRule chain = RuleChain.outerRule(database = setUp()).around(resource = new ExternalResource() {
+    @Override
+    protected void before() throws Throwable {
+      migrateDatabase();
+    }
+  });
+
+  public static DAOTestRule setUp() {
+    return DAOTestRule.newBuilder().setHbm2DdlAuto("update")
+        .addEntityClass(Topic.class)
+        .addEntityClass(User.class)
+        .addEntityClass(Company.class)
+        .addEntityClass(Faculty.class)
+        .addEntityClass(University.class)
+        .addEntityClass(TopicApplication.class)
+        .addEntityClass(Task.class).build();
+  }
+
+  public static void migrateDatabase() {
     SessionFactory sessionFactory = database.getSessionFactory();
     Session session = sessionFactory.openSession();
     Transaction transaction = session.beginTransaction();
@@ -62,9 +89,9 @@ public abstract class AbstractDAOTest {
     transaction.commit();
   }
 
-  // Copy of DAOTestRule#inTransaction but this it is not commited but
+  // Copy of DAOTestRule#inTransaction but this is not commited but
   // rollbacked.
-  public <T> T inRollbackTransaction(Callable<T> call) {
+  public static <T> T inRollbackTransaction(Callable<T> call) {
     final Session session = database.getSessionFactory().getCurrentSession();
     final Transaction transaction = session.beginTransaction();
     try {
@@ -76,9 +103,9 @@ public abstract class AbstractDAOTest {
     }
   }
 
-  // Copy of DAOTestRule#inTransaction but this it is not commited but
+  // Copy of DAOTestRule#inTransaction but this is not commited but
   // rollbacked.
-  public void inRollbackTransaction(Runnable action) {
+  public static void inRollbackTransaction(Runnable action) {
     inRollbackTransaction(() -> {
       action.run();
       return true;

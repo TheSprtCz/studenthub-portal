@@ -6,22 +6,26 @@ import java.util.HashSet;
 import java.util.List;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
+import cz.studenthub.DAOTestSuite;
 import cz.studenthub.core.Company;
 import cz.studenthub.core.Faculty;
 import cz.studenthub.core.User;
 import cz.studenthub.core.UserRole;
+import io.dropwizard.testing.junit.DAOTestRule;
 
-public class UserDAOTest extends AbstractDAOTest {
+public class UserDAOTest {
 
+  public static final DAOTestRule DATABASE = DAOTestSuite.database;
   private static FacultyDAO facDAO;
   private static CompanyDAO companyDAO;
   private static UserDAO userDAO;
 
   @BeforeClass
   public static void setUp() {
-    facDAO = new FacultyDAO(database.getSessionFactory());
-    companyDAO = new CompanyDAO(database.getSessionFactory());
-    userDAO = new UserDAO(database.getSessionFactory());
+    facDAO = new FacultyDAO(DATABASE.getSessionFactory());
+    companyDAO = new CompanyDAO(DATABASE.getSessionFactory());
+    userDAO = new UserDAO(DATABASE.getSessionFactory());
   }
 
   /*
@@ -30,7 +34,7 @@ public class UserDAOTest extends AbstractDAOTest {
    */
   @Test
   public void createAndDeleteUser() {
-    database.inTransaction(() -> {
+    DATABASE.inTransaction(() -> {
       Faculty faculty = facDAO.findById((long) 12);
       HashSet<UserRole> roles = new HashSet<UserRole>();
       roles.add(UserRole.ADMIN);
@@ -47,7 +51,7 @@ public class UserDAOTest extends AbstractDAOTest {
 
   @Test
   public void fetchUser() {
-    User user = database.inTransaction(() -> {
+    User user = DATABASE.inTransaction(() -> {
       return userDAO.findById((long) 6);
     });
 
@@ -58,7 +62,7 @@ public class UserDAOTest extends AbstractDAOTest {
 
   @Test
   public void listAllUsers() {
-    List<User> users = database.inTransaction(() -> {
+    List<User> users = DATABASE.inTransaction(() -> {
       return userDAO.findAll();
     });
     assertNotNull(users);
@@ -67,12 +71,12 @@ public class UserDAOTest extends AbstractDAOTest {
 
   @Test
   public void listAllUsersByRole() {
-    List<User> users = database.inTransaction(() -> {
+    List<User> users = DATABASE.inTransaction(() -> {
       return userDAO.findByRole(UserRole.STUDENT);
     });
     assertNotNull(users);
     assertEquals(5, users.size());
-    users = database.inTransaction(() -> {
+    users = DATABASE.inTransaction(() -> {
       return userDAO.findByRole(UserRole.AC_SUPERVISOR);
     });
     assertNotNull(users);
@@ -81,7 +85,7 @@ public class UserDAOTest extends AbstractDAOTest {
 
   @Test
   public void listAllUsersByCompany() {
-    List<User> users = database.inTransaction(() -> {
+    List<User> users = DATABASE.inTransaction(() -> {
       Company company = companyDAO.findById((long) 1);
 
       return userDAO.findByCompany(company);
@@ -92,7 +96,7 @@ public class UserDAOTest extends AbstractDAOTest {
 
   @Test
   public void listAllUsersByTag() {
-    List<User> users = database.inTransaction(() -> {
+    List<User> users = DATABASE.inTransaction(() -> {
       return userDAO.findByTag("Java");
     });
     assertNotNull(users);
@@ -101,7 +105,7 @@ public class UserDAOTest extends AbstractDAOTest {
 
   @Test
   public void listAllUsersByRoleAndFaculty() {
-    database.inTransaction(() -> {
+    DATABASE.inTransaction(() -> {
       Faculty faculty = facDAO.findById((long) 1);
 
       List<User> students = userDAO.findByRoleAndFaculty(UserRole.STUDENT, faculty);
