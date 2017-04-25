@@ -23,6 +23,7 @@ logging:
 # server
 server:
   rootPath: /api/
+  adminContextPath: /info
 
 # database
 database:

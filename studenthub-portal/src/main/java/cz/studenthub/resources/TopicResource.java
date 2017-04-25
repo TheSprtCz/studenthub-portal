@@ -38,6 +38,9 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriBuilder;
 
+import com.codahale.metrics.annotation.ExceptionMetered;
+import com.codahale.metrics.annotation.Timed;
+
 import cz.studenthub.core.Topic;
 import cz.studenthub.core.TopicApplication;
 import cz.studenthub.core.User;
@@ -64,6 +67,7 @@ public class TopicResource {
   }
 
   @GET
+  @Timed
   @UnitOfWork
   public List<Topic> fetch(@Min(0) @DefaultValue("0") @QueryParam("start") IntParam startParam,
       @Min(0) @DefaultValue("0") @QueryParam("size") IntParam sizeParam) {
@@ -78,6 +82,7 @@ public class TopicResource {
   }
 
   @DELETE
+  @ExceptionMetered
   @Path("/{id}")
   @UnitOfWork
   @RolesAllowed("ADMIN")
@@ -92,6 +97,7 @@ public class TopicResource {
   }
 
   @PUT
+  @ExceptionMetered
   @Path("/{id}")
   @UnitOfWork
   @RolesAllowed("TECH_LEADER")
@@ -117,6 +123,7 @@ public class TopicResource {
   }
 
   @POST
+  @ExceptionMetered
   @UnitOfWork
   @RolesAllowed("TECH_LEADER")
   public Response create(@NotNull @Valid Topic topic, @Auth User user) {
@@ -136,6 +143,7 @@ public class TopicResource {
   }
 
   @PUT
+  @ExceptionMetered
   @Path("/{id}/supervise")
   @UnitOfWork
   @RolesAllowed("AC_SUPERVISOR")
@@ -147,6 +155,7 @@ public class TopicResource {
   }
 
   @GET
+  @Timed
   @Path("/{id}/applications")
   @UnitOfWork
   @PermitAll
@@ -183,6 +192,7 @@ public class TopicResource {
   }
 
   @GET
+  @Timed
   @Path("/search")
   @UnitOfWork
   public List<Topic> search(@NotNull @QueryParam("text") String text,

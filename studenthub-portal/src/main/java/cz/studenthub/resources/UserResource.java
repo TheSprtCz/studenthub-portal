@@ -37,6 +37,9 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import com.codahale.metrics.annotation.ExceptionMetered;
+import com.codahale.metrics.annotation.Timed;
+
 import cz.studenthub.api.UpdateUserBean;
 import cz.studenthub.core.Topic;
 import cz.studenthub.core.TopicApplication;
@@ -70,6 +73,7 @@ public class UserResource {
   }
 
   @GET
+  @Timed
   @UnitOfWork
   @RolesAllowed("ADMIN")
   public List<User> fetch(@Min(0) @DefaultValue("0") @QueryParam("start") IntParam startParam,
@@ -91,6 +95,7 @@ public class UserResource {
   }
 
   @DELETE
+  @ExceptionMetered
   @Path("/{id}")
   @UnitOfWork
   public Response delete(@Auth User user, @PathParam("id") LongParam idParam) {
@@ -106,6 +111,7 @@ public class UserResource {
   }
 
   @PUT
+  @ExceptionMetered
   @Path("/{id}")
   @UnitOfWork
   public Response update(@PathParam("id") LongParam idParam, @NotNull @Valid UpdateUserBean updateUserBean,
@@ -132,6 +138,7 @@ public class UserResource {
   }
 
   @GET
+  @Timed
   @Path("/{id}/applications")
   @UnitOfWork
   @RolesAllowed("STUDENT")
@@ -148,6 +155,7 @@ public class UserResource {
   }
 
   @GET
+  @Timed
   @Path("/{id}/ledApplications")
   @UnitOfWork
   @RolesAllowed("TECH_LEADER")
@@ -164,6 +172,7 @@ public class UserResource {
   }
 
   @GET
+  @Timed
   @Path("/{id}/ownedTopics")
   @UnitOfWork
   @RolesAllowed("TECH_LEADER")
@@ -180,6 +189,7 @@ public class UserResource {
   }
 
   @GET
+  @Timed
   @Path("/{id}/supervisedTopics")
   @UnitOfWork
   @RolesAllowed("AC_SUPERVISOR")
@@ -196,6 +206,7 @@ public class UserResource {
   }
 
   @GET
+  @Timed
   @Path("/{id}/supervisedApplications")
   @UnitOfWork
   @RolesAllowed("AC_SUPERVISOR")

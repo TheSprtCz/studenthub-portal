@@ -39,6 +39,9 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriBuilder;
 
+import com.codahale.metrics.annotation.ExceptionMetered;
+import com.codahale.metrics.annotation.Timed;
+
 import cz.studenthub.core.Task;
 import cz.studenthub.core.TopicApplication;
 import cz.studenthub.core.User;
@@ -65,6 +68,7 @@ public class TopicApplicationResource {
   }
 
   @GET
+  @Timed
   @UnitOfWork
   @PermitAll
   public List<TopicApplication> fetch(@Min(0) @DefaultValue("0") @QueryParam("start") IntParam startParam,
@@ -81,6 +85,7 @@ public class TopicApplicationResource {
   }
 
   @DELETE
+  @ExceptionMetered
   @Path("/{id}")
   @UnitOfWork
   @RolesAllowed("ADMIN")
@@ -95,6 +100,7 @@ public class TopicApplicationResource {
   }
 
   @PUT
+  @ExceptionMetered
   @Path("/{id}")
   @UnitOfWork
   public Response update(@PathParam("id") LongParam idParam, @NotNull @Valid TopicApplication app, @Auth User user) {
@@ -118,6 +124,7 @@ public class TopicApplicationResource {
   }
 
   @POST
+  @ExceptionMetered
   @UnitOfWork
   @RolesAllowed("STUDENT")
   public Response create(@NotNull @Valid TopicApplication app) {
@@ -136,6 +143,7 @@ public class TopicApplicationResource {
    */
 
   @GET
+  @Timed
   @Path("/{id}/tasks")
   @UnitOfWork
   public List<Task> getTasksByApplication(@PathParam("id") LongParam id, @Auth User user,
