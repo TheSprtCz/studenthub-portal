@@ -64,6 +64,7 @@ import cz.studenthub.resources.CompanyResource;
 import cz.studenthub.resources.FacultyResource;
 import cz.studenthub.resources.LoginResource;
 import cz.studenthub.resources.TagResource;
+import cz.studenthub.resources.TaskResource;
 import cz.studenthub.resources.TopicApplicationResource;
 import cz.studenthub.resources.TopicResource;
 import cz.studenthub.resources.UniversityResource;
@@ -156,6 +157,7 @@ public class StudentHubApplication extends Application<StudentHubConfiguration> 
     environment.jersey().register(new UserResource(userDao, topicDao, taDao));
     environment.jersey().register(new TopicResource(topicDao, taDao, userDao));
     environment.jersey().register(new TopicApplicationResource(taDao, userDao, taskDao));
+    environment.jersey().register(new TaskResource(taDao, taskDao));
     environment.jersey().register(new LoginResource());
     environment.jersey().register(new TagResource(userDao, topicDao));
 

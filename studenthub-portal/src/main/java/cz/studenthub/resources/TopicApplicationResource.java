@@ -147,79 +147,11 @@ public class TopicApplicationResource {
   public List<Task> getTasksByApplication(@PathParam("id") LongParam id, @Pac4JProfile StudentHubProfile profile) {
     TopicApplication app = appDao.findById(id.get());
     // allow only app student, leader and/or supervisor
-    if (isAllowedToAccessTask(app, profile)) {
+    if (TaskResource.isAllowedToAccessTask(app, profile)) {
       return taskDao.findByTopicApplication(app);
     } else {
       throw new WebApplicationException(Status.FORBIDDEN);
     }
-  }
-
-  @GET
-  @Path("/{id}/tasks/{tid}")
-  @UnitOfWork
-  public Task getTaskById(@PathParam("tid") LongParam id) {
-    return taskDao.findById(id.get());
-  }
-
-  @POST
-  @Path("/{id}/tasks")
-  @UnitOfWork
-  public Response createTask(@PathParam("id") LongParam id, @NotNull @Valid Task task,
-      @Pac4JProfile StudentHubProfile profile) {
-
-    TopicApplication app = appDao.findById(id.get());
-    // allow only app student, leader and/or supervisor
-    if (!isAllowedToAccessTask(app, profile))
-      throw new WebApplicationException(Status.FORBIDDEN);
-
-    task.setApplication(app);
-    taskDao.create(task);
-
-    if (task.getId() == null)
-      throw new WebApplicationException(Status.INTERNAL_SERVER_ERROR);
-
-    return Response.created(
-        UriBuilder.fromResource(TopicApplicationResource.class).path("/{id}/tasks/{tid}").build(id.get(), task.getId()))
-        .entity(task).build();
-  }
-
-  @PUT
-  @Path("/{id}/tasks/{tid}")
-  @UnitOfWork
-  public Response updateTask(@PathParam("id") LongParam id, @PathParam("tid") LongParam taskId,
-      @NotNull @Valid Task task, @Pac4JProfile StudentHubProfile profile) {
-
-    TopicApplication app = appDao.findById(id.get());
-
-    // allow only app student, leader and/or supervisor
-    if (!isAllowedToAccessTask(app, profile))
-      throw new WebApplicationException(Status.FORBIDDEN);
-
-    task.setId(taskId.get());
-    taskDao.update(task);
-    return Response.ok(task).build();
-  }
-
-  @DELETE
-  @Path("/{id}/tasks/{tid}")
-  @UnitOfWork
-  public Response deleteTask(@PathParam("id") LongParam id, @PathParam("tid") LongParam taskId,
-      @Pac4JProfile StudentHubProfile profile) {
-    
-    TopicApplication app = appDao.findById(id.get());
-
-    // allow only app student, leader and/or supervisor
-    if (!isAllowedToAccessTask(app, profile))
-      throw new WebApplicationException(Status.FORBIDDEN);
-
-    taskDao.delete(taskDao.findById(id.get()));
-    return Response.noContent().build();
-  }
-
-  private boolean isAllowedToAccessTask(TopicApplication app, StudentHubProfile profile) {
-    Long profileId = Long.valueOf(profile.getId());
-    return app.getAcademicSupervisor().getId().equals(profileId) || app.getStudent().getId().equals(profileId)
-        || app.getTechLeader().getId().equals(profileId) || profile.getRoles().contains(UserRole.ADMIN.name());
   }
 
 }
