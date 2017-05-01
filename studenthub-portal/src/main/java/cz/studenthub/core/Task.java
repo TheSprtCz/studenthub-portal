@@ -29,6 +29,8 @@ import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import org.hibernate.validator.constraints.NotEmpty;
 
 /**
@@ -54,10 +56,9 @@ public class Task {
 
   private Date deadline;
 
-  // TODO: delete cascade:
-  // http://stackoverflow.com/questions/7197181/jpa-unidirectional-many-to-one-and-cascading-delete
   @ManyToOne
   @NotNull
+  @OnDelete(action = OnDeleteAction.CASCADE)
   private TopicApplication application;
 
   public Task() {

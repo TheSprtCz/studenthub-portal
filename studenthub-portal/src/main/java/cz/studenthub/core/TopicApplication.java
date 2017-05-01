@@ -32,6 +32,9 @@ import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+
 @Entity
 @Table(name = "TopicApplications")
 @NamedQueries({ @NamedQuery(name = "TopicApplication.findAll", query = "SELECT app FROM TopicApplication app"),
@@ -48,6 +51,7 @@ public class TopicApplication {
 
   @NotNull
   @ManyToOne
+  @OnDelete(action = OnDeleteAction.CASCADE)
   private Topic topic;
 
   private String officialAssignment;
@@ -64,6 +68,7 @@ public class TopicApplication {
 
   @NotNull
   @ManyToOne
+  @OnDelete(action = OnDeleteAction.CASCADE)
   private Faculty faculty;
 
   @ManyToOne
