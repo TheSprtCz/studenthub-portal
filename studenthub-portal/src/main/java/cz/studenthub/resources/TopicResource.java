@@ -118,8 +118,10 @@ public class TopicResource {
     if (oldTopic == null)
       throw new WebApplicationException(Status.NOT_FOUND);
 
-    // if user is topic creator or is an admin
-    if (oldTopic.getCreator().getId().equals(Long.valueOf(profile.getId()))
+    Long oldCreatorId = oldTopic.getCreator().getId();
+    Long newCreatorId = topic.getCreator().getId();
+    // if user is topic creator and creator stays the same, or is an admin
+    if ((oldCreatorId.equals(Long.valueOf(profile.getId())) && oldCreatorId.equals(newCreatorId))
         || profile.getRoles().contains(UserRole.ADMIN.name())) {
 
       topic.setId(id);
@@ -134,14 +136,21 @@ public class TopicResource {
   @UnitOfWork
   @Pac4JSecurity(authorizers = TECH_LEADER, clients = { BASIC_AUTH, JWT_AUTH })
   public Response create(@Pac4JProfile StudentHubProfile profile, @NotNull @Valid Topic topic) {
-    User creator = userDao.findById(Long.valueOf(profile.getId()));
-    topic.setCreator(creator);
-    topicDao.create(topic);
-    if (topic.getId() == null)
-      throw new WebApplicationException(Status.INTERNAL_SERVER_ERROR);
 
-    return Response.created(UriBuilder.fromResource(TopicResource.class).path("/{id}").build(topic.getId()))
-        .entity(topic).build();
+    // If user is topic creator or is an admin
+    if (topic.getCreator().getId().equals(Long.valueOf(profile.getId()))
+        || profile.getRoles().contains(UserRole.ADMIN.name())) {
+	
+	    topicDao.create(topic);
+	    if (topic.getId() == null)
+	      throw new WebApplicationException(Status.INTERNAL_SERVER_ERROR);
+	
+	    return Response.created(UriBuilder.fromResource(TopicResource.class).path("/{id}").build(topic.getId()))
+	        .entity(topic).build();
+    }
+    else {
+        throw new WebApplicationException(Status.FORBIDDEN);
+    }
   }
 
   @PUT
