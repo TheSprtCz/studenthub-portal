@@ -6,22 +6,26 @@ import java.util.List;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
+
+import cz.studenthub.DAOTestSuite;
 import cz.studenthub.core.Country;
 import cz.studenthub.core.University;
+import io.dropwizard.testing.junit.DAOTestRule;
 
-public class UniversityDAOTest extends AbstractDAOTest {
+public class UniversityDAOTest {
 
+  public static final DAOTestRule DATABASE = DAOTestSuite.database;
   private static UniversityDAO uniDAO;
 
   @BeforeClass
   public static void setUp() {
-    uniDAO = new UniversityDAO(database.getSessionFactory());
+    uniDAO = new UniversityDAO(DATABASE.getSessionFactory());
   }
 
   @Test
   public void createUniversity() {
     University uni = new University("BUT", "www.nothing.com", "Brno", Country.CZ, "/img.jpg");
-    inRollbackTransaction(() -> {
+    DAOTestSuite.inRollbackTransaction(() -> {
       University created = uniDAO.create(uni);
       List<University> universities = uniDAO.findAll();
       assertNotNull(created.getId());
@@ -32,7 +36,7 @@ public class UniversityDAOTest extends AbstractDAOTest {
 
   @Test
   public void fetchUniversity() {
-    University university = database.inTransaction(() -> {
+    University university = DATABASE.inTransaction(() -> {
       return uniDAO.findById((long) 1);
     });
 
@@ -44,7 +48,7 @@ public class UniversityDAOTest extends AbstractDAOTest {
 
   @Test
   public void listAllUniversities() {
-    List<University> universities = database.inTransaction(() -> {
+    List<University> universities = DATABASE.inTransaction(() -> {
       return uniDAO.findAll();
     });
     assertNotNull(universities);
@@ -53,7 +57,7 @@ public class UniversityDAOTest extends AbstractDAOTest {
 
   @Test
   public void removeUniversity() {
-    inRollbackTransaction(() -> {
+    DAOTestSuite.inRollbackTransaction(() -> {
       University university = uniDAO.findById((long) 5);
       uniDAO.delete(university);
       List<University> universities = uniDAO.findAll();

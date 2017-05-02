@@ -6,23 +6,27 @@ import java.util.List;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
+
+import cz.studenthub.DAOTestSuite;
 import cz.studenthub.core.Faculty;
 import cz.studenthub.core.University;
+import io.dropwizard.testing.junit.DAOTestRule;
 
-public class FacultyDAOTest extends AbstractDAOTest {
+public class FacultyDAOTest {
 
+  public static final DAOTestRule DATABASE = DAOTestSuite.database;
   private static FacultyDAO facDAO;
   private static UniversityDAO uniDAO;
 
   @BeforeClass
   public static void setUp() {
-    facDAO = new FacultyDAO(database.getSessionFactory());
-    uniDAO = new UniversityDAO(database.getSessionFactory());
+    facDAO = new FacultyDAO(DATABASE.getSessionFactory());
+    uniDAO = new UniversityDAO(DATABASE.getSessionFactory());
   }
 
   @Test
   public void createFaculty() {
-    inRollbackTransaction(() -> {
+    DAOTestSuite.inRollbackTransaction(() -> {
       University uni = uniDAO.findById((long) 2);
       Faculty faculty = new Faculty("New", uni);
 
@@ -35,7 +39,7 @@ public class FacultyDAOTest extends AbstractDAOTest {
 
   @Test
   public void fetchFaculty() {
-    Faculty faculty = database.inTransaction(() -> {
+    Faculty faculty = DATABASE.inTransaction(() -> {
       return facDAO.findById((long) 6);
     });
 
@@ -47,7 +51,7 @@ public class FacultyDAOTest extends AbstractDAOTest {
 
   @Test
   public void listAllFaculties() {
-    List<Faculty> faculties = database.inTransaction(() -> {
+    List<Faculty> faculties = DATABASE.inTransaction(() -> {
       return facDAO.findAll();
     });
     assertNotNull(faculties);
@@ -56,7 +60,7 @@ public class FacultyDAOTest extends AbstractDAOTest {
 
   @Test
   public void listAllFacultiesByUniversity() {
-    List<Faculty> faculties = database.inTransaction(() -> {
+    List<Faculty> faculties = DATABASE.inTransaction(() -> {
       University uni = uniDAO.findById((long) 2);
       return facDAO.findAllByUniversity(uni);
     });
@@ -66,7 +70,7 @@ public class FacultyDAOTest extends AbstractDAOTest {
 
   @Test
   public void removeUniversity() {
-    inRollbackTransaction(() -> {
+    DAOTestSuite.inRollbackTransaction(() -> {
       Faculty faculty = facDAO.findById((long) 12);
       facDAO.delete(faculty);
       List<Faculty> faculties = facDAO.findAll();

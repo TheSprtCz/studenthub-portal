@@ -6,15 +6,19 @@ import java.util.Date;
 import java.util.List;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
+import cz.studenthub.DAOTestSuite;
 import cz.studenthub.core.Faculty;
 import cz.studenthub.core.Topic;
 import cz.studenthub.core.TopicApplication;
 import cz.studenthub.core.TopicDegree;
 import cz.studenthub.core.TopicGrade;
 import cz.studenthub.core.User;
+import io.dropwizard.testing.junit.DAOTestRule;
 
-public class TopicApplicationDAOTest extends AbstractDAOTest {
+public class TopicApplicationDAOTest {
 
+  public static final DAOTestRule DATABASE = DAOTestSuite.database;
   private static FacultyDAO facDAO;
   private static UserDAO userDAO;
   private static TopicDAO topicDAO;
@@ -22,15 +26,15 @@ public class TopicApplicationDAOTest extends AbstractDAOTest {
 
   @BeforeClass
   public static void setUp() {
-    topicDAO = new TopicDAO(database.getSessionFactory());
-    facDAO = new FacultyDAO(database.getSessionFactory());
-    userDAO = new UserDAO(database.getSessionFactory());
-    appDAO = new TopicApplicationDAO(database.getSessionFactory());
+    topicDAO = new TopicDAO(DATABASE.getSessionFactory());
+    facDAO = new FacultyDAO(DATABASE.getSessionFactory());
+    userDAO = new UserDAO(DATABASE.getSessionFactory());
+    appDAO = new TopicApplicationDAO(DATABASE.getSessionFactory());
   }
 
   @Test
   public void createTopicApplication() {
-    inRollbackTransaction(() -> {
+    DAOTestSuite.inRollbackTransaction(() -> {
       User user = userDAO.findById((long) 10);
       Topic topic = topicDAO.findById((long) 2);
       Faculty faculty = facDAO.findById((long) 5);
@@ -47,19 +51,18 @@ public class TopicApplicationDAOTest extends AbstractDAOTest {
 
   @Test
   public void fetchTopicApplication() {
-    TopicApplication app = database.inTransaction(() -> {
+    TopicApplication app = DATABASE.inTransaction(() -> {
       return appDAO.findById((long) 2);
     });
 
     assertNotNull(app);
     assertEquals(TopicDegree.MASTER, app.getDegree());
     assertEquals(TopicGrade.F, app.getGrade());
-
   }
 
   @Test
   public void listAllTopicApplication() {
-    List<TopicApplication> apps = database.inTransaction(() -> {
+    List<TopicApplication> apps = DATABASE.inTransaction(() -> {
       return appDAO.findAll();
     });
 
@@ -69,7 +72,7 @@ public class TopicApplicationDAOTest extends AbstractDAOTest {
 
   @Test
   public void listAllTopicApplicationBySupervisor() {
-    database.inTransaction(() -> {
+    DATABASE.inTransaction(() -> {
       User user = userDAO.findById((long) 2);
       List<TopicApplication> apps = appDAO.findBySupervisor(user);
 
@@ -83,7 +86,7 @@ public class TopicApplicationDAOTest extends AbstractDAOTest {
 
   @Test
   public void listAllTopicApplicationByStudent() {
-    database.inTransaction(() -> {
+    DATABASE.inTransaction(() -> {
       User user = userDAO.findById((long) 13);
       List<TopicApplication> apps = appDAO.findByStudent(user);
 
@@ -97,7 +100,7 @@ public class TopicApplicationDAOTest extends AbstractDAOTest {
 
   @Test
   public void listAllTopicApplicationByFaculty() {
-    database.inTransaction(() -> {
+    DATABASE.inTransaction(() -> {
       Faculty faculty = facDAO.findById((long) 1);
       List<TopicApplication> apps = appDAO.findByFaculty(faculty);
 
@@ -111,7 +114,7 @@ public class TopicApplicationDAOTest extends AbstractDAOTest {
 
   @Test
   public void listAllTopicApplicationByTopic() {
-    database.inTransaction(() -> {
+    DATABASE.inTransaction(() -> {
       Topic topic = topicDAO.findById((long) 2);
       List<TopicApplication> apps = appDAO.findByTopic(topic);
 
@@ -124,8 +127,8 @@ public class TopicApplicationDAOTest extends AbstractDAOTest {
   }
 
   @Test
-  public void removeUniversity() {
-    inRollbackTransaction(() -> {
+  public void removeTopicApplication() {
+    DAOTestSuite.inRollbackTransaction(() -> {
       TopicApplication app = appDAO.findById((long) 5);
       appDAO.delete(app);
       List<TopicApplication> apps = appDAO.findAll();

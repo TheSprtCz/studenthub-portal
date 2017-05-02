@@ -6,22 +6,26 @@ import java.util.HashSet;
 import java.util.List;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
+import cz.studenthub.DAOTestSuite;
 import cz.studenthub.core.Company;
 import cz.studenthub.core.Topic;
 import cz.studenthub.core.TopicDegree;
 import cz.studenthub.core.User;
+import io.dropwizard.testing.junit.DAOTestRule;
 
-public class TopicDAOTest extends AbstractDAOTest {
+public class TopicDAOTest {
 
+  public static final DAOTestRule DATABASE = DAOTestSuite.database;
   private static CompanyDAO companyDAO;
   private static UserDAO userDAO;
   private static TopicDAO topicDAO;
 
   @BeforeClass
   public static void setUp() {
-    topicDAO = new TopicDAO(database.getSessionFactory());
-    companyDAO = new CompanyDAO(database.getSessionFactory());
-    userDAO = new UserDAO(database.getSessionFactory());
+    topicDAO = new TopicDAO(DATABASE.getSessionFactory());
+    companyDAO = new CompanyDAO(DATABASE.getSessionFactory());
+    userDAO = new UserDAO(DATABASE.getSessionFactory());
   }
 
   /*
@@ -30,7 +34,7 @@ public class TopicDAOTest extends AbstractDAOTest {
    */
   @Test
   public void createAndDeleteTopic() {
-    inRollbackTransaction(() -> {
+    DAOTestSuite.inRollbackTransaction(() -> {
       User user = userDAO.findById((long) 10);
       HashSet<TopicDegree> degrees = new HashSet<TopicDegree>();
       degrees.add(TopicDegree.MASTER);
@@ -47,7 +51,7 @@ public class TopicDAOTest extends AbstractDAOTest {
 
   @Test
   public void fetchTopic() {
-    Topic topic = database.inTransaction(() -> {
+    Topic topic = DATABASE.inTransaction(() -> {
       return topicDAO.findById((long) 2);
     });
 
@@ -58,7 +62,7 @@ public class TopicDAOTest extends AbstractDAOTest {
 
   @Test
   public void listAllTopics() {
-    List<Topic> topics = database.inTransaction(() -> {
+    List<Topic> topics = DATABASE.inTransaction(() -> {
       return topicDAO.findAll();
     });
     assertNotNull(topics);
@@ -67,7 +71,7 @@ public class TopicDAOTest extends AbstractDAOTest {
 
   @Test
   public void listAllTopicsByCreator() {
-    database.inTransaction(() -> {
+    DATABASE.inTransaction(() -> {
       User user = userDAO.findById((long) 9);
       List<Topic> topics = topicDAO.findByCreator(user);
 
@@ -81,7 +85,7 @@ public class TopicDAOTest extends AbstractDAOTest {
 
   @Test
   public void listAllTopicsBySupervisor() {
-    database.inTransaction(() -> {
+    DATABASE.inTransaction(() -> {
       User user = userDAO.findById((long) 2);
       List<Topic> topics = topicDAO.findBySupervisor(user);
 
@@ -95,7 +99,7 @@ public class TopicDAOTest extends AbstractDAOTest {
 
   @Test
   public void listAllTopicsByTag() {
-    List<Topic> topics = database.inTransaction(() -> {
+    List<Topic> topics = DATABASE.inTransaction(() -> {
       return topicDAO.findByTag("Java");
     });
     assertNotNull(topics);
@@ -107,7 +111,7 @@ public class TopicDAOTest extends AbstractDAOTest {
 
   @Test
   public void listAllTopicsByCompany() {
-    database.inTransaction(() -> {
+    DATABASE.inTransaction(() -> {
       Company company = companyDAO.findById((long) 5);
       List<Topic> topics = topicDAO.findByCompany(company);
 
