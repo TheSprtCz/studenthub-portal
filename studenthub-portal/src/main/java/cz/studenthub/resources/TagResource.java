@@ -22,10 +22,13 @@ import static cz.studenthub.auth.Consts.JWT_AUTH;
 
 import java.util.List;
 
+import javax.validation.constraints.Min;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import org.pac4j.jax.rs.annotations.Pac4JSecurity;
@@ -34,7 +37,9 @@ import cz.studenthub.core.Topic;
 import cz.studenthub.core.User;
 import cz.studenthub.db.TopicDAO;
 import cz.studenthub.db.UserDAO;
+import cz.studenthub.util.PagingUtil;
 import io.dropwizard.hibernate.UnitOfWork;
+import io.dropwizard.jersey.params.IntParam;
 
 @Path("/tags")
 @Produces(MediaType.APPLICATION_JSON)
@@ -52,14 +57,18 @@ public class TagResource {
   @Path("/{tag}/users")
   @UnitOfWork
   @Pac4JSecurity(authorizers = AUTHENTICATED, clients = { BASIC_AUTH, JWT_AUTH })
-  public List<User> fetchUsers(@PathParam("tag") String tag) {
-    return userDao.findByTag(tag);
+  public List<User> fetchUsers(@PathParam("tag") String tag,
+          @Min(0) @DefaultValue("0") @QueryParam("start") IntParam startParam,
+          @Min(0) @DefaultValue("0") @QueryParam("size") IntParam sizeParam) {
+    return PagingUtil.paging(userDao.findByTag(tag), startParam.get(), sizeParam.get());
   }
 
   @GET
   @Path("/{tag}/topics")
   @UnitOfWork
-  public List<Topic> fetchTopics(@PathParam("tag") String tag) {
-    return topicDao.findByTag(tag);
+  public List<Topic> fetchTopics(@PathParam("tag") String tag,
+          @Min(0) @DefaultValue("0") @QueryParam("start") IntParam startParam,
+          @Min(0) @DefaultValue("0") @QueryParam("size") IntParam sizeParam) {
+    return PagingUtil.paging(topicDao.findByTag(tag), startParam.get(), sizeParam.get());
   }
 }

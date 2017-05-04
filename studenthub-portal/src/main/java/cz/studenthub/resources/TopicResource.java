@@ -23,10 +23,7 @@ import static cz.studenthub.auth.Consts.JWT_AUTH;
 import static cz.studenthub.auth.Consts.SUPERVISOR;
 import static cz.studenthub.auth.Consts.TECH_LEADER;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
-
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
@@ -57,6 +54,7 @@ import cz.studenthub.core.UserRole;
 import cz.studenthub.db.TopicApplicationDAO;
 import cz.studenthub.db.TopicDAO;
 import cz.studenthub.db.UserDAO;
+import cz.studenthub.util.PagingUtil;
 import io.dropwizard.hibernate.UnitOfWork;
 import io.dropwizard.jersey.params.IntParam;
 import io.dropwizard.jersey.params.LongParam;
@@ -82,7 +80,7 @@ public class TopicResource {
   @Pac4JSecurity(ignore = true)
   public List<Topic> fetch(@Min(0) @DefaultValue("0") @QueryParam("start") IntParam startParam,
       @Min(0) @DefaultValue("0") @QueryParam("size") IntParam sizeParam) {
-    return paging(topicDao.findAll(), startParam.get(), sizeParam.get());
+    return PagingUtil.paging(topicDao.findAll(), startParam.get(), sizeParam.get());
   }
 
   @GET
@@ -169,12 +167,15 @@ public class TopicResource {
   @Path("/{id}/applications")
   @UnitOfWork
   @Pac4JSecurity(authorizers = AUTHENTICATED, clients = { BASIC_AUTH, JWT_AUTH })
-  public List<TopicApplication> fetchSupervisedTopics(@PathParam("id") LongParam id) {
+  public List<TopicApplication> fetchSupervisedTopics(@PathParam("id") LongParam id,
+          @Min(0) @DefaultValue("0") @QueryParam("start") IntParam startParam,
+          @Min(0) @DefaultValue("0") @QueryParam("size") IntParam sizeParam) {
+
     Topic topic = topicDao.findById(id.get());
     if (topic == null)
       throw new WebApplicationException(Status.NOT_FOUND);
 
-    return appDao.findByTopic(topic);
+    return PagingUtil.paging(appDao.findByTopic(topic), startParam.get(), sizeParam.get());
   }
 
   /*
@@ -185,9 +186,12 @@ public class TopicResource {
   @Path("/{id}/supervisors")
   @UnitOfWork
   @Pac4JSecurity(authorizers = AUTHENTICATED, clients = { BASIC_AUTH, JWT_AUTH })
-  public Set<User> getTopicSupervisors(@PathParam("id") LongParam id) {
+  public List<User> getTopicSupervisors(@PathParam("id") LongParam id,
+          @Min(0) @DefaultValue("0") @QueryParam("start") IntParam startParam,
+          @Min(0) @DefaultValue("0") @QueryParam("size") IntParam sizeParam) {
+
     Topic topic = topicDao.findById(id.get());
-    return topic.getAcademicSupervisors();
+    return PagingUtil.paging(topic.getAcademicSupervisors(), startParam.get(), sizeParam.get());
   }
 
   @GET
@@ -206,20 +210,7 @@ public class TopicResource {
   public List<Topic> search(@NotNull @QueryParam("text") String text,
       @Min(0) @DefaultValue("0") @QueryParam("start") IntParam startParam,
       @Min(0) @DefaultValue("0") @QueryParam("size") IntParam sizeParam) {
-    return paging(topicDao.search(text), startParam.get(), sizeParam.get());
+    return PagingUtil.paging(topicDao.search(text), startParam.get(), sizeParam.get());
   }
 
-  public List<Topic> paging(List<Topic> list, int start, int size) {
-    ArrayList<Topic> topics = new ArrayList<Topic>(list);
-    int topicSize = topics.size();
-    if (start > topicSize)
-      start = 0;
-
-    int remaining = topicSize - start;
-
-    if (size > remaining || size == 0)
-      size = remaining;
-
-    return topics.subList(start, start + size);
-  }
 }
