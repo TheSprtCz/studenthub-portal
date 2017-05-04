@@ -69,8 +69,9 @@ public class UniversityResource {
   @GET
   @UnitOfWork
   @Pac4JSecurity(ignore = true)
-  public List<University> fetch() {
-    return uniDao.findAll();
+  public List<University> fetch(@Min(0) @DefaultValue("0") @QueryParam("start") IntParam startParam,
+          @Min(0) @DefaultValue("0") @QueryParam("size") IntParam sizeParam) {
+    return PagingUtil.paging(uniDao.findAll(), startParam.get(), sizeParam.get());
   }
 
   @GET
@@ -133,12 +134,15 @@ public class UniversityResource {
   @Path("/{id}/faculties")
   @UnitOfWork
   @Pac4JSecurity(ignore = true)
-  public List<Faculty> fetchFaculties(@PathParam("id") LongParam id) {
+  public List<Faculty> fetchFaculties(@PathParam("id") LongParam id,
+          @Min(0) @DefaultValue("0") @QueryParam("start") IntParam startParam,
+          @Min(0) @DefaultValue("0") @QueryParam("size") IntParam sizeParam) {
+
     University university = uniDao.findById(id.get());
     if (university == null)
       throw new WebApplicationException(Status.NOT_FOUND);
 
-    return facDao.findAllByUniversity(university);
+    return PagingUtil.paging(facDao.findAllByUniversity(university), startParam.get(), sizeParam.get());
   }
 
   @GET

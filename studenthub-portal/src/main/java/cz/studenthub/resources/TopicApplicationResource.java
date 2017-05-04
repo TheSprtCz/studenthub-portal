@@ -25,15 +25,18 @@ import static cz.studenthub.auth.Consts.STUDENT;
 import java.util.List;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -51,7 +54,9 @@ import cz.studenthub.core.UserRole;
 import cz.studenthub.db.TaskDAO;
 import cz.studenthub.db.TopicApplicationDAO;
 import cz.studenthub.db.UserDAO;
+import cz.studenthub.util.PagingUtil;
 import io.dropwizard.hibernate.UnitOfWork;
+import io.dropwizard.jersey.params.IntParam;
 import io.dropwizard.jersey.params.LongParam;
 
 @Path("/applications")
@@ -73,8 +78,9 @@ public class TopicApplicationResource {
   @GET
   @UnitOfWork
   @Pac4JSecurity(authorizers = ADMIN, clients = { BASIC_AUTH, JWT_AUTH })
-  public List<TopicApplication> fetch() {
-    return appDao.findAll();
+  public List<TopicApplication> fetch(@Min(0) @DefaultValue("0") @QueryParam("start") IntParam startParam,
+          @Min(0) @DefaultValue("0") @QueryParam("size") IntParam sizeParam) {
+    return PagingUtil.paging(appDao.findAll(), startParam.get(), sizeParam.get());
   }
 
   @GET
@@ -144,11 +150,14 @@ public class TopicApplicationResource {
   @GET
   @Path("/{id}/tasks")
   @UnitOfWork
-  public List<Task> getTasksByApplication(@PathParam("id") LongParam id, @Pac4JProfile StudentHubProfile profile) {
+  public List<Task> getTasksByApplication(@PathParam("id") LongParam id, @Pac4JProfile StudentHubProfile profile,
+          @Min(0) @DefaultValue("0") @QueryParam("start") IntParam startParam,
+          @Min(0) @DefaultValue("0") @QueryParam("size") IntParam sizeParam) {
+
     TopicApplication app = appDao.findById(id.get());
     // allow only app student, leader and/or supervisor
     if (TaskResource.isAllowedToAccessTask(app, profile)) {
-      return taskDao.findByTopicApplication(app);
+      return PagingUtil.paging(taskDao.findByTopicApplication(app), startParam.get(), sizeParam.get());
     } else {
       throw new WebApplicationException(Status.FORBIDDEN);
     }

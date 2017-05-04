@@ -27,15 +27,18 @@ import static cz.studenthub.auth.Consts.TECH_LEADER;
 import java.util.List;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -54,7 +57,9 @@ import cz.studenthub.core.UserRole;
 import cz.studenthub.db.TopicApplicationDAO;
 import cz.studenthub.db.TopicDAO;
 import cz.studenthub.db.UserDAO;
+import cz.studenthub.util.PagingUtil;
 import io.dropwizard.hibernate.UnitOfWork;
+import io.dropwizard.jersey.params.IntParam;
 import io.dropwizard.jersey.params.LongParam;
 
 @Path("/users")
@@ -76,8 +81,9 @@ public class UserResource {
   @GET
   @UnitOfWork
   @Pac4JSecurity(authorizers = ADMIN, clients = { BASIC_AUTH, JWT_AUTH })
-  public List<User> fetch() {
-    return userDao.findAll();
+  public List<User> fetch(@Min(0) @DefaultValue("0") @QueryParam("start") IntParam startParam,
+          @Min(0) @DefaultValue("0") @QueryParam("size") IntParam sizeParam) {
+    return PagingUtil.paging(userDao.findAll(), startParam.get(), sizeParam.get());
   }
 
   @GET
@@ -157,11 +163,13 @@ public class UserResource {
   @UnitOfWork
   @Pac4JSecurity(authorizers = STUDENT, clients = { BASIC_AUTH, JWT_AUTH })
   public List<TopicApplication> fetchApplications(@Pac4JProfile StudentHubProfile profile,
-      @PathParam("id") LongParam id) {
+      @PathParam("id") LongParam id,
+      @Min(0) @DefaultValue("0") @QueryParam("start") IntParam startParam,
+      @Min(0) @DefaultValue("0") @QueryParam("size") IntParam sizeParam) {
 
     User user = userDao.findById(id.get());
     if (id.get().equals(Long.valueOf(profile.getId())) || profile.getRoles().contains(UserRole.ADMIN.name())) {
-      return appDao.findByStudent(user);
+      return PagingUtil.paging(appDao.findByStudent(user), startParam.get(), sizeParam.get());
     } else {
       throw new WebApplicationException(Status.FORBIDDEN);
     }
@@ -171,11 +179,13 @@ public class UserResource {
   @Path("/{id}/leadApplications")
   @UnitOfWork
   @Pac4JSecurity(authorizers = TECH_LEADER, clients = { BASIC_AUTH, JWT_AUTH })
-  public List<TopicApplication> fetchLeadApps(@Pac4JProfile StudentHubProfile profile, @PathParam("id") LongParam id) {
+  public List<TopicApplication> fetchLeadApps(@Pac4JProfile StudentHubProfile profile, @PathParam("id") LongParam id,
+          @Min(0) @DefaultValue("0") @QueryParam("start") IntParam startParam,
+          @Min(0) @DefaultValue("0") @QueryParam("size") IntParam sizeParam) {
 
     User user = userDao.findById(id.get());
     if (id.get().equals(Long.valueOf(profile.getId())) || profile.getRoles().contains(UserRole.ADMIN.name())) {
-      return appDao.findByLeader(user);
+      return PagingUtil.paging(appDao.findByLeader(user), startParam.get(), sizeParam.get());
     } else {
       throw new WebApplicationException(Status.FORBIDDEN);
     }
@@ -185,10 +195,13 @@ public class UserResource {
   @Path("/{id}/ownedTopics")
   @UnitOfWork
   @Pac4JSecurity(authorizers = TECH_LEADER, clients = { BASIC_AUTH, JWT_AUTH })
-  public List<Topic> fetchOwnedTopics(@Pac4JProfile StudentHubProfile profile, @PathParam("id") LongParam id) {
+  public List<Topic> fetchOwnedTopics(@Pac4JProfile StudentHubProfile profile, @PathParam("id") LongParam id,
+          @Min(0) @DefaultValue("0") @QueryParam("start") IntParam startParam,
+          @Min(0) @DefaultValue("0") @QueryParam("size") IntParam sizeParam) {
+
     User user = userDao.findById(id.get());
     if (id.get().equals(Long.valueOf(profile.getId())) || profile.getRoles().contains(UserRole.ADMIN.name())) {
-      return topicDao.findByCreator(user);
+      return PagingUtil.paging(topicDao.findByCreator(user), startParam.get(), sizeParam.get());
     } else {
       throw new WebApplicationException(Status.FORBIDDEN);
     }
@@ -198,10 +211,13 @@ public class UserResource {
   @Path("/{id}/supervisedTopics")
   @UnitOfWork
   @Pac4JSecurity(authorizers = SUPERVISOR, clients = { BASIC_AUTH, JWT_AUTH })
-  public List<Topic> fetchSupervisedTopics(@Pac4JProfile StudentHubProfile profile, @PathParam("id") LongParam id) {
+  public List<Topic> fetchSupervisedTopics(@Pac4JProfile StudentHubProfile profile, @PathParam("id") LongParam id,
+          @Min(0) @DefaultValue("0") @QueryParam("start") IntParam startParam,
+          @Min(0) @DefaultValue("0") @QueryParam("size") IntParam sizeParam) {
+
     User user = userDao.findById(id.get());
     if (id.get().equals(Long.valueOf(profile.getId())) || profile.getRoles().contains(UserRole.ADMIN.name())) {
-      return topicDao.findBySupervisor(user);
+      return PagingUtil.paging(topicDao.findBySupervisor(user), startParam.get(), sizeParam.get());
     } else {
       throw new WebApplicationException(Status.FORBIDDEN);
     }
@@ -212,11 +228,13 @@ public class UserResource {
   @UnitOfWork
   @Pac4JSecurity(authorizers = SUPERVISOR, clients = { BASIC_AUTH, JWT_AUTH })
   public List<TopicApplication> fetchSupervisedApplications(@Pac4JProfile StudentHubProfile profile,
-      @PathParam("id") LongParam id) {
+      @PathParam("id") LongParam id,
+      @Min(0) @DefaultValue("0") @QueryParam("start") IntParam startParam,
+      @Min(0) @DefaultValue("0") @QueryParam("size") IntParam sizeParam) {
 
     User user = userDao.findById(id.get());
     if (id.get().equals(Long.valueOf(profile.getId())) || profile.getRoles().contains(UserRole.ADMIN.name())) {
-      return appDao.findBySupervisor(user);
+      return PagingUtil.paging(appDao.findBySupervisor(user), startParam.get(), sizeParam.get());
     } else {
       throw new WebApplicationException(Status.FORBIDDEN);
     }

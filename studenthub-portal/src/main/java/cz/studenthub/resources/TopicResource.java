@@ -24,8 +24,6 @@ import static cz.studenthub.auth.Consts.SUPERVISOR;
 import static cz.studenthub.auth.Consts.TECH_LEADER;
 
 import java.util.List;
-import java.util.Set;
-
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
@@ -169,12 +167,15 @@ public class TopicResource {
   @Path("/{id}/applications")
   @UnitOfWork
   @Pac4JSecurity(authorizers = AUTHENTICATED, clients = { BASIC_AUTH, JWT_AUTH })
-  public List<TopicApplication> fetchSupervisedTopics(@PathParam("id") LongParam id) {
+  public List<TopicApplication> fetchSupervisedTopics(@PathParam("id") LongParam id,
+          @Min(0) @DefaultValue("0") @QueryParam("start") IntParam startParam,
+          @Min(0) @DefaultValue("0") @QueryParam("size") IntParam sizeParam) {
+
     Topic topic = topicDao.findById(id.get());
     if (topic == null)
       throw new WebApplicationException(Status.NOT_FOUND);
 
-    return appDao.findByTopic(topic);
+    return PagingUtil.paging(appDao.findByTopic(topic), startParam.get(), sizeParam.get());
   }
 
   /*
@@ -185,9 +186,12 @@ public class TopicResource {
   @Path("/{id}/supervisors")
   @UnitOfWork
   @Pac4JSecurity(authorizers = AUTHENTICATED, clients = { BASIC_AUTH, JWT_AUTH })
-  public Set<User> getTopicSupervisors(@PathParam("id") LongParam id) {
+  public List<User> getTopicSupervisors(@PathParam("id") LongParam id,
+          @Min(0) @DefaultValue("0") @QueryParam("start") IntParam startParam,
+          @Min(0) @DefaultValue("0") @QueryParam("size") IntParam sizeParam) {
+
     Topic topic = topicDao.findById(id.get());
-    return topic.getAcademicSupervisors();
+    return PagingUtil.paging(topic.getAcademicSupervisors(), startParam.get(), sizeParam.get());
   }
 
   @GET

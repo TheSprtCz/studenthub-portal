@@ -24,15 +24,18 @@ import static cz.studenthub.auth.Consts.JWT_AUTH;
 import java.util.List;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -46,7 +49,9 @@ import cz.studenthub.core.User;
 import cz.studenthub.core.UserRole;
 import cz.studenthub.db.FacultyDAO;
 import cz.studenthub.db.UserDAO;
+import cz.studenthub.util.PagingUtil;
 import io.dropwizard.hibernate.UnitOfWork;
+import io.dropwizard.jersey.params.IntParam;
 import io.dropwizard.jersey.params.LongParam;
 
 @Path("/faculties")
@@ -66,8 +71,9 @@ public class FacultyResource {
   @GET
   @UnitOfWork
   @Pac4JSecurity(ignore = true)
-  public List<Faculty> fetch() {
-    return facDao.findAll();
+  public List<Faculty> fetch(@Min(0) @DefaultValue("0") @QueryParam("start") IntParam startParam,
+          @Min(0) @DefaultValue("0") @QueryParam("size") IntParam sizeParam) {
+      return PagingUtil.paging(facDao.findAll(), startParam.get(), sizeParam.get());
   }
 
   @GET
@@ -119,24 +125,30 @@ public class FacultyResource {
   @Path("/{id}/students")
   @UnitOfWork
   @Pac4JSecurity(authorizers = AUTHENTICATED, clients = { BASIC_AUTH, JWT_AUTH })
-  public List<User> fetchStudents(@PathParam("id") LongParam id) {
+  public List<User> fetchStudents(@PathParam("id") LongParam id,
+          @Min(0) @DefaultValue("0") @QueryParam("start") IntParam startParam,
+          @Min(0) @DefaultValue("0") @QueryParam("size") IntParam sizeParam) {
+
     Faculty faculty = facDao.findById(id.get());
     if (faculty == null)
       throw new WebApplicationException(Status.NOT_FOUND);
 
-    return userDao.findByRoleAndFaculty(UserRole.STUDENT, faculty);
+    return PagingUtil.paging(userDao.findByRoleAndFaculty(UserRole.STUDENT, faculty), startParam.get(), sizeParam.get());
   }
 
   @GET
   @Path("/{id}/supervisors")
   @UnitOfWork
   @Pac4JSecurity(authorizers = AUTHENTICATED, clients = { BASIC_AUTH, JWT_AUTH })
-  public List<User> fetchSupervisors(@PathParam("id") LongParam id) {
+  public List<User> fetchSupervisors(@PathParam("id") LongParam id,
+          @Min(0) @DefaultValue("0") @QueryParam("start") IntParam startParam,
+          @Min(0) @DefaultValue("0") @QueryParam("size") IntParam sizeParam) {
+
     Faculty faculty = facDao.findById(id.get());
     if (faculty == null)
       throw new WebApplicationException(Status.NOT_FOUND);
 
-    return userDao.findByRoleAndFaculty(UserRole.AC_SUPERVISOR, faculty);
+    return PagingUtil.paging(userDao.findByRoleAndFaculty(UserRole.AC_SUPERVISOR, faculty), startParam.get(), sizeParam.get());
   }
 
 }

@@ -24,15 +24,18 @@ import static cz.studenthub.auth.Consts.JWT_AUTH;
 import java.util.List;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -48,7 +51,9 @@ import cz.studenthub.core.UserRole;
 import cz.studenthub.db.CompanyDAO;
 import cz.studenthub.db.TopicDAO;
 import cz.studenthub.db.UserDAO;
+import cz.studenthub.util.PagingUtil;
 import io.dropwizard.hibernate.UnitOfWork;
+import io.dropwizard.jersey.params.IntParam;
 import io.dropwizard.jersey.params.LongParam;
 
 @Path("/companies")
@@ -70,8 +75,9 @@ public class CompanyResource {
   @GET
   @UnitOfWork
   @Pac4JSecurity(ignore = true)
-  public List<Company> fetch() {
-    return companyDao.findAll();
+  public List<Company> fetch(@Min(0) @DefaultValue("0") @QueryParam("start") IntParam startParam,
+          @Min(0) @DefaultValue("0") @QueryParam("size") IntParam sizeParam) {
+    return PagingUtil.paging(companyDao.findAll(), startParam.get(), sizeParam.get());
   }
 
   @GET
@@ -123,24 +129,30 @@ public class CompanyResource {
   @Path("/{id}/leaders")
   @UnitOfWork
   @Pac4JSecurity(authorizers = AUTHENTICATED, clients = { BASIC_AUTH, JWT_AUTH })
-  public List<User> fetchLeaders(@PathParam("id") LongParam id) {
+  public List<User> fetchLeaders(@PathParam("id") LongParam id,
+		  @Min(0) @DefaultValue("0") @QueryParam("start") IntParam startParam,
+		  @Min(0) @DefaultValue("0") @QueryParam("size") IntParam sizeParam) {
+
     Company company = companyDao.findById(id.get());
     if (company == null)
       throw new WebApplicationException(Status.NOT_FOUND);
 
-    return userDao.findByRoleAndCompany(UserRole.TECH_LEADER, company);
+    return PagingUtil.paging(userDao.findByRoleAndCompany(UserRole.TECH_LEADER, company), startParam.get(), sizeParam.get());
   }
 
   @GET
   @Path("/{id}/topics")
   @UnitOfWork
   @Pac4JSecurity(ignore = true)
-  public List<Topic> fetchTopics(@PathParam("id") LongParam id) {
+  public List<Topic> fetchTopics(@PathParam("id") LongParam id,
+          @Min(0) @DefaultValue("0") @QueryParam("start") IntParam startParam,
+          @Min(0) @DefaultValue("0") @QueryParam("size") IntParam sizeParam) {
+
     Company company = companyDao.findById(id.get());
     if (company == null)
       throw new WebApplicationException(Status.NOT_FOUND);
 
-    return topicDao.findByCompany(company);
+    return PagingUtil.paging(topicDao.findByCompany(company), startParam.get(), sizeParam.get());
   }
 
 }
