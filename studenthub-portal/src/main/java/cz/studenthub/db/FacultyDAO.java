@@ -18,7 +18,9 @@ package cz.studenthub.db;
 
 import java.util.List;
 
+import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Restrictions;
 
 import cz.studenthub.core.Faculty;
 import cz.studenthub.core.University;
@@ -59,5 +61,14 @@ public class FacultyDAO extends AbstractDAO<Faculty> {
 
   public void delete(Faculty faculty) {
     currentSession().delete(faculty);
+  }
+
+  public List<Faculty> search(University university, String text) {
+    String pattern = "%" + text + "%";
+    Criteria criteria = criteria().add(Restrictions.ilike("name", pattern))
+        .add(Restrictions.eq("university", university))
+        .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+
+    return list(criteria);
   }
 }

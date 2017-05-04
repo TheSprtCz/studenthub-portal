@@ -23,15 +23,18 @@ import static cz.studenthub.auth.Consts.JWT_AUTH;
 import java.util.List;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -44,7 +47,9 @@ import cz.studenthub.core.Faculty;
 import cz.studenthub.core.University;
 import cz.studenthub.db.FacultyDAO;
 import cz.studenthub.db.UniversityDAO;
+import cz.studenthub.util.PagingUtil;
 import io.dropwizard.hibernate.UnitOfWork;
+import io.dropwizard.jersey.params.IntParam;
 import io.dropwizard.jersey.params.LongParam;
 
 @Path("/universities")
@@ -66,6 +71,17 @@ public class UniversityResource {
   @Pac4JSecurity(ignore = true)
   public List<University> fetch() {
     return uniDao.findAll();
+  }
+
+  @GET
+  @Path("/search")
+  @UnitOfWork
+  @Pac4JSecurity(ignore = true)
+  public List<University> search(@NotNull @QueryParam("text") String text,
+          @Min(0) @DefaultValue("0") @QueryParam("start") IntParam startParam,
+          @Min(0) @DefaultValue("0") @QueryParam("size") IntParam sizeParam) {
+
+    return PagingUtil.paging(uniDao.search(text), startParam.get(), sizeParam.get());
   }
 
   @GET
@@ -125,4 +141,18 @@ public class UniversityResource {
     return facDao.findAllByUniversity(university);
   }
 
+  @GET
+  @Path("/{id}/faculties/search")
+  @UnitOfWork
+  @Pac4JSecurity(ignore = true)
+  public List<Faculty> searchFaculties(@PathParam("id") LongParam id, @NotNull @QueryParam("text") String text,
+          @Min(0) @DefaultValue("0") @QueryParam("start") IntParam startParam,
+	      @Min(0) @DefaultValue("0") @QueryParam("size") IntParam sizeParam) {
+
+    University university = uniDao.findById(id.get());
+    if (university == null)
+      throw new WebApplicationException(Status.NOT_FOUND);
+
+    return PagingUtil.paging(facDao.search(university, text), startParam.get(), sizeParam.get());
+  }
 }
