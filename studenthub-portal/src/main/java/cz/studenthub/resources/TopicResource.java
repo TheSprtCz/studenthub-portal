@@ -16,6 +16,7 @@
  *******************************************************************************/
 package cz.studenthub.resources;
 import java.util.List;
+import java.util.Optional;
 
 import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
@@ -65,6 +66,7 @@ public class TopicResource {
 
   @GET
   @UnitOfWork
+  @RolesAllowed("ADMIN")
   public List<Topic> fetch(@Min(0) @DefaultValue("0") @QueryParam("start") IntParam startParam,
       @Min(0) @DefaultValue("0") @QueryParam("size") IntParam sizeParam) {
     return PagingUtil.paging(topicDao.findAll(), startParam.get(), sizeParam.get());
@@ -73,8 +75,15 @@ public class TopicResource {
   @GET
   @Path("/{id}")
   @UnitOfWork
-  public Topic findById(@PathParam("id") LongParam id) {
-    return topicDao.findById(id.get());
+  public Topic findById(@PathParam("id") LongParam id, @Auth Optional<User> user) {
+    Topic topic = topicDao.findById(id.get());
+
+    // If topic is enabled, or user is creator or admin, return topic 
+    if (topic != null && (topic.isEnabled() || (user.isPresent() && (topic.getCreator().getId().equals(user.get().getId())
+       || user.get().getRoles().contains(UserRole.ADMIN))))) {
+      return topic;
+    }
+    throw new WebApplicationException(Status.NOT_FOUND);   
   }
 
   @DELETE

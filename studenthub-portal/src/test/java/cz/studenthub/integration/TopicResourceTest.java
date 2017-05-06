@@ -36,8 +36,8 @@ public class TopicResourceTest {
   }
   
   private List<Topic> fetchTopics() {
-    return client.target(String.format("http://localhost:%d/api/topics", DROPWIZARD.getLocalPort()))
-      .request().get(new GenericType<List<Topic>>(){});
+    return IntegrationTestSuite.authorizedRequest(client.target(String.format("http://localhost:%d/api/topics", DROPWIZARD.getLocalPort()))
+      .request(), client).get(new GenericType<List<Topic>>(){});
   }
 
   private List<User> getSupervisors(int id) {
@@ -50,7 +50,7 @@ public class TopicResourceTest {
     List<Topic> list = fetchTopics();
 
     assertNotNull(list);
-    assertEquals(list.size(), 4);
+    assertEquals(list.size(), 5);
   }
 
   @Test
@@ -78,8 +78,8 @@ public class TopicResourceTest {
     assertNotNull(response);
     System.out.println(response);
     assertEquals(response.getStatus(), 201);
-    assertEquals(fetchTopics().size(), 5);
-    assertEquals((long) response.readEntity(Topic.class).getId(), 5);
+    assertEquals(fetchTopics().size(), 6);
+    assertEquals((long) response.readEntity(Topic.class).getId(), 6);
   }
 
   @Test(dependsOnMethods = "createTopic")
@@ -91,7 +91,7 @@ public class TopicResourceTest {
     topic.put("title", "Another Topic");
     topic.put("creator", creator);
 
-    Response response = IntegrationTestSuite.authorizedRequest(client.target(String.format("http://localhost:%d/api/topics/5", DROPWIZARD.getLocalPort()))
+    Response response = IntegrationTestSuite.authorizedRequest(client.target(String.format("http://localhost:%d/api/topics/6", DROPWIZARD.getLocalPort()))
       .request(MediaType.APPLICATION_JSON), client).put(Entity.json(topic.toJSONString()));
 
     assertNotNull(response);
@@ -101,12 +101,12 @@ public class TopicResourceTest {
 
   @Test(dependsOnMethods = "updateTopic")
   public void deleteTopic() {
-    Response response = IntegrationTestSuite.authorizedRequest(client.target(String.format("http://localhost:%d/api/topics/5", DROPWIZARD.getLocalPort()))
+    Response response = IntegrationTestSuite.authorizedRequest(client.target(String.format("http://localhost:%d/api/topics/6", DROPWIZARD.getLocalPort()))
       .request(), client).delete();
 
     assertNotNull(response);
     assertEquals(response.getStatus(), 204);
-    assertEquals(fetchTopics().size(), 4);
+    assertEquals(fetchTopics().size(), 5);
   }
 
   @Test(dependsOnGroups = "login")

@@ -43,8 +43,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 @NamedQueries({ @NamedQuery(name = "Topic.findAll", query = "SELECT topic FROM Topic topic"),
   @NamedQuery(name = "Topic.findByCreator", query = "SELECT topic FROM Topic topic WHERE topic.creator = :creator"),
   @NamedQuery(name = "Topic.findBySupervisor", query = "SELECT topic FROM Topic topic join topic.academicSupervisors supervisor WHERE supervisor = :supervisor"),
-  @NamedQuery(name = "Topic.findByTag", query = "SELECT topic FROM Topic topic join topic.tags tag WHERE tag = :tag"),
-  @NamedQuery(name = "Topic.findByCompany", query = "SELECT topic FROM Topic topic WHERE topic.creator.company = :company") })
+  @NamedQuery(name = "Topic.findByTag", query = "SELECT topic FROM Topic topic join topic.tags tag WHERE tag = :tag AND enabled = TRUE"),
+  @NamedQuery(name = "Topic.findByCompany", query = "SELECT topic FROM Topic topic WHERE topic.creator.company = :company AND enabled = TRUE") })
 public class Topic {
 
   @Id
@@ -55,6 +55,7 @@ public class Topic {
   private String title;
   private String shortAbstract;
   private String description;
+  private boolean enabled = true;
 
   /*
    * TODO: This is a possible data integrity issue (e.g. student can be a
@@ -164,6 +165,14 @@ public class Topic {
   public void setDegrees(Set<TopicDegree> degrees) {
     this.degrees = degrees;
   }
+
+  public boolean isEnabled() {
+    return enabled;
+  }
+
+  public void setEnabled(boolean enabled) {
+    this.enabled = enabled;
+  } 
 
   @Override
   public int hashCode() {
