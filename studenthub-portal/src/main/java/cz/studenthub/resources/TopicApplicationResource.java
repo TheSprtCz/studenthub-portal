@@ -117,8 +117,10 @@ public class TopicApplicationResource {
 
     // allow topic creator/leader, assigned student, topic supervisor, admin
     Long userId = Long.valueOf(profile.getId());
-    if (oldApp.getTechLeader().getId().equals(userId) || oldApp.getStudent().getId().equals(userId)
-        || oldApp.getAcademicSupervisor().getId().equals(userId) || profile.getRoles().contains(UserRole.ADMIN.name())) {
+    if ((oldApp.getTechLeader() != null && oldApp.getTechLeader().getId().equals(userId))
+        || oldApp.getStudent().getId().equals(userId)
+        || (oldApp.getAcademicSupervisor() != null && oldApp.getAcademicSupervisor().getId().equals(userId))
+        || profile.getRoles().contains(UserRole.ADMIN.name())) {
       app.setId(id);
       appDao.update(app);
       return Response.ok(app).build();

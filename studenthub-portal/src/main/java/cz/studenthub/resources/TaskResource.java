@@ -125,8 +125,10 @@ public class TaskResource {
 
   public static boolean isAllowedToAccessTask(TopicApplication app, StudentHubProfile profile) {
     Long profileId = Long.valueOf(profile.getId());
-    return app.getAcademicSupervisor().getId().equals(profileId) || app.getStudent().getId().equals(profileId)
-        || app.getTechLeader().getId().equals(profileId) || profile.getRoles().contains(UserRole.ADMIN.name());
+    return (app.getAcademicSupervisor() != null && app.getAcademicSupervisor().getId().equals(profileId))
+            || app.getStudent().getId().equals(profileId)
+            || (app.getTechLeader() != null && app.getTechLeader().getId().equals(profileId))
+            || profile.getRoles().contains(UserRole.ADMIN.name());
   }
 
 }
