@@ -1,35 +1,24 @@
 package cz.studenthub;
 
 import javax.ws.rs.client.Client;
+import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.Invocation.Builder;
+import javax.ws.rs.core.MultivaluedHashMap;
+import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
-import org.junit.ClassRule;
-import org.junit.Ignore;
-import org.junit.rules.ExternalResource;
-import org.junit.rules.RuleChain;
-import org.junit.rules.TestRule;
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.testng.annotations.AfterSuite;
+import org.testng.annotations.BeforeSuite;
+import org.testng.annotations.Test;
 
 import cz.studenthub.StudentHubApplication;
 import cz.studenthub.StudentHubConfiguration;
-import cz.studenthub.integration.CompanyResourceTest;
-import cz.studenthub.integration.FacultyResourceTest;
-import cz.studenthub.integration.LoginResourceTest;
-import cz.studenthub.integration.TagResourceTest;
-import cz.studenthub.integration.TaskResourceTest;
-import cz.studenthub.integration.TopicApplicationResourceTest;
-import cz.studenthub.integration.TopicResourceTest;
-import cz.studenthub.integration.UniversityResourceTest;
-import cz.studenthub.integration.UserResourceTest;
-import io.dropwizard.testing.junit.DropwizardAppRule;
+import io.dropwizard.testing.DropwizardTestSupport;
 import liquibase.Contexts;
 import liquibase.Liquibase;
 import liquibase.database.Database;
@@ -39,30 +28,30 @@ import liquibase.exception.DatabaseException;
 import liquibase.exception.LiquibaseException;
 import liquibase.resource.ClassLoaderResourceAccessor;
 
-@Ignore
-@RunWith(Suite.class)
-@SuiteClasses({ LoginResourceTest.class, UniversityResourceTest.class, FacultyResourceTest.class,
-    CompanyResourceTest.class, TagResourceTest.class, UserResourceTest.class, TopicResourceTest.class,
-    TopicApplicationResourceTest.class, TaskResourceTest.class})
 public class IntegrationTestSuite {
 
-  public static DropwizardAppRule<StudentHubConfiguration> DROPWIZARD;
+  public static final DropwizardTestSupport<StudentHubConfiguration> DROPWIZARD =
+            new DropwizardTestSupport<StudentHubConfiguration>(StudentHubApplication.class, "config-test.yml");
   public static final Logger LOG = LoggerFactory.getLogger(IntegrationTestSuite.class);
 
+  // Superadmin credentials
+  public static String USERNAME = "superadmin@example.com";
+  public static String PASSWORD = "test";
 
-  public static ExternalResource resource;
   private static String superToken;
-  
-  @ClassRule
-  public static TestRule chain = RuleChain.outerRule(DROPWIZARD = new DropwizardAppRule<StudentHubConfiguration>(StudentHubApplication.class, "config-test.yml"))
-      .around(resource = new ExternalResource() {
-          @Override
-          protected void before() throws Throwable {
-             migrateDatabase();
-          }    
-      });
+
+  @BeforeSuite
+  public void beforeClass() {
+      DROPWIZARD.before();
+  }
+
+  @AfterSuite(alwaysRun = true)
+  public void afterClass() {
+      DROPWIZARD.after();
+  }
 
   // Migrates database
+  @Test(groups = "migrate")
   public static void migrateDatabase() {
     SessionFactory sessionFactory = getSessionFactory();
     Session session = sessionFactory.openSession();
@@ -86,30 +75,38 @@ public class IntegrationTestSuite {
     LOG.debug("migrated");
   }
 
+  public static Response authorizationRequest(Client client, String username, String password) {
+    MultivaluedMap<String, String> formData = new MultivaluedHashMap<String, String>();
+    formData.add("username", username);
+    formData.add("password", password);
+
+    return client.target(
+        String.format("http://localhost:%d/api/auth/login", DROPWIZARD.getLocalPort())).request().post(Entity.form(formData));
+  }
+
   public static String authorize(Client client, String username, String password) {
-    Response response = client.target(
-        String.format("http://localhost:%d/api/auth/login", DROPWIZARD.getLocalPort()))
-        .queryParam("username", "superadmin@example.com")
-        .queryParam("password", "test").request().post(null);
-    return response.getHeaderString("Authorization");
+    Response response = authorizationRequest(client, username, password);
+ 
+    return response.getCookies().get("sh-token").getValue();
   }
 
   public static String authorize(Client client) {
-    return authorize(client, "superadmin@example.com", "test");
+    return authorize(client, USERNAME, PASSWORD);
   }
 
   public static Builder authorizedRequest(Builder target, String token) {
-    return target.header("Authorization", token);
+    return target.cookie("sh-token", token);
   }
 
   public static Builder authorizedRequest(Builder target, Client client) {
     if (superToken == null) {
       superToken = authorize(client);
     }
-    return target.header("Authorization", superToken);
+    return target.cookie("sh-token", superToken);
   }
 
   public static SessionFactory getSessionFactory() {
     return ((StudentHubApplication) DROPWIZARD.getApplication()).getSessionFactory();
   }
+
 }
