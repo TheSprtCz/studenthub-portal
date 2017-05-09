@@ -55,7 +55,7 @@ public class CompanyDAOTest {
       return companyDAO.findAll();
     });
     assertNotNull(companies);
-    assertEquals(companies.size(), 8);
+    assertEquals(8, companies.size());
   }
 
   @Test
