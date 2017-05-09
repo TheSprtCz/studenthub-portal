@@ -1,7 +1,7 @@
 package cz.studenthub.integration;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
 
 import java.util.List;
 
@@ -11,47 +11,51 @@ import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import org.junit.FixMethodOrder;
-import org.junit.Test;
-import org.junit.runners.MethodSorters;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.Test;
 
 import cz.studenthub.IntegrationTestSuite;
 import cz.studenthub.StudentHubConfiguration;
 import cz.studenthub.core.Faculty;
 import cz.studenthub.core.University;
 import io.dropwizard.client.JerseyClientBuilder;
-import io.dropwizard.testing.junit.DropwizardAppRule;
+import io.dropwizard.testing.DropwizardTestSupport;
 import net.minidev.json.JSONObject;
 
-@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class UniversityResourceTest {
-  public static final DropwizardAppRule<StudentHubConfiguration> DROPWIZARD = IntegrationTestSuite.DROPWIZARD;
+  public static DropwizardTestSupport<StudentHubConfiguration> DROPWIZARD;
 
-  private static Client client = new JerseyClientBuilder(DROPWIZARD.getEnvironment()).build("UniversityTest");
+  private static Client client;
+
+  @BeforeClass
+  public void setup() {
+      DROPWIZARD = IntegrationTestSuite.DROPWIZARD;
+      client = new JerseyClientBuilder(DROPWIZARD.getEnvironment()).build("UniversityTest");
+  }
   
   private List<University> fetchUniversities() {
     return client.target(String.format("http://localhost:%d/api/universities", DROPWIZARD.getLocalPort()))
       .request().get(new GenericType<List<University>>(){});
   }
 
-  @Test
+  @Test(dependsOnGroups = "migrate")
   public void listUniversities() {
     List<University> list = fetchUniversities();
 
     assertNotNull(list);
-    assertEquals(5, list.size());
+    assertEquals(list.size(), 5);
   }
 
-  @Test
+  @Test(dependsOnGroups = "login")
   public void fetchUniversity() {
     University uni = IntegrationTestSuite.authorizedRequest(client.target(String.format("http://localhost:%d/api/universities/1", DROPWIZARD.getLocalPort()))
         .request(MediaType.APPLICATION_JSON), client).get(University.class);
 
     assertNotNull(uni);
-    assertEquals("Masaryk University", uni.getName());
+    assertEquals(uni.getName(), "Masaryk University");
   }
 
-  @Test
+  @Test(dependsOnMethods = "listUniversities")
   public void createUniversity() {
     JSONObject university = new JSONObject();
     university.put("name", "Unknown");
@@ -62,11 +66,11 @@ public class UniversityResourceTest {
       .request(MediaType.APPLICATION_JSON), client).post(Entity.json(university.toJSONString()));
 
     assertNotNull(response);
-    assertEquals(201, response.getStatus());
-    assertEquals(6, fetchUniversities().size());
+    assertEquals(response.getStatus(), 201);
+    assertEquals(fetchUniversities().size(), 6);
   }
 
-  @Test
+  @Test(dependsOnMethods = "createUniversity")
   public void updateUniversity() {
     JSONObject university = new JSONObject();
     university.put("name", "New");
@@ -75,26 +79,26 @@ public class UniversityResourceTest {
       .request(MediaType.APPLICATION_JSON), client).put(Entity.json(university.toJSONString()));
 
     assertNotNull(response);
-    assertEquals(200, response.getStatus());
-    assertEquals("New", response.readEntity(University.class).getName());
+    assertEquals(response.getStatus(), 200);
+    assertEquals(response.readEntity(University.class).getName(), "New");
   }
 
-  @Test
+  @Test(dependsOnMethods = "updateUniversity")
   public void deleteUniversity() {
     Response response = IntegrationTestSuite.authorizedRequest(client.target(String.format("http://localhost:%d/api/universities/6", DROPWIZARD.getLocalPort())).request(), client)
       .delete();
 
     assertNotNull(response);
-    assertEquals(204, response.getStatus());
-    assertEquals(5, fetchUniversities().size());
+    assertEquals(response.getStatus(), 204);
+    assertEquals(fetchUniversities().size(), 5);
   }
 
-  @Test
+  @Test(dependsOnGroups = "login")
   public void fetchFaculties() {
     List<Faculty> faculties = IntegrationTestSuite.authorizedRequest(client.target(String.format("http://localhost:%d/api/universities/1/faculties", DROPWIZARD.getLocalPort())).request(), client)
         .get(new GenericType<List<Faculty>>(){}); 
 
     assertNotNull(faculties);
-    assertEquals(4, faculties.size());
+    assertEquals(faculties.size(), 4);
   }
 }

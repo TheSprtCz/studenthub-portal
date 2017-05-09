@@ -1,0 +1,18 @@
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
+ 
+<suite name="IntegrationTestSuite" verbose="1" >
+	<test name="Integration Tests"   >
+	    <classes>
+	        <class name="cz.studenthub.IntegrationTestSuite"/>
+	        <class name="cz.studenthub.integration.LoginResourceTest"/>
+	        <class name="cz.studenthub.integration.CompanyResourceTest"/>
+	        <class name="cz.studenthub.integration.UniversityResourceTest"/>
+	        <class name="cz.studenthub.integration.FacultyResourceTest"/>
+	        <class name="cz.studenthub.integration.TopicResourceTest"/>
+	        <class name="cz.studenthub.integration.UserResourceTest"/>
+	        <class name="cz.studenthub.integration.TopicApplicationResourceTest"/>
+	        <class name="cz.studenthub.integration.TaskResourceTest"/>
+	        <class name="cz.studenthub.integration.TagResourceTest"/>
+	    </classes>
+    </test>
+</suite>
