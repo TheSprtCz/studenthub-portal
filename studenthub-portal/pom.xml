@@ -44,6 +44,30 @@
         </plugins>
       </build>
     </profile>
+    <profile>
+      <id>swagger</id>
+      <build>
+        <plugins>             
+          <plugin>
+	        <groupId>com.sebastian-daschner</groupId>
+	        <artifactId>jaxrs-analyzer-maven-plugin</artifactId>
+	        <executions>
+	          <execution>
+	            <goals>
+	              <goal>analyze-jaxrs</goal>
+	            </goals>
+	            <phase>package</phase>
+	            <configuration>
+	              <backend>swagger</backend>
+	              <deployedDomain>localhost:8080/api</deployedDomain>
+	              <resourcesDir>../api-docs</resourcesDir>
+	            </configuration>
+	          </execution>
+	        </executions>
+	      </plugin>
+        </plugins>
+      </build>
+    </profile>
   </profiles> 
 
   <dependencyManagement>
@@ -125,23 +149,6 @@
 
   <build>
     <plugins>
-      <plugin>
-        <groupId>com.sebastian-daschner</groupId>
-        <artifactId>jaxrs-analyzer-maven-plugin</artifactId>
-        <executions>
-          <execution>
-            <goals>
-              <goal>analyze-jaxrs</goal>
-            </goals>
-            <phase>package</phase>
-            <configuration>
-              <backend>swagger</backend>
-              <deployedDomain>localhost:8080/api</deployedDomain>
-              <resourcesDir>../api-docs</resourcesDir>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
       <plugin>
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
