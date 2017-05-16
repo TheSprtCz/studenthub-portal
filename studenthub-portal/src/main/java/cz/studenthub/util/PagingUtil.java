@@ -11,6 +11,9 @@ public class PagingUtil {
 
     public static <T> List<T> paging(ArrayList<T> list, int start, int size) {
         int listSize = list.size();
+        if (listSize == 0)
+            return list;
+
         if (start >= listSize)
             throw new WebApplicationException(Status.BAD_REQUEST);
 
