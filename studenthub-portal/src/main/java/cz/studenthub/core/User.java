@@ -39,7 +39,6 @@ import javax.persistence.Table;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 @Entity
 @Table(name = "Users")
@@ -48,7 +47,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
     @NamedQuery(name = "User.findByCompany", query = "SELECT user FROM User user WHERE user.company = :company"),
     @NamedQuery(name = "User.findByRoleAndFaculty", query = "SELECT user FROM User user join user.roles role WHERE user.faculty = :faculty and role = :role"),
     @NamedQuery(name = "User.findByRoleAndCompany", query = "SELECT user FROM User user join user.roles role WHERE user.company = :company and role = :role"),
-    @NamedQuery(name = "User.findByTag", query = "SELECT user FROM User user join user.tags tag WHERE tag = :tag") })
+    @NamedQuery(name = "User.findByTag", query = "SELECT user FROM User user join user.tags tag WHERE tag = :tag"),
+    @NamedQuery(name = "User.findByEmail", query = "SELECT user FROM User user WHERE user.email = :email")})
 public class User implements Principal {
 
   @Id
@@ -58,7 +58,6 @@ public class User implements Principal {
   @Column(unique = true, nullable = false)
   private String username;
 
-  @NotEmpty
   @JsonIgnore
   private String password;
 
@@ -128,12 +127,10 @@ public class User implements Principal {
     this.username = username;
   }
 
-  @JsonIgnore
   public String getPassword() {
     return password;
   }
 
-  @JsonProperty
   public void setPassword(String password) {
     this.password = password;
   }

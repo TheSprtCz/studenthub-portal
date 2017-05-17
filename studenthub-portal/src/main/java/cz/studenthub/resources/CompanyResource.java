@@ -16,13 +16,10 @@
  *******************************************************************************/
 package cz.studenthub.resources;
 
-import static cz.studenthub.auth.Consts.ADMIN;
-import static cz.studenthub.auth.Consts.AUTHENTICATED;
-import static cz.studenthub.auth.Consts.BASIC_AUTH;
-import static cz.studenthub.auth.Consts.JWT_AUTH;
-
 import java.util.List;
 
+import javax.annotation.security.PermitAll;
+import javax.annotation.security.RolesAllowed;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
@@ -42,8 +39,6 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriBuilder;
 
-import org.pac4j.jax.rs.annotations.Pac4JSecurity;
-
 import cz.studenthub.core.Company;
 import cz.studenthub.core.Topic;
 import cz.studenthub.core.User;
@@ -59,7 +54,6 @@ import io.dropwizard.jersey.params.LongParam;
 @Path("/companies")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
-@Pac4JSecurity(authorizers = ADMIN, clients = { BASIC_AUTH, JWT_AUTH })
 public class CompanyResource {
 
   private final CompanyDAO companyDao;
@@ -74,7 +68,6 @@ public class CompanyResource {
 
   @GET
   @UnitOfWork
-  @Pac4JSecurity(ignore = true)
   public List<Company> fetch(@Min(0) @DefaultValue("0") @QueryParam("start") IntParam startParam,
           @Min(0) @DefaultValue("0") @QueryParam("size") IntParam sizeParam) {
     return PagingUtil.paging(companyDao.findAll(), startParam.get(), sizeParam.get());
@@ -83,13 +76,13 @@ public class CompanyResource {
   @GET
   @Path("/{id}")
   @UnitOfWork
-  @Pac4JSecurity(ignore = true)
   public Company findById(@PathParam("id") LongParam id) {
     return companyDao.findById(id.get());
   }
 
   @POST
   @UnitOfWork
+  @RolesAllowed("ADMIN")
   public Response create(@NotNull @Valid Company company) {
     Company returned = companyDao.create(company);
     if (returned.getId() == null)
@@ -102,6 +95,7 @@ public class CompanyResource {
   @PUT
   @Path("/{id}")
   @UnitOfWork
+  @RolesAllowed("ADMIN")
   public Response update(@PathParam("id") LongParam idParam, @NotNull @Valid Company company) {
     Long id = idParam.get();
     if (companyDao.findById(id) == null) 
@@ -115,6 +109,7 @@ public class CompanyResource {
   @DELETE
   @Path("/{id}")
   @UnitOfWork
+  @RolesAllowed("ADMIN")
   public Response delete(@PathParam("id") LongParam idParam) {
     Long id = idParam.get();
     Company company = companyDao.findById(id);
@@ -128,7 +123,7 @@ public class CompanyResource {
   @GET
   @Path("/{id}/leaders")
   @UnitOfWork
-  @Pac4JSecurity(authorizers = AUTHENTICATED, clients = { BASIC_AUTH, JWT_AUTH })
+  @PermitAll
   public List<User> fetchLeaders(@PathParam("id") LongParam id,
 		  @Min(0) @DefaultValue("0") @QueryParam("start") IntParam startParam,
 		  @Min(0) @DefaultValue("0") @QueryParam("size") IntParam sizeParam) {
@@ -143,7 +138,6 @@ public class CompanyResource {
   @GET
   @Path("/{id}/topics")
   @UnitOfWork
-  @Pac4JSecurity(ignore = true)
   public List<Topic> fetchTopics(@PathParam("id") LongParam id,
           @Min(0) @DefaultValue("0") @QueryParam("start") IntParam startParam,
           @Min(0) @DefaultValue("0") @QueryParam("size") IntParam sizeParam) {

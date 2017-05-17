@@ -16,14 +16,10 @@
  *******************************************************************************/
 package cz.studenthub.resources;
 
-import static cz.studenthub.auth.Consts.ADMIN;
-import static cz.studenthub.auth.Consts.AUTHENTICATED;
-import static cz.studenthub.auth.Consts.BASIC_AUTH;
-import static cz.studenthub.auth.Consts.JWT_AUTH;
-import static cz.studenthub.auth.Consts.STUDENT;
-
 import java.util.List;
 
+import javax.annotation.security.PermitAll;
+import javax.annotation.security.RolesAllowed;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
@@ -43,18 +39,14 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriBuilder;
 
-import org.pac4j.jax.rs.annotations.Pac4JProfile;
-import org.pac4j.jax.rs.annotations.Pac4JSecurity;
-
-import cz.studenthub.auth.StudentHubProfile;
 import cz.studenthub.core.Task;
 import cz.studenthub.core.TopicApplication;
 import cz.studenthub.core.User;
 import cz.studenthub.core.UserRole;
 import cz.studenthub.db.TaskDAO;
 import cz.studenthub.db.TopicApplicationDAO;
-import cz.studenthub.db.UserDAO;
 import cz.studenthub.util.PagingUtil;
+import io.dropwizard.auth.Auth;
 import io.dropwizard.hibernate.UnitOfWork;
 import io.dropwizard.jersey.params.IntParam;
 import io.dropwizard.jersey.params.LongParam;
@@ -62,22 +54,19 @@ import io.dropwizard.jersey.params.LongParam;
 @Path("/applications")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
-@Pac4JSecurity(authorizers = AUTHENTICATED, clients = { BASIC_AUTH, JWT_AUTH })
 public class TopicApplicationResource {
 
   private final TopicApplicationDAO appDao;
-  private final UserDAO userDao;
   private final TaskDAO taskDao;
 
-  public TopicApplicationResource(TopicApplicationDAO appDao, UserDAO userDao, TaskDAO taskDao) {
+  public TopicApplicationResource(TopicApplicationDAO appDao, TaskDAO taskDao) {
     this.appDao = appDao;
-    this.userDao = userDao;
     this.taskDao = taskDao;
   }
 
   @GET
   @UnitOfWork
-  @Pac4JSecurity(authorizers = ADMIN, clients = { BASIC_AUTH, JWT_AUTH })
+  @PermitAll
   public List<TopicApplication> fetch(@Min(0) @DefaultValue("0") @QueryParam("start") IntParam startParam,
           @Min(0) @DefaultValue("0") @QueryParam("size") IntParam sizeParam) {
     return PagingUtil.paging(appDao.findAll(), startParam.get(), sizeParam.get());
@@ -86,6 +75,7 @@ public class TopicApplicationResource {
   @GET
   @Path("/{id}")
   @UnitOfWork
+  @PermitAll
   public TopicApplication findById(@PathParam("id") LongParam id) {
     return appDao.findById(id.get());
   }
@@ -93,7 +83,7 @@ public class TopicApplicationResource {
   @DELETE
   @Path("/{id}")
   @UnitOfWork
-  @Pac4JSecurity(authorizers = ADMIN, clients = { BASIC_AUTH, JWT_AUTH })
+  @RolesAllowed("ADMIN")
   public Response delete(@PathParam("id") LongParam idParam) {
     Long id = idParam.get();
     TopicApplication app = appDao.findById(id);
@@ -107,8 +97,7 @@ public class TopicApplicationResource {
   @PUT
   @Path("/{id}")
   @UnitOfWork
-  public Response update(@Pac4JProfile StudentHubProfile profile, @PathParam("id") LongParam idParam,
-      @NotNull @Valid TopicApplication app) {
+  public Response update(@Auth User user, @PathParam("id") LongParam idParam, @NotNull @Valid TopicApplication app) {
     
     long id = idParam.get();
     TopicApplication oldApp = appDao.findById(id);
@@ -116,9 +105,8 @@ public class TopicApplicationResource {
       throw new WebApplicationException(Status.NOT_FOUND);
 
     // allow topic creator/leader, assigned student, topic supervisor, admin
-    Long userId = Long.valueOf(profile.getId());
-    if (oldApp.getTechLeader().getId().equals(userId) || oldApp.getStudent().getId().equals(userId)
-        || oldApp.getAcademicSupervisor().getId().equals(userId) || profile.getRoles().contains(UserRole.ADMIN.name())) {
+    if (oldApp.getTechLeader().equals(user) || oldApp.getStudent().equals(user)
+        || oldApp.getAcademicSupervisor().equals(user) || user.getRoles().contains(UserRole.ADMIN)) {
       app.setId(id);
       appDao.update(app);
       return Response.ok(app).build();
@@ -129,10 +117,8 @@ public class TopicApplicationResource {
 
   @POST
   @UnitOfWork
-  @Pac4JSecurity(authorizers = STUDENT, clients = { BASIC_AUTH, JWT_AUTH })
-  public Response create(@Pac4JProfile StudentHubProfile profile, @NotNull @Valid TopicApplication app) {
-    User student = userDao.findById(Long.valueOf(profile.getId()));
-    app.setStudent(student);
+  @RolesAllowed("STUDENT")
+  public Response create(@NotNull @Valid TopicApplication app) {
     appDao.create(app);
     if (app.getId() == null)
       throw new WebApplicationException(Status.INTERNAL_SERVER_ERROR);
@@ -150,13 +136,13 @@ public class TopicApplicationResource {
   @GET
   @Path("/{id}/tasks")
   @UnitOfWork
-  public List<Task> getTasksByApplication(@PathParam("id") LongParam id, @Pac4JProfile StudentHubProfile profile,
+  public List<Task> getTasksByApplication(@PathParam("id") LongParam id, @Auth User user,
           @Min(0) @DefaultValue("0") @QueryParam("start") IntParam startParam,
           @Min(0) @DefaultValue("0") @QueryParam("size") IntParam sizeParam) {
 
     TopicApplication app = appDao.findById(id.get());
     // allow only app student, leader and/or supervisor
-    if (TaskResource.isAllowedToAccessTask(app, profile)) {
+    if (TaskResource.isAllowedToAccessTask(app, user)) {
       return PagingUtil.paging(taskDao.findByTopicApplication(app), startParam.get(), sizeParam.get());
     } else {
       throw new WebApplicationException(Status.FORBIDDEN);

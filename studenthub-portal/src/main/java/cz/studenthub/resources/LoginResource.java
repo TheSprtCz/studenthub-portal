@@ -16,46 +16,56 @@
  *******************************************************************************/
 package cz.studenthub.resources;
 
-import static cz.studenthub.auth.Consts.AUTHENTICATED;
+import java.io.UnsupportedEncodingException;
+import java.sql.Timestamp;
+import java.util.Date;
+import java.util.Set;
 
+import javax.annotation.security.PermitAll;
+import javax.ws.rs.CookieParam;
+import javax.ws.rs.FormParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Cookie;
 import javax.ws.rs.core.HttpHeaders;
+import javax.ws.rs.core.NewCookie;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
-import org.pac4j.jax.rs.annotations.Pac4JProfile;
-import org.pac4j.jax.rs.annotations.Pac4JSecurity;
-import org.pac4j.jwt.config.signature.SecretSignatureConfiguration;
-import org.pac4j.jwt.profile.JwtGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.algorithms.Algorithm;
+
 import cz.studenthub.auth.StudentHubPasswordEncoder;
-import cz.studenthub.auth.StudentHubProfile;
+import cz.studenthub.core.User;
+import cz.studenthub.core.UserRole;
+import cz.studenthub.db.UserDAO;
 import io.dropwizard.hibernate.UnitOfWork;
 
 /**
  * Resource class for obtaining JWT Token
  * 
- * JWT Format: 
+ * JWT Payload:
+ * 
  * <pre>
  * {
-    "$int_perms": [],
-    "sub": "cz.studenthub.auth.StudentHubProfile#1",
-    "$int_roles": [
+    "sub": "1",
+    "exp": 1487091708,
+    "iat": 1573491708,
+    "name": "Student Hub Admin",
+    "email": "admin@studenthub.cz",
+    "roles": [
       "STUDENT",
       "COMPANY_REP",
       "AC_SUPERVISOR",
       "ADMIN",
       "TECH_LEADER"
-    ],
-    "display_name": "Student Hub Admin",
-    "iat": 1487091708,
-    "email": "admin@studenthub.cz"
+    ]
   }
-  </pre>
+ * </pre>
  * 
  * @author sbunciak
  * @since 1.0
@@ -63,37 +73,76 @@ import io.dropwizard.hibernate.UnitOfWork;
 @Path("/auth")
 public class LoginResource {
 
-  private final Logger LOG = LoggerFactory.getLogger(LoginResource.class);
+  private static final Logger LOG = LoggerFactory.getLogger(LoginResource.class);
 
   public static final String BEARER_PREFFIX = "Bearer ";
+
+  public static final String COOKIE_NAME = "sh-token";
+  
+  private final UserDAO userDao;
+
+  public LoginResource(UserDAO userDao) {
+    this.userDao = userDao;
+  }
 
   @POST
   @UnitOfWork
   @Path("/login")
-  @Pac4JSecurity(authorizers = AUTHENTICATED, clients = "DirectFormClient")
-  public Response authenticateUser(@Pac4JProfile StudentHubProfile profile) {
-    try {
+  public Response authenticateUser(@FormParam("username") String username, @FormParam("password") String password) {
+    User user = userDao.findByEmail(username);
+    if (StudentHubPasswordEncoder.matches(password, user.getPassword())) {
       // Generate random 256-bit (32-byte) shared secret
       String sharedSecret = StudentHubPasswordEncoder.DEFAULT_SECRET;
+      Algorithm algorithm = null;
+      try {
+        algorithm = Algorithm.HMAC256(sharedSecret);
+      } catch (IllegalArgumentException | UnsupportedEncodingException e) {
+        LOG.error("Error when constructing JWT Algorithm", e);
+      }
 
-      // Issue a token for the user
-      JwtGenerator<StudentHubProfile> generator = new JwtGenerator<StudentHubProfile>(
-          new SecretSignatureConfiguration(sharedSecret));
-      String token = generator.generate(profile);
+      // construct JWT token
+      Date issuedAt = new Date();
+      String token = JWT.create()
+          .withSubject(user.getId().toString())
+          .withClaim("name", user.getName())
+          .withClaim("email", user.getEmail())
+          .withArrayClaim("roles", getRolesAsStringArray(user))
+          .withIssuer("student-hub")
+          .withIssuedAt(issuedAt)
+          .withExpiresAt(new Date(issuedAt.getTime() + (1000 * 60 * 60 * 24)))
+          .sign(algorithm);
 
-      // TODO: expiration
-      // TODO: login timestamp
       // update last login timestamp
-      // User u = userDao.findByEmail(profile.getEmail());
-      // u.setLastLogin(new Timestamp(System.currentTimeMillis()));
-      // userDao.createOrUpdate(u);
+      user.setLastLogin(new Timestamp(issuedAt.getTime()));
+      userDao.update(user);
 
-      // Return the token on the response
-      return Response.ok().header(HttpHeaders.AUTHORIZATION, BEARER_PREFFIX + token).build();
-    } catch (Exception e) {
-      // otherwise return FORBIDDEN
-      LOG.error(e.getMessage(), e);
+      // Return the token on the response and store in cookie
+      NewCookie newCookie = new NewCookie(COOKIE_NAME, token);
+      return Response.ok().header(HttpHeaders.AUTHORIZATION, BEARER_PREFFIX + token).cookie(newCookie).build();
+    } else {
       throw new WebApplicationException(Status.FORBIDDEN);
     }
+  }
+
+  @POST
+  @Path("/logout")
+  @PermitAll
+  public Response logout(@CookieParam(COOKIE_NAME) Cookie cookie) {
+    if (cookie != null) {
+      NewCookie newCookie = new NewCookie(cookie, null, 0, false);
+      return Response.ok().cookie(newCookie).build();
+    }
+    return Response.ok().build();
+  }
+
+  private static String[] getRolesAsStringArray(User user) {
+    Set<UserRole> roles = user.getRoles();
+    String[] rolesArray = new String[roles.size()];
+    int i = 0;
+    for (UserRole role : roles) {
+      rolesArray[i] = role.toString();
+      i++;
+    }
+    return rolesArray;
   }
 }

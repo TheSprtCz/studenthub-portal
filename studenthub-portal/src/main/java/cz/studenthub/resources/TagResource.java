@@ -16,12 +16,9 @@
  *******************************************************************************/
 package cz.studenthub.resources;
 
-import static cz.studenthub.auth.Consts.AUTHENTICATED;
-import static cz.studenthub.auth.Consts.BASIC_AUTH;
-import static cz.studenthub.auth.Consts.JWT_AUTH;
-
 import java.util.List;
 
+import javax.annotation.security.PermitAll;
 import javax.validation.constraints.Min;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
@@ -30,8 +27,6 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
-
-import org.pac4j.jax.rs.annotations.Pac4JSecurity;
 
 import cz.studenthub.core.Topic;
 import cz.studenthub.core.User;
@@ -56,7 +51,7 @@ public class TagResource {
   @GET
   @Path("/{tag}/users")
   @UnitOfWork
-  @Pac4JSecurity(authorizers = AUTHENTICATED, clients = { BASIC_AUTH, JWT_AUTH })
+  @PermitAll
   public List<User> fetchUsers(@PathParam("tag") String tag,
           @Min(0) @DefaultValue("0") @QueryParam("start") IntParam startParam,
           @Min(0) @DefaultValue("0") @QueryParam("size") IntParam sizeParam) {
