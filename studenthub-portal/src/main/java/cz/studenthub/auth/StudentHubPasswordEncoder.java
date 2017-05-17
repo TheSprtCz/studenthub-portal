@@ -20,7 +20,6 @@ import java.security.SecureRandom;
 
 import org.apache.commons.codec.digest.Crypt;
 import org.apache.commons.lang3.RandomStringUtils;
-import org.pac4j.core.credentials.password.PasswordEncoder;
 
 /**
  * Helper class for password encoding.
@@ -28,20 +27,18 @@ import org.pac4j.core.credentials.password.PasswordEncoder;
  * @author sbunciak
  * @since 1.0
  */
-public class StudentHubPasswordEncoder implements PasswordEncoder {
+public class StudentHubPasswordEncoder {
 
   private static final int DEFAULT_PASSWORD_LENGTH = 64;
   private static final String ALLOWED_CHARS = "abcdefghijklmnopqrstuvwxyz0123456789";
 
   public static final String DEFAULT_SECRET = genSecret();
 
-  @Override
-  public String encode(String password) {
+  public static String encode(String password) {
     return Crypt.crypt(password);
   }
 
-  @Override
-  public boolean matches(String plainPassword, String encodedPassword) {
+  public static boolean matches(String plainPassword, String encodedPassword) {
     return encodedPassword.equals(Crypt.crypt(plainPassword, encodedPassword));
   }
 

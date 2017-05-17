@@ -24,7 +24,7 @@ logging:
 server:
   rootPath: /api/
 
-# database - development conf. (not for prod. usage)
+# database
 database:
   # the name of your JDBC driver
   driverClass: org.postgresql.Driver

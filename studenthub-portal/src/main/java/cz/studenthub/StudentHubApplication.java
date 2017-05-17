@@ -16,34 +16,20 @@
  *******************************************************************************/
 package cz.studenthub;
 
-import static cz.studenthub.auth.Consts.ADMIN;
-import static cz.studenthub.auth.Consts.BASIC_AUTH;
-import static cz.studenthub.auth.Consts.COMPANY_REP;
-import static cz.studenthub.auth.Consts.JWT_AUTH;
-import static cz.studenthub.auth.Consts.STUDENT;
-import static cz.studenthub.auth.Consts.SUPERVISOR;
-import static cz.studenthub.auth.Consts.TECH_LEADER;
-
-import javax.ws.rs.core.HttpHeaders;
+import java.util.List;
 
 import org.eclipse.jetty.server.session.SessionHandler;
 import org.eclipse.jetty.servlet.ErrorPageErrorHandler;
+import org.glassfish.jersey.server.filter.RolesAllowedDynamicFeature;
 import org.hibernate.SessionFactory;
-import org.pac4j.core.config.Config;
-import org.pac4j.http.client.direct.DirectBasicAuthClient;
-import org.pac4j.http.client.direct.DirectFormClient;
-import org.pac4j.http.client.direct.HeaderClient;
-import org.pac4j.jax.rs.features.Pac4JSecurityFeature;
-import org.pac4j.jax.rs.jersey.features.Pac4JValueFactoryProvider;
-import org.pac4j.jax.rs.servlet.features.ServletJaxRsContextFactoryProvider;
-import org.pac4j.jwt.config.signature.SecretSignatureConfiguration;
-import org.pac4j.jwt.credentials.authenticator.JwtAuthenticator;
 
 import com.codahale.metrics.health.HealthCheck;
+import com.google.common.collect.Lists;
 
-import cz.studenthub.auth.HibernateUsernamePasswordAuthenticator;
+import cz.studenthub.auth.BasicAuthenticator;
+import cz.studenthub.auth.JwtCookieAuthFilter;
 import cz.studenthub.auth.StudentHubAuthorizer;
-import cz.studenthub.auth.StudentHubPasswordEncoder;
+import cz.studenthub.auth.TokenAuthenticator;
 import cz.studenthub.core.Company;
 import cz.studenthub.core.Faculty;
 import cz.studenthub.core.Task;
@@ -51,7 +37,6 @@ import cz.studenthub.core.Topic;
 import cz.studenthub.core.TopicApplication;
 import cz.studenthub.core.University;
 import cz.studenthub.core.User;
-import cz.studenthub.core.UserRole;
 import cz.studenthub.db.CompanyDAO;
 import cz.studenthub.db.FacultyDAO;
 import cz.studenthub.db.TaskDAO;
@@ -63,6 +48,7 @@ import cz.studenthub.health.StudentHubHealthCheck;
 import cz.studenthub.resources.CompanyResource;
 import cz.studenthub.resources.FacultyResource;
 import cz.studenthub.resources.LoginResource;
+import cz.studenthub.resources.RegistrationResource;
 import cz.studenthub.resources.TagResource;
 import cz.studenthub.resources.TaskResource;
 import cz.studenthub.resources.TopicApplicationResource;
@@ -71,6 +57,14 @@ import cz.studenthub.resources.UniversityResource;
 import cz.studenthub.resources.UserResource;
 import io.dropwizard.Application;
 import io.dropwizard.assets.AssetsBundle;
+import io.dropwizard.auth.AuthDynamicFeature;
+import io.dropwizard.auth.AuthFilter;
+import io.dropwizard.auth.AuthValueFactoryProvider;
+import io.dropwizard.auth.Authorizer;
+import io.dropwizard.auth.basic.BasicCredentialAuthFilter;
+import io.dropwizard.auth.basic.BasicCredentials;
+import io.dropwizard.auth.chained.ChainedAuthFilter;
+import io.dropwizard.auth.oauth.OAuthCredentialAuthFilter;
 import io.dropwizard.configuration.EnvironmentVariableSubstitutor;
 import io.dropwizard.configuration.ResourceConfigurationSourceProvider;
 import io.dropwizard.configuration.SubstitutingSourceProvider;
@@ -89,6 +83,8 @@ import io.dropwizard.setup.Environment;
  */
 public class StudentHubApplication extends Application<StudentHubConfiguration> {
 
+  public static final String NAME = "Student Hub";
+  
   /*
    * Hibernate bundle initialization
    */
@@ -111,7 +107,7 @@ public class StudentHubApplication extends Application<StudentHubConfiguration> 
 
   @Override
   public String getName() {
-    return "Student Hub";
+    return NAME;
   }
 
   @Override
@@ -135,9 +131,6 @@ public class StudentHubApplication extends Application<StudentHubConfiguration> 
 
   @Override
   public void run(final StudentHubConfiguration configuration, final Environment environment) {
-
-    configurePac4j(environment);
-
     // initialize DAOs
     final CompanyDAO companyDao = new CompanyDAO(hibernate.getSessionFactory());
     final UniversityDAO uniDao = new UniversityDAO(hibernate.getSessionFactory());
@@ -155,11 +148,15 @@ public class StudentHubApplication extends Application<StudentHubConfiguration> 
     environment.jersey().register(new UniversityResource(uniDao, facDao));
     environment.jersey().register(new FacultyResource(facDao, userDao));
     environment.jersey().register(new UserResource(userDao, topicDao, taDao));
-    environment.jersey().register(new TopicResource(topicDao, taDao, userDao));
-    environment.jersey().register(new TopicApplicationResource(taDao, userDao, taskDao));
+    environment.jersey().register(new TopicResource(topicDao, taDao));
+    environment.jersey().register(new TopicApplicationResource(taDao, taskDao));
     environment.jersey().register(new TaskResource(taDao, taskDao));
-    environment.jersey().register(new LoginResource());
+    environment.jersey().register(new LoginResource(userDao));
+    environment.jersey().register(new RegistrationResource(userDao));
     environment.jersey().register(new TagResource(userDao, topicDao));
+
+    // set up auth
+    configureAuth(configuration, environment, userDao);
 
     // since routing is achieved on client side we need to catch 404 and
     // redirect to index.html - handle 404 on client as well (this makes SPA
@@ -169,39 +166,44 @@ public class StudentHubApplication extends Application<StudentHubConfiguration> 
     environment.getApplicationContext().setErrorHandler(epeh);
 
     // healthcheck
-    HealthCheck hc = new UnitOfWorkAwareProxyFactory(hibernate).create(StudentHubHealthCheck.class, UserDAO.class,
-        userDao);
+    HealthCheck hc = new UnitOfWorkAwareProxyFactory(hibernate)
+        .create(StudentHubHealthCheck.class, UserDAO.class, userDao);
     environment.healthChecks().register("admin", hc);
   }
 
-  private void configurePac4j(Environment environment) {
-    // enable transactions in hibernate authenticator
-    HibernateUsernamePasswordAuthenticator hibernateAuth = new UnitOfWorkAwareProxyFactory(hibernate)
-        .create(HibernateUsernamePasswordAuthenticator.class, SessionFactory.class, hibernate.getSessionFactory());
+  @SuppressWarnings({ "rawtypes", "unchecked" })
+  private void configureAuth(StudentHubConfiguration configuration, Environment environment, UserDAO dao) {
+    BasicAuthenticator basicAuth = new UnitOfWorkAwareProxyFactory(hibernate).create(BasicAuthenticator.class, UserDAO.class, dao);
+    TokenAuthenticator tokenAuth = new UnitOfWorkAwareProxyFactory(hibernate).create(TokenAuthenticator.class, UserDAO.class, dao);
+    Authorizer<User> authorizer = new StudentHubAuthorizer();
+    
+    AuthFilter<BasicCredentials, User> basicCredentialAuthFilter = new BasicCredentialAuthFilter.Builder<User>()
+        .setAuthenticator(basicAuth)
+        .setAuthorizer(authorizer)
+        .setPrefix("Basic")
+        .setRealm(this.getName())
+        .buildAuthFilter();
 
-    JwtAuthenticator jwtAuth = new JwtAuthenticator();
-    jwtAuth.setSignatureConfiguration(new SecretSignatureConfiguration(StudentHubPasswordEncoder.DEFAULT_SECRET));
+    // TODO: merge with cookieCredentialAuthFilter into JwtAuthFilter?
+    AuthFilter<String, User> oauthCredentialAuthFilter = new OAuthCredentialAuthFilter.Builder<User>()
+        .setAuthenticator(tokenAuth)
+        .setAuthorizer(authorizer)
+        .setPrefix("Bearer")
+        .setRealm(this.getName())
+        .buildAuthFilter();
+    
+    AuthFilter<String, User> cookieCredentialAuthFilter = new JwtCookieAuthFilter.Builder<User>()
+        .setCookieName(LoginResource.COOKIE_NAME)
+        .setAuthenticator(tokenAuth)
+        .setAuthorizer(authorizer)
+        .setRealm(this.getName())
+        .buildAuthFilter();
 
-    // create clients (= ways of authenticating)
-    DirectFormClient formClient = new DirectFormClient(hibernateAuth);
-    DirectBasicAuthClient basicAuthClient = new DirectBasicAuthClient(hibernateAuth);
-    basicAuthClient.setName(BASIC_AUTH);
-    HeaderClient jwtClient = new HeaderClient(HttpHeaders.AUTHORIZATION, LoginResource.BEARER_PREFFIX, jwtAuth);
-    jwtClient.setName(JWT_AUTH);
-
-    Config pac4jConfig = new Config(formClient, basicAuthClient, jwtClient);
-    pac4jConfig.getClients().setDefaultClient(basicAuthClient);
-
-    // setup custom authorizers for role based access
-    pac4jConfig.addAuthorizer(ADMIN, new StudentHubAuthorizer(UserRole.ADMIN));
-    pac4jConfig.addAuthorizer(STUDENT, new StudentHubAuthorizer(UserRole.STUDENT));
-    pac4jConfig.addAuthorizer(TECH_LEADER, new StudentHubAuthorizer(UserRole.TECH_LEADER));
-    pac4jConfig.addAuthorizer(COMPANY_REP, new StudentHubAuthorizer(UserRole.COMPANY_REP));
-    pac4jConfig.addAuthorizer(SUPERVISOR, new StudentHubAuthorizer(UserRole.AC_SUPERVISOR));
-
-    environment.jersey().register(new ServletJaxRsContextFactoryProvider(pac4jConfig));
-    environment.jersey().register(new Pac4JSecurityFeature(pac4jConfig));
-    environment.jersey().register(new Pac4JValueFactoryProvider.Binder());
+    List<AuthFilter> filters = Lists.newArrayList(basicCredentialAuthFilter, oauthCredentialAuthFilter, cookieCredentialAuthFilter);
+    environment.jersey().register(new AuthDynamicFeature(new ChainedAuthFilter(filters)));
+    environment.jersey().register(RolesAllowedDynamicFeature.class);
+    // If you want to use @Auth to inject a custom Principal type into your resource
+    environment.jersey().register(new AuthValueFactoryProvider.Binder<>(User.class));
   }
 
   public SessionFactory getSessionFactory() {
