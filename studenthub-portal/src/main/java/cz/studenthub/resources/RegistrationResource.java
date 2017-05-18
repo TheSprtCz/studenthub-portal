@@ -69,8 +69,6 @@ public class RegistrationResource {
   @Path("/signUp")
   @UnitOfWork
   public Response signUp(@NotNull @Valid User user) {
-    userDao.create(user);
-    
     // check if someone is not trying to reg as ADMIN
     if (user.getRoles().contains(UserRole.ADMIN))
       throw new WebApplicationException("Invalid role - can't register new ADMIN.", Status.BAD_REQUEST);
@@ -78,7 +76,9 @@ public class RegistrationResource {
     // check either faculty or company is assigned
     if (user.getFaculty() == null && user.getCompany() == null)
       throw new WebApplicationException("User must have either Faculty of Company assigned.", Status.BAD_REQUEST);
-    
+
+    // persist user to DB
+    userDao.create(user);
     // failed to persist user - server error
     if (user.getId() == null)
       throw new WebApplicationException(Status.INTERNAL_SERVER_ERROR);
@@ -87,7 +87,7 @@ public class RegistrationResource {
     String secretKey = StudentHubPasswordEncoder.genSecret();
     activations.put(user.getId(), secretKey);
 
-    sendActivationEMail(user, secretKey);
+    sendActivationEmail(user, secretKey);
 
     return Response.created(UriBuilder.fromResource(UserResource.class).path("/{id}").build(user.getId())).entity(user)
         .build();
@@ -125,7 +125,7 @@ public class RegistrationResource {
     if (user.getPassword() != null)
       throw new WebApplicationException("User is already active.", Status.BAD_REQUEST);
     
-    sendActivationEMail(user, activations.get(user.getId()));
+    sendActivationEmail(user, activations.get(user.getId()));
     
     return Response.ok().build();
   }
@@ -153,7 +153,7 @@ public class RegistrationResource {
     }
   }
   
-  private void sendActivationEMail(User user, String secretKey) {
+  private void sendActivationEmail(User user, String secretKey) {
     // send conf. email with activation link
     Map<String, String> args = new HashMap<String, String>();
     args.put("secret", secretKey);
