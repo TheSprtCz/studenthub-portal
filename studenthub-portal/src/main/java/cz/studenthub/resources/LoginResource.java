@@ -90,6 +90,9 @@ public class LoginResource {
   @Path("/login")
   public Response authenticateUser(@FormParam("username") String username, @FormParam("password") String password) {
     User user = userDao.findByEmail(username);
+    if (user == null || user.getPassword() == null)
+      throw new WebApplicationException(Status.UNAUTHORIZED);
+    
     if (StudentHubPasswordEncoder.matches(password, user.getPassword())) {
       // Generate random 256-bit (32-byte) shared secret
       String sharedSecret = StudentHubPasswordEncoder.DEFAULT_SECRET;
