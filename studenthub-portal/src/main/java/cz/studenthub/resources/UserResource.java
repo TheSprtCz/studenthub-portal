@@ -136,7 +136,8 @@ public class UserResource {
       @Min(0) @DefaultValue("0") @QueryParam("size") IntParam sizeParam) {
 
     if (id.get().equals(user.getId()) || user.getRoles().contains(UserRole.ADMIN)) {
-      return PagingUtil.paging(appDao.findByStudent(user), startParam.get(), sizeParam.get());
+      User student = userDao.findById(id.get());
+      return PagingUtil.paging(appDao.findByStudent(student), startParam.get(), sizeParam.get());
     } else {
       throw new WebApplicationException(Status.FORBIDDEN);
     }
@@ -151,7 +152,8 @@ public class UserResource {
       @Min(0) @DefaultValue("0") @QueryParam("size") IntParam sizeParam) {
 
     if (id.get().equals(user.getId()) || user.getRoles().contains(UserRole.ADMIN)) {
-      return PagingUtil.paging(appDao.findByLeader(user), startParam.get(), sizeParam.get());
+      User leader = userDao.findById(id.get());
+      return PagingUtil.paging(appDao.findByLeader(leader), startParam.get(), sizeParam.get());
     } else {
       throw new WebApplicationException(Status.FORBIDDEN);
     }
@@ -166,7 +168,8 @@ public class UserResource {
       @Min(0) @DefaultValue("0") @QueryParam("size") IntParam sizeParam) {
 
     if (id.get().equals(user.getId()) || user.getRoles().contains(UserRole.ADMIN)) {
-      return PagingUtil.paging(topicDao.findByCreator(user), startParam.get(), sizeParam.get());
+      User creator = userDao.findById(id.get());
+      return PagingUtil.paging(topicDao.findByCreator(creator), startParam.get(), sizeParam.get());
     } else {
       throw new WebApplicationException(Status.FORBIDDEN);
     }
@@ -181,7 +184,8 @@ public class UserResource {
       @Min(0) @DefaultValue("0") @QueryParam("size") IntParam sizeParam) {
 
     if (id.get().equals(user.getId()) || user.getRoles().contains(UserRole.ADMIN)) {
-      return PagingUtil.paging(topicDao.findBySupervisor(user), startParam.get(), sizeParam.get());
+      User supervisor = userDao.findById(id.get());
+      return PagingUtil.paging(topicDao.findBySupervisor(supervisor), startParam.get(), sizeParam.get());
     } else {
       throw new WebApplicationException(Status.FORBIDDEN);
     }
@@ -196,7 +200,8 @@ public class UserResource {
       @Min(0) @DefaultValue("0") @QueryParam("size") IntParam sizeParam) {
 
     if (id.get().equals(user.getId()) || user.getRoles().contains(UserRole.ADMIN)) {
-      return PagingUtil.paging(appDao.findBySupervisor(user), startParam.get(), sizeParam.get());
+      User supervisor = userDao.findById(id.get());
+      return PagingUtil.paging(appDao.findBySupervisor(supervisor), startParam.get(), sizeParam.get());
     } else {
       throw new WebApplicationException(Status.FORBIDDEN);
     }
