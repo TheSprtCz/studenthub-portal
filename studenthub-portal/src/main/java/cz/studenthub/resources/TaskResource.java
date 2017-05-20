@@ -116,7 +116,9 @@ public class TaskResource {
   }
 
   public static boolean isAllowedToAccessTask(TopicApplication app, User user) {
-    return app.getAcademicSupervisor().equals(user) || app.getStudent().equals(user) || app.getTechLeader().equals(user)
+    return (app.getAcademicSupervisor() != null && app.getAcademicSupervisor().equals(user)) 
+        || app.getStudent().equals(user) 
+        || (app.getTechLeader() != null && app.getTechLeader().equals(user))
         || user.getRoles().contains(UserRole.ADMIN);
   }
 

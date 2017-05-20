@@ -105,8 +105,10 @@ public class TopicApplicationResource {
       throw new WebApplicationException(Status.NOT_FOUND);
 
     // allow topic creator/leader, assigned student, topic supervisor, admin
-    if (oldApp.getTechLeader().equals(user) || oldApp.getStudent().equals(user)
-        || oldApp.getAcademicSupervisor().equals(user) || user.getRoles().contains(UserRole.ADMIN)) {
+    if ((oldApp.getTechLeader() != null && oldApp.getTechLeader().equals(user)) 
+        || oldApp.getStudent().equals(user)
+        || (oldApp.getAcademicSupervisor() != null && oldApp.getAcademicSupervisor().equals(user)) 
+        || user.getRoles().contains(UserRole.ADMIN)) {
       app.setId(id);
       appDao.update(app);
       return Response.ok(app).build();
