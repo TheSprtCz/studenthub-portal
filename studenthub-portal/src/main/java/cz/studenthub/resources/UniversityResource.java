@@ -16,12 +16,9 @@
  *******************************************************************************/
 package cz.studenthub.resources;
 
-import static cz.studenthub.auth.Consts.ADMIN;
-import static cz.studenthub.auth.Consts.BASIC_AUTH;
-import static cz.studenthub.auth.Consts.JWT_AUTH;
-
 import java.util.List;
 
+import javax.annotation.security.RolesAllowed;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
@@ -41,8 +38,6 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriBuilder;
 
-import org.pac4j.jax.rs.annotations.Pac4JSecurity;
-
 import cz.studenthub.core.Faculty;
 import cz.studenthub.core.University;
 import cz.studenthub.db.FacultyDAO;
@@ -55,7 +50,6 @@ import io.dropwizard.jersey.params.LongParam;
 @Path("/universities")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
-@Pac4JSecurity(authorizers = ADMIN, clients = { BASIC_AUTH, JWT_AUTH })
 public class UniversityResource {
 
   private final UniversityDAO uniDao;
@@ -68,7 +62,6 @@ public class UniversityResource {
 
   @GET
   @UnitOfWork
-  @Pac4JSecurity(ignore = true)
   public List<University> fetch(@Min(0) @DefaultValue("0") @QueryParam("start") IntParam startParam,
           @Min(0) @DefaultValue("0") @QueryParam("size") IntParam sizeParam) {
     return PagingUtil.paging(uniDao.findAll(), startParam.get(), sizeParam.get());
@@ -77,7 +70,6 @@ public class UniversityResource {
   @GET
   @Path("/search")
   @UnitOfWork
-  @Pac4JSecurity(ignore = true)
   public List<University> search(@NotNull @QueryParam("text") String text,
           @Min(0) @DefaultValue("0") @QueryParam("start") IntParam startParam,
           @Min(0) @DefaultValue("0") @QueryParam("size") IntParam sizeParam) {
@@ -88,7 +80,6 @@ public class UniversityResource {
   @GET
   @Path("/{id}")
   @UnitOfWork
-  @Pac4JSecurity(ignore = true)
   public University findById(@PathParam("id") LongParam id) {
     return uniDao.findById(id.get());
   }
@@ -96,6 +87,7 @@ public class UniversityResource {
   @DELETE
   @Path("/{id}")
   @UnitOfWork
+  @RolesAllowed("ADMIN")
   public Response delete(@PathParam("id") LongParam idParam) {
     Long id = idParam.get();
     University university = uniDao.findById(id);
@@ -109,6 +101,7 @@ public class UniversityResource {
   @PUT
   @Path("/{id}")
   @UnitOfWork
+  @RolesAllowed("ADMIN")
   public Response update(@PathParam("id") LongParam idParam, @NotNull @Valid University university) {
     Long id = idParam.get();
     if (uniDao.findById(id) == null)
@@ -121,6 +114,7 @@ public class UniversityResource {
 
   @POST
   @UnitOfWork
+  @RolesAllowed("ADMIN")
   public Response create(@NotNull @Valid University university) {
     uniDao.create(university);
     if (university.getId() == null)
@@ -133,7 +127,6 @@ public class UniversityResource {
   @GET
   @Path("/{id}/faculties")
   @UnitOfWork
-  @Pac4JSecurity(ignore = true)
   public List<Faculty> fetchFaculties(@PathParam("id") LongParam id,
           @Min(0) @DefaultValue("0") @QueryParam("start") IntParam startParam,
           @Min(0) @DefaultValue("0") @QueryParam("size") IntParam sizeParam) {
@@ -148,7 +141,6 @@ public class UniversityResource {
   @GET
   @Path("/{id}/faculties/search")
   @UnitOfWork
-  @Pac4JSecurity(ignore = true)
   public List<Faculty> searchFaculties(@PathParam("id") LongParam id, @NotNull @QueryParam("text") String text,
           @Min(0) @DefaultValue("0") @QueryParam("start") IntParam startParam,
 	      @Min(0) @DefaultValue("0") @QueryParam("size") IntParam sizeParam) {

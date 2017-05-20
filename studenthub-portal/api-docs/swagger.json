@@ -11,6 +11,169 @@
         "http"
     ],
     "paths":{
+        "/account/activate":{
+            "post":{
+                "consumes":[
+                    "application/x-www-form-urlencoded"
+                ],
+                "produces":[
+                    "application/json"
+                ],
+                "parameters":[
+                    {
+                        "type":"string",
+                        "name":"id",
+                        "in":"query",
+                        "required":true
+                    },
+                    {
+                        "type":"string",
+                        "name":"secret",
+                        "in":"query",
+                        "required":true
+                    },
+                    {
+                        "type":"string",
+                        "name":"password",
+                        "in":"formData",
+                        "required":true
+                    }
+                ],
+                "responses":{
+                    "200":{
+                        "description":"OK",
+                        "headers":{
+                        }
+                    },
+                    "403":{
+                        "description":"Forbidden",
+                        "headers":{
+                        }
+                    }
+                }
+            }
+        },
+        "/account/resendActivation":{
+            "post":{
+                "consumes":[
+                    "application/x-www-form-urlencoded"
+                ],
+                "produces":[
+                    "application/json"
+                ],
+                "parameters":[
+                    {
+                        "type":"string",
+                        "name":"email",
+                        "in":"formData",
+                        "required":true
+                    }
+                ],
+                "responses":{
+                    "200":{
+                        "description":"OK",
+                        "headers":{
+                        }
+                    },
+                    "400":{
+                        "description":"Bad Request",
+                        "headers":{
+                        }
+                    },
+                    "404":{
+                        "description":"Not Found",
+                        "headers":{
+                        }
+                    }
+                }
+            }
+        },
+        "/account/signUp":{
+            "post":{
+                "consumes":[
+                    "application/json"
+                ],
+                "produces":[
+                    "application/json"
+                ],
+                "parameters":[
+                    {
+                        "name":"body",
+                        "in":"body",
+                        "required":true,
+                        "schema":{
+                            "$ref":"#/definitions/User"
+                        }
+                    }
+                ],
+                "responses":{
+                    "201":{
+                        "description":"Created",
+                        "headers":{
+                            "Location":{
+                                "type":"string"
+                            }
+                        },
+                        "schema":{
+                            "$ref":"#/definitions/User"
+                        }
+                    },
+                    "400":{
+                        "description":"Bad Request",
+                        "headers":{
+                        }
+                    },
+                    "500":{
+                        "description":"Internal Server Error",
+                        "headers":{
+                        }
+                    }
+                }
+            }
+        },
+        "/account/{id}/password":{
+            "put":{
+                "consumes":[
+                    "application/json"
+                ],
+                "produces":[
+                    "application/json"
+                ],
+                "parameters":[
+                    {
+                        "type":"string",
+                        "name":"id",
+                        "in":"path",
+                        "required":true
+                    },
+                    {
+                        "name":"body",
+                        "in":"body",
+                        "required":true,
+                        "schema":{
+                            "$ref":"#/definitions/User"
+                        }
+                    }
+                ],
+                "responses":{
+                    "200":{
+                        "description":"OK",
+                        "headers":{
+                        }
+                    },
+                    "400":{
+                        "description":"Bad Request",
+                        "headers":{
+                        }
+                    },
+                    "403":{
+                        "description":"Forbidden",
+                        "headers":{
+                        }
+                    }
+                }
+            }
+        },
         "/applications":{
             "get":{
                 "consumes":[
@@ -20,6 +183,20 @@
                     "application/json"
                 ],
                 "parameters":[
+                    {
+                        "type":"string",
+                        "name":"size",
+                        "in":"query",
+                        "required":false,
+                        "default":"0"
+                    },
+                    {
+                        "type":"string",
+                        "name":"start",
+                        "in":"query",
+                        "required":false,
+                        "default":"0"
+                    }
                 ],
                 "responses":{
                     "200":{
@@ -31,6 +208,11 @@
                             "items":{
                                 "$ref":"#/definitions/TopicApplication"
                             }
+                        }
+                    },
+                    "400":{
+                        "description":"Bad Request",
+                        "headers":{
                         }
                     }
                 }
@@ -48,7 +230,7 @@
                         "in":"body",
                         "required":true,
                         "schema":{
-                            "$ref":"#/definitions/StudentHubProfile"
+                            "$ref":"#/definitions/TopicApplication"
                         }
                     }
                 ],
@@ -118,7 +300,7 @@
                         "in":"body",
                         "required":true,
                         "schema":{
-                            "$ref":"#/definitions/StudentHubProfile"
+                            "$ref":"#/definitions/User"
                         }
                     }
                 ],
@@ -188,11 +370,25 @@
                         "required":true
                     },
                     {
+                        "type":"string",
+                        "name":"size",
+                        "in":"query",
+                        "required":false,
+                        "default":"0"
+                    },
+                    {
+                        "type":"string",
+                        "name":"start",
+                        "in":"query",
+                        "required":false,
+                        "default":"0"
+                    },
+                    {
                         "name":"body",
                         "in":"body",
                         "required":true,
                         "schema":{
-                            "$ref":"#/definitions/StudentHubProfile"
+                            "$ref":"#/definitions/User"
                         }
                     }
                 ],
@@ -208,165 +404,8 @@
                             }
                         }
                     },
-                    "403":{
-                        "description":"Forbidden",
-                        "headers":{
-                        }
-                    }
-                }
-            },
-            "post":{
-                "consumes":[
-                    "application/json"
-                ],
-                "produces":[
-                    "application/json"
-                ],
-                "parameters":[
-                    {
-                        "type":"string",
-                        "name":"id",
-                        "in":"path",
-                        "required":true
-                    },
-                    {
-                        "name":"body",
-                        "in":"body",
-                        "required":true,
-                        "schema":{
-                            "$ref":"#/definitions/Task"
-                        }
-                    }
-                ],
-                "responses":{
-                    "201":{
-                        "description":"Created",
-                        "headers":{
-                            "Location":{
-                                "type":"string"
-                            }
-                        },
-                        "schema":{
-                            "$ref":"#/definitions/Task"
-                        }
-                    },
-                    "403":{
-                        "description":"Forbidden",
-                        "headers":{
-                        }
-                    },
-                    "500":{
-                        "description":"Internal Server Error",
-                        "headers":{
-                        }
-                    }
-                }
-            }
-        },
-        "/applications/{id}/tasks/{tid}":{
-            "get":{
-                "consumes":[
-                    "application/json"
-                ],
-                "produces":[
-                    "application/json"
-                ],
-                "parameters":[
-                    {
-                        "type":"string",
-                        "name":"tid",
-                        "in":"path",
-                        "required":true
-                    }
-                ],
-                "responses":{
-                    "200":{
-                        "description":"OK",
-                        "headers":{
-                        },
-                        "schema":{
-                            "$ref":"#/definitions/Task"
-                        }
-                    }
-                }
-            },
-            "put":{
-                "consumes":[
-                    "application/json"
-                ],
-                "produces":[
-                    "application/json"
-                ],
-                "parameters":[
-                    {
-                        "type":"string",
-                        "name":"id",
-                        "in":"path",
-                        "required":true
-                    },
-                    {
-                        "type":"string",
-                        "name":"tid",
-                        "in":"path",
-                        "required":true
-                    },
-                    {
-                        "name":"body",
-                        "in":"body",
-                        "required":true,
-                        "schema":{
-                            "$ref":"#/definitions/Task"
-                        }
-                    }
-                ],
-                "responses":{
-                    "200":{
-                        "description":"OK",
-                        "headers":{
-                        },
-                        "schema":{
-                            "$ref":"#/definitions/Task"
-                        }
-                    },
-                    "403":{
-                        "description":"Forbidden",
-                        "headers":{
-                        }
-                    }
-                }
-            },
-            "delete":{
-                "consumes":[
-                    "application/json"
-                ],
-                "produces":[
-                    "application/json"
-                ],
-                "parameters":[
-                    {
-                        "type":"string",
-                        "name":"id",
-                        "in":"path",
-                        "required":true
-                    },
-                    {
-                        "type":"string",
-                        "name":"tid",
-                        "in":"path",
-                        "required":true
-                    },
-                    {
-                        "name":"body",
-                        "in":"body",
-                        "required":true,
-                        "schema":{
-                            "$ref":"#/definitions/StudentHubProfile"
-                        }
-                    }
-                ],
-                "responses":{
-                    "204":{
-                        "description":"No Content",
+                    "400":{
+                        "description":"Bad Request",
                         "headers":{
                         }
                     },
@@ -386,12 +425,16 @@
                 ],
                 "parameters":[
                     {
-                        "name":"body",
-                        "in":"body",
-                        "required":true,
-                        "schema":{
-                            "$ref":"#/definitions/StudentHubProfile"
-                        }
+                        "type":"string",
+                        "name":"password",
+                        "in":"formData",
+                        "required":true
+                    },
+                    {
+                        "type":"string",
+                        "name":"username",
+                        "in":"formData",
+                        "required":true
                     }
                 ],
                 "responses":{
@@ -400,11 +443,31 @@
                         "headers":{
                             "Authorization":{
                                 "type":"string"
+                            },
+                            "Set-Cookie":{
+                                "type":"string"
                             }
                         }
                     },
                     "403":{
                         "description":"Forbidden",
+                        "headers":{
+                        }
+                    }
+                }
+            }
+        },
+        "/auth/logout":{
+            "post":{
+                "consumes":[
+                ],
+                "produces":[
+                ],
+                "parameters":[
+                ],
+                "responses":{
+                    "200":{
+                        "description":"OK",
                         "headers":{
                         }
                     }
@@ -420,6 +483,20 @@
                     "application/json"
                 ],
                 "parameters":[
+                    {
+                        "type":"string",
+                        "name":"size",
+                        "in":"query",
+                        "required":false,
+                        "default":"0"
+                    },
+                    {
+                        "type":"string",
+                        "name":"start",
+                        "in":"query",
+                        "required":false,
+                        "default":"0"
+                    }
                 ],
                 "responses":{
                     "200":{
@@ -431,6 +508,11 @@
                             "items":{
                                 "$ref":"#/definitions/Company"
                             }
+                        }
+                    },
+                    "400":{
+                        "description":"Bad Request",
+                        "headers":{
                         }
                     }
                 }
@@ -581,6 +663,20 @@
                         "name":"id",
                         "in":"path",
                         "required":true
+                    },
+                    {
+                        "type":"string",
+                        "name":"size",
+                        "in":"query",
+                        "required":false,
+                        "default":"0"
+                    },
+                    {
+                        "type":"string",
+                        "name":"start",
+                        "in":"query",
+                        "required":false,
+                        "default":"0"
                     }
                 ],
                 "responses":{
@@ -593,6 +689,11 @@
                             "items":{
                                 "$ref":"#/definitions/User"
                             }
+                        }
+                    },
+                    "400":{
+                        "description":"Bad Request",
+                        "headers":{
                         }
                     },
                     "404":{
@@ -617,6 +718,20 @@
                         "name":"id",
                         "in":"path",
                         "required":true
+                    },
+                    {
+                        "type":"string",
+                        "name":"size",
+                        "in":"query",
+                        "required":false,
+                        "default":"0"
+                    },
+                    {
+                        "type":"string",
+                        "name":"start",
+                        "in":"query",
+                        "required":false,
+                        "default":"0"
                     }
                 ],
                 "responses":{
@@ -629,6 +744,11 @@
                             "items":{
                                 "$ref":"#/definitions/Topic"
                             }
+                        }
+                    },
+                    "400":{
+                        "description":"Bad Request",
+                        "headers":{
                         }
                     },
                     "404":{
@@ -648,6 +768,20 @@
                     "application/json"
                 ],
                 "parameters":[
+                    {
+                        "type":"string",
+                        "name":"size",
+                        "in":"query",
+                        "required":false,
+                        "default":"0"
+                    },
+                    {
+                        "type":"string",
+                        "name":"start",
+                        "in":"query",
+                        "required":false,
+                        "default":"0"
+                    }
                 ],
                 "responses":{
                     "200":{
@@ -659,6 +793,11 @@
                             "items":{
                                 "$ref":"#/definitions/Faculty"
                             }
+                        }
+                    },
+                    "400":{
+                        "description":"Bad Request",
+                        "headers":{
                         }
                     }
                 }
@@ -809,6 +948,20 @@
                         "name":"id",
                         "in":"path",
                         "required":true
+                    },
+                    {
+                        "type":"string",
+                        "name":"size",
+                        "in":"query",
+                        "required":false,
+                        "default":"0"
+                    },
+                    {
+                        "type":"string",
+                        "name":"start",
+                        "in":"query",
+                        "required":false,
+                        "default":"0"
                     }
                 ],
                 "responses":{
@@ -821,6 +974,11 @@
                             "items":{
                                 "$ref":"#/definitions/User"
                             }
+                        }
+                    },
+                    "400":{
+                        "description":"Bad Request",
+                        "headers":{
                         }
                     },
                     "404":{
@@ -845,6 +1003,20 @@
                         "name":"id",
                         "in":"path",
                         "required":true
+                    },
+                    {
+                        "type":"string",
+                        "name":"size",
+                        "in":"query",
+                        "required":false,
+                        "default":"0"
+                    },
+                    {
+                        "type":"string",
+                        "name":"start",
+                        "in":"query",
+                        "required":false,
+                        "default":"0"
                     }
                 ],
                 "responses":{
@@ -857,6 +1029,11 @@
                             "items":{
                                 "$ref":"#/definitions/User"
                             }
+                        }
+                    },
+                    "400":{
+                        "description":"Bad Request",
+                        "headers":{
                         }
                     },
                     "404":{
@@ -880,6 +1057,20 @@
                         "name":"tag",
                         "in":"path",
                         "required":true
+                    },
+                    {
+                        "type":"string",
+                        "name":"size",
+                        "in":"query",
+                        "required":false,
+                        "default":"0"
+                    },
+                    {
+                        "type":"string",
+                        "name":"start",
+                        "in":"query",
+                        "required":false,
+                        "default":"0"
                     }
                 ],
                 "responses":{
@@ -892,6 +1083,11 @@
                             "items":{
                                 "$ref":"#/definitions/Topic"
                             }
+                        }
+                    },
+                    "400":{
+                        "description":"Bad Request",
+                        "headers":{
                         }
                     }
                 }
@@ -910,6 +1106,20 @@
                         "name":"tag",
                         "in":"path",
                         "required":true
+                    },
+                    {
+                        "type":"string",
+                        "name":"size",
+                        "in":"query",
+                        "required":false,
+                        "default":"0"
+                    },
+                    {
+                        "type":"string",
+                        "name":"start",
+                        "in":"query",
+                        "required":false,
+                        "default":"0"
                     }
                 ],
                 "responses":{
@@ -922,6 +1132,157 @@
                             "items":{
                                 "$ref":"#/definitions/User"
                             }
+                        }
+                    },
+                    "400":{
+                        "description":"Bad Request",
+                        "headers":{
+                        }
+                    }
+                }
+            }
+        },
+        "/tasks":{
+            "post":{
+                "consumes":[
+                    "application/json"
+                ],
+                "produces":[
+                    "application/json"
+                ],
+                "parameters":[
+                    {
+                        "name":"body",
+                        "in":"body",
+                        "required":true,
+                        "schema":{
+                            "$ref":"#/definitions/Task"
+                        }
+                    }
+                ],
+                "responses":{
+                    "201":{
+                        "description":"Created",
+                        "headers":{
+                            "Location":{
+                                "type":"string"
+                            }
+                        },
+                        "schema":{
+                            "$ref":"#/definitions/Task"
+                        }
+                    },
+                    "403":{
+                        "description":"Forbidden",
+                        "headers":{
+                        }
+                    },
+                    "500":{
+                        "description":"Internal Server Error",
+                        "headers":{
+                        }
+                    }
+                }
+            }
+        },
+        "/tasks/{id}":{
+            "get":{
+                "consumes":[
+                    "application/json"
+                ],
+                "produces":[
+                    "application/json"
+                ],
+                "parameters":[
+                    {
+                        "type":"string",
+                        "name":"id",
+                        "in":"path",
+                        "required":true
+                    }
+                ],
+                "responses":{
+                    "200":{
+                        "description":"OK",
+                        "headers":{
+                        },
+                        "schema":{
+                            "$ref":"#/definitions/Task"
+                        }
+                    }
+                }
+            },
+            "put":{
+                "consumes":[
+                    "application/json"
+                ],
+                "produces":[
+                    "application/json"
+                ],
+                "parameters":[
+                    {
+                        "type":"string",
+                        "name":"id",
+                        "in":"path",
+                        "required":true
+                    },
+                    {
+                        "name":"body",
+                        "in":"body",
+                        "required":true,
+                        "schema":{
+                            "$ref":"#/definitions/Task"
+                        }
+                    }
+                ],
+                "responses":{
+                    "200":{
+                        "description":"OK",
+                        "headers":{
+                        },
+                        "schema":{
+                            "$ref":"#/definitions/Task"
+                        }
+                    },
+                    "403":{
+                        "description":"Forbidden",
+                        "headers":{
+                        }
+                    }
+                }
+            },
+            "delete":{
+                "consumes":[
+                    "application/json"
+                ],
+                "produces":[
+                    "application/json"
+                ],
+                "parameters":[
+                    {
+                        "type":"string",
+                        "name":"id",
+                        "in":"path",
+                        "required":true
+                    },
+                    {
+                        "name":"body",
+                        "in":"body",
+                        "required":true,
+                        "schema":{
+                            "$ref":"#/definitions/User"
+                        }
+                    }
+                ],
+                "responses":{
+                    "204":{
+                        "description":"No Content",
+                        "headers":{
+                        }
+                    },
+                    "403":{
+                        "description":"Forbidden",
+                        "headers":{
                         }
                     }
                 }
@@ -962,6 +1323,11 @@
                                 "$ref":"#/definitions/Topic"
                             }
                         }
+                    },
+                    "400":{
+                        "description":"Bad Request",
+                        "headers":{
+                        }
                     }
                 }
             },
@@ -978,7 +1344,7 @@
                         "in":"body",
                         "required":true,
                         "schema":{
-                            "$ref":"#/definitions/StudentHubProfile"
+                            "$ref":"#/definitions/User"
                         }
                     }
                 ],
@@ -992,6 +1358,11 @@
                         },
                         "schema":{
                             "$ref":"#/definitions/Topic"
+                        }
+                    },
+                    "403":{
+                        "description":"Forbidden",
+                        "headers":{
                         }
                     },
                     "500":{
@@ -1043,6 +1414,11 @@
                                 "$ref":"#/definitions/Topic"
                             }
                         }
+                    },
+                    "400":{
+                        "description":"Bad Request",
+                        "headers":{
+                        }
                     }
                 }
             }
@@ -1093,7 +1469,7 @@
                         "in":"body",
                         "required":true,
                         "schema":{
-                            "$ref":"#/definitions/StudentHubProfile"
+                            "$ref":"#/definitions/User"
                         }
                     }
                 ],
@@ -1161,6 +1537,20 @@
                         "name":"id",
                         "in":"path",
                         "required":true
+                    },
+                    {
+                        "type":"string",
+                        "name":"size",
+                        "in":"query",
+                        "required":false,
+                        "default":"0"
+                    },
+                    {
+                        "type":"string",
+                        "name":"start",
+                        "in":"query",
+                        "required":false,
+                        "default":"0"
                     }
                 ],
                 "responses":{
@@ -1173,6 +1563,11 @@
                             "items":{
                                 "$ref":"#/definitions/TopicApplication"
                             }
+                        }
+                    },
+                    "400":{
+                        "description":"Bad Request",
+                        "headers":{
                         }
                     },
                     "404":{
@@ -1231,7 +1626,7 @@
                         "in":"body",
                         "required":true,
                         "schema":{
-                            "$ref":"#/definitions/StudentHubProfile"
+                            "$ref":"#/definitions/User"
                         }
                     }
                 ],
@@ -1261,6 +1656,20 @@
                         "name":"id",
                         "in":"path",
                         "required":true
+                    },
+                    {
+                        "type":"string",
+                        "name":"size",
+                        "in":"query",
+                        "required":false,
+                        "default":"0"
+                    },
+                    {
+                        "type":"string",
+                        "name":"start",
+                        "in":"query",
+                        "required":false,
+                        "default":"0"
                     }
                 ],
                 "responses":{
@@ -1273,6 +1682,11 @@
                             "items":{
                                 "$ref":"#/definitions/User"
                             }
+                        }
+                    },
+                    "400":{
+                        "description":"Bad Request",
+                        "headers":{
                         }
                     }
                 }
@@ -1287,6 +1701,20 @@
                     "application/json"
                 ],
                 "parameters":[
+                    {
+                        "type":"string",
+                        "name":"size",
+                        "in":"query",
+                        "required":false,
+                        "default":"0"
+                    },
+                    {
+                        "type":"string",
+                        "name":"start",
+                        "in":"query",
+                        "required":false,
+                        "default":"0"
+                    }
                 ],
                 "responses":{
                     "200":{
@@ -1298,6 +1726,11 @@
                             "items":{
                                 "$ref":"#/definitions/University"
                             }
+                        }
+                    },
+                    "400":{
+                        "description":"Bad Request",
+                        "headers":{
                         }
                     }
                 }
@@ -1333,6 +1766,56 @@
                     },
                     "500":{
                         "description":"Internal Server Error",
+                        "headers":{
+                        }
+                    }
+                }
+            }
+        },
+        "/universities/search":{
+            "get":{
+                "consumes":[
+                    "application/json"
+                ],
+                "produces":[
+                    "application/json"
+                ],
+                "parameters":[
+                    {
+                        "type":"string",
+                        "name":"size",
+                        "in":"query",
+                        "required":false,
+                        "default":"0"
+                    },
+                    {
+                        "type":"string",
+                        "name":"start",
+                        "in":"query",
+                        "required":false,
+                        "default":"0"
+                    },
+                    {
+                        "type":"string",
+                        "name":"text",
+                        "in":"query",
+                        "required":true
+                    }
+                ],
+                "responses":{
+                    "200":{
+                        "description":"OK",
+                        "headers":{
+                        },
+                        "schema":{
+                            "type":"array",
+                            "items":{
+                                "$ref":"#/definitions/University"
+                            }
+                        }
+                    },
+                    "400":{
+                        "description":"Bad Request",
                         "headers":{
                         }
                     }
@@ -1448,6 +1931,20 @@
                         "name":"id",
                         "in":"path",
                         "required":true
+                    },
+                    {
+                        "type":"string",
+                        "name":"size",
+                        "in":"query",
+                        "required":false,
+                        "default":"0"
+                    },
+                    {
+                        "type":"string",
+                        "name":"start",
+                        "in":"query",
+                        "required":false,
+                        "default":"0"
                     }
                 ],
                 "responses":{
@@ -1460,6 +1957,72 @@
                             "items":{
                                 "$ref":"#/definitions/Faculty"
                             }
+                        }
+                    },
+                    "400":{
+                        "description":"Bad Request",
+                        "headers":{
+                        }
+                    },
+                    "404":{
+                        "description":"Not Found",
+                        "headers":{
+                        }
+                    }
+                }
+            }
+        },
+        "/universities/{id}/faculties/search":{
+            "get":{
+                "consumes":[
+                    "application/json"
+                ],
+                "produces":[
+                    "application/json"
+                ],
+                "parameters":[
+                    {
+                        "type":"string",
+                        "name":"id",
+                        "in":"path",
+                        "required":true
+                    },
+                    {
+                        "type":"string",
+                        "name":"size",
+                        "in":"query",
+                        "required":false,
+                        "default":"0"
+                    },
+                    {
+                        "type":"string",
+                        "name":"start",
+                        "in":"query",
+                        "required":false,
+                        "default":"0"
+                    },
+                    {
+                        "type":"string",
+                        "name":"text",
+                        "in":"query",
+                        "required":true
+                    }
+                ],
+                "responses":{
+                    "200":{
+                        "description":"OK",
+                        "headers":{
+                        },
+                        "schema":{
+                            "type":"array",
+                            "items":{
+                                "$ref":"#/definitions/Faculty"
+                            }
+                        }
+                    },
+                    "400":{
+                        "description":"Bad Request",
+                        "headers":{
                         }
                     },
                     "404":{
@@ -1479,6 +2042,20 @@
                     "application/json"
                 ],
                 "parameters":[
+                    {
+                        "type":"string",
+                        "name":"size",
+                        "in":"query",
+                        "required":false,
+                        "default":"0"
+                    },
+                    {
+                        "type":"string",
+                        "name":"start",
+                        "in":"query",
+                        "required":false,
+                        "default":"0"
+                    }
                 ],
                 "responses":{
                     "200":{
@@ -1491,42 +2068,9 @@
                                 "$ref":"#/definitions/User"
                             }
                         }
-                    }
-                }
-            }
-        },
-        "/users/signUp":{
-            "post":{
-                "consumes":[
-                    "application/json"
-                ],
-                "produces":[
-                    "application/json"
-                ],
-                "parameters":[
-                    {
-                        "name":"body",
-                        "in":"body",
-                        "required":true,
-                        "schema":{
-                            "$ref":"#/definitions/User"
-                        }
-                    }
-                ],
-                "responses":{
-                    "201":{
-                        "description":"Created",
-                        "headers":{
-                            "Location":{
-                                "type":"string"
-                            }
-                        },
-                        "schema":{
-                            "$ref":"#/definitions/User"
-                        }
                     },
-                    "500":{
-                        "description":"Internal Server Error",
+                    "400":{
+                        "description":"Bad Request",
                         "headers":{
                         }
                     }
@@ -1553,7 +2097,7 @@
                         "in":"body",
                         "required":true,
                         "schema":{
-                            "$ref":"#/definitions/StudentHubProfile"
+                            "$ref":"#/definitions/User"
                         }
                     }
                 ],
@@ -1592,7 +2136,7 @@
                         "in":"body",
                         "required":true,
                         "schema":{
-                            "$ref":"#/definitions/StudentHubProfile"
+                            "$ref":"#/definitions/User"
                         }
                     }
                 ],
@@ -1607,11 +2151,6 @@
                     },
                     "403":{
                         "description":"Forbidden",
-                        "headers":{
-                        }
-                    },
-                    "404":{
-                        "description":"Not Found",
                         "headers":{
                         }
                     }
@@ -1636,7 +2175,7 @@
                         "in":"body",
                         "required":true,
                         "schema":{
-                            "$ref":"#/definitions/StudentHubProfile"
+                            "$ref":"#/definitions/User"
                         }
                     }
                 ],
@@ -1648,11 +2187,6 @@
                     },
                     "403":{
                         "description":"Forbidden",
-                        "headers":{
-                        }
-                    },
-                    "404":{
-                        "description":"Not Found",
                         "headers":{
                         }
                     }
@@ -1675,11 +2209,25 @@
                         "required":true
                     },
                     {
+                        "type":"string",
+                        "name":"size",
+                        "in":"query",
+                        "required":false,
+                        "default":"0"
+                    },
+                    {
+                        "type":"string",
+                        "name":"start",
+                        "in":"query",
+                        "required":false,
+                        "default":"0"
+                    },
+                    {
                         "name":"body",
                         "in":"body",
                         "required":true,
                         "schema":{
-                            "$ref":"#/definitions/StudentHubProfile"
+                            "$ref":"#/definitions/User"
                         }
                     }
                 ],
@@ -1693,6 +2241,11 @@
                             "items":{
                                 "$ref":"#/definitions/TopicApplication"
                             }
+                        }
+                    },
+                    "400":{
+                        "description":"Bad Request",
+                        "headers":{
                         }
                     },
                     "403":{
@@ -1719,11 +2272,25 @@
                         "required":true
                     },
                     {
+                        "type":"string",
+                        "name":"size",
+                        "in":"query",
+                        "required":false,
+                        "default":"0"
+                    },
+                    {
+                        "type":"string",
+                        "name":"start",
+                        "in":"query",
+                        "required":false,
+                        "default":"0"
+                    },
+                    {
                         "name":"body",
                         "in":"body",
                         "required":true,
                         "schema":{
-                            "$ref":"#/definitions/StudentHubProfile"
+                            "$ref":"#/definitions/User"
                         }
                     }
                 ],
@@ -1737,6 +2304,11 @@
                             "items":{
                                 "$ref":"#/definitions/TopicApplication"
                             }
+                        }
+                    },
+                    "400":{
+                        "description":"Bad Request",
+                        "headers":{
                         }
                     },
                     "403":{
@@ -1763,11 +2335,25 @@
                         "required":true
                     },
                     {
+                        "type":"string",
+                        "name":"size",
+                        "in":"query",
+                        "required":false,
+                        "default":"0"
+                    },
+                    {
+                        "type":"string",
+                        "name":"start",
+                        "in":"query",
+                        "required":false,
+                        "default":"0"
+                    },
+                    {
                         "name":"body",
                         "in":"body",
                         "required":true,
                         "schema":{
-                            "$ref":"#/definitions/StudentHubProfile"
+                            "$ref":"#/definitions/User"
                         }
                     }
                 ],
@@ -1781,6 +2367,11 @@
                             "items":{
                                 "$ref":"#/definitions/Topic"
                             }
+                        }
+                    },
+                    "400":{
+                        "description":"Bad Request",
+                        "headers":{
                         }
                     },
                     "403":{
@@ -1807,11 +2398,25 @@
                         "required":true
                     },
                     {
+                        "type":"string",
+                        "name":"size",
+                        "in":"query",
+                        "required":false,
+                        "default":"0"
+                    },
+                    {
+                        "type":"string",
+                        "name":"start",
+                        "in":"query",
+                        "required":false,
+                        "default":"0"
+                    },
+                    {
                         "name":"body",
                         "in":"body",
                         "required":true,
                         "schema":{
-                            "$ref":"#/definitions/StudentHubProfile"
+                            "$ref":"#/definitions/User"
                         }
                     }
                 ],
@@ -1825,6 +2430,11 @@
                             "items":{
                                 "$ref":"#/definitions/TopicApplication"
                             }
+                        }
+                    },
+                    "400":{
+                        "description":"Bad Request",
+                        "headers":{
                         }
                     },
                     "403":{
@@ -1851,11 +2461,25 @@
                         "required":true
                     },
                     {
+                        "type":"string",
+                        "name":"size",
+                        "in":"query",
+                        "required":false,
+                        "default":"0"
+                    },
+                    {
+                        "type":"string",
+                        "name":"start",
+                        "in":"query",
+                        "required":false,
+                        "default":"0"
+                    },
+                    {
                         "name":"body",
                         "in":"body",
                         "required":true,
                         "schema":{
-                            "$ref":"#/definitions/StudentHubProfile"
+                            "$ref":"#/definitions/User"
                         }
                     }
                 ],
@@ -1871,6 +2495,11 @@
                             }
                         }
                     },
+                    "400":{
+                        "description":"Bad Request",
+                        "headers":{
+                        }
+                    },
                     "403":{
                         "description":"Forbidden",
                         "headers":{
@@ -1881,22 +2510,6 @@
         }
     },
     "definitions":{
-        "AttributesDefinition":{
-            "properties":{
-                "primaryAttributes":{
-                    "type":"array",
-                    "items":{
-                        "type":"string"
-                    }
-                },
-                "secondaryAttributes":{
-                    "type":"array",
-                    "items":{
-                        "type":"string"
-                    }
-                }
-            }
-        },
         "Company":{
             "properties":{
                 "city":{
@@ -1950,81 +2563,6 @@
                 },
                 "university":{
                     "$ref":"#/definitions/University"
-                }
-            }
-        },
-        "StudentHubProfile":{
-            "properties":{
-                "attribute":{
-                    "type":"object"
-                },
-                "attributes":{
-                    "type":"object"
-                },
-                "attributesDefinition":{
-                    "$ref":"#/definitions/AttributesDefinition"
-                },
-                "clientName":{
-                    "type":"string"
-                },
-                "displayName":{
-                    "type":"string"
-                },
-                "email":{
-                    "type":"string"
-                },
-                "familyName":{
-                    "type":"string"
-                },
-                "firstName":{
-                    "type":"string"
-                },
-                "gender":{
-                    "type":"string",
-                    "enum":[
-                        "FEMALE",
-                        "MALE",
-                        "UNSPECIFIED"
-                    ]
-                },
-                "id":{
-                    "type":"string"
-                },
-                "locale":{
-                    "type":"object"
-                },
-                "location":{
-                    "type":"string"
-                },
-                "oldTypedId":{
-                    "type":"string"
-                },
-                "permissions":{
-                    "type":"array",
-                    "items":{
-                        "type":"string"
-                    }
-                },
-                "pictureUrl":{
-                    "type":"string"
-                },
-                "profileUrl":{
-                    "type":"string"
-                },
-                "remembered":{
-                    "type":"boolean"
-                },
-                "roles":{
-                    "type":"array",
-                    "items":{
-                        "type":"string"
-                    }
-                },
-                "typedId":{
-                    "type":"string"
-                },
-                "username":{
-                    "type":"string"
                 }
             }
         },

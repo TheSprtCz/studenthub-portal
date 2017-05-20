@@ -16,9 +16,7 @@
  *******************************************************************************/
 package cz.studenthub.resources;
 
-import static cz.studenthub.auth.Consts.AUTHENTICATED;
-import static cz.studenthub.auth.Consts.BASIC_AUTH;
-import static cz.studenthub.auth.Consts.JWT_AUTH;
+import javax.annotation.security.PermitAll;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.Consumes;
@@ -35,26 +33,25 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriBuilder;
 
-import org.pac4j.jax.rs.annotations.Pac4JProfile;
-import org.pac4j.jax.rs.annotations.Pac4JSecurity;
-
-import cz.studenthub.auth.StudentHubProfile;
 import cz.studenthub.core.Task;
 import cz.studenthub.core.TopicApplication;
+import cz.studenthub.core.User;
 import cz.studenthub.core.UserRole;
 import cz.studenthub.db.TaskDAO;
 import cz.studenthub.db.TopicApplicationDAO;
+import io.dropwizard.auth.Auth;
 import io.dropwizard.hibernate.UnitOfWork;
 import io.dropwizard.jersey.params.LongParam;
 
 @Path("/tasks")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
-@Pac4JSecurity(authorizers = AUTHENTICATED, clients = { BASIC_AUTH, JWT_AUTH })
+@PermitAll
 public class TaskResource {
 
   private final TopicApplicationDAO appDao;
   private final TaskDAO taskDao;
+  // private static final Logger LOG = LoggerFactory.getLogger(TaskResource.class);
 
   public TaskResource(TopicApplicationDAO appDao, TaskDAO taskDao) {
     this.appDao = appDao;
@@ -70,12 +67,11 @@ public class TaskResource {
 
   @POST
   @UnitOfWork
-  public Response createTask(@NotNull @Valid Task task,
-      @Pac4JProfile StudentHubProfile profile) {
+  public Response createTask(@NotNull @Valid Task task, @Auth User user) {
 
     TopicApplication app = appDao.findById(task.getApplication().getId());
     // allow only app student, leader and/or supervisor
-    if (!isAllowedToAccessTask(app, profile))
+    if (!isAllowedToAccessTask(app, user))
       throw new WebApplicationException(Status.FORBIDDEN);
 
     task.setApplication(app);
@@ -84,21 +80,18 @@ public class TaskResource {
     if (task.getId() == null)
       throw new WebApplicationException(Status.INTERNAL_SERVER_ERROR);
 
-    return Response.created(
-        UriBuilder.fromResource(TaskResource.class).path("/{id}").build(task.getId()))
-        .entity(task).build();
+    return Response.created(UriBuilder.fromResource(TaskResource.class).path("/{id}").build(task.getId())).entity(task)
+        .build();
   }
 
   @PUT
   @Path("/{id}")
   @UnitOfWork
-  public Response updateTask(@PathParam("id") LongParam taskId,
-      @NotNull @Valid Task task, @Pac4JProfile StudentHubProfile profile) {
+  public Response updateTask(@PathParam("id") LongParam taskId, @NotNull @Valid Task task, @Auth User user) {
 
     TopicApplication app = appDao.findById(task.getApplication().getId());
-
     // allow only app student, leader and/or supervisor
-    if (!isAllowedToAccessTask(app, profile))
+    if (!isAllowedToAccessTask(app, user))
       throw new WebApplicationException(Status.FORBIDDEN);
 
     task.setId(taskId.get());
@@ -109,24 +102,22 @@ public class TaskResource {
   @DELETE
   @Path("/{id}")
   @UnitOfWork
-  public Response deleteTask(@PathParam("id") LongParam taskId,
-      @Pac4JProfile StudentHubProfile profile) {
+  public Response deleteTask(@PathParam("id") LongParam taskId, @Auth User user) {
 
     Task task = taskDao.findById(taskId.get());
     TopicApplication app = task.getApplication();
 
     // allow only app student, leader and/or supervisor
-    if (!isAllowedToAccessTask(app, profile))
+    if (!isAllowedToAccessTask(app, user))
       throw new WebApplicationException(Status.FORBIDDEN);
 
     taskDao.delete(task);
     return Response.noContent().build();
   }
 
-  public static boolean isAllowedToAccessTask(TopicApplication app, StudentHubProfile profile) {
-    Long profileId = Long.valueOf(profile.getId());
-    return app.getAcademicSupervisor().getId().equals(profileId) || app.getStudent().getId().equals(profileId)
-        || app.getTechLeader().getId().equals(profileId) || profile.getRoles().contains(UserRole.ADMIN.name());
+  public static boolean isAllowedToAccessTask(TopicApplication app, User user) {
+    return app.getAcademicSupervisor().equals(user) || app.getStudent().equals(user) || app.getTechLeader().equals(user)
+        || user.getRoles().contains(UserRole.ADMIN);
   }
 
 }

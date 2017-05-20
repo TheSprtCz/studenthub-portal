@@ -8,6 +8,7 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.junit.ClassRule;
+import org.junit.Ignore;
 import org.junit.rules.ExternalResource;
 import org.junit.rules.RuleChain;
 import org.junit.rules.TestRule;
@@ -38,6 +39,7 @@ import liquibase.exception.DatabaseException;
 import liquibase.exception.LiquibaseException;
 import liquibase.resource.ClassLoaderResourceAccessor;
 
+@Ignore
 @RunWith(Suite.class)
 @SuiteClasses({ LoginResourceTest.class, UniversityResourceTest.class, FacultyResourceTest.class,
     CompanyResourceTest.class, TagResourceTest.class, UserResourceTest.class, TopicResourceTest.class,

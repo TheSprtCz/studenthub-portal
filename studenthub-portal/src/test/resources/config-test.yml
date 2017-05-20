@@ -3,7 +3,7 @@ logging:
   level: INFO
   loggers:
     cz.studenthub: DEBUG
-    org.pac4j: INFO
+    org.hibernate.engine: WARN
 
 # server
 server:

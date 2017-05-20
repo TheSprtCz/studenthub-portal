@@ -21,14 +21,25 @@ import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import cz.studenthub.util.SmtpConfig;
 import io.dropwizard.Configuration;
 import io.dropwizard.db.DataSourceFactory;
 
+/**
+ * Configuration for entire DW application
+ * 
+ * @author sbunciak
+ * @since 1.0
+ */
 public class StudentHubConfiguration extends Configuration {
 
   @Valid
   @NotNull
   private DataSourceFactory database = new DataSourceFactory();
+
+  @Valid
+  @NotNull
+  private SmtpConfig smtp = new SmtpConfig();
 
   @JsonProperty("database")
   public DataSourceFactory getDataSourceFactory() {
@@ -38,5 +49,15 @@ public class StudentHubConfiguration extends Configuration {
   @JsonProperty("database")
   public void setDataSourceFactory(DataSourceFactory factory) {
     this.database = factory;
+  }
+
+  @JsonProperty("smtp")
+  public SmtpConfig getSmtpConfig() {
+    return smtp;
+  }
+
+  @JsonProperty("smtp")
+  public void setSmtpConfig(SmtpConfig smtp) {
+    this.smtp = smtp;
   }
 }
