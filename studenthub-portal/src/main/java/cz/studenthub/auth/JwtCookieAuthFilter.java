@@ -37,7 +37,8 @@ import io.dropwizard.auth.oauth.OAuthCredentialAuthFilter;
  * @author sbunciak
  * @since 1.0
  *
- * @param <P> Principal
+ * @param <P>
+ *          Principal
  */
 @Priority(Priorities.AUTHENTICATION)
 public class JwtCookieAuthFilter<P extends Principal> extends AuthFilter<String, P> {
@@ -51,9 +52,8 @@ public class JwtCookieAuthFilter<P extends Principal> extends AuthFilter<String,
   @Override
   public void filter(ContainerRequestContext requestContext) throws IOException {
     Cookie cookie = requestContext.getCookies().get(cookieName);
-    String credentials = cookie.getValue();
 
-    if (!authenticate(requestContext, credentials, SecurityContext.BASIC_AUTH)) {
+    if (cookie == null || !authenticate(requestContext, cookie.getValue(), SecurityContext.BASIC_AUTH)) {
       throw new WebApplicationException(unauthorizedHandler.buildResponse(prefix, realm));
     }
   }
@@ -64,7 +64,8 @@ public class JwtCookieAuthFilter<P extends Principal> extends AuthFilter<String,
    * An {@link Authenticator} must be provided during the building process.
    * </p>
    *
-   * @param <P> the type of the principal
+   * @param <P>
+   *          the type of the principal
    */
   public static class Builder<P extends Principal> extends AuthFilterBuilder<String, P, JwtCookieAuthFilter<P>> {
 

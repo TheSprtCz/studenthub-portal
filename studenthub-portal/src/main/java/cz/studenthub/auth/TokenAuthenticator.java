@@ -59,12 +59,18 @@ public class TokenAuthenticator implements Authenticator<String, User> {
 
   @Override
   @UnitOfWork
-  public Optional<User> authenticate(String token) throws AuthenticationException, JWTVerificationException {
+  public Optional<User> authenticate(String token) throws AuthenticationException {
     LOG.debug("Authenticating using token: " + token);
-    DecodedJWT jwt = verifier.verify(token);
-    LOG.debug("Token verified for user id: " + jwt.getSubject());
-    User user = userDao.findById(Long.parseLong(jwt.getSubject()));
-    LOG.debug("Authenticated: " + user);
+    User user = null;
+    try {
+      DecodedJWT jwt = verifier.verify(token);
+      LOG.debug("Token verified for user id: " + jwt.getSubject());
+      user = userDao.findById(Long.parseLong(jwt.getSubject()));
+      LOG.debug("Authenticated: " + user);
+    } catch (JWTVerificationException e) {
+      LOG.debug("Token not authenticated: " + token);
+    }
+
     return Optional.ofNullable(user);
   }
 }
