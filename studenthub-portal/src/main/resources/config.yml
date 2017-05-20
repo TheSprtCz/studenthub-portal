@@ -24,7 +24,7 @@ logging:
 server:
   rootPath: /api/
 
-# database - development conf. (not for prod. usage)
+# database
 database:
   # the name of your JDBC driver
   driverClass: org.postgresql.Driver
@@ -46,3 +46,12 @@ database:
     hibernate.hbm2ddl.auto: validate
     charSet: UTF-8
     hibernate.dialect: org.hibernate.dialect.PostgreSQLDialect
+    
+# smtp config
+smtp:
+  server: ${SMTP_SERVER:-localhost}
+  port: ${SMTP_PORT:-587}
+  username: ${SMTP_USERNAME}
+  password: ${SMTP_PASSWORD}
+  fromEmail: ${SMTP_FROM_EMAIL:-admin@example.com}
+  fromName: ${SMTP_FROM_NAME:-admin}

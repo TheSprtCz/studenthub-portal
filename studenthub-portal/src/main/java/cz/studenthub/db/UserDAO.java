@@ -50,6 +50,10 @@ public class UserDAO extends AbstractDAO<User> {
   public User findById(Long id) {
     return get(id);
   }
+  
+  public User findByEmail(String email) {
+    return uniqueResult(namedQuery("User.findByEmail").setParameter("email", email));
+  }
 
   public List<User> findByRole(UserRole role) {
     return list(namedQuery("User.findByRole").setParameter("role", role));

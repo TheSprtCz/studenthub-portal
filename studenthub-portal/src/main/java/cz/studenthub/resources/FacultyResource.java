@@ -16,13 +16,10 @@
  *******************************************************************************/
 package cz.studenthub.resources;
 
-import static cz.studenthub.auth.Consts.ADMIN;
-import static cz.studenthub.auth.Consts.AUTHENTICATED;
-import static cz.studenthub.auth.Consts.BASIC_AUTH;
-import static cz.studenthub.auth.Consts.JWT_AUTH;
-
 import java.util.List;
 
+import javax.annotation.security.PermitAll;
+import javax.annotation.security.RolesAllowed;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
@@ -42,8 +39,6 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriBuilder;
 
-import org.pac4j.jax.rs.annotations.Pac4JSecurity;
-
 import cz.studenthub.core.Faculty;
 import cz.studenthub.core.User;
 import cz.studenthub.core.UserRole;
@@ -57,7 +52,6 @@ import io.dropwizard.jersey.params.LongParam;
 @Path("/faculties")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
-@Pac4JSecurity(authorizers = ADMIN, clients = { BASIC_AUTH, JWT_AUTH })
 public class FacultyResource {
 
   private final FacultyDAO facDao;
@@ -70,7 +64,6 @@ public class FacultyResource {
 
   @GET
   @UnitOfWork
-  @Pac4JSecurity(ignore = true)
   public List<Faculty> fetch(@Min(0) @DefaultValue("0") @QueryParam("start") IntParam startParam,
           @Min(0) @DefaultValue("0") @QueryParam("size") IntParam sizeParam) {
       return PagingUtil.paging(facDao.findAll(), startParam.get(), sizeParam.get());
@@ -79,7 +72,6 @@ public class FacultyResource {
   @GET
   @Path("/{id}")
   @UnitOfWork
-  @Pac4JSecurity(ignore = true)
   public Faculty findById(@PathParam("id") LongParam id) {
     return facDao.findById(id.get());
   }
@@ -87,6 +79,7 @@ public class FacultyResource {
   @DELETE
   @Path("/{id}")
   @UnitOfWork
+  @RolesAllowed("ADMIN")
   public Response delete(@PathParam("id") LongParam idParam) {
     Long id = idParam.get();
     Faculty faculty = facDao.findById(id);
@@ -100,6 +93,7 @@ public class FacultyResource {
   @PUT
   @Path("/{id}")
   @UnitOfWork
+  @RolesAllowed("ADMIN")
   public Response update(@PathParam("id") LongParam idParam, @NotNull @Valid Faculty faculty) {
     Long id = idParam.get();
     if (facDao.findById(id) == null)
@@ -112,6 +106,7 @@ public class FacultyResource {
 
   @POST
   @UnitOfWork
+  @RolesAllowed("ADMIN")
   public Response create(@NotNull @Valid Faculty faculty) {
     facDao.create(faculty);
     if (faculty.getId() == null)
@@ -124,7 +119,7 @@ public class FacultyResource {
   @GET
   @Path("/{id}/students")
   @UnitOfWork
-  @Pac4JSecurity(authorizers = AUTHENTICATED, clients = { BASIC_AUTH, JWT_AUTH })
+  @PermitAll
   public List<User> fetchStudents(@PathParam("id") LongParam id,
           @Min(0) @DefaultValue("0") @QueryParam("start") IntParam startParam,
           @Min(0) @DefaultValue("0") @QueryParam("size") IntParam sizeParam) {
@@ -139,7 +134,7 @@ public class FacultyResource {
   @GET
   @Path("/{id}/supervisors")
   @UnitOfWork
-  @Pac4JSecurity(authorizers = AUTHENTICATED, clients = { BASIC_AUTH, JWT_AUTH })
+  @PermitAll
   public List<User> fetchSupervisors(@PathParam("id") LongParam id,
           @Min(0) @DefaultValue("0") @QueryParam("start") IntParam startParam,
           @Min(0) @DefaultValue("0") @QueryParam("size") IntParam sizeParam) {

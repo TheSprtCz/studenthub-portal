@@ -15,15 +15,10 @@
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *******************************************************************************/
 package cz.studenthub.resources;
-
-import static cz.studenthub.auth.Consts.ADMIN;
-import static cz.studenthub.auth.Consts.AUTHENTICATED;
-import static cz.studenthub.auth.Consts.BASIC_AUTH;
-import static cz.studenthub.auth.Consts.JWT_AUTH;
-import static cz.studenthub.auth.Consts.SUPERVISOR;
-import static cz.studenthub.auth.Consts.TECH_LEADER;
-
 import java.util.List;
+
+import javax.annotation.security.PermitAll;
+import javax.annotation.security.RolesAllowed;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
@@ -43,18 +38,14 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriBuilder;
 
-import org.pac4j.jax.rs.annotations.Pac4JProfile;
-import org.pac4j.jax.rs.annotations.Pac4JSecurity;
-
-import cz.studenthub.auth.StudentHubProfile;
 import cz.studenthub.core.Topic;
 import cz.studenthub.core.TopicApplication;
 import cz.studenthub.core.User;
 import cz.studenthub.core.UserRole;
 import cz.studenthub.db.TopicApplicationDAO;
 import cz.studenthub.db.TopicDAO;
-import cz.studenthub.db.UserDAO;
 import cz.studenthub.util.PagingUtil;
+import io.dropwizard.auth.Auth;
 import io.dropwizard.hibernate.UnitOfWork;
 import io.dropwizard.jersey.params.IntParam;
 import io.dropwizard.jersey.params.LongParam;
@@ -62,22 +53,18 @@ import io.dropwizard.jersey.params.LongParam;
 @Path("/topics")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
-@Pac4JSecurity(authorizers = ADMIN, clients = { BASIC_AUTH, JWT_AUTH })
 public class TopicResource {
 
-  private final UserDAO userDao;
   private final TopicDAO topicDao;
   private final TopicApplicationDAO appDao;
 
-  public TopicResource(TopicDAO topicDao, TopicApplicationDAO taDao, UserDAO userDao) {
-    this.userDao = userDao;
+  public TopicResource(TopicDAO topicDao, TopicApplicationDAO taDao) {
     this.topicDao = topicDao;
     this.appDao = taDao;
   }
 
   @GET
   @UnitOfWork
-  @Pac4JSecurity(ignore = true)
   public List<Topic> fetch(@Min(0) @DefaultValue("0") @QueryParam("start") IntParam startParam,
       @Min(0) @DefaultValue("0") @QueryParam("size") IntParam sizeParam) {
     return PagingUtil.paging(topicDao.findAll(), startParam.get(), sizeParam.get());
@@ -86,7 +73,6 @@ public class TopicResource {
   @GET
   @Path("/{id}")
   @UnitOfWork
-  @Pac4JSecurity(ignore = true)
   public Topic findById(@PathParam("id") LongParam id) {
     return topicDao.findById(id.get());
   }
@@ -94,6 +80,7 @@ public class TopicResource {
   @DELETE
   @Path("/{id}")
   @UnitOfWork
+  @RolesAllowed("ADMIN")
   public Response delete(@PathParam("id") LongParam idParam) {
     Long id = idParam.get();
     Topic topic = topicDao.findById(id);
@@ -107,9 +94,8 @@ public class TopicResource {
   @PUT
   @Path("/{id}")
   @UnitOfWork
-  @Pac4JSecurity(authorizers = TECH_LEADER, clients = { BASIC_AUTH, JWT_AUTH })
-  public Response update(@Pac4JProfile StudentHubProfile profile, @PathParam("id") LongParam idParam,
-      @NotNull @Valid Topic topic) {
+  @RolesAllowed("TECH_LEADER")
+  public Response update(@Auth User user, @PathParam("id") LongParam idParam, @NotNull @Valid Topic topic) {
 
     Long id = idParam.get();
     Topic oldTopic = topicDao.findById(id);
@@ -119,8 +105,8 @@ public class TopicResource {
     Long oldCreatorId = oldTopic.getCreator().getId();
     Long newCreatorId = topic.getCreator().getId();
     // if user is topic creator and creator stays the same, or is an admin
-    if ((oldCreatorId.equals(Long.valueOf(profile.getId())) && oldCreatorId.equals(newCreatorId))
-        || profile.getRoles().contains(UserRole.ADMIN.name())) {
+    if ((oldCreatorId.equals(user.getId()) && oldCreatorId.equals(newCreatorId))
+        || user.getRoles().contains(UserRole.ADMIN)) {
 
       topic.setId(id);
       topicDao.update(topic);
@@ -132,32 +118,29 @@ public class TopicResource {
 
   @POST
   @UnitOfWork
-  @Pac4JSecurity(authorizers = TECH_LEADER, clients = { BASIC_AUTH, JWT_AUTH })
-  public Response create(@Pac4JProfile StudentHubProfile profile, @NotNull @Valid Topic topic) {
+  @RolesAllowed("TECH_LEADER")
+  public Response create(@Auth User user, @NotNull @Valid Topic topic) {
 
     // If user is topic creator or is an admin
-    if (topic.getCreator().getId().equals(Long.valueOf(profile.getId()))
-        || profile.getRoles().contains(UserRole.ADMIN.name())) {
-	
-	    topicDao.create(topic);
-	    if (topic.getId() == null)
-	      throw new WebApplicationException(Status.INTERNAL_SERVER_ERROR);
-	
-	    return Response.created(UriBuilder.fromResource(TopicResource.class).path("/{id}").build(topic.getId()))
-	        .entity(topic).build();
-    }
-    else {
-        throw new WebApplicationException(Status.FORBIDDEN);
+    if (topic.getCreator().equals(user) || user.getRoles().contains(UserRole.ADMIN)) {
+
+      topicDao.create(topic);
+      if (topic.getId() == null)
+        throw new WebApplicationException(Status.INTERNAL_SERVER_ERROR);
+
+      return Response.created(UriBuilder.fromResource(TopicResource.class).path("/{id}").build(topic.getId()))
+          .entity(topic).build();
+    } else {
+      throw new WebApplicationException(Status.FORBIDDEN);
     }
   }
 
   @PUT
   @Path("/{id}/supervise")
   @UnitOfWork
-  @Pac4JSecurity(authorizers = SUPERVISOR, clients = { BASIC_AUTH, JWT_AUTH })
-  public Response superviseTopic(@Pac4JProfile StudentHubProfile profile, @PathParam("id") LongParam id) {
+  @RolesAllowed("AC_SUPERVISOR")
+  public Response superviseTopic(@Auth User supervisor, @PathParam("id") LongParam id) {
     Topic topic = topicDao.findById(id.get());
-    User supervisor = userDao.findById(Long.valueOf(profile.getId()));
     topic.getAcademicSupervisors().add(supervisor);
     topicDao.update(topic);
     return Response.ok(topic).build();
@@ -166,10 +149,10 @@ public class TopicResource {
   @GET
   @Path("/{id}/applications")
   @UnitOfWork
-  @Pac4JSecurity(authorizers = AUTHENTICATED, clients = { BASIC_AUTH, JWT_AUTH })
+  @PermitAll
   public List<TopicApplication> fetchSupervisedTopics(@PathParam("id") LongParam id,
-          @Min(0) @DefaultValue("0") @QueryParam("start") IntParam startParam,
-          @Min(0) @DefaultValue("0") @QueryParam("size") IntParam sizeParam) {
+      @Min(0) @DefaultValue("0") @QueryParam("start") IntParam startParam,
+      @Min(0) @DefaultValue("0") @QueryParam("size") IntParam sizeParam) {
 
     Topic topic = topicDao.findById(id.get());
     if (topic == null)
@@ -178,17 +161,13 @@ public class TopicResource {
     return PagingUtil.paging(appDao.findByTopic(topic), startParam.get(), sizeParam.get());
   }
 
-  /*
-   * We don't want to publicly expose info about creator/supervisors we need
-   * separate endpoints
-   */
   @GET
   @Path("/{id}/supervisors")
   @UnitOfWork
-  @Pac4JSecurity(authorizers = AUTHENTICATED, clients = { BASIC_AUTH, JWT_AUTH })
+  @PermitAll
   public List<User> getTopicSupervisors(@PathParam("id") LongParam id,
-          @Min(0) @DefaultValue("0") @QueryParam("start") IntParam startParam,
-          @Min(0) @DefaultValue("0") @QueryParam("size") IntParam sizeParam) {
+      @Min(0) @DefaultValue("0") @QueryParam("start") IntParam startParam,
+      @Min(0) @DefaultValue("0") @QueryParam("size") IntParam sizeParam) {
 
     Topic topic = topicDao.findById(id.get());
     return PagingUtil.paging(topic.getAcademicSupervisors(), startParam.get(), sizeParam.get());
@@ -197,7 +176,7 @@ public class TopicResource {
   @GET
   @Path("/{id}/creator")
   @UnitOfWork
-  @Pac4JSecurity(authorizers = AUTHENTICATED, clients = { BASIC_AUTH, JWT_AUTH })
+  @PermitAll
   public User getTopicCreator(@PathParam("id") LongParam id) {
     Topic topic = topicDao.findById(id.get());
     return topic.getCreator();
@@ -206,7 +185,6 @@ public class TopicResource {
   @GET
   @Path("/search")
   @UnitOfWork
-  @Pac4JSecurity(ignore = true)
   public List<Topic> search(@NotNull @QueryParam("text") String text,
       @Min(0) @DefaultValue("0") @QueryParam("start") IntParam startParam,
       @Min(0) @DefaultValue("0") @QueryParam("size") IntParam sizeParam) {

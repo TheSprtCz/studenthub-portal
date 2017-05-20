@@ -16,33 +16,43 @@
  *******************************************************************************/
 package cz.studenthub.auth;
 
+import java.util.Optional;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import cz.studenthub.core.User;
-import cz.studenthub.core.UserRole;
-import io.dropwizard.auth.Authorizer;
+import cz.studenthub.db.UserDAO;
+import io.dropwizard.auth.AuthenticationException;
+import io.dropwizard.auth.Authenticator;
+import io.dropwizard.auth.basic.BasicCredentials;
+import io.dropwizard.hibernate.UnitOfWork;
 
 /**
- * Dropwizard authorizer to work specifically with UserRole enum.
+ * Username/password basic auth authenticator
  * 
  * @author sbunciak
  * @since 1.0
  */
-public class StudentHubAuthorizer implements Authorizer<User> {
+public class BasicAuthenticator implements Authenticator<BasicCredentials, User> {
 
-  private final Logger LOG = LoggerFactory.getLogger(StudentHubAuthorizer.class);
-  
+  private final UserDAO userDao;
+  private final Logger LOG = LoggerFactory.getLogger(BasicAuthenticator.class);
+      
+  public BasicAuthenticator(UserDAO userDao) {
+    this.userDao = userDao;
+  }
+
   @Override
-  public boolean authorize(User user, String checkedRole) {
-    LOG.debug("Authorizing " + user + "for role " + checkedRole); 
-    for (UserRole role : user.getRoles()) {
-      if (role.toString().equalsIgnoreCase(checkedRole)) {
-        LOG.debug("Role granted: " + checkedRole);
-        return true;
-      }
+  @UnitOfWork
+  public Optional<User> authenticate(BasicCredentials creds) throws AuthenticationException {
+    LOG.debug("Authenticating using Basic Auth user: " + creds.getUsername());
+    User user = userDao.findByEmail(creds.getUsername());
+    if (user != null && StudentHubPasswordEncoder.matches(creds.getPassword(), user.getPassword())) {
+      LOG.debug("User authenticated: " + user);
+      return Optional.of(user);
+    } else {
+      return Optional.empty();
     }
-    LOG.debug("Role not granted " + checkedRole);
-    return false;
   }
 }
