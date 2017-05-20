@@ -108,8 +108,9 @@ public class UserResource {
   @PUT
   @Path("/{id}")
   @UnitOfWork
-  public Response update(@Auth User user, @PathParam("id") LongParam idParam,
-      @NotNull @Valid UpdateUserBean updateUserBean) {
+  public Response update(@PathParam("id") LongParam idParam, @NotNull @Valid UpdateUserBean updateUserBean,
+      @Auth User user) {
+    
     Long id = idParam.get();
 
     if (id.equals(user.getId()) || user.getRoles().contains(UserRole.ADMIN)) {

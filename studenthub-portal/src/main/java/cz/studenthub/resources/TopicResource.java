@@ -95,7 +95,7 @@ public class TopicResource {
   @Path("/{id}")
   @UnitOfWork
   @RolesAllowed("TECH_LEADER")
-  public Response update(@Auth User user, @PathParam("id") LongParam idParam, @NotNull @Valid Topic topic) {
+  public Response update(@PathParam("id") LongParam idParam, @NotNull @Valid Topic topic, @Auth User user) {
 
     Long id = idParam.get();
     Topic oldTopic = topicDao.findById(id);
@@ -119,7 +119,7 @@ public class TopicResource {
   @POST
   @UnitOfWork
   @RolesAllowed("TECH_LEADER")
-  public Response create(@Auth User user, @NotNull @Valid Topic topic) {
+  public Response create(@NotNull @Valid Topic topic, @Auth User user) {
 
     // If user is topic creator or is an admin
     if (topic.getCreator().equals(user) || user.getRoles().contains(UserRole.ADMIN)) {
@@ -139,7 +139,7 @@ public class TopicResource {
   @Path("/{id}/supervise")
   @UnitOfWork
   @RolesAllowed("AC_SUPERVISOR")
-  public Response superviseTopic(@Auth User supervisor, @PathParam("id") LongParam id) {
+  public Response superviseTopic(@PathParam("id") LongParam id, @Auth User supervisor) {
     Topic topic = topicDao.findById(id.get());
     topic.getAcademicSupervisors().add(supervisor);
     topicDao.update(topic);

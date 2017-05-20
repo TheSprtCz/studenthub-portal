@@ -97,7 +97,7 @@ public class TopicApplicationResource {
   @PUT
   @Path("/{id}")
   @UnitOfWork
-  public Response update(@Auth User user, @PathParam("id") LongParam idParam, @NotNull @Valid TopicApplication app) {
+  public Response update(@PathParam("id") LongParam idParam, @NotNull @Valid TopicApplication app, @Auth User user) {
     
     long id = idParam.get();
     TopicApplication oldApp = appDao.findById(id);

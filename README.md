@@ -31,6 +31,16 @@ Student Hub Portal uses SMTP protocol for sending email notifications. You can c
 
 To see your applications health enter url `http://localhost:8081/healthcheck`
 
+## Profiles
+
+### Docker
+
+Running ```mvn clean package -Pdocker``` generates a new Docker file.
+
+### Swagger
+
+Running ```mvn clean package -Pswagger``` scans JAX-RS resources and creates swagger.json in api-docs folder.
+
 ## How to contribute
 
 * Write to us at admin@studenthub.cz

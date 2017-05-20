@@ -151,7 +151,7 @@
                         "in":"body",
                         "required":true,
                         "schema":{
-                            "$ref":"#/definitions/User"
+                            "$ref":"#/definitions/UpdatePasswordBean"
                         }
                     }
                 ],
@@ -300,7 +300,7 @@
                         "in":"body",
                         "required":true,
                         "schema":{
-                            "$ref":"#/definitions/User"
+                            "$ref":"#/definitions/TopicApplication"
                         }
                     }
                 ],
@@ -420,6 +420,7 @@
         "/auth/login":{
             "post":{
                 "consumes":[
+                    "application/x-www-form-urlencoded"
                 ],
                 "produces":[
                 ],
@@ -447,6 +448,11 @@
                             "Set-Cookie":{
                                 "type":"string"
                             }
+                        }
+                    },
+                    "401":{
+                        "description":"Unauthorized",
+                        "headers":{
                         }
                     },
                     "403":{
@@ -1344,7 +1350,7 @@
                         "in":"body",
                         "required":true,
                         "schema":{
-                            "$ref":"#/definitions/User"
+                            "$ref":"#/definitions/Topic"
                         }
                     }
                 ],
@@ -1469,7 +1475,7 @@
                         "in":"body",
                         "required":true,
                         "schema":{
-                            "$ref":"#/definitions/User"
+                            "$ref":"#/definitions/Topic"
                         }
                     }
                 ],
@@ -2136,7 +2142,7 @@
                         "in":"body",
                         "required":true,
                         "schema":{
-                            "$ref":"#/definitions/User"
+                            "$ref":"#/definitions/UpdateUserBean"
                         }
                     }
                 ],
@@ -2641,7 +2647,8 @@
                         "C",
                         "D",
                         "E",
-                        "F"
+                        "F",
+                        "NOT_FINISHED"
                     ]
                 },
                 "id":{
@@ -2689,6 +2696,57 @@
                     "type":"string"
                 },
                 "url":{
+                    "type":"string"
+                }
+            }
+        },
+        "UpdatePasswordBean":{
+            "properties":{
+                "newPwd":{
+                    "type":"string"
+                },
+                "oldPwd":{
+                    "type":"string"
+                }
+            }
+        },
+        "UpdateUserBean":{
+            "properties":{
+                "company":{
+                    "$ref":"#/definitions/Company"
+                },
+                "email":{
+                    "type":"string"
+                },
+                "faculty":{
+                    "$ref":"#/definitions/Faculty"
+                },
+                "lastLogin":{
+                    "type":"object"
+                },
+                "name":{
+                    "type":"string"
+                },
+                "phone":{
+                    "type":"string"
+                },
+                "roles":{
+                    "type":"string",
+                    "enum":[
+                        "AC_SUPERVISOR",
+                        "ADMIN",
+                        "COMPANY_REP",
+                        "STUDENT",
+                        "TECH_LEADER"
+                    ]
+                },
+                "tags":{
+                    "type":"array",
+                    "items":{
+                        "type":"string"
+                    }
+                },
+                "username":{
                     "type":"string"
                 }
             }

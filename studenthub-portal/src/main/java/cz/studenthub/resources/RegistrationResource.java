@@ -137,7 +137,7 @@ public class RegistrationResource {
   @Path("/{id}/password")
   @UnitOfWork
   @PermitAll
-  public Response updatePassword(@Auth User user, @PathParam("id") LongParam id, UpdatePasswordBean updateBean) {
+  public Response updatePassword(@PathParam("id") LongParam id, UpdatePasswordBean updateBean, @Auth User user) {
     // only admin or profile owner is allowed
     if (id.get().equals(user.getId()) || user.getRoles().contains(UserRole.ADMIN)) {
       // check if old password matches
