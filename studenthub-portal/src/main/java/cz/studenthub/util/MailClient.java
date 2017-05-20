@@ -37,23 +37,18 @@ public class MailClient {
 
   private static Logger LOG = LoggerFactory.getLogger(MailClient.class);
 
-  private static final String SMTP_FROM_EMAIL = System.getenv("SMTP_FROM_EMAIL");
-  private static final String SMTP_FROM_NAME = System.getenv("SMTP_FROM_NAME");
-  private static final String SMTP_SERVER = System.getenv("SMTP_SERVER");
-  private static final String SMTP_PORT = System.getenv("SMTP_PORT");
-  private static final String SMTP_USERNAME = System.getenv("SMTP_USERNAME");
-  private static final String SMTP_PASSWORD = System.getenv("SMTP_PASSWORD");
-
   private final Mailer mailer;
+  
+  private final SmtpConfig config;
 
-  public MailClient() {
-    mailer = new Mailer(SMTP_SERVER, Integer.parseInt(SMTP_PORT), SMTP_USERNAME, SMTP_PASSWORD,
-        TransportStrategy.SMTP_TLS);
+  public MailClient(SmtpConfig config) {
+    this.config = config;
+    mailer = new Mailer(config.getServer(), config.getPort(), config.getUsername(), config.getPassword(), TransportStrategy.SMTP_TLS);
   }
 
   public void sendMessage(String recipient, String subject, String templateFile, Map<String, String> args) {
     Email email = new EmailBuilder()
-        .from(SMTP_FROM_NAME, SMTP_FROM_EMAIL)
+        .from(config.getFromName(), config.getFromEmail())
         .to(recipient)
         .subject(subject)
         .textHTML(loadHtmlFromTemplate(templateFile, args))

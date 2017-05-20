@@ -33,8 +33,8 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.Response.Status;
+import javax.ws.rs.core.UriBuilder;
 
 import cz.studenthub.api.UpdatePasswordBean;
 import cz.studenthub.auth.StudentHubPasswordEncoder;
@@ -42,6 +42,7 @@ import cz.studenthub.core.User;
 import cz.studenthub.core.UserRole;
 import cz.studenthub.db.UserDAO;
 import cz.studenthub.util.MailClient;
+import cz.studenthub.util.SmtpConfig;
 import io.dropwizard.auth.Auth;
 import io.dropwizard.hibernate.UnitOfWork;
 import io.dropwizard.jersey.params.LongParam;
@@ -57,12 +58,13 @@ import io.dropwizard.jersey.params.LongParam;
 @Consumes(MediaType.APPLICATION_JSON)
 public class RegistrationResource {
 
+  private final MailClient mailer;
   private final UserDAO userDao;
   private static final Map<Long, String> activations = new HashMap<Long, String>();
-  private final MailClient mailer = new MailClient();
 
-  public RegistrationResource(UserDAO userDao) {
+  public RegistrationResource(UserDAO userDao, SmtpConfig smtpConfig) {
     this.userDao = userDao;
+    this.mailer = new MailClient(smtpConfig);
   }
 
   @POST
@@ -72,7 +74,7 @@ public class RegistrationResource {
     // check if someone is not trying to reg as ADMIN
     if (user.getRoles().contains(UserRole.ADMIN))
       throw new WebApplicationException("Invalid role - can't register new ADMIN.", Status.BAD_REQUEST);
-      
+
     // check either faculty or company is assigned
     if (user.getFaculty() == null && user.getCompany() == null)
       throw new WebApplicationException("User must have either Faculty of Company assigned.", Status.BAD_REQUEST);
@@ -82,7 +84,7 @@ public class RegistrationResource {
     // failed to persist user - server error
     if (user.getId() == null)
       throw new WebApplicationException(Status.INTERNAL_SERVER_ERROR);
-    
+
     // put user into cache of "inactive" users
     String secretKey = StudentHubPasswordEncoder.genSecret();
     activations.put(user.getId(), secretKey);
@@ -97,7 +99,8 @@ public class RegistrationResource {
   @Path("/activate")
   @UnitOfWork
   @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-  public Response activate(@QueryParam("secret") String secretKey, @QueryParam("id") LongParam idParam, @FormParam("password") String password) {
+  public Response activate(@QueryParam("secret") String secretKey, @QueryParam("id") LongParam idParam,
+      @FormParam("password") String password) {
     Long userId = idParam.get();
     if (activations.get(userId) != null && activations.get(userId).equals(secretKey)) {
       User user = userDao.findById(userId);
@@ -124,9 +127,9 @@ public class RegistrationResource {
       throw new WebApplicationException(Status.NOT_FOUND);
     if (user.getPassword() != null)
       throw new WebApplicationException("User is already active.", Status.BAD_REQUEST);
-    
+
     sendActivationEmail(user, activations.get(user.getId()));
-    
+
     return Response.ok().build();
   }
 
@@ -152,7 +155,7 @@ public class RegistrationResource {
       throw new WebApplicationException(Status.FORBIDDEN);
     }
   }
-  
+
   private void sendActivationEmail(User user, String secretKey) {
     // send conf. email with activation link
     Map<String, String> args = new HashMap<String, String>();
