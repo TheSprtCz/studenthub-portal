@@ -113,13 +113,16 @@ public class UserResource {
     
     Long id = idParam.get();
 
+    // roles update allowed only to admin
+    if (user.getRoles().contains(UserRole.ADMIN))
+      user.setRoles(updateUserBean.getRoles());
+    
     if (id.equals(user.getId()) || user.getRoles().contains(UserRole.ADMIN)) {
       user.setName(updateUserBean.getName());
       user.setEmail(updateUserBean.getEmail());
       user.setFaculty(updateUserBean.getFaculty());
       user.setCompany(updateUserBean.getCompany());
       user.setPhone(updateUserBean.getPhone());
-      user.setRoles(updateUserBean.getRoles());
       user.setTags(updateUserBean.getTags());
       userDao.update(user);
       return Response.ok(user).build();
