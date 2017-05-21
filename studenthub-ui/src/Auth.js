@@ -1,5 +1,6 @@
 import * as Cookies from 'js-cookie';
 import jwt_decode from "jwt-decode";
+import Util from './Util.js';
 
 // "import" jquery
 const $ = window.$;
@@ -11,17 +12,19 @@ const Auth = {
     return !this.getToken() ? false : true;
   },
 
+  /**
+   * Obtains JWT token from backend which subsequently stores it in Browser cookies
+   */
   authenticate(username, password, cb) {
 
     var settings = {
-      "async": true,
-      "crossDomain": true,
-      "url": "http://localhost:8080/api/auth/login",
+      "url": "/api/auth/login",
       "method": "POST",
+      "xhrFields": {
+        "withCredentials": true
+      },
       "headers": {
-        "content-type": "application/x-www-form-urlencoded",
-        "Access-Control-Expose-Headers": "Authorization",
-        "cache-control": "no-cache"
+        "content-type": "application/x-www-form-urlencoded"
       },
       "data": {
         "username": username,
@@ -30,35 +33,54 @@ const Auth = {
     }
 
     // console.log(settings);
-    const that = this;
-    $.ajax(settings).done(function ( data, textStatus, jqXHR) {
-      var header = jqXHR.getResponseHeader("Authorization");
-      console.log(header);
-      that.setToken(header.replace('Bearer ',''));
+    $.ajax(settings).done(function (data, textStatus, jqXHR) {
+      console.log(textStatus);
+      // TODO: if cookie was not set but Authorization header was returned
     });
 
-    setTimeout(cb, 100)
+    setTimeout(cb, 500)
   },
 
+  /**
+   * Sends POST request to logout and delete auth Cookie
+   */
   signout(cb) {
-    this.deleteToken();
-    setTimeout(cb, 100)
-  },
 
-  setToken(token) {
-    Cookies.set('sh-token', token);
+    var settings = {
+      "url": "/api/auth/logout",
+      "method": "POST",
+      "xhrFields": {
+        "withCredentials": true
+      }
+    }
+
+    // console.log(settings);
+    $.ajax(settings).done(function (data, textStatus, jqXHR) {
+      console.log(textStatus);
+      // TODO: if cookie was not un-set
+    });
+
+    setTimeout(cb, 500)
   },
 
   getToken() {
-    return Cookies.get('sh-token');
-  },
-
-  deleteToken() {
-    Cookies.remove('sh-token');
+    return Cookies.get(Util.TOKEN_COOKIE_NAME);
   },
 
   /*
-    Returns decoded JWT token: display_name, email, iat, sub, $int_roles, $int_perms
+    Returns decoded JWT token:
+    "sub": "1",
+    "exp": 1487091708,
+    "iat": 1573491708,
+    "name": "Student Hub Admin",
+    "email": "admin@studenthub.cz",
+    "roles": [
+      "STUDENT",
+      "COMPANY_REP",
+      "AC_SUPERVISOR",
+      "ADMIN",
+      "TECH_LEADER"
+    ]
   */
   getUserInfo() {
     if (!this.getToken()) {
@@ -76,7 +98,7 @@ const Auth = {
     if (!userInfo) {
       return false;
     } else {
-      return $.inArray(role, userInfo.$int_roles) >= 0 ? true : false;
+      return $.inArray(role, userInfo.roles) >= 0 ? true : false;
     }
   }
 }

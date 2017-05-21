@@ -1,14 +1,118 @@
+// 'base' imports
 import React, { Component } from 'react';
-import AppRouter from './AppRouter.js';
+import { BrowserRouter as Router, Route, Link, Switch, Redirect, withRouter } from 'react-router-dom';
 
+// views
+import TopicSearch from './views/TopicSearch.js';
+import SignIn from './views/SignIn.js';
+import SignUp from './views/SignUp.js';
+import ForgotPassword from './views/ForgotPassword.js';
+import Users from './views/Users.js';
+import Universities from './views/Universities.js';
+import MyTopics from './views/MyTopics.js';
+import MyApplications from './views/MyApplications.js';
+import Application from './views/Application.js';
+import Profile from './views/Profile.js';
+import CompanyReg from './views/CompanyReg.js';
+
+// components
+import AboutDrawer from './components/AboutDrawer.js';
+import Button from 'react-toolbox/lib/button/Button.js';
+import AppBar from 'react-toolbox/lib/app_bar/AppBar.js';
+import Navigation from 'react-toolbox/lib/navigation/Navigation.js';
+import FontIcon from 'react-toolbox/lib/font_icon/FontIcon.js';
+
+// Auth controller
+import Auth from './Auth.js';
+import Util from './Util.js';
+
+/**
+ * '404' page - displayed when no route is matched
+ */
+const NoMatch = ({ location }) => (
+  <div className='text-center'>
+    <h3>
+      <FontIcon value='error_outline' /> No page available at location <code>{location.pathname}</code>
+    </h3>
+  </div>
+)
+
+/**
+ * Component to display navigation links in AppBar
+ */
+const NavBarLinks = withRouter(() => (
+  <div>
+    <Link to="/"><Button label="Home" flat style={{ color: 'white' }} /></Link>
+    { Auth.hasRole(Util.userRoles.admin) ? <Link to="/users"><Button label="Users" flat style={{ color: 'white' }} /></Link> : '' }
+    { Auth.hasRole(Util.userRoles.admin) ? <Link to="/unis"><Button label="Universities" flat style={{ color: 'white' }} /></Link> : '' }
+    { Auth.isAuthenticated() ? <Link to="/my-apps"><Button label="My Applications" flat style={{ color: 'white' }} /></Link> : '' }
+    { Auth.isAuthenticated() ? <Link to="/my-topics"><Button label="My Topics" flat style={{ color: 'white' }} /></Link> : '' }
+    {
+      Auth.isAuthenticated() ?
+        <Link to="/profile">
+          <Button label="Profile" icon="account_circle" flat style={{ color: 'white' }} />
+        </Link>
+        :
+        <Link to="/signin">
+          <Button label="Sign In" icon="account_circle" flat style={{ color: 'white' }} />
+        </Link>
+    }
+  </div>
+))
+
+/**
+ * Route extension to enforce auth
+ */
+const PrivateRoute = ({ component: Component, ...rest }) => (
+  <Route {...rest} render={props => (
+    Auth.isAuthenticated() ? (
+      <Component {...props}/>
+    ) : (
+      <Redirect to={{
+        pathname: '/signin',
+        state: { from: props.location }
+      }}/>
+    )
+  )}/>
+)
+
+/**
+* Main application comonent
+*/
 class App extends Component {
+
+  state = { drawerActive: false }
+
   render() {
     return (
-      <div className="container">
-        <div className="content">
-          <AppRouter />
+      <Router>
+        <div>
+          <AppBar title='Student Hub' leftIcon='menu' onLeftIconClick={() => this.setState({ drawerActive: true })}>
+            <Navigation type='horizontal'>
+              <NavBarLinks />
+            </Navigation>
+            <AboutDrawer active={ this.state.drawerActive } onOverlayClick={() => this.setState({ drawerActive: false })}/>
+          </AppBar>
+
+          { /* Routes definition */ }
+          <div className='container'>
+            <Switch>
+              <Route exact path="/" component={TopicSearch}/>
+              <Route exact path="/signin" component={SignIn}/>
+              <Route exact path="/signup" component={SignUp}/>
+              <Route exact path="/forgot" component={ForgotPassword}/>
+              <PrivateRoute exact path="/users" component={Users}/>
+              <PrivateRoute exact path="/unis" component={Universities}/>
+              <PrivateRoute exact path="/my-apps" component={MyApplications}/>
+              <PrivateRoute exact path="/my-topics" component={MyTopics}/>
+              <PrivateRoute exact path="/profile" component={Profile}/>
+              <PrivateRoute path="/applications/:id" component={Application}/>
+              <Route exact path="/company-reg" component={CompanyReg}/>
+              <Route component={NoMatch}/>
+            </Switch>
+          </div>
         </div>
-      </div>
+      </Router>
     );
   }
 }
