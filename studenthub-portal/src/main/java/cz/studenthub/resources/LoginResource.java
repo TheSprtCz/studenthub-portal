@@ -23,12 +23,10 @@ import java.util.Set;
 
 import javax.annotation.security.PermitAll;
 import javax.ws.rs.Consumes;
-import javax.ws.rs.CookieParam;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.Cookie;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.NewCookie;
@@ -123,7 +121,7 @@ public class LoginResource {
       userDao.update(user);
 
       // Return the token on the response and store in cookie
-      NewCookie newCookie = new NewCookie(COOKIE_NAME, token);
+      NewCookie newCookie = new NewCookie(COOKIE_NAME, token, "/", "", "", -1, false, false);
       return Response.ok().header(HttpHeaders.AUTHORIZATION, BEARER_PREFFIX + token).cookie(newCookie).build();
     } else {
       throw new WebApplicationException(Status.FORBIDDEN);
@@ -133,12 +131,9 @@ public class LoginResource {
   @POST
   @Path("/logout")
   @PermitAll
-  public Response logout(@CookieParam(COOKIE_NAME) Cookie cookie) {
-    if (cookie != null) {
-      NewCookie newCookie = new NewCookie(cookie, null, 0, false);
-      return Response.ok().cookie(newCookie).build();
-    }
-    return Response.ok().build();
+  public Response logout() {
+    NewCookie newCookie = new NewCookie(COOKIE_NAME, null, "/", "", 1, "", 0, new Date(0), false, false);
+    return Response.ok().cookie(newCookie).build();
   }
 
   private static String[] getRolesAsStringArray(User user) {
