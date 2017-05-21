@@ -8,6 +8,7 @@ import TableCell from 'react-toolbox/lib/table/TableCell.js';
 import EditButton from '../components/EditButton.js';
 
 import Auth from '../Auth.js';
+import Util from '../Util.js';
 
 class ApplicationTable extends Component {
   constructor(props) {
@@ -29,7 +30,7 @@ class ApplicationTable extends Component {
       method: 'get'
     }).then(function(response) {
       if (response.ok) {
-          return response.json();
+        return response.json();
       } else {
         throw new Error('There was a problem with network connection.');
       }
@@ -90,8 +91,8 @@ class ApplicationTable extends Component {
             <TableRow key={item.id}>
               <TableCell><h5>{item.topic.title}</h5></TableCell>
               <TableCell>{item.faculty.name}</TableCell>
-              <TableCell>{(item.techLeader === null || typeof item.techLeader === 'undefined') ? "" : item.techLeader.email}</TableCell>
-              <TableCell>{(item.academicSupervisor === null || typeof item.academicSupervisor === 'undefined') ? "" : item.academicSupervisor.email}</TableCell>
+              <TableCell>{Util.isEmpty(item.techLeader) ? "" : item.techLeader.email}</TableCell>
+              <TableCell>{Util.isEmpty(item.academicSupervisor) ? "" : item.academicSupervisor.email}</TableCell>
               <TableCell>{item.thesisStarted}</TableCell>
               <TableCell>{item.thesisFinish}</TableCell>
               <TableCell>{item.grade}</TableCell>

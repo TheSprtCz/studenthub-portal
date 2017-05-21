@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import Link from 'react-toolbox/lib/link/Link.js';
 import TableCell from 'react-toolbox/lib/table/TableCell.js';
 import TableHead from 'react-toolbox/lib/table/TableHead.js';
 import TableRow from 'react-toolbox/lib/table/TableRow.js';
@@ -29,7 +30,7 @@ class UniversityRow extends Component {
           {this.props.uni.country}
         </TableCell>
         <TableCell>
-          {this.props.uni.url}
+          <Link href={this.props.uni.url} label={this.props.uni.url} icon='explore' />
         </TableCell>
         <TableCell>
           <table>

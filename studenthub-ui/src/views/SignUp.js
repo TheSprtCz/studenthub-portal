@@ -99,7 +99,7 @@ class SignUpForm extends React.Component {
   };
 
   handleSubmit = () => {
-    fetch('/api/users/signUp', {
+    fetch('/api/account/signUp', {
       method: 'post',
       credentials: 'same-origin',
       headers: { "Content-Type" : "application/json" },
@@ -148,14 +148,14 @@ class SignUpForm extends React.Component {
         <h1>Sign Up</h1>
         <Input type='email' label='Email address' hint='Your email adress' icon='email' required value={this.state.email} onChange={this.handleChange.bind(this, 'email')} />
         <Input type='text' label='Name' hint='Your name' name='name' icon='textsms' required value={this.state.name} onChange={this.handleChange.bind(this, 'name')} maxLength={16} />
-        <Input type='tel' label='Phone' hint='Your phone number' name='phone' icon='phone' required value={this.state.phone} onChange={this.handleChange.bind(this, 'phone')} maxLength={9} />
+        <Input type='tel' label='Phone' hint='Your phone number' name='phone' icon='phone' value={this.state.phone} onChange={this.handleChange.bind(this, 'phone')} maxLength={9} />
         <RoleSelect changeHandler={(value) => this.handleChange("role", value)} />
         <FacultySelect changeHandler={(value) => this.handleChange("faculty", value)} />
         <table>
           <tbody>
             <tr>
               <td>
-                <Checkbox checked={this.state.terms} onChange={this.handleChange.bind(this, 'terms')} />
+                <Checkbox checked={this.state.terms} onChange={this.handleChange.bind(this, 'terms')} required />
               </td>
               <td style={{ paddingBottom: '15px', paddingLeft: '10px', display: 'inline-flex'}}>
                 I have read and I do accept the &nbsp;<TermsOfUseDialog />&nbsp; and &nbsp;<PersonalDataProcDialog />.

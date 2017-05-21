@@ -15,7 +15,8 @@ const LogoutButton = withRouter(({ history }) => (
 ))
 
 class ProfileEditView extends React.Component {
-  state = { user: { name: "User" }, email: '', phone: '', roles: '',  tags: '', lastLogin: [], snackbarActive: false, snackbarLabel: '' };
+  state = { user: { name: "User" }, email: '', phone: '', roles: '',  tags: '',
+  lastLogin: [], snackbarActive: false, snackbarLabel: '' };
 
   componentDidMount() {
     this.getUser();
@@ -27,7 +28,7 @@ class ProfileEditView extends React.Component {
       credentials: 'same-origin'
     }).then(function(response) {
       if (response.ok) {
-          return response.json();
+        return response.json();
       } else {
         throw new Error('There was a problem with network connection.');
       }
@@ -52,7 +53,7 @@ class ProfileEditView extends React.Component {
       this.setState({
         user: json,
         email:	json.email,
-        phone: (json.phone === null || typeof json.phone === "undefined") ? "" : json.phone,
+        phone: Util.isEmpty(json.phone) ? "" : json.phone,
         roles: rolesState,
         tags: tagsState,
         lastLogin: lastLoginState
@@ -127,13 +128,10 @@ class ProfileEditView extends React.Component {
         <Input type='email' icon='email' label='Email'  hint="Change your email" required value={this.state.email} onChange={this.handleChange.bind(this, 'email')} />
         <Input type='text' name='name' label='Name' icon='person' disabled value={this.state.user.name} />
         <Input type='tel' name='phone' label='Phone number' icon='phone' hint="Change your phone number" required value={this.state.phone} onChange={this.handleChange.bind(this, 'phone')} maxLength={9} />
-        <Input type='text' name='faculty' label='Faculty' icon='business' disabled value={(this.state.user.faculty === null || typeof this.state.user.faculty === 'undefined') ? "None" : this.state.user.faculty.name} />
-        <Input type='text' name='company' label='Company' icon='business' disabled value={(this.state.user.company === null || typeof this.state.user.company === 'undefined') ? "None" : this.state.user.company.name} />
+        <Input type='text' name='faculty' label='Faculty' icon='business' disabled value={Util.isEmpty(this.state.user.faculty) ? "None" : this.state.user.faculty.name} />
+        <Input type='text' name='company' label='Company' icon='business' disabled value={Util.isEmpty(this.state.user.company) ? "None" : this.state.user.company.name} />
         <Input type='text' name='roles' label='Assigned roles' icon='person' disabled value={this.state.roles} />
         <Input type='text' name='tags' label='User tags' icon='flag' hint="Divide tags using ;" value={this.state.tags} onChange={this.handleChange.bind(this, 'tags')} />
-        <p>
-          Last loged in: {(this.state.lastLogin[0] === null || typeof this.state.lastLogin[0] === 'undefined') ? "N/A" : this.state.lastLogin[0]}.
-        </p>
         <Button icon='edit' label='Save changes' raised primary className='pull-right' onClick={this.handleSubmit}/>
         <SiteSnackbar active={this.state.snackbarActive} label={this.state.snackbarLabel} toggleHandler={() => this.toggleSnackbar()} />
       </section>
@@ -142,22 +140,25 @@ class ProfileEditView extends React.Component {
 }
 
 class CompanyEditView extends React.Component {
-  state = { id: 0, name: '', city: '', country: '',  url: '', logoUrl: '', size: '', plan: "", snackbarActive: false, snackbarLabel: '' };
+  state = { id: 0, name: '', city: '', country: '',  url: '', logoUrl: '',
+    size: '', plan: "", snackbarActive: false, snackbarLabel: '' };
 
   componentDidMount() {
     this.getCompany();
   }
 
   getCompany = () => {
-    fetch('/api/users/'+Auth.getUserInfo().sub, {
+    fetch('/api/users/' + Auth.getUserInfo().sub, {
       method: 'get',
       credentials: 'same-origin'
     }).then(function(response) {
-        if(response.ok) {
-          return response.json();
-      } else throw new Error('There was a problem with network connection.');
+      if (response.ok) {
+        return response.json();
+      } else {
+        throw new Error('There was a problem with network connection.');
+      }
     }).then(function(json) {
-      if(json.company === null || typeof json.company === 'undefined') {
+      if (Util.isEmpty(json.company)) {
         this.setState({
           snackbarActive: true,
           snackbarLabel: "Couldn't find any companies associated with your account!"
@@ -182,7 +183,7 @@ class CompanyEditView extends React.Component {
   };
 
   handleSubmit = () => {
-    fetch('/api/companies/'+this.state.id, {
+    fetch('/api/companies/' + this.state.id, {
       method: 'put',
       credentials: 'same-origin',
       headers: {
@@ -198,7 +199,7 @@ class CompanyEditView extends React.Component {
           plan: this.state.plan
         })
     }).then(function(response) {
-        if(response.ok) {
+        if (response.ok) {
           this.setState({
             snackbarLabel: "Your company has been succesfully changed!",
             snackbarActive: true

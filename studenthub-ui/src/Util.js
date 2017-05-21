@@ -71,9 +71,8 @@ Util.userRoles = {
 }
 
 Util.rolesSource = [
-    { value: 'STUDENT', label: 'Student' },
-    { value: 'TECH_LEADER', label: 'Technical Leader'},
-    { value: 'AC_SUPERVISOR', label: 'Academic Supervisor'}
+  { value: 'STUDENT', label: 'Student' },
+  { value: 'AC_SUPERVISOR', label: 'Academic Supervisor'}
 ]
 
 /**

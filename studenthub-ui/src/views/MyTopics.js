@@ -306,7 +306,7 @@ class NewTopicDialog extends Component {
               <Tab label="Description">
                 <Input type='text' label='Description' hint="Full topic description in markdown" multiline rows={3} value={this.state.description} onChange={this.handleChange.bind(this, 'description')} />
               </Tab>
-              <Tab label="Result">
+              <Tab label="Preview">
                 <ReactMarkdown source={ this.state.description } />
               </Tab>
             </Tabs>

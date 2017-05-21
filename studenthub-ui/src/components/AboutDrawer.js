@@ -21,7 +21,7 @@ class AboutDrawer extends React.Component {
             <Button label="View documentation" icon="assignment" target="_blank" href="https://student-hub.gitbooks.io/user-guide/" />
           </p>
           <p>
-            <Button label="Report a bug" icon="bug_report" target="_blank" href="https://github.com/StudentHubCZ/studenthub-portal/issues" />
+            <Button label="Report a bug" icon="bug_report" target="_blank" href="https://github.com/StudentHubCZ/studenthub-portal/issues/new" />
           </p>
           <hr className="m-y-2" />
           <p>Student Hub &copy; 2017</p>
