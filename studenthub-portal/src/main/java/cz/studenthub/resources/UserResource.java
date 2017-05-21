@@ -148,10 +148,10 @@ public class UserResource {
   }
 
   @GET
-  @Path("/{id}/leadApplications")
+  @Path("/{id}/ledApplications")
   @UnitOfWork
   @RolesAllowed("TECH_LEADER")
-  public List<TopicApplication> fetchLeadApps(@Auth User user, @PathParam("id") LongParam id,
+  public List<TopicApplication> fetchLedApps(@Auth User user, @PathParam("id") LongParam id,
       @Min(0) @DefaultValue("0") @QueryParam("start") IntParam startParam,
       @Min(0) @DefaultValue("0") @QueryParam("size") IntParam sizeParam) {
 
