@@ -132,6 +132,28 @@ public class RegistrationResource {
 
     return Response.ok().build();
   }
+  
+  @POST
+  @UnitOfWork
+  @Path("/resetPassword")
+  @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+  public Response resetPassword(@FormParam("email") String email) {
+    User user = userDao.findByEmail(email);
+    if (user == null)
+      throw new WebApplicationException(Status.NOT_FOUND);
+    
+    // "de-activate" user by un-setting his password
+    user.setPassword(null);
+    userDao.update(user);
+    
+    // put user into cache of "inactive" users
+    String secretKey = StudentHubPasswordEncoder.genSecret();
+    activations.put(user.getId(), secretKey);
+
+    sendActivationEmail(user, activations.get(user.getId()));
+
+    return Response.ok().build();
+  }
 
   @PUT
   @Path("/{id}/password")
@@ -145,7 +167,7 @@ public class RegistrationResource {
         // set new password
         user.setPassword(StudentHubPasswordEncoder.encode(updateBean.getNewPwd()));
         userDao.update(user);
-        mailer.sendMessage(user.getEmail(), "Password Update", "pwdUpdate.html", null);
+        mailer.sendMessage(user.getEmail(), "Password Updated", "pwdUpdated.html", null);
         return Response.ok().build();
       } else {
         // passwords don't match
@@ -162,6 +184,6 @@ public class RegistrationResource {
     args.put("secret", secretKey);
     args.put("name", user.getName());
     args.put("id", user.getId().toString());
-    mailer.sendMessage(user.getEmail(), "User Registration", "signUp.html", args);
+    mailer.sendMessage(user.getEmail(), "Password Setup", "setPassword.html", args);
   }
 }
