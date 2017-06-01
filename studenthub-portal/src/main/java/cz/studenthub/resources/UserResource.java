@@ -93,11 +93,12 @@ public class UserResource {
   @DELETE
   @Path("/{id}")
   @UnitOfWork
-  public Response delete(@Auth User user, @PathParam("id") LongParam idParam) {
+  public Response delete(@Auth User authUser, @PathParam("id") LongParam idParam) {
     Long id = idParam.get();
+    User user = userDao.findById(id);
 
     // only admin or profile owner is allowed
-    if (id.equals(user.getId()) || user.getRoles().contains(UserRole.ADMIN)) {
+    if (id.equals(authUser.getId()) || authUser.getRoles().contains(UserRole.ADMIN)) {
       userDao.delete(user);
       return Response.noContent().build();
     } else {
@@ -109,15 +110,16 @@ public class UserResource {
   @Path("/{id}")
   @UnitOfWork
   public Response update(@PathParam("id") LongParam idParam, @NotNull @Valid UpdateUserBean updateUserBean,
-      @Auth User user) {
+      @Auth User authUser) {
     
     Long id = idParam.get();
+    User user = userDao.findById(id);
 
     // roles update allowed only to admin
-    if (user.getRoles().contains(UserRole.ADMIN))
+    if (authUser.getRoles().contains(UserRole.ADMIN))
       user.setRoles(updateUserBean.getRoles());
     
-    if (id.equals(user.getId()) || user.getRoles().contains(UserRole.ADMIN)) {
+    if (id.equals(authUser.getId()) || authUser.getRoles().contains(UserRole.ADMIN)) {
       user.setName(updateUserBean.getName());
       user.setEmail(updateUserBean.getEmail());
       user.setFaculty(updateUserBean.getFaculty());
