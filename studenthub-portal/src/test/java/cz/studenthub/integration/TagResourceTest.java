@@ -1,42 +1,50 @@
 package cz.studenthub.integration;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
 
 import java.util.List;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.core.GenericType;
-import org.junit.Test;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.Test;
 
 import cz.studenthub.IntegrationTestSuite;
 import cz.studenthub.StudentHubConfiguration;
 import cz.studenthub.core.Topic;
 import cz.studenthub.core.User;
 import io.dropwizard.client.JerseyClientBuilder;
-import io.dropwizard.testing.junit.DropwizardAppRule;
+import io.dropwizard.testing.DropwizardTestSupport;
 
 public class TagResourceTest {
-  public static final DropwizardAppRule<StudentHubConfiguration> DROPWIZARD = IntegrationTestSuite.DROPWIZARD;
+  public static DropwizardTestSupport<StudentHubConfiguration> DROPWIZARD;
 
-  private static Client client = new JerseyClientBuilder(DROPWIZARD.getEnvironment()).build("TagTest");
+  private static Client client;
 
-  @Test
+  @BeforeClass
+  public void setup() {
+      DROPWIZARD = IntegrationTestSuite.DROPWIZARD;
+      client = new JerseyClientBuilder(DROPWIZARD.getEnvironment()).build("TagTest");
+  }
+
+  @Test(dependsOnGroups = "login")
   public void listUsers() {
     List<User> list = IntegrationTestSuite.authorizedRequest(client.target(String.format("http://localhost:%d/api/tags/Java/users", DROPWIZARD.getLocalPort()))
         .request(), client).get(new GenericType<List<User>>(){});
 
     assertNotNull(list);
-    assertEquals(4, list.size());
+    assertEquals(list.size(), 4);
   }
 
-  @Test
+  @Test(dependsOnGroups = "migrate")
   public void listTopic() {
-    List<Topic> list = IntegrationTestSuite.authorizedRequest(client.target(String.format("http://localhost:%d/api/tags/Java/topics", DROPWIZARD.getLocalPort()))
-        .request(), client).get(new GenericType<List<Topic>>(){});
+    List<Topic> list = client.target(String.format("http://localhost:%d/api/tags/Java/topics", DROPWIZARD.getLocalPort()))
+        .request()
+        .get(new GenericType<List<Topic>>(){});
 
     assertNotNull(list);
-    assertEquals(2, list.size());
+    assertEquals(list.size(), 2);
   }
 
 }

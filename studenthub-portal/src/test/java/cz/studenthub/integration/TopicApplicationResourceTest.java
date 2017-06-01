@@ -1,7 +1,7 @@
 package cz.studenthub.integration;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
 
 import java.util.List;
 
@@ -11,23 +11,27 @@ import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import org.junit.FixMethodOrder;
-import org.junit.Test;
-import org.junit.runners.MethodSorters;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.Test;
 
 import cz.studenthub.IntegrationTestSuite;
 import cz.studenthub.StudentHubConfiguration;
 import cz.studenthub.core.Task;
 import cz.studenthub.core.TopicApplication;
 import io.dropwizard.client.JerseyClientBuilder;
-import io.dropwizard.testing.junit.DropwizardAppRule;
+import io.dropwizard.testing.DropwizardTestSupport;
 import net.minidev.json.JSONObject;
 
-@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class TopicApplicationResourceTest {
-  public static final DropwizardAppRule<StudentHubConfiguration> DROPWIZARD = IntegrationTestSuite.DROPWIZARD;
+  public static DropwizardTestSupport<StudentHubConfiguration> DROPWIZARD;
 
-  private static Client client = new JerseyClientBuilder(DROPWIZARD.getEnvironment()).build("TopicApplicationTest");
+  private static Client client;
+
+  @BeforeClass
+  public void setup() {
+      DROPWIZARD = IntegrationTestSuite.DROPWIZARD;
+      client = new JerseyClientBuilder(DROPWIZARD.getEnvironment()).build("TopicApplicationTest");
+  }
   
   private List<TopicApplication> fetchApplications() {
     return IntegrationTestSuite.authorizedRequest(client.target(String.format("http://localhost:%d/api/applications", DROPWIZARD.getLocalPort()))
@@ -39,24 +43,24 @@ public class TopicApplicationResourceTest {
       .request(), client).get(new GenericType<List<Task>>(){});
   }
 
-  @Test
+  @Test(dependsOnGroups = "login")
   public void listApplications() {
     List<TopicApplication> list = fetchApplications();
 
     assertNotNull(list);
-    assertEquals(7, list.size());
+    assertEquals(list.size(), 7);
   }
 
-  @Test
+  @Test(dependsOnGroups = "login")
   public void fetchApplication() {
     TopicApplication app = IntegrationTestSuite.authorizedRequest(client.target(String.format("http://localhost:%d/api/applications/6", DROPWIZARD.getLocalPort()))
         .request(MediaType.APPLICATION_JSON), client).get(TopicApplication.class);
 
     assertNotNull(app);
-    assertEquals(".JSX editor plugin", app.getOfficialAssignment());
+    assertEquals(app.getOfficialAssignment(), ".JSX editor plugin");
   }
 
-  @Test
+  @Test(dependsOnMethods = "listApplications")
   public void createApplication() {
     JSONObject faculty = new JSONObject();
     faculty.put("id", 2);
@@ -74,11 +78,11 @@ public class TopicApplicationResourceTest {
       .request(MediaType.APPLICATION_JSON), client).post(Entity.json(app.toJSONString()));
 
     assertNotNull(response);
-    assertEquals(201, response.getStatus());
-    assertEquals(8, fetchApplications().size());
+    assertEquals(response.getStatus(), 201);
+    assertEquals(fetchApplications().size(), 8);
   }
 
-  @Test
+  @Test(dependsOnMethods = "createApplication")
   public void updateApplication() {
     JSONObject faculty = new JSONObject();
     faculty.put("id", 2);
@@ -93,34 +97,34 @@ public class TopicApplicationResourceTest {
     app.put("topic", topic);
     app.put("student", student);
 
-    Response response = IntegrationTestSuite.authorizedRequest(client.target(String.format("http://localhost:%d/api/applications/5", DROPWIZARD.getLocalPort()))
+    Response response = IntegrationTestSuite.authorizedRequest(client.target(String.format("http://localhost:%d/api/applications/7", DROPWIZARD.getLocalPort()))
       .request(MediaType.APPLICATION_JSON), client).put(Entity.json(app.toJSONString()));
 
     assertNotNull(response);
-    assertEquals(200, response.getStatus());
-    assertEquals("New", response.readEntity(TopicApplication.class).getOfficialAssignment());
+    assertEquals(response.getStatus(), 200);
+    assertEquals(response.readEntity(TopicApplication.class).getOfficialAssignment(), "New");
   }
 
-  @Test
+  @Test(dependsOnMethods = "updateApplication")
   public void deleteApplication() {
     Response response = IntegrationTestSuite.authorizedRequest(client.target(String.format("http://localhost:%d/api/applications/8", DROPWIZARD.getLocalPort())).request(), client)
       .delete();
 
     assertNotNull(response);
-    assertEquals(204, response.getStatus());
-    assertEquals(7, fetchApplications().size());
+    assertEquals(response.getStatus(), 204);
+    assertEquals(fetchApplications().size(), 7);
   }
 
   /*
    * Task tests
    */
 
-  @Test
+  @Test(dependsOnGroups = "login")
   public void listTasks() {
     List<Task> list = fetchTasks();
 
     assertNotNull(list);
-    assertEquals(3, list.size());
+    assertEquals(list.size(), 3);
   }
 
 }
