@@ -119,7 +119,7 @@ public class UserResourceTest {
         .get(new GenericType<List<Topic>>(){}); 
 
     assertNotNull(topics);
-    assertEquals(topics.size(), 2);
+    assertEquals(topics.size(), 3);
   }
 
   @Test(dependsOnGroups = "login")

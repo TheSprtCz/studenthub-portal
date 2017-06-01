@@ -93,6 +93,9 @@
             </column>
             <column name="description" type="TEXT"/>
             <column name="shortabstract" type="VARCHAR(255)"/>
+            <column name="enabled" type="BOOLEAN">
+                <constraints nullable="false"/>
+            </column>
             <column name="title" type="VARCHAR(255)">
                 <constraints nullable="false"/>
             </column>

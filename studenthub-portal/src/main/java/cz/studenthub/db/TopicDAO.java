@@ -78,6 +78,7 @@ public class TopicDAO extends AbstractDAO<Topic> {
         .add(Restrictions.or(Restrictions.ilike("title", pattern), Restrictions.ilike("shortAbstract", pattern),
             Restrictions.ilike("description", pattern),
             Restrictions.eq("tag." + CollectionPropertyNames.COLLECTION_ELEMENTS, text).ignoreCase()))
+        .add(Restrictions.eq("enabled", true))
         .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
 
     return list(criteria);
