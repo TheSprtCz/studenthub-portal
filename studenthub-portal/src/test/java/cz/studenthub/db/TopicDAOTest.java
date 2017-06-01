@@ -43,9 +43,9 @@ public class TopicDAOTest {
       Topic created = topicDAO.create(topic);
       assertNotNull(created.getId());
       assertEquals(topic, created);
-      assertEquals(5, topicDAO.findAll().size());
+      assertEquals(6, topicDAO.findAll().size());
       topicDAO.delete(created);
-      assertEquals(4, topicDAO.findAll().size());
+      assertEquals(5, topicDAO.findAll().size());
     });
   }
 
@@ -66,7 +66,7 @@ public class TopicDAOTest {
       return topicDAO.findAll();
     });
     assertNotNull(topics);
-    assertEquals(4, topics.size());
+    assertEquals(5, topics.size());
   }
 
   @Test
@@ -121,6 +121,15 @@ public class TopicDAOTest {
         assertEquals(company, topic.getCreator().getCompany());
       }
     });
+  }
+
+  @Test
+  public void search() {
+    List<Topic> topics = DATABASE.inTransaction(() -> {
+      return topicDAO.search("Java");
+    });
+    assertNotNull(topics);
+    assertEquals(3, topics.size());
   }
 
 }
