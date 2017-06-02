@@ -39,6 +39,8 @@ import org.slf4j.LoggerFactory;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 
+import com.codahale.metrics.annotation.ExceptionMetered;
+
 import cz.studenthub.auth.StudentHubPasswordEncoder;
 import cz.studenthub.core.User;
 import cz.studenthub.core.UserRole;
@@ -87,6 +89,7 @@ public class LoginResource {
 
   @POST
   @UnitOfWork
+  @ExceptionMetered
   @Path("/login")
   @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
   public Response authenticateUser(@FormParam("username") String username, @FormParam("password") String password) {

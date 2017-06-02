@@ -28,6 +28,8 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
+import com.codahale.metrics.annotation.Timed;
+
 import cz.studenthub.core.Topic;
 import cz.studenthub.core.User;
 import cz.studenthub.db.TopicDAO;
@@ -49,6 +51,7 @@ public class TagResource {
   }
 
   @GET
+  @Timed
   @Path("/{tag}/users")
   @UnitOfWork
   @PermitAll
@@ -59,6 +62,7 @@ public class TagResource {
   }
 
   @GET
+  @Timed
   @Path("/{tag}/topics")
   @UnitOfWork
   public List<Topic> fetchTopics(@PathParam("tag") String tag,

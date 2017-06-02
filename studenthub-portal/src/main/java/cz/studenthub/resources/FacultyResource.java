@@ -39,6 +39,9 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriBuilder;
 
+import com.codahale.metrics.annotation.ExceptionMetered;
+import com.codahale.metrics.annotation.Timed;
+
 import cz.studenthub.core.Faculty;
 import cz.studenthub.core.User;
 import cz.studenthub.core.UserRole;
@@ -64,6 +67,7 @@ public class FacultyResource {
 
   @GET
   @UnitOfWork
+  @Timed
   public List<Faculty> fetch(@Min(0) @DefaultValue("0") @QueryParam("start") IntParam startParam,
           @Min(0) @DefaultValue("0") @QueryParam("size") IntParam sizeParam) {
       return PagingUtil.paging(facDao.findAll(), startParam.get(), sizeParam.get());
@@ -77,6 +81,7 @@ public class FacultyResource {
   }
 
   @DELETE
+  @ExceptionMetered
   @Path("/{id}")
   @UnitOfWork
   @RolesAllowed("ADMIN")
@@ -91,6 +96,7 @@ public class FacultyResource {
   }
 
   @PUT
+  @ExceptionMetered
   @Path("/{id}")
   @UnitOfWork
   @RolesAllowed("ADMIN")
@@ -105,6 +111,7 @@ public class FacultyResource {
   }
 
   @POST
+  @ExceptionMetered
   @UnitOfWork
   @RolesAllowed("ADMIN")
   public Response create(@NotNull @Valid Faculty faculty) {
@@ -117,6 +124,7 @@ public class FacultyResource {
   }
 
   @GET
+  @Timed
   @Path("/{id}/students")
   @UnitOfWork
   @PermitAll

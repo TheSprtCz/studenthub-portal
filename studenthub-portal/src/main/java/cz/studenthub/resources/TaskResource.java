@@ -33,6 +33,8 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriBuilder;
 
+import com.codahale.metrics.annotation.ExceptionMetered;
+
 import cz.studenthub.core.Task;
 import cz.studenthub.core.TopicApplication;
 import cz.studenthub.core.User;
@@ -66,6 +68,7 @@ public class TaskResource {
   }
 
   @POST
+  @ExceptionMetered
   @UnitOfWork
   public Response createTask(@NotNull @Valid Task task, @Auth User user) {
 
@@ -85,6 +88,7 @@ public class TaskResource {
   }
 
   @PUT
+  @ExceptionMetered
   @Path("/{id}")
   @UnitOfWork
   public Response updateTask(@PathParam("id") LongParam taskId, @NotNull @Valid Task task, @Auth User user) {
@@ -100,6 +104,7 @@ public class TaskResource {
   }
 
   @DELETE
+  @ExceptionMetered
   @Path("/{id}")
   @UnitOfWork
   public Response deleteTask(@PathParam("id") LongParam taskId, @Auth User user) {

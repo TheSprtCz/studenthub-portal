@@ -39,6 +39,9 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriBuilder;
 
+import com.codahale.metrics.annotation.ExceptionMetered;
+import com.codahale.metrics.annotation.Timed;
+
 import cz.studenthub.core.Company;
 import cz.studenthub.core.Topic;
 import cz.studenthub.core.User;
@@ -67,6 +70,7 @@ public class CompanyResource {
   }
 
   @GET
+  @Timed
   @UnitOfWork
   public List<Company> fetch(@Min(0) @DefaultValue("0") @QueryParam("start") IntParam startParam,
           @Min(0) @DefaultValue("0") @QueryParam("size") IntParam sizeParam) {
@@ -81,6 +85,7 @@ public class CompanyResource {
   }
 
   @POST
+  @ExceptionMetered
   @UnitOfWork
   @RolesAllowed("ADMIN")
   public Response create(@NotNull @Valid Company company) {
@@ -93,6 +98,7 @@ public class CompanyResource {
   }
 
   @PUT
+  @ExceptionMetered
   @Path("/{id}")
   @UnitOfWork
   @RolesAllowed("ADMIN")
@@ -107,6 +113,7 @@ public class CompanyResource {
   }
 
   @DELETE
+  @ExceptionMetered
   @Path("/{id}")
   @UnitOfWork
   @RolesAllowed("ADMIN")
@@ -121,6 +128,7 @@ public class CompanyResource {
   }
 
   @GET
+  @Timed
   @Path("/{id}/leaders")
   @UnitOfWork
   @PermitAll
@@ -136,6 +144,7 @@ public class CompanyResource {
   }
 
   @GET
+  @Timed
   @Path("/{id}/topics")
   @UnitOfWork
   public List<Topic> fetchTopics(@PathParam("id") LongParam id,
