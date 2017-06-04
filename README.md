@@ -21,7 +21,7 @@ Student Hub Portal uses SMTP protocol for sending email notifications. You can c
 | --------------- |----------------| --------------------|
 | SMTP_FROM_EMAIL | Sender email   | admin@example.com   |
 | SMTP_FROM_NAME  | Sender name    | Student Hub Admin   |
-| SMTP_SERVER     | Server address | smtp.gmail.com      |
+| SMTP_SERVER     | Server address | smtp.emample.com     |
 | SMTP_PORT       | Server port    | 587                 |
 | SMTP_USERNAME   | Username       | -                   |
 | SMTP_PASSWORD   | Password       | -                   |
@@ -43,9 +43,19 @@ Running ```mvn clean package -Pswagger``` scans JAX-RS resources and creates swa
 
 ## How to contribute
 
-* Write to us at admin@studenthub.cz
-* Create a GitHub [issue](https://github.com/StudentHubCZ/studenthub-portal/issues/new)
-* Send a [Pull-Request](https://github.com/StudentHubCZ/studenthub-portal/compare)
+There are several ways of contribution to our project, all of them are more than welcome!
+
+### Code
+
+* Create a GitHub [issue](https://github.com/StudentHubCZ/studenthub-portal/issues/new) and/or send a [Pull-Request](https://github.com/StudentHubCZ/studenthub-portal/compare)
+
+### Other
+
+However, we would appreciate also other forms of contribution, e.g. graphics, blgo post, bug report, etc. Read more at:
+
+* [Contributing to Open Source on GitHub](https://guides.github.com/activities/contributing-to-open-source/)
+* [How getting started in open source can help your career](https://opensource.com/life/16/1/3-new-open-source-contributors-share-their-experiences)
+* [8 non-code ways to contribute to open source](https://opensource.com/life/16/1/8-ways-contribute-open-source-without-writing-code)
 
 ## License
 
