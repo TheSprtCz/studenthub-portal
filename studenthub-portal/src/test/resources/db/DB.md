@@ -50,7 +50,7 @@ Test Database contains these entries:
 | id  | name                               | logoUrl                | city       | country | url            | size      | plan    |
 | --- | ---------------------------------- | ---------------------- | ---------- | ------  | -------------- | --------- | ------- |
 | 1   | Company One                        | c1.com/logo.png        | Brno       | CZ      | www.c1.com     | CORPORATE | TIER_3  | 
-| 2   | Company Two                        | c2.com/logo.jpg        | Bratislava | SK      | www.c2.com     | MEDIUM    | TIER_2  | // Tohle a dal jeste nepridáno
+| 2   | Company Two                        | c2.com/logo.jpg        | Bratislava | SK      | www.c2.com     | MEDIUM    | TIER_2  | 
 | 3   | Company Three                      | c3.com/img.jpg         | Prague     | CZ      | www.c3.com     | SMALL     | TIER_3  |
 | 4   | Company Four                       | c4.com/picture.jpg     | Brno       | CZ      | www.c4.com     | STARTUP   | TIER_1  |
 | 5   | Company Five                       | c5.com/us.jpg          | Prague     | CZ      | www.c5.com     | MEDIUM    | TIER_3  |
