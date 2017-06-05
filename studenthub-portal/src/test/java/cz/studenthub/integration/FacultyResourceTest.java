@@ -18,7 +18,6 @@ import cz.studenthub.IntegrationTestSuite;
 import cz.studenthub.StudentHubConfiguration;
 import cz.studenthub.core.Faculty;
 import cz.studenthub.core.User;
-import io.dropwizard.client.JerseyClientBuilder;
 import io.dropwizard.testing.DropwizardTestSupport;
 import net.minidev.json.JSONObject;
 
@@ -30,7 +29,7 @@ public class FacultyResourceTest {
   @BeforeClass
   public void setup() {
       DROPWIZARD = IntegrationTestSuite.DROPWIZARD;
-      client = new JerseyClientBuilder(DROPWIZARD.getEnvironment()).build("FacultyTest");
+      client = IntegrationTestSuite.BUILDER.build("FacultyTest");
   }
 
   private List<Faculty> fetchFaculties() {

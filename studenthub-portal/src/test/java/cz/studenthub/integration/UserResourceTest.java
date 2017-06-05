@@ -19,7 +19,6 @@ import cz.studenthub.StudentHubConfiguration;
 import cz.studenthub.core.Topic;
 import cz.studenthub.core.TopicApplication;
 import cz.studenthub.core.User;
-import io.dropwizard.client.JerseyClientBuilder;
 import io.dropwizard.testing.DropwizardTestSupport;
 import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
@@ -32,7 +31,7 @@ public class UserResourceTest {
   @BeforeClass
   public void setup() {
       DROPWIZARD = IntegrationTestSuite.DROPWIZARD;
-      client = new JerseyClientBuilder(DROPWIZARD.getEnvironment()).build("UserTest");
+      client = IntegrationTestSuite.BUILDER.build("UserTest");
   }
   
   private List<User> fetchUsers() {

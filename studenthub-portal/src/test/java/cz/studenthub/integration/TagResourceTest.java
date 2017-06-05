@@ -14,7 +14,6 @@ import cz.studenthub.IntegrationTestSuite;
 import cz.studenthub.StudentHubConfiguration;
 import cz.studenthub.core.Topic;
 import cz.studenthub.core.User;
-import io.dropwizard.client.JerseyClientBuilder;
 import io.dropwizard.testing.DropwizardTestSupport;
 
 public class TagResourceTest {
@@ -25,7 +24,7 @@ public class TagResourceTest {
   @BeforeClass
   public void setup() {
       DROPWIZARD = IntegrationTestSuite.DROPWIZARD;
-      client = new JerseyClientBuilder(DROPWIZARD.getEnvironment()).build("TagTest");
+      client = IntegrationTestSuite.BUILDER.build("TagTest");
   }
 
   @Test(dependsOnGroups = "login")
