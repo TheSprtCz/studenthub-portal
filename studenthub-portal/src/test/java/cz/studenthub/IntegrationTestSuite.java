@@ -7,6 +7,7 @@ import javax.ws.rs.core.MultivaluedHashMap;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 
+import org.glassfish.jersey.client.ClientProperties;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
@@ -18,6 +19,7 @@ import org.testng.annotations.Test;
 
 import cz.studenthub.StudentHubApplication;
 import cz.studenthub.StudentHubConfiguration;
+import io.dropwizard.client.JerseyClientBuilder;
 import io.dropwizard.testing.DropwizardTestSupport;
 import liquibase.Contexts;
 import liquibase.Liquibase;
@@ -33,6 +35,7 @@ public class IntegrationTestSuite {
   public static final DropwizardTestSupport<StudentHubConfiguration> DROPWIZARD =
             new DropwizardTestSupport<StudentHubConfiguration>(StudentHubApplication.class, "config-test.yml");
   public static final Logger LOG = LoggerFactory.getLogger(IntegrationTestSuite.class);
+  public static final JerseyClientBuilder BUILDER = new JerseyClientBuilder(DROPWIZARD.getEnvironment()).withProperty(ClientProperties.READ_TIMEOUT, 1000);
 
   // Superadmin credentials
   public static String USERNAME = "superadmin@example.com";

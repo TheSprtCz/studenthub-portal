@@ -19,7 +19,6 @@ import cz.studenthub.IntegrationTestSuite;
 import cz.studenthub.core.Company;
 import cz.studenthub.core.Topic;
 import cz.studenthub.core.User;
-import io.dropwizard.client.JerseyClientBuilder;
 import io.dropwizard.testing.DropwizardTestSupport;
 import net.minidev.json.JSONObject;
 
@@ -31,7 +30,7 @@ public class CompanyResourceTest {
   @BeforeClass
   public void setup() {
       DROPWIZARD = IntegrationTestSuite.DROPWIZARD;
-      client = new JerseyClientBuilder(DROPWIZARD.getEnvironment()).build("CompanyTest");
+      client = IntegrationTestSuite.BUILDER.build("CompanyTest");
   }
 
   private List<Company> fetchFaculties() {
