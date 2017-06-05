@@ -11,7 +11,6 @@ import org.testng.annotations.Test;
 
 import cz.studenthub.IntegrationTestSuite;
 import cz.studenthub.StudentHubConfiguration;
-import io.dropwizard.client.JerseyClientBuilder;
 import io.dropwizard.testing.DropwizardTestSupport;
 
 public class LoginResourceTest {
@@ -22,7 +21,7 @@ public class LoginResourceTest {
   @BeforeClass
   public void setup() {
       DROPWIZARD = IntegrationTestSuite.DROPWIZARD;
-      client = new JerseyClientBuilder(DROPWIZARD.getEnvironment()).build("LoginTest");
+      client = IntegrationTestSuite.BUILDER.build("LoginTest");
   }
 
   @Test(groups = "login", dependsOnGroups = "migrate")

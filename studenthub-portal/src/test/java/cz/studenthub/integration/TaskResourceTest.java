@@ -14,7 +14,6 @@ import org.testng.annotations.Test;
 import cz.studenthub.IntegrationTestSuite;
 import cz.studenthub.StudentHubConfiguration;
 import cz.studenthub.core.Task;
-import io.dropwizard.client.JerseyClientBuilder;
 import io.dropwizard.testing.DropwizardTestSupport;
 import net.minidev.json.JSONObject;
 
@@ -26,7 +25,7 @@ public class TaskResourceTest {
   @BeforeClass
   public void setup() {
       DROPWIZARD = IntegrationTestSuite.DROPWIZARD;
-      client = new JerseyClientBuilder(DROPWIZARD.getEnvironment()).build("TaskTest");
+      client = IntegrationTestSuite.BUILDER.build("TaskTest");
   }
 
   @Test(dependsOnGroups = "login")

@@ -20,7 +20,6 @@ import cz.studenthub.StudentHubConfiguration;
 import cz.studenthub.core.Topic;
 import cz.studenthub.core.TopicApplication;
 import cz.studenthub.core.User;
-import io.dropwizard.client.JerseyClientBuilder;
 import io.dropwizard.testing.DropwizardTestSupport;
 import net.minidev.json.JSONObject;
 
@@ -32,7 +31,7 @@ public class TopicResourceTest {
   @BeforeClass
   public void setup() {
       DROPWIZARD = IntegrationTestSuite.DROPWIZARD;
-      client = new JerseyClientBuilder(DROPWIZARD.getEnvironment()).build("TopicTest");
+      client = IntegrationTestSuite.BUILDER.build("TopicTest");
   }
   
   private List<Topic> fetchTopics() {
