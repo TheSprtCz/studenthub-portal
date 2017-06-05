@@ -61,12 +61,10 @@ public class Topic {
    * TODO: This is a possible data integrity issue (e.g. student can be a
    * leader)
    */
-  @JsonIgnore
   @ManyToOne
   @NotNull
   private User creator;
 
-  @JsonIgnore
   @Nullable
   @ManyToMany
   private Set<User> academicSupervisors;
