@@ -1,0 +1,209 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+    <changeSet author="phala (generated)" id="1496646751908-13">
+        <insert catalogName="studenthub" schemaName="public" tableName="companies">
+            <column name="id" valueNumeric="1"/>
+            <column name="city" value="Brno"/>
+            <column name="country" value="CZ"/>
+            <column name="logourl" value="c1.com/logo.png"/>
+            <column name="name" value="Company One"/>
+            <column name="plan" value="TIER_3"/>
+            <column name="size" value="CORPORATE"/>
+            <column name="url" value="www.c1.com"/>
+        </insert>
+        <sql>SELECT setval('companies_id_seq', 1)</sql>
+    </changeSet>
+    <changeSet author="phala (generated)" id="1496646751908-20">
+        <insert catalogName="studenthub" schemaName="public" tableName="universities">
+            <column name="id" valueNumeric="1"/>
+            <column name="city" value="Brno"/>
+            <column name="country" value="CZ"/>
+            <column name="logourl" value="www.muni.cz/img.png"/>
+            <column name="name" value="Masaryk University"/>
+            <column name="url" value="www.muni.cz"/>
+        </insert>
+        <sql>SELECT setval('universities_id_seq', 1)</sql>
+    </changeSet>
+    <changeSet author="phala (generated)" id="1496646751908-14">
+        <insert catalogName="studenthub" schemaName="public" tableName="faculties">
+            <column name="id" valueNumeric="1"/>
+            <column name="name" value="Faculty of Informatics"/>
+            <column name="university_id" valueNumeric="1"/>
+        </insert>
+        <sql>SELECT setval('faculties_id_seq', 1)</sql>
+    </changeSet>
+    <changeSet author="phala (generated)" id="1496646751908-22">
+        <insert catalogName="studenthub" schemaName="public" tableName="users">
+            <column name="id" valueNumeric="1"/>
+            <column name="email" value="superadmin@example.com"/>
+            <column name="lastlogin" valueDate="2016-11-05 00:00:00.0"/>
+            <column name="name" value="Admin Admin"/>
+            <column name="password" value="$6$utr8Ibd0$83l4Rv.4m4QCdNy4jt5aDO9fC8mYpG6.Z3zPD.6azhSto6lfyNAIcJkE8cg2jjDhKDsiSdLrSkCTLo/xglEzi."/>
+            <column name="phone" value="463 147 891"/>
+            <column name="username" value="admin"/>
+            <column name="company_id"/>
+            <column name="faculty_id"/>
+        </insert>
+        <insert catalogName="studenthub" schemaName="public" tableName="users">
+            <column name="id" valueNumeric="2"/>
+            <column name="email" value="supervisor@example.com"/>
+            <column name="lastlogin" valueDate="2017-03-19 00:00:00.0"/>
+            <column name="name" value="Supervisor One"/>
+            <column name="password" value="$6$utr8Ibd0$83l4Rv.4m4QCdNy4jt5aDO9fC8mYpG6.Z3zPD.6azhSto6lfyNAIcJkE8cg2jjDhKDsiSdLrSkCTLo/xglEzi."/>
+            <column name="phone" value="258 457 987"/>
+            <column name="username" value="supervisor"/>
+            <column name="company_id"/>
+            <column name="faculty_id" valueNumeric="1"/>
+        </insert>
+        <insert catalogName="studenthub" schemaName="public" tableName="users">
+            <column name="id" valueNumeric="3"/>
+            <column name="email" value="leader@example.com"/>
+            <column name="lastlogin" valueDate="2017-01-09 00:00:00.0"/>
+            <column name="name" value="Leader One"/>
+            <column name="password" value="$6$utr8Ibd0$83l4Rv.4m4QCdNy4jt5aDO9fC8mYpG6.Z3zPD.6azhSto6lfyNAIcJkE8cg2jjDhKDsiSdLrSkCTLo/xglEzi."/>
+            <column name="phone" value="875 687 149"/>
+            <column name="username" value="leader"/>
+            <column name="company_id" valueNumeric="1"/>
+            <column name="faculty_id"/>
+        </insert>
+        <insert catalogName="studenthub" schemaName="public" tableName="users">
+            <column name="id" valueNumeric="5"/>
+            <column name="email" value="rep@example.com"/>
+            <column name="lastlogin" valueDate="2016-05-06 00:00:00.0"/>
+            <column name="name" value="Rep One"/>
+            <column name="password" value="$6$utr8Ibd0$83l4Rv.4m4QCdNy4jt5aDO9fC8mYpG6.Z3zPD.6azhSto6lfyNAIcJkE8cg2jjDhKDsiSdLrSkCTLo/xglEzi."/>
+            <column name="phone" value="154 798 416"/>
+            <column name="username" value="rep"/>
+            <column name="company_id" valueNumeric="1"/>
+            <column name="faculty_id"/>
+        </insert>
+        <insert catalogName="studenthub" schemaName="public" tableName="users">
+            <column name="id" valueNumeric="4"/>
+            <column name="email" value="student@example.com"/>
+            <column name="lastlogin" valueDate="2016-08-26 00:00:00.0"/>
+            <column name="name" value="Student One"/>
+            <column name="password" value="$6$utr8Ibd0$83l4Rv.4m4QCdNy4jt5aDO9fC8mYpG6.Z3zPD.6azhSto6lfyNAIcJkE8cg2jjDhKDsiSdLrSkCTLo/xglEzi."/>
+            <column name="phone" value="654 712 354"/>
+            <column name="username" value="student"/>
+            <column name="company_id"/>
+            <column name="faculty_id" valueNumeric="1"/>
+        </insert>
+        <sql>SELECT setval('users_id_seq', 5)</sql>
+    </changeSet>
+    <changeSet author="phala (generated)" id="1496646751908-21">
+        <insert catalogName="studenthub" schemaName="public" tableName="user_roles">
+            <column name="user_id" valueNumeric="1"/>
+            <column name="roles" value="ADMIN"/>
+        </insert>
+        <insert catalogName="studenthub" schemaName="public" tableName="user_roles">
+            <column name="user_id" valueNumeric="1"/>
+            <column name="roles" value="AC_SUPERVISOR"/>
+        </insert>
+        <insert catalogName="studenthub" schemaName="public" tableName="user_roles">
+            <column name="user_id" valueNumeric="1"/>
+            <column name="roles" value="TECH_LEADER"/>
+        </insert>
+        <insert catalogName="studenthub" schemaName="public" tableName="user_roles">
+            <column name="user_id" valueNumeric="1"/>
+            <column name="roles" value="STUDENT"/>
+        </insert>
+    </changeSet>
+    <changeSet author="phala (generated)" id="1496646751908-19">
+        <insert catalogName="studenthub" schemaName="public" tableName="topics">
+            <column name="id" valueNumeric="1"/>
+            <column name="description" value="REST endpoints"/>
+            <column name="enabled" valueBoolean="true"/>
+            <column name="shortabstract" value="Simple app using Dropwizard stack"/>
+            <column name="title" value="Dropwizard"/>
+            <column name="creator_id" valueNumeric="3"/>
+        </insert>
+        <insert catalogName="studenthub" schemaName="public" tableName="topics">
+            <column name="id" valueNumeric="2"/>
+            <column name="description" value="JavaScript &amp; React"/>
+            <column name="enabled" valueBoolean="true"/>
+            <column name="shortabstract" value="Create nice and functional UI"/>
+            <column name="title" value="React UI"/>
+            <column name="creator_id" valueNumeric="3"/>
+        </insert>
+        <sql>SELECT setval('topics_id_seq', 2)</sql>
+    </changeSet>
+    <changeSet author="phala (generated)" id="1496646751908-16">
+        <insert catalogName="studenthub" schemaName="public" tableName="topic_degrees">
+            <column name="topic_id" valueNumeric="1"/>
+            <column name="degrees" valueNumeric="1"/>
+        </insert>
+        <insert catalogName="studenthub" schemaName="public" tableName="topic_degrees">
+            <column name="topic_id" valueNumeric="1"/>
+            <column name="degrees" valueNumeric="2"/>
+        </insert>
+        <insert catalogName="studenthub" schemaName="public" tableName="topic_degrees">
+            <column name="topic_id" valueNumeric="2"/>
+            <column name="degrees" valueNumeric="0"/>
+        </insert>
+        <insert catalogName="studenthub" schemaName="public" tableName="topic_degrees">
+            <column name="topic_id" valueNumeric="2"/>
+            <column name="degrees" valueNumeric="3"/>
+        </insert>
+    </changeSet>
+    <changeSet author="phala (generated)" id="1496646751908-17">
+        <insert catalogName="studenthub" schemaName="public" tableName="topic_tags">
+            <column name="topic_id" valueNumeric="1"/>
+            <column name="tags" value="Java"/>
+        </insert>
+        <insert catalogName="studenthub" schemaName="public" tableName="topic_tags">
+            <column name="topic_id" valueNumeric="1"/>
+            <column name="tags" value="REST"/>
+        </insert>
+        <insert catalogName="studenthub" schemaName="public" tableName="topic_tags">
+            <column name="topic_id" valueNumeric="1"/>
+            <column name="tags" value="Web"/>
+        </insert>
+        <insert catalogName="studenthub" schemaName="public" tableName="topic_tags">
+            <column name="topic_id" valueNumeric="2"/>
+            <column name="tags" value="Web"/>
+        </insert>
+        <insert catalogName="studenthub" schemaName="public" tableName="topic_tags">
+            <column name="topic_id" valueNumeric="2"/>
+            <column name="tags" value="JavaScript"/>
+        </insert>
+    </changeSet>
+    <changeSet author="phala (generated)" id="1496646751908-18">
+        <insert catalogName="studenthub" schemaName="public" tableName="topicapplications">
+            <column name="id" valueNumeric="1"/>
+            <column name="degree" value="BACHELOR"/>
+            <column name="grade" value="A"/>
+            <column name="officialassignment" value="Static HTML page generator, powered by markdown"/>
+            <column name="thesisfinish" valueDate="2017-03-17 01:00:00.0"/>
+            <column name="thesisstart" valueDate="2016-10-02 00:00:00.0"/>
+            <column name="academicsupervisor_id" valueNumeric="2"/>
+            <column name="faculty_id" valueNumeric="1"/>
+            <column name="student_id" valueNumeric="4"/>
+            <column name="techleader_id" valueNumeric="3"/>
+            <column name="topic_id" valueNumeric="1"/>
+        </insert>
+        <insert catalogName="studenthub" schemaName="public" tableName="topicapplications">
+            <column name="id" valueNumeric="2"/>
+            <column name="degree" value="HIGH_SCHOOL"/>
+            <column name="grade"/>
+            <column name="officialassignment" value="UI for thesis management system"/>
+            <column name="thesisfinish"/>
+            <column name="thesisstart" valueDate="2016-12-18 00:00:00.0"/>
+            <column name="academicsupervisor_id" valueNumeric="2"/>
+            <column name="faculty_id" valueNumeric="1"/>
+            <column name="student_id" valueNumeric="4"/>
+            <column name="techleader_id" valueNumeric="3"/>
+            <column name="topic_id" valueNumeric="2"/>
+        </insert>
+        <sql>SELECT setval('topicapplications_id_seq', 2)</sql>
+    </changeSet>
+    <changeSet author="phala (generated)" id="1496646751908-15">
+        <insert catalogName="studenthub" schemaName="public" tableName="tasks">
+            <column name="id" valueNumeric="1"/>
+            <column name="completed" valueBoolean="false"/>
+            <column name="deadline" valueDate="2016-11-25 01:00:00.0"/>
+            <column name="title" value="Reduce size"/>
+            <column name="application_id" valueNumeric="1"/>
+        </insert>
+    </changeSet>
+</databaseChangeLog>
+
