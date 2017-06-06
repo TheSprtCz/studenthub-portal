@@ -62,8 +62,8 @@ public class Topic {
    * TODO: This is a possible data integrity issue (e.g. student can be a
    * leader)
    */
-  @ManyToOne
   @NotNull
+  @ManyToOne(fetch = FetchType.EAGER)
   private User creator;
 
   @Nullable
@@ -134,22 +134,18 @@ public class Topic {
     this.secondaryDescription = secondaryDescription;
   }
 
-  @JsonIgnore
   public User getCreator() {
     return creator;
   }
 
-  @JsonProperty
   public void setCreator(User leader) {
     this.creator = leader;
   }
 
-  @JsonIgnore
   public Set<User> getAcademicSupervisors() {
     return academicSupervisors;
   }
 
-  @JsonProperty
   public void setAcademicSupervisor(Set<User> academicSupervisors) {
     this.academicSupervisors = academicSupervisors;
   }
