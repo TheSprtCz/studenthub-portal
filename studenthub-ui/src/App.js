@@ -89,7 +89,7 @@ class App extends Component {
     return (
       <Router>
         <div>
-          <AppBar title="Student Hub" leftIcon='menu' onLeftIconClick={() => this.setState({ drawerActive: true })}>
+          <AppBar title={ Util.PORTAL_NAME } leftIcon='menu' onLeftIconClick={() => this.setState({ drawerActive: true })}>
             <Navigation type='horizontal'>
               <NavBarLinks />
             </Navigation>

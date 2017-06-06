@@ -141,6 +141,7 @@ Util.degreesSource = [
 Util.TOPICS_PER_PAGE = 5;
 Util.TERMS_OF_USE = config.termsOfUse;
 Util.PERSONAL_DATA_PROCESSING = config.personalDataProc;
+Util.PORTAL_NAME = config.name;
 Util.PORTAL_VERSION = config.version;
 Util.TOKEN_COOKIE_NAME = "sh-token";
 Util.ADMIN_EMAIL = config.adminEmail;
