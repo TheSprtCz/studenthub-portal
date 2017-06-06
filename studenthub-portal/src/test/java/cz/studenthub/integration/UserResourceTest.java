@@ -39,12 +39,12 @@ public class UserResourceTest {
       .request(), client).get(new GenericType<List<User>>(){});
   }
 
-  @Test(dependsOnGroups = "login")
+  @Test(dependsOnGroups = {"login", "signUp"})
   public void listUsers() {
     List<User> list = fetchUsers();
 
     assertNotNull(list);
-    assertEquals(list.size(), 19);
+    assertEquals(list.size(), 20);
   }
 
   @Test(dependsOnGroups = "login")
@@ -82,7 +82,7 @@ public class UserResourceTest {
 
     assertNotNull(response);
     assertEquals(response.getStatus(), 204);
-    assertEquals(fetchUsers().size(), 18);
+    assertEquals(fetchUsers().size(), 19);
   }
 
   @Test(dependsOnGroups = "login")

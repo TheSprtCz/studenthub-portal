@@ -182,9 +182,14 @@ public class RegistrationResource {
   @Path("/{id}/password")
   @UnitOfWork
   @PermitAll
-  public Response updatePassword(@PathParam("id") LongParam id, UpdatePasswordBean updateBean, @Auth User user) {
+  public Response updatePassword(@PathParam("id") LongParam idParam, UpdatePasswordBean updateBean, @Auth User auth) {
     // only admin or profile owner is allowed
-    if (id.get().equals(user.getId()) || user.getRoles().contains(UserRole.ADMIN)) {
+    Long id = idParam.get();
+    User user = userDao.findById(id);
+    if (user == null)
+      throw new WebApplicationException(Status.NOT_FOUND);
+
+    if (id.equals(auth.getId()) || auth.getRoles().contains(UserRole.ADMIN)) {
       // check if old password matches
       if (StudentHubPasswordEncoder.matches(updateBean.getOldPwd(), user.getPassword())) {
         // set new password
