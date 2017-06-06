@@ -32,8 +32,6 @@ public class StudentHubPasswordEncoder {
   private static final int DEFAULT_PASSWORD_LENGTH = 64;
   private static final String ALLOWED_CHARS = "abcdefghijklmnopqrstuvwxyz0123456789";
 
-  public static final String DEFAULT_SECRET = genSecret();
-
   public static String encode(String password) {
     return Crypt.crypt(password);
   }

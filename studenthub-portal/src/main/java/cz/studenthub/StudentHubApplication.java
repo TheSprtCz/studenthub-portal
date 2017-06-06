@@ -154,7 +154,7 @@ public class StudentHubApplication extends Application<StudentHubConfiguration> 
     environment.jersey().register(new TopicResource(topicDao, taDao));
     environment.jersey().register(new TopicApplicationResource(taDao, taskDao));
     environment.jersey().register(new TaskResource(taDao, taskDao));
-    environment.jersey().register(new LoginResource(userDao));
+    environment.jersey().register(new LoginResource(userDao, configuration.getJwtSecret()));
     environment.jersey().register(new RegistrationResource(userDao, actDao, configuration.getSmtpConfig()));
     environment.jersey().register(new TagResource(userDao, topicDao));
 
@@ -176,10 +176,15 @@ public class StudentHubApplication extends Application<StudentHubConfiguration> 
 
   @SuppressWarnings({ "rawtypes", "unchecked" })
   private void configureAuth(StudentHubConfiguration configuration, Environment environment, UserDAO dao) {
-    BasicAuthenticator basicAuth = new UnitOfWorkAwareProxyFactory(hibernate).create(BasicAuthenticator.class, UserDAO.class, dao);
-    TokenAuthenticator tokenAuth = new UnitOfWorkAwareProxyFactory(hibernate).create(TokenAuthenticator.class, UserDAO.class, dao);
-    Authorizer<User> authorizer = new StudentHubAuthorizer();
+    BasicAuthenticator basicAuth = new UnitOfWorkAwareProxyFactory(hibernate).create(BasicAuthenticator.class,
+        UserDAO.class, dao);
     
+    Class<?>[] types = {UserDAO.class, String.class};
+    Object[] args = {dao, configuration.getJwtSecret()};
+    
+    TokenAuthenticator tokenAuth = new UnitOfWorkAwareProxyFactory(hibernate).create(TokenAuthenticator.class, types, args);
+    Authorizer<User> authorizer = new StudentHubAuthorizer();
+  
     AuthFilter<BasicCredentials, User> basicCredentialAuthFilter = new BasicCredentialAuthFilter.Builder<User>()
         .setAuthenticator(basicAuth)
         .setAuthorizer(authorizer)

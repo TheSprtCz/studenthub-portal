@@ -47,7 +47,10 @@ database:
     hibernate.hbm2ddl.auto: validate
     charSet: UTF-8
     hibernate.dialect: org.hibernate.dialect.PostgreSQLDialect
-    
+
+# jwt secret
+jwtSecret: ${SH_JWT_SECRET:-superSecret12345}
+
 # smtp config
 smtp:
   server: ${SMTP_SERVER:-localhost}

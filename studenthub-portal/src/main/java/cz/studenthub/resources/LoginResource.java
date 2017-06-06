@@ -81,10 +81,13 @@ public class LoginResource {
 
   public static final String COOKIE_NAME = "sh-token";
   
+  private final String jwtSecret;
+  
   private final UserDAO userDao;
 
-  public LoginResource(UserDAO userDao) {
+  public LoginResource(UserDAO userDao, String jwtSecret) {
     this.userDao = userDao;
+    this.jwtSecret = jwtSecret;
   }
 
   @POST
@@ -98,11 +101,10 @@ public class LoginResource {
       throw new WebApplicationException(Status.UNAUTHORIZED);
     
     if (StudentHubPasswordEncoder.matches(password, user.getPassword())) {
-      // Generate random 256-bit (32-byte) shared secret
-      String sharedSecret = StudentHubPasswordEncoder.DEFAULT_SECRET;
+      
       Algorithm algorithm = null;
       try {
-        algorithm = Algorithm.HMAC256(sharedSecret);
+        algorithm = Algorithm.HMAC256(jwtSecret);
       } catch (IllegalArgumentException | UnsupportedEncodingException e) {
         LOG.error("Error when constructing JWT Algorithm", e);
       }

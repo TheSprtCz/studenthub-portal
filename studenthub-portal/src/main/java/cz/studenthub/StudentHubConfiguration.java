@@ -41,6 +41,8 @@ public class StudentHubConfiguration extends Configuration {
   @NotNull
   private SmtpConfig smtp = new SmtpConfig();
 
+  private String jwtSecret;
+  
   @JsonProperty("database")
   public DataSourceFactory getDataSourceFactory() {
     return database;
@@ -59,5 +61,15 @@ public class StudentHubConfiguration extends Configuration {
   @JsonProperty("smtp")
   public void setSmtpConfig(SmtpConfig smtp) {
     this.smtp = smtp;
+  }
+  
+  @JsonProperty("jwtSecret")
+  public void setJwtSecret(String jwtSecret) {
+    this.jwtSecret = jwtSecret;
+  }
+  
+  @JsonProperty("jwtSecret")
+  public String getJwtSecret() {
+    return jwtSecret;
   }
 }

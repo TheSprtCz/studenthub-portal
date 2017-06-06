@@ -46,11 +46,11 @@ public class TokenAuthenticator implements Authenticator<String, User> {
   private final UserDAO userDao;
   private final Logger LOG = LoggerFactory.getLogger(TokenAuthenticator.class);
 
-  public TokenAuthenticator(UserDAO userDao) {
+  public TokenAuthenticator(UserDAO userDao, String secret) {
     this.userDao = userDao;
     Algorithm algorithm = null;
     try {
-      algorithm = Algorithm.HMAC256(StudentHubPasswordEncoder.DEFAULT_SECRET);
+      algorithm = Algorithm.HMAC256(secret);
     } catch (IllegalArgumentException | UnsupportedEncodingException e) {
       LOG.error("Error constructing JWT Algorithm. Token authentication will most likely not work.", e);
     }

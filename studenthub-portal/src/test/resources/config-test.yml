@@ -32,6 +32,10 @@ database:
   # validate schema
   properties:
     hibernate.hbm2ddl.auto: update
+
+# jwt secret
+jwtSecret: superSecret12345
+
 smtp:
   server: localhost
   port: 587
