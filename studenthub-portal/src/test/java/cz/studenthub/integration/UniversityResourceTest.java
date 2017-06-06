@@ -22,18 +22,17 @@ import io.dropwizard.testing.DropwizardTestSupport;
 import net.minidev.json.JSONObject;
 
 public class UniversityResourceTest {
-  public static DropwizardTestSupport<StudentHubConfiguration> DROPWIZARD;
-
-  private static Client client;
+  private DropwizardTestSupport<StudentHubConfiguration> dropwizard;
+  private Client client;
 
   @BeforeClass
   public void setup() {
-      DROPWIZARD = IntegrationTestSuite.DROPWIZARD;
+      dropwizard = IntegrationTestSuite.DROPWIZARD;
       client = IntegrationTestSuite.BUILDER.build("UniversityTest");
   }
   
   private List<University> fetchUniversities() {
-    return client.target(String.format("http://localhost:%d/api/universities", DROPWIZARD.getLocalPort()))
+    return client.target(String.format("http://localhost:%d/api/universities", dropwizard.getLocalPort()))
       .request().get(new GenericType<List<University>>(){});
   }
 
@@ -47,7 +46,7 @@ public class UniversityResourceTest {
 
   @Test(dependsOnGroups = "login")
   public void fetchUniversity() {
-    University uni = IntegrationTestSuite.authorizedRequest(client.target(String.format("http://localhost:%d/api/universities/1", DROPWIZARD.getLocalPort()))
+    University uni = IntegrationTestSuite.authorizedRequest(client.target(String.format("http://localhost:%d/api/universities/1", dropwizard.getLocalPort()))
         .request(MediaType.APPLICATION_JSON), client).get(University.class);
 
     assertNotNull(uni);
@@ -61,7 +60,7 @@ public class UniversityResourceTest {
     university.put("url", "past.me");
     university.put("city", "Brno");
 
-    Response response = IntegrationTestSuite.authorizedRequest(client.target(String.format("http://localhost:%d/api/universities", DROPWIZARD.getLocalPort()))
+    Response response = IntegrationTestSuite.authorizedRequest(client.target(String.format("http://localhost:%d/api/universities", dropwizard.getLocalPort()))
       .request(MediaType.APPLICATION_JSON), client).post(Entity.json(university.toJSONString()));
 
     assertNotNull(response);
@@ -74,7 +73,7 @@ public class UniversityResourceTest {
     JSONObject university = new JSONObject();
     university.put("name", "New");
 
-    Response response = IntegrationTestSuite.authorizedRequest(client.target(String.format("http://localhost:%d/api/universities/5", DROPWIZARD.getLocalPort()))
+    Response response = IntegrationTestSuite.authorizedRequest(client.target(String.format("http://localhost:%d/api/universities/5", dropwizard.getLocalPort()))
       .request(MediaType.APPLICATION_JSON), client).put(Entity.json(university.toJSONString()));
 
     assertNotNull(response);
@@ -84,7 +83,7 @@ public class UniversityResourceTest {
 
   @Test(dependsOnMethods = "updateUniversity")
   public void deleteUniversity() {
-    Response response = IntegrationTestSuite.authorizedRequest(client.target(String.format("http://localhost:%d/api/universities/6", DROPWIZARD.getLocalPort())).request(), client)
+    Response response = IntegrationTestSuite.authorizedRequest(client.target(String.format("http://localhost:%d/api/universities/6", dropwizard.getLocalPort())).request(), client)
       .delete();
 
     assertNotNull(response);
@@ -94,7 +93,7 @@ public class UniversityResourceTest {
 
   @Test(dependsOnGroups = "login")
   public void fetchFaculties() {
-    List<Faculty> faculties = IntegrationTestSuite.authorizedRequest(client.target(String.format("http://localhost:%d/api/universities/1/faculties", DROPWIZARD.getLocalPort())).request(), client)
+    List<Faculty> faculties = IntegrationTestSuite.authorizedRequest(client.target(String.format("http://localhost:%d/api/universities/1/faculties", dropwizard.getLocalPort())).request(), client)
         .get(new GenericType<List<Faculty>>(){}); 
 
     assertNotNull(faculties);

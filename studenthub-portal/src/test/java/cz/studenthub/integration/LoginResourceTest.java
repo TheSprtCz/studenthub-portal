@@ -10,17 +10,12 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import cz.studenthub.IntegrationTestSuite;
-import cz.studenthub.StudentHubConfiguration;
-import io.dropwizard.testing.DropwizardTestSupport;
 
 public class LoginResourceTest {
-  public static DropwizardTestSupport<StudentHubConfiguration> DROPWIZARD;
-
-  private static Client client;
+  private Client client;
 
   @BeforeClass
   public void setup() {
-      DROPWIZARD = IntegrationTestSuite.DROPWIZARD;
       client = IntegrationTestSuite.BUILDER.build("LoginTest");
   }
 

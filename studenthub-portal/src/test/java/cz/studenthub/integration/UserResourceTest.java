@@ -24,18 +24,17 @@ import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
 
 public class UserResourceTest {
-  public static DropwizardTestSupport<StudentHubConfiguration> DROPWIZARD;
-
-  private static Client client;
+  private DropwizardTestSupport<StudentHubConfiguration> dropwizard;
+  private Client client;
 
   @BeforeClass
   public void setup() {
-      DROPWIZARD = IntegrationTestSuite.DROPWIZARD;
+      dropwizard = IntegrationTestSuite.DROPWIZARD;
       client = IntegrationTestSuite.BUILDER.build("UserTest");
   }
   
   private List<User> fetchUsers() {
-    return IntegrationTestSuite.authorizedRequest(client.target(String.format("http://localhost:%d/api/users", DROPWIZARD.getLocalPort()))
+    return IntegrationTestSuite.authorizedRequest(client.target(String.format("http://localhost:%d/api/users", dropwizard.getLocalPort()))
       .request(), client).get(new GenericType<List<User>>(){});
   }
 
@@ -49,7 +48,7 @@ public class UserResourceTest {
 
   @Test(dependsOnGroups = "login")
   public void fetchUser() {
-    User user = IntegrationTestSuite.authorizedRequest(client.target(String.format("http://localhost:%d/api/users/2", DROPWIZARD.getLocalPort()))
+    User user = IntegrationTestSuite.authorizedRequest(client.target(String.format("http://localhost:%d/api/users/2", dropwizard.getLocalPort()))
         .request(MediaType.APPLICATION_JSON), client).get(User.class);
 
     assertNotNull(user);
@@ -67,7 +66,7 @@ public class UserResourceTest {
     roles.add("ADMIN");
     user.put("roles", roles);
 
-    Response response = IntegrationTestSuite.authorizedRequest(client.target(String.format("http://localhost:%d/api/users/1", DROPWIZARD.getLocalPort()))
+    Response response = IntegrationTestSuite.authorizedRequest(client.target(String.format("http://localhost:%d/api/users/1", dropwizard.getLocalPort()))
       .request(MediaType.APPLICATION_JSON), client).put(Entity.json(user.toJSONString()));
 
     assertNotNull(response);
@@ -77,7 +76,7 @@ public class UserResourceTest {
 
   @Test(dependsOnMethods = "updateUser")
   public void deleteUser() {
-    Response response = IntegrationTestSuite.authorizedRequest(client.target(String.format("http://localhost:%d/api/users/1", DROPWIZARD.getLocalPort())).request(), client)
+    Response response = IntegrationTestSuite.authorizedRequest(client.target(String.format("http://localhost:%d/api/users/1", dropwizard.getLocalPort())).request(), client)
       .delete();
 
     assertNotNull(response);
@@ -87,7 +86,7 @@ public class UserResourceTest {
 
   @Test(dependsOnGroups = "login")
   public void fetchApplications() {
-    List<TopicApplication> apps = IntegrationTestSuite.authorizedRequest(client.target(String.format("http://localhost:%d/api/users/13/applications", DROPWIZARD.getLocalPort())).request(), client)
+    List<TopicApplication> apps = IntegrationTestSuite.authorizedRequest(client.target(String.format("http://localhost:%d/api/users/13/applications", dropwizard.getLocalPort())).request(), client)
         .get(new GenericType<List<TopicApplication>>(){}); 
 
     assertNotNull(apps);
@@ -96,7 +95,7 @@ public class UserResourceTest {
 
   @Test(dependsOnGroups = "login")
   public void fetchLedApplications() {
-    List<TopicApplication> apps = IntegrationTestSuite.authorizedRequest(client.target(String.format("http://localhost:%d/api/users/8/ledApplications", DROPWIZARD.getLocalPort())).request(), client)
+    List<TopicApplication> apps = IntegrationTestSuite.authorizedRequest(client.target(String.format("http://localhost:%d/api/users/8/ledApplications", dropwizard.getLocalPort())).request(), client)
         .get(new GenericType<List<TopicApplication>>(){}); 
 
     assertNotNull(apps);
@@ -105,7 +104,7 @@ public class UserResourceTest {
 
   @Test(dependsOnGroups = "login")
   public void fetchSupervisedApplications() {
-    List<TopicApplication> apps = IntegrationTestSuite.authorizedRequest(client.target(String.format("http://localhost:%d/api/users/2/supervisedApplications", DROPWIZARD.getLocalPort())).request(), client)
+    List<TopicApplication> apps = IntegrationTestSuite.authorizedRequest(client.target(String.format("http://localhost:%d/api/users/2/supervisedApplications", dropwizard.getLocalPort())).request(), client)
         .get(new GenericType<List<TopicApplication>>(){}); 
 
     assertNotNull(apps);
@@ -114,7 +113,7 @@ public class UserResourceTest {
 
   @Test(dependsOnGroups = "login")
   public void fetchSupervisedTopics() {
-    List<Topic> topics = IntegrationTestSuite.authorizedRequest(client.target(String.format("http://localhost:%d/api/users/7/supervisedTopics", DROPWIZARD.getLocalPort())).request(), client)
+    List<Topic> topics = IntegrationTestSuite.authorizedRequest(client.target(String.format("http://localhost:%d/api/users/7/supervisedTopics", dropwizard.getLocalPort())).request(), client)
         .get(new GenericType<List<Topic>>(){}); 
 
     assertNotNull(topics);
@@ -123,7 +122,7 @@ public class UserResourceTest {
 
   @Test(dependsOnGroups = "login")
   public void fetchOwnedTopics() {
-    List<Topic> topics = IntegrationTestSuite.authorizedRequest(client.target(String.format("http://localhost:%d/api/users/9/ownedTopics", DROPWIZARD.getLocalPort())).request(), client)
+    List<Topic> topics = IntegrationTestSuite.authorizedRequest(client.target(String.format("http://localhost:%d/api/users/9/ownedTopics", dropwizard.getLocalPort())).request(), client)
         .get(new GenericType<List<Topic>>(){}); 
 
     assertNotNull(topics);
