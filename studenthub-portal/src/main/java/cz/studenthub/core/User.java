@@ -48,7 +48,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
     @NamedQuery(name = "User.findByRoleAndFaculty", query = "SELECT user FROM User user join user.roles role WHERE user.faculty = :faculty and role = :role"),
     @NamedQuery(name = "User.findByRoleAndCompany", query = "SELECT user FROM User user join user.roles role WHERE user.company = :company and role = :role"),
     @NamedQuery(name = "User.findByTag", query = "SELECT user FROM User user join user.tags tag WHERE tag = :tag"),
-    @NamedQuery(name = "User.findByEmail", query = "SELECT user FROM User user WHERE user.email = :email")})
+    @NamedQuery(name = "User.findByEmail", query = "SELECT user FROM User user WHERE user.email = :email"),
+    @NamedQuery(name = "User.findByUsername", query = "SELECT user FROM User user WHERE user.username = :username")})
 public class User implements Principal {
 
   @Id

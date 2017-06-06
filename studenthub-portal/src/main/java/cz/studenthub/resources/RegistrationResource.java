@@ -38,8 +38,10 @@ import javax.ws.rs.core.UriBuilder;
 
 import cz.studenthub.api.UpdatePasswordBean;
 import cz.studenthub.auth.StudentHubPasswordEncoder;
+import cz.studenthub.core.Activation;
 import cz.studenthub.core.User;
 import cz.studenthub.core.UserRole;
+import cz.studenthub.db.ActivationDAO;
 import cz.studenthub.db.UserDAO;
 import cz.studenthub.util.MailClient;
 import cz.studenthub.util.SmtpConfig;
@@ -60,10 +62,11 @@ public class RegistrationResource {
 
   private final MailClient mailer;
   private final UserDAO userDao;
-  private static final Map<Long, String> activations = new HashMap<Long, String>();
+  private final ActivationDAO actDao;
 
-  public RegistrationResource(UserDAO userDao, SmtpConfig smtpConfig) {
+  public RegistrationResource(UserDAO userDao, ActivationDAO actDao, SmtpConfig smtpConfig) {
     this.userDao = userDao;
+    this.actDao = actDao;
     this.mailer = new MailClient(smtpConfig);
   }
 
@@ -71,6 +74,17 @@ public class RegistrationResource {
   @Path("/signUp")
   @UnitOfWork
   public Response signUp(@NotNull @Valid User user) {
+
+    // check if email is taken
+    User sameEmail = userDao.findByEmail(user.getEmail());
+    if (sameEmail != null)
+      throw new WebApplicationException("Email is already taken.", Status.CONFLICT);
+
+    // check if username is taken
+    User sameUsername = userDao.findByUsername(user.getUsername());
+    if (sameUsername != null)
+      throw new WebApplicationException("Username is already taken.", Status.CONFLICT);
+
     // check if someone is not trying to reg as ADMIN
     if (user.getRoles().contains(UserRole.ADMIN))
       throw new WebApplicationException("Invalid role - can't register new ADMIN.", Status.BAD_REQUEST);
@@ -86,10 +100,10 @@ public class RegistrationResource {
       throw new WebApplicationException(Status.INTERNAL_SERVER_ERROR);
 
     // put user into cache of "inactive" users
-    String secretKey = StudentHubPasswordEncoder.genSecret();
-    activations.put(user.getId(), secretKey);
+    Activation act = new Activation(user);
+    actDao.create(act);
 
-    sendActivationEmail(user, secretKey);
+    sendActivationEmail(user, act.getActivationCode());
 
     return Response.created(UriBuilder.fromResource(UserResource.class).path("/{id}").build(user.getId())).entity(user)
         .build();
@@ -101,16 +115,16 @@ public class RegistrationResource {
   @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
   public Response activate(@QueryParam("secret") String secretKey, @QueryParam("id") LongParam idParam,
       @FormParam("password") String password) {
-    Long userId = idParam.get();
-    if (activations.get(userId) != null && activations.get(userId).equals(secretKey)) {
-      User user = userDao.findById(userId);
+    User user = userDao.findById(idParam.get());
+    Activation act = actDao.findByUser(user);
+    if (act != null && act.getActivationCode().equals(secretKey)) {
       // hash and update user password
       user.setPassword(StudentHubPasswordEncoder.encode(password));
       userDao.update(user);
       // send conf. mail
       mailer.sendMessage(user.getEmail(), "User Activation", "activated.html", null);
       // remove user from "inactive" users
-      activations.remove(userId);
+      actDao.delete(act);
       return Response.ok().build();
     } else {
       throw new WebApplicationException(Status.FORBIDDEN);
@@ -128,7 +142,11 @@ public class RegistrationResource {
     if (user.getPassword() != null)
       throw new WebApplicationException("User is already active.", Status.BAD_REQUEST);
 
-    sendActivationEmail(user, activations.get(user.getId()));
+    Activation act = actDao.findByUser(user);
+    if (act == null)
+      throw new WebApplicationException("No activation to resend.", Status.NOT_FOUND);
+
+    sendActivationEmail(user, act.getActivationCode());
 
     return Response.ok().build();
   }
@@ -141,16 +159,21 @@ public class RegistrationResource {
     User user = userDao.findByEmail(email);
     if (user == null)
       throw new WebApplicationException(Status.NOT_FOUND);
-    
+
+    Activation existing = actDao.findByUser(user);
+    if (existing != null) {
+      throw new WebApplicationException("Already pending activation.", Status.BAD_REQUEST);
+    }
+
     // "de-activate" user by un-setting his password
     user.setPassword(null);
     userDao.update(user);
-    
-    // put user into cache of "inactive" users
-    String secretKey = StudentHubPasswordEncoder.genSecret();
-    activations.put(user.getId(), secretKey);
 
-    sendActivationEmail(user, activations.get(user.getId()));
+    // put user into cache of "inactive" users
+    Activation act = new Activation(user);
+    actDao.create(act);
+
+    sendActivationEmail(user, act.getActivationCode());
 
     return Response.ok().build();
   }

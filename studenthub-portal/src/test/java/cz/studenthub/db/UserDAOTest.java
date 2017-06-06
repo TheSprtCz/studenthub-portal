@@ -118,4 +118,24 @@ public class UserDAOTest {
     });
   }
 
+  @Test
+  public void findUserByUsername() {
+    User user = DATABASE.inTransaction(() -> {
+      return userDAO.findByUsername("supervisor1");
+    });
+
+    assertNotNull(user);
+    assertEquals("258 457 987", user.getPhone());
+  }
+
+  @Test
+  public void findUserByEmail() {
+    User user = DATABASE.inTransaction(() -> {
+      return userDAO.findByEmail("admin@example.com");
+    });
+
+    assertNotNull(user);
+    assertEquals("123 456 789", user.getPhone());
+  }
+
 }
