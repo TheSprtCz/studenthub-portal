@@ -39,7 +39,7 @@ public class TopicDAOTest {
       HashSet<TopicDegree> degrees = new HashSet<TopicDegree>();
       degrees.add(TopicDegree.MASTER);
 
-      Topic topic = new Topic("Topic", "short", "description", user, null, null, degrees);
+      Topic topic = new Topic("Topic", "short", "description", null, user, null, null, degrees);
       Topic created = topicDAO.create(topic);
       assertNotNull(created.getId());
       assertEquals(topic, created);
@@ -57,7 +57,7 @@ public class TopicDAOTest {
 
     assertNotNull(topic);
     assertEquals("Dropwizard", topic.getTitle());
-
+    assertEquals("RESTové endpointy", topic.getSecondaryDescription());
   }
 
   @Test

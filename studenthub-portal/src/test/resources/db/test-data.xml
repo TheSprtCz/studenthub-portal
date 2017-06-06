@@ -648,6 +648,7 @@
             <column name="ID" valueNumeric="2"/>
             <column name="ENABLED" valueBoolean="true"/>
             <column name="DESCRIPTION" value="REST endpoints"/>
+            <column name="SECONDARYDESCRIPTION" value="RESTové endpointy"/>            
             <column name="SHORTABSTRACT" value="Simple app using Dropwizard stack"/>
             <column name="TITLE" value="Dropwizard"/>
             <column name="CREATOR_ID" valueNumeric="11"/>
@@ -656,6 +657,7 @@
             <column name="ID" valueNumeric="3"/>
             <column name="ENABLED" valueBoolean="true"/>
             <column name="DESCRIPTION" value="Eclipse"/>
+            <column name="SECONDARYDESCRIPTION" value="Eclipse"/>           
             <column name="SHORTABSTRACT" value="Create custom eclipse plugin"/>
             <column name="TITLE" value="Eclipse plugin"/>
             <column name="CREATOR_ID" valueNumeric="10"/>
@@ -672,6 +674,7 @@
             <column name="ID" valueNumeric="1"/>
             <column name="ENABLED" valueBoolean="true"/>
             <column name="DESCRIPTION" value="Laser melon cutter"/>
+            <column name="SECONDARYDESCRIPTION" value="Laserový kráječ melounů"/>
             <column name="SHORTABSTRACT" value="Create simple laser melon cutter"/>
             <column name="TITLE" value="Melon cutter"/>
             <column name="CREATOR_ID" valueNumeric="9"/>

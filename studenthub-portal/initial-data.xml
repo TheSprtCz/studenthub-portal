@@ -112,6 +112,7 @@
         <insert catalogName="studenthub" schemaName="public" tableName="topics">
             <column name="id" valueNumeric="1"/>
             <column name="description" value="REST endpoints"/>
+            <column name="secondarydescription" value="RESTové endpointy"/>      
             <column name="enabled" valueBoolean="true"/>
             <column name="shortabstract" value="Simple app using Dropwizard stack"/>
             <column name="title" value="Dropwizard"/>

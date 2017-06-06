@@ -92,6 +92,7 @@
                 <constraints primaryKey="true" primaryKeyName="topics_pkey"/>
             </column>
             <column name="description" type="TEXT"/>
+            <column name="secondarydescription" type="TEXT"/>
             <column name="shortabstract" type="VARCHAR(255)"/>
             <column name="enabled" type="BOOLEAN">
                 <constraints nullable="false"/>

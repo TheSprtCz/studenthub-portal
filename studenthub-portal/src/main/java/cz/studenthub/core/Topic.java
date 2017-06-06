@@ -55,6 +55,7 @@ public class Topic {
   private String title;
   private String shortAbstract;
   private String description;
+  private String secondaryDescription;
   private boolean enabled = true;
 
   /*
@@ -81,11 +82,12 @@ public class Topic {
   public Topic() {
   }
 
-  public Topic(String title, String shortAbstract, String description, User creator, Set<User> academicSupervisors,
+  public Topic(String title, String shortAbstract, String description, String secondaryDescription, User creator, Set<User> academicSupervisors,
       Set<String> tags, Set<TopicDegree> degrees) {
     this.title = title;
     this.shortAbstract = shortAbstract;
     this.description = description;
+    this.secondaryDescription = secondaryDescription;
     this.creator = creator;
     this.academicSupervisors = academicSupervisors;
     this.tags = tags;
@@ -122,6 +124,14 @@ public class Topic {
 
   public void setDescription(String description) {
     this.description = description;
+  }
+
+  public String getSecondaryDescription() {
+    return secondaryDescription;
+  }
+
+  public void setSecondaryDescription(String secondaryDescription) {
+    this.secondaryDescription = secondaryDescription;
   }
 
   @JsonIgnore
