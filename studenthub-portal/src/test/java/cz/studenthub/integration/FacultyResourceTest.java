@@ -104,7 +104,7 @@ public class FacultyResourceTest {
         .request(MediaType.APPLICATION_JSON), client).get(new GenericType<List<User>>(){});
 
     assertNotNull(users);
-    assertEquals(users.size(), 2);
+    assertEquals(users.size(), 3);
   }
 
   @Test(dependsOnGroups = "login")

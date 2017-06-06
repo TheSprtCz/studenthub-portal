@@ -93,7 +93,7 @@ Password field is not present because it is encoded and irrelevant when testing 
 | 16  | rep1               | rep1@example.com            | Rep One            | 154 798 416  | 6.5.2016       | 1       | ------- | [COMPANY_REP]                | ------------------------ |
 | 17  | rep2               | rep2@example.com            | Rep Two            | 871 423 698  | 27.4.2016      | 8       | ------- | [COMPANY_REP]                | ------------------------ | 
 | 18  | rep3               | rep3@example.com            | Rep Three          | 234 156 774  | 27.1.2017      | 7       | ------- | [COMPANY_REP]                | ------------------------ | 
-| 19  | superadmin         | superadmin@example.com      | Super Admin        | 463 147 891  | 5.11.2016      | ------- | ------- | [ALL]                        | ------------------------ |
+| 19  | superadmin         | superadmin@example.com      | Super Admin        | 463 147 891  | 5.11.2016      | 1       | 1       | [ALL]                        | ------------------------ |
 | 20  | project            | project@example.com         | Project Leader     | 205 709 548  | 10.6.2017      | ------- | ------- | [PROJECT_LEADER]             | ------------------------ |
 
 ## Activations

@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.annotation.security.PermitAll;
+import javax.inject.Inject;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.Consumes;
@@ -61,12 +62,14 @@ import io.dropwizard.jersey.params.LongParam;
 public class RegistrationResource {
 
   private final MailClient mailer;
-  private final UserDAO userDao;
-  private final ActivationDAO actDao;
 
-  public RegistrationResource(UserDAO userDao, ActivationDAO actDao, SmtpConfig smtpConfig) {
-    this.userDao = userDao;
-    this.actDao = actDao;
+  @Inject
+  private UserDAO userDao;
+
+  @Inject
+  private ActivationDAO actDao;
+
+  public RegistrationResource(SmtpConfig smtpConfig) {
     this.mailer = new MailClient(smtpConfig);
   }
 
@@ -88,10 +91,6 @@ public class RegistrationResource {
     // check if someone is not trying to reg as ADMIN
     if (user.getRoles().contains(UserRole.ADMIN))
       throw new WebApplicationException("Invalid role - can't register new ADMIN.", Status.BAD_REQUEST);
-
-    // check either faculty or company is assigned
-    if (user.getFaculty() == null && user.getCompany() == null)
-      throw new WebApplicationException("User must have either Faculty of Company assigned.", Status.BAD_REQUEST);
 
     // persist user to DB
     userDao.create(user);

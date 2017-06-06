@@ -29,6 +29,13 @@
     <url>https://github.com/StudentHubCZ/studenthub-portal.git</url>
   </scm>
 
+  <repositories>
+    <repository>
+      <id>jitpack.io</id>  
+      <url>https://jitpack.io</url>
+    </repository>
+  </repositories>
+
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -111,7 +118,12 @@
         <artifactId>testng</artifactId>
         <version>${testng.version}</version>
         <scope>test</scope>
-      </dependency>   
+      </dependency>
+      <dependency>
+        <groupId>com.github.alex-shpak</groupId>
+        <artifactId>dropwizard-hk2bundle</artifactId>
+        <version>0.4.1</version>
+      </dependency>
     </dependencies>
   </dependencyManagement>
 

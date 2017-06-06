@@ -2,10 +2,10 @@
 {
     "swagger":"2.0",
     "info":{
-        "version":"1.0-SNAPSHOT",
+        "version":"1.1-SNAPSHOT",
         "title":"studenthub-portal"
     },
-    "host":"localhost:8080/api",
+    "host":"localhost:8080",
     "basePath":"/",
     "schemes":[
         "http"
@@ -88,6 +88,41 @@
                 }
             }
         },
+        "/account/resetPassword":{
+            "post":{
+                "consumes":[
+                    "application/x-www-form-urlencoded"
+                ],
+                "produces":[
+                    "application/json"
+                ],
+                "parameters":[
+                    {
+                        "type":"string",
+                        "name":"email",
+                        "in":"formData",
+                        "required":true
+                    }
+                ],
+                "responses":{
+                    "200":{
+                        "description":"OK",
+                        "headers":{
+                        }
+                    },
+                    "400":{
+                        "description":"Bad Request",
+                        "headers":{
+                        }
+                    },
+                    "404":{
+                        "description":"Not Found",
+                        "headers":{
+                        }
+                    }
+                }
+            }
+        },
         "/account/signUp":{
             "post":{
                 "consumes":[
@@ -120,6 +155,11 @@
                     },
                     "400":{
                         "description":"Bad Request",
+                        "headers":{
+                        }
+                    },
+                    "409":{
+                        "description":"Conflict",
                         "headers":{
                         }
                     },
@@ -168,6 +208,11 @@
                     },
                     "403":{
                         "description":"Forbidden",
+                        "headers":{
+                        }
+                    },
+                    "404":{
+                        "description":"Not Found",
                         "headers":{
                         }
                     }
@@ -475,6 +520,9 @@
                     "200":{
                         "description":"OK",
                         "headers":{
+                            "Set-Cookie":{
+                                "type":"string"
+                            }
                         }
                     }
                 }
@@ -694,6 +742,107 @@
                             "type":"array",
                             "items":{
                                 "$ref":"#/definitions/User"
+                            }
+                        }
+                    },
+                    "400":{
+                        "description":"Bad Request",
+                        "headers":{
+                        }
+                    },
+                    "404":{
+                        "description":"Not Found",
+                        "headers":{
+                        }
+                    }
+                }
+            }
+        },
+        "/companies/{id}/plan":{
+            "get":{
+                "consumes":[
+                    "application/json"
+                ],
+                "produces":[
+                    "application/json"
+                ],
+                "parameters":[
+                    {
+                        "type":"string",
+                        "name":"id",
+                        "in":"path",
+                        "required":true
+                    },
+                    {
+                        "name":"body",
+                        "in":"body",
+                        "required":true,
+                        "schema":{
+                            "$ref":"#/definitions/User"
+                        }
+                    }
+                ],
+                "responses":{
+                    "200":{
+                        "description":"OK",
+                        "headers":{
+                        },
+                        "schema":{
+                            "$ref":"#/definitions/CompanyPlan"
+                        }
+                    },
+                    "403":{
+                        "description":"Forbidden",
+                        "headers":{
+                        }
+                    },
+                    "404":{
+                        "description":"Not Found",
+                        "headers":{
+                        }
+                    }
+                }
+            }
+        },
+        "/companies/{id}/projects":{
+            "get":{
+                "consumes":[
+                    "application/json"
+                ],
+                "produces":[
+                    "application/json"
+                ],
+                "parameters":[
+                    {
+                        "type":"string",
+                        "name":"id",
+                        "in":"path",
+                        "required":true
+                    },
+                    {
+                        "type":"string",
+                        "name":"size",
+                        "in":"query",
+                        "required":false,
+                        "default":"0"
+                    },
+                    {
+                        "type":"string",
+                        "name":"start",
+                        "in":"query",
+                        "required":false,
+                        "default":"0"
+                    }
+                ],
+                "responses":{
+                    "200":{
+                        "description":"OK",
+                        "headers":{
+                        },
+                        "schema":{
+                            "type":"array",
+                            "items":{
+                                "$ref":"#/definitions/Project"
                             }
                         }
                     },
@@ -940,6 +1089,61 @@
                 }
             }
         },
+        "/faculties/{id}/projects":{
+            "get":{
+                "consumes":[
+                    "application/json"
+                ],
+                "produces":[
+                    "application/json"
+                ],
+                "parameters":[
+                    {
+                        "type":"string",
+                        "name":"id",
+                        "in":"path",
+                        "required":true
+                    },
+                    {
+                        "type":"string",
+                        "name":"size",
+                        "in":"query",
+                        "required":false,
+                        "default":"0"
+                    },
+                    {
+                        "type":"string",
+                        "name":"start",
+                        "in":"query",
+                        "required":false,
+                        "default":"0"
+                    }
+                ],
+                "responses":{
+                    "200":{
+                        "description":"OK",
+                        "headers":{
+                        },
+                        "schema":{
+                            "type":"array",
+                            "items":{
+                                "$ref":"#/definitions/Project"
+                            }
+                        }
+                    },
+                    "400":{
+                        "description":"Bad Request",
+                        "headers":{
+                        }
+                    },
+                    "404":{
+                        "description":"Not Found",
+                        "headers":{
+                        }
+                    }
+                }
+            }
+        },
         "/faculties/{id}/students":{
             "get":{
                 "consumes":[
@@ -1034,6 +1238,703 @@
                             "type":"array",
                             "items":{
                                 "$ref":"#/definitions/User"
+                            }
+                        }
+                    },
+                    "400":{
+                        "description":"Bad Request",
+                        "headers":{
+                        }
+                    },
+                    "404":{
+                        "description":"Not Found",
+                        "headers":{
+                        }
+                    }
+                }
+            }
+        },
+        "/plans":{
+            "get":{
+                "consumes":[
+                    "application/json"
+                ],
+                "produces":[
+                    "application/json"
+                ],
+                "parameters":[
+                    {
+                        "type":"string",
+                        "name":"size",
+                        "in":"query",
+                        "required":false,
+                        "default":"0"
+                    },
+                    {
+                        "type":"string",
+                        "name":"start",
+                        "in":"query",
+                        "required":false,
+                        "default":"0"
+                    }
+                ],
+                "responses":{
+                    "200":{
+                        "description":"OK",
+                        "headers":{
+                        },
+                        "schema":{
+                            "type":"array",
+                            "items":{
+                                "$ref":"#/definitions/CompanyPlan"
+                            }
+                        }
+                    },
+                    "400":{
+                        "description":"Bad Request",
+                        "headers":{
+                        }
+                    }
+                }
+            },
+            "post":{
+                "consumes":[
+                    "application/json"
+                ],
+                "produces":[
+                    "application/json"
+                ],
+                "parameters":[
+                    {
+                        "name":"body",
+                        "in":"body",
+                        "required":true,
+                        "schema":{
+                            "$ref":"#/definitions/CompanyPlan"
+                        }
+                    }
+                ],
+                "responses":{
+                    "201":{
+                        "description":"Created",
+                        "headers":{
+                            "Location":{
+                                "type":"string"
+                            }
+                        },
+                        "schema":{
+                            "$ref":"#/definitions/CompanyPlan"
+                        }
+                    }
+                }
+            }
+        },
+        "/plans/{name}":{
+            "get":{
+                "consumes":[
+                    "application/json"
+                ],
+                "produces":[
+                    "application/json"
+                ],
+                "parameters":[
+                    {
+                        "type":"string",
+                        "name":"name",
+                        "in":"path",
+                        "required":true
+                    }
+                ],
+                "responses":{
+                    "200":{
+                        "description":"OK",
+                        "headers":{
+                        },
+                        "schema":{
+                            "$ref":"#/definitions/CompanyPlan"
+                        }
+                    }
+                }
+            },
+            "put":{
+                "consumes":[
+                    "application/json"
+                ],
+                "produces":[
+                    "application/json"
+                ],
+                "parameters":[
+                    {
+                        "type":"string",
+                        "name":"name",
+                        "in":"path",
+                        "required":true
+                    },
+                    {
+                        "name":"body",
+                        "in":"body",
+                        "required":true,
+                        "schema":{
+                            "$ref":"#/definitions/CompanyPlan"
+                        }
+                    }
+                ],
+                "responses":{
+                    "200":{
+                        "description":"OK",
+                        "headers":{
+                        },
+                        "schema":{
+                            "$ref":"#/definitions/CompanyPlan"
+                        }
+                    },
+                    "404":{
+                        "description":"Not Found",
+                        "headers":{
+                        }
+                    }
+                }
+            },
+            "delete":{
+                "consumes":[
+                    "application/json"
+                ],
+                "produces":[
+                    "application/json"
+                ],
+                "parameters":[
+                    {
+                        "type":"string",
+                        "name":"name",
+                        "in":"path",
+                        "required":true
+                    }
+                ],
+                "responses":{
+                    "204":{
+                        "description":"No Content",
+                        "headers":{
+                        }
+                    },
+                    "404":{
+                        "description":"Not Found",
+                        "headers":{
+                        }
+                    }
+                }
+            }
+        },
+        "/projects":{
+            "get":{
+                "consumes":[
+                    "application/json"
+                ],
+                "produces":[
+                    "application/json"
+                ],
+                "parameters":[
+                    {
+                        "type":"string",
+                        "name":"size",
+                        "in":"query",
+                        "required":false,
+                        "default":"0"
+                    },
+                    {
+                        "type":"string",
+                        "name":"start",
+                        "in":"query",
+                        "required":false,
+                        "default":"0"
+                    }
+                ],
+                "responses":{
+                    "200":{
+                        "description":"OK",
+                        "headers":{
+                        },
+                        "schema":{
+                            "type":"array",
+                            "items":{
+                                "$ref":"#/definitions/Project"
+                            }
+                        }
+                    },
+                    "400":{
+                        "description":"Bad Request",
+                        "headers":{
+                        }
+                    }
+                }
+            },
+            "post":{
+                "consumes":[
+                    "application/json"
+                ],
+                "produces":[
+                    "application/json"
+                ],
+                "parameters":[
+                    {
+                        "name":"body",
+                        "in":"body",
+                        "required":true,
+                        "schema":{
+                            "$ref":"#/definitions/Project"
+                        }
+                    }
+                ],
+                "responses":{
+                    "201":{
+                        "description":"Created",
+                        "headers":{
+                            "Location":{
+                                "type":"string"
+                            }
+                        },
+                        "schema":{
+                            "$ref":"#/definitions/Project"
+                        }
+                    },
+                    "400":{
+                        "description":"Bad Request",
+                        "headers":{
+                        }
+                    },
+                    "500":{
+                        "description":"Internal Server Error",
+                        "headers":{
+                        }
+                    }
+                }
+            }
+        },
+        "/projects/{id}":{
+            "get":{
+                "consumes":[
+                    "application/json"
+                ],
+                "produces":[
+                    "application/json"
+                ],
+                "parameters":[
+                    {
+                        "type":"string",
+                        "name":"id",
+                        "in":"path",
+                        "required":true
+                    }
+                ],
+                "responses":{
+                    "200":{
+                        "description":"OK",
+                        "headers":{
+                        },
+                        "schema":{
+                            "$ref":"#/definitions/Project"
+                        }
+                    }
+                }
+            },
+            "put":{
+                "consumes":[
+                    "application/json"
+                ],
+                "produces":[
+                    "application/json"
+                ],
+                "parameters":[
+                    {
+                        "type":"string",
+                        "name":"id",
+                        "in":"path",
+                        "required":true
+                    },
+                    {
+                        "name":"body",
+                        "in":"body",
+                        "required":true,
+                        "schema":{
+                            "$ref":"#/definitions/Project"
+                        }
+                    }
+                ],
+                "responses":{
+                    "200":{
+                        "description":"OK",
+                        "headers":{
+                        },
+                        "schema":{
+                            "$ref":"#/definitions/Project"
+                        }
+                    },
+                    "403":{
+                        "description":"Forbidden",
+                        "headers":{
+                        }
+                    },
+                    "404":{
+                        "description":"Not Found",
+                        "headers":{
+                        }
+                    }
+                }
+            },
+            "delete":{
+                "consumes":[
+                    "application/json"
+                ],
+                "produces":[
+                    "application/json"
+                ],
+                "parameters":[
+                    {
+                        "type":"string",
+                        "name":"id",
+                        "in":"path",
+                        "required":true
+                    },
+                    {
+                        "name":"body",
+                        "in":"body",
+                        "required":true,
+                        "schema":{
+                            "$ref":"#/definitions/User"
+                        }
+                    }
+                ],
+                "responses":{
+                    "204":{
+                        "description":"No Content",
+                        "headers":{
+                        }
+                    },
+                    "403":{
+                        "description":"Forbidden",
+                        "headers":{
+                        }
+                    },
+                    "404":{
+                        "description":"Not Found",
+                        "headers":{
+                        }
+                    }
+                }
+            }
+        },
+        "/projects/{id}/applications":{
+            "get":{
+                "consumes":[
+                    "application/json"
+                ],
+                "produces":[
+                    "application/json"
+                ],
+                "parameters":[
+                    {
+                        "type":"string",
+                        "name":"id",
+                        "in":"path",
+                        "required":true
+                    },
+                    {
+                        "type":"string",
+                        "name":"size",
+                        "in":"query",
+                        "required":false,
+                        "default":"0"
+                    },
+                    {
+                        "type":"string",
+                        "name":"start",
+                        "in":"query",
+                        "required":false,
+                        "default":"0"
+                    }
+                ],
+                "responses":{
+                    "200":{
+                        "description":"OK",
+                        "headers":{
+                        },
+                        "schema":{
+                            "type":"array",
+                            "items":{
+                                "$ref":"#/definitions/TopicApplication"
+                            }
+                        }
+                    },
+                    "400":{
+                        "description":"Bad Request",
+                        "headers":{
+                        }
+                    },
+                    "404":{
+                        "description":"Not Found",
+                        "headers":{
+                        }
+                    }
+                }
+            }
+        },
+        "/projects/{id}/assignTopic/{topicId}":{
+            "put":{
+                "consumes":[
+                    "application/json"
+                ],
+                "produces":[
+                    "application/json"
+                ],
+                "parameters":[
+                    {
+                        "type":"string",
+                        "name":"id",
+                        "in":"path",
+                        "required":true
+                    },
+                    {
+                        "type":"string",
+                        "name":"topicId",
+                        "in":"path",
+                        "required":true
+                    },
+                    {
+                        "name":"body",
+                        "in":"body",
+                        "required":true,
+                        "schema":{
+                            "$ref":"#/definitions/User"
+                        }
+                    }
+                ],
+                "responses":{
+                    "200":{
+                        "description":"OK",
+                        "headers":{
+                        }
+                    },
+                    "403":{
+                        "description":"Forbidden",
+                        "headers":{
+                        }
+                    },
+                    "404":{
+                        "description":"Not Found",
+                        "headers":{
+                        }
+                    },
+                    "409":{
+                        "description":"Conflict",
+                        "headers":{
+                        }
+                    }
+                }
+            }
+        },
+        "/projects/{id}/companies":{
+            "get":{
+                "consumes":[
+                    "application/json"
+                ],
+                "produces":[
+                    "application/json"
+                ],
+                "parameters":[
+                    {
+                        "type":"string",
+                        "name":"id",
+                        "in":"path",
+                        "required":true
+                    },
+                    {
+                        "type":"string",
+                        "name":"size",
+                        "in":"query",
+                        "required":false,
+                        "default":"0"
+                    },
+                    {
+                        "type":"string",
+                        "name":"start",
+                        "in":"query",
+                        "required":false,
+                        "default":"0"
+                    }
+                ],
+                "responses":{
+                    "200":{
+                        "description":"OK",
+                        "headers":{
+                        },
+                        "schema":{
+                            "type":"array",
+                            "items":{
+                                "$ref":"#/definitions/Company"
+                            }
+                        }
+                    },
+                    "400":{
+                        "description":"Bad Request",
+                        "headers":{
+                        }
+                    },
+                    "404":{
+                        "description":"Not Found",
+                        "headers":{
+                        }
+                    }
+                }
+            }
+        },
+        "/projects/{id}/creators":{
+            "get":{
+                "consumes":[
+                    "application/json"
+                ],
+                "produces":[
+                    "application/json"
+                ],
+                "parameters":[
+                    {
+                        "type":"string",
+                        "name":"id",
+                        "in":"path",
+                        "required":true
+                    },
+                    {
+                        "type":"string",
+                        "name":"size",
+                        "in":"query",
+                        "required":false,
+                        "default":"0"
+                    },
+                    {
+                        "type":"string",
+                        "name":"start",
+                        "in":"query",
+                        "required":false,
+                        "default":"0"
+                    }
+                ],
+                "responses":{
+                    "200":{
+                        "description":"OK",
+                        "headers":{
+                        },
+                        "schema":{
+                            "type":"array",
+                            "items":{
+                                "$ref":"#/definitions/User"
+                            }
+                        }
+                    },
+                    "400":{
+                        "description":"Bad Request",
+                        "headers":{
+                        }
+                    },
+                    "404":{
+                        "description":"Not Found",
+                        "headers":{
+                        }
+                    }
+                }
+            }
+        },
+        "/projects/{id}/faculties":{
+            "get":{
+                "consumes":[
+                    "application/json"
+                ],
+                "produces":[
+                    "application/json"
+                ],
+                "parameters":[
+                    {
+                        "type":"string",
+                        "name":"id",
+                        "in":"path",
+                        "required":true
+                    },
+                    {
+                        "type":"string",
+                        "name":"size",
+                        "in":"query",
+                        "required":false,
+                        "default":"0"
+                    },
+                    {
+                        "type":"string",
+                        "name":"start",
+                        "in":"query",
+                        "required":false,
+                        "default":"0"
+                    }
+                ],
+                "responses":{
+                    "200":{
+                        "description":"OK",
+                        "headers":{
+                        },
+                        "schema":{
+                            "type":"array",
+                            "items":{
+                                "$ref":"#/definitions/Faculty"
+                            }
+                        }
+                    },
+                    "400":{
+                        "description":"Bad Request",
+                        "headers":{
+                        }
+                    },
+                    "404":{
+                        "description":"Not Found",
+                        "headers":{
+                        }
+                    }
+                }
+            }
+        },
+        "/projects/{id}/topics":{
+            "get":{
+                "consumes":[
+                    "application/json"
+                ],
+                "produces":[
+                    "application/json"
+                ],
+                "parameters":[
+                    {
+                        "type":"string",
+                        "name":"id",
+                        "in":"path",
+                        "required":true
+                    },
+                    {
+                        "type":"string",
+                        "name":"size",
+                        "in":"query",
+                        "required":false,
+                        "default":"0"
+                    },
+                    {
+                        "type":"string",
+                        "name":"start",
+                        "in":"query",
+                        "required":false,
+                        "default":"0"
+                    }
+                ],
+                "responses":{
+                    "200":{
+                        "description":"OK",
+                        "headers":{
+                        },
+                        "schema":{
+                            "type":"array",
+                            "items":{
+                                "$ref":"#/definitions/Topic"
                             }
                         }
                     },
@@ -1371,6 +2272,11 @@
                         "headers":{
                         }
                     },
+                    "406":{
+                        "description":"Not Acceptable",
+                        "headers":{
+                        }
+                    },
                     "500":{
                         "description":"Internal Server Error",
                         "headers":{
@@ -1443,6 +2349,14 @@
                         "name":"id",
                         "in":"path",
                         "required":true
+                    },
+                    {
+                        "name":"body",
+                        "in":"body",
+                        "required":true,
+                        "schema":{
+                            "type":"object"
+                        }
                     }
                 ],
                 "responses":{
@@ -1452,6 +2366,11 @@
                         },
                         "schema":{
                             "$ref":"#/definitions/Topic"
+                        }
+                    },
+                    "404":{
+                        "description":"Not Found",
+                        "headers":{
                         }
                     }
                 }
@@ -1495,6 +2414,11 @@
                     },
                     "404":{
                         "description":"Not Found",
+                        "headers":{
+                        }
+                    },
+                    "406":{
+                        "description":"Not Acceptable",
                         "headers":{
                         }
                     }
@@ -1607,6 +2531,56 @@
                         },
                         "schema":{
                             "$ref":"#/definitions/User"
+                        }
+                    }
+                }
+            }
+        },
+        "/topics/{id}/projects":{
+            "get":{
+                "consumes":[
+                    "application/json"
+                ],
+                "produces":[
+                    "application/json"
+                ],
+                "parameters":[
+                    {
+                        "type":"string",
+                        "name":"id",
+                        "in":"path",
+                        "required":true
+                    },
+                    {
+                        "type":"string",
+                        "name":"size",
+                        "in":"query",
+                        "required":false,
+                        "default":"0"
+                    },
+                    {
+                        "type":"string",
+                        "name":"start",
+                        "in":"query",
+                        "required":false,
+                        "default":"0"
+                    }
+                ],
+                "responses":{
+                    "200":{
+                        "description":"OK",
+                        "headers":{
+                        },
+                        "schema":{
+                            "type":"array",
+                            "items":{
+                                "$ref":"#/definitions/Project"
+                            }
+                        }
+                    },
+                    "400":{
+                        "description":"Bad Request",
+                        "headers":{
                         }
                     }
                 }
@@ -2142,7 +3116,7 @@
                         "in":"body",
                         "required":true,
                         "schema":{
-                            "$ref":"#/definitions/UpdateUserBean"
+                            "$ref":"#/definitions/User"
                         }
                     }
                 ],
@@ -2262,7 +3236,7 @@
                 }
             }
         },
-        "/users/{id}/leadApplications":{
+        "/users/{id}/ledApplications":{
             "get":{
                 "consumes":[
                     "application/json"
@@ -2372,6 +3346,69 @@
                             "type":"array",
                             "items":{
                                 "$ref":"#/definitions/Topic"
+                            }
+                        }
+                    },
+                    "400":{
+                        "description":"Bad Request",
+                        "headers":{
+                        }
+                    },
+                    "403":{
+                        "description":"Forbidden",
+                        "headers":{
+                        }
+                    }
+                }
+            }
+        },
+        "/users/{id}/projects":{
+            "get":{
+                "consumes":[
+                    "application/json"
+                ],
+                "produces":[
+                    "application/json"
+                ],
+                "parameters":[
+                    {
+                        "type":"string",
+                        "name":"id",
+                        "in":"path",
+                        "required":true
+                    },
+                    {
+                        "type":"string",
+                        "name":"size",
+                        "in":"query",
+                        "required":false,
+                        "default":"0"
+                    },
+                    {
+                        "type":"string",
+                        "name":"start",
+                        "in":"query",
+                        "required":false,
+                        "default":"0"
+                    },
+                    {
+                        "name":"body",
+                        "in":"body",
+                        "required":true,
+                        "schema":{
+                            "$ref":"#/definitions/User"
+                        }
+                    }
+                ],
+                "responses":{
+                    "200":{
+                        "description":"OK",
+                        "headers":{
+                        },
+                        "schema":{
+                            "type":"array",
+                            "items":{
+                                "$ref":"#/definitions/Project"
                             }
                         }
                     },
@@ -2538,12 +3575,7 @@
                     "type":"string"
                 },
                 "plan":{
-                    "type":"string",
-                    "enum":[
-                        "TIER_1",
-                        "TIER_2",
-                        "TIER_3"
-                    ]
+                    "$ref":"#/definitions/CompanyPlan"
                 },
                 "size":{
                     "type":"string",
@@ -2559,6 +3591,19 @@
                 }
             }
         },
+        "CompanyPlan":{
+            "properties":{
+                "description":{
+                    "type":"string"
+                },
+                "maxTopics":{
+                    "type":"integer"
+                },
+                "name":{
+                    "type":"string"
+                }
+            }
+        },
         "Faculty":{
             "properties":{
                 "id":{
@@ -2569,6 +3614,43 @@
                 },
                 "university":{
                     "$ref":"#/definitions/University"
+                }
+            }
+        },
+        "Project":{
+            "properties":{
+                "companies":{
+                    "type":"array",
+                    "items":{
+                        "$ref":"#/definitions/Company"
+                    }
+                },
+                "creators":{
+                    "type":"array",
+                    "items":{
+                        "$ref":"#/definitions/User"
+                    }
+                },
+                "description":{
+                    "type":"string"
+                },
+                "faculties":{
+                    "type":"array",
+                    "items":{
+                        "$ref":"#/definitions/Faculty"
+                    }
+                },
+                "id":{
+                    "type":"integer"
+                },
+                "name":{
+                    "type":"string"
+                },
+                "topics":{
+                    "type":"array",
+                    "items":{
+                        "$ref":"#/definitions/Topic"
+                    }
                 }
             }
         },
@@ -2593,6 +3675,15 @@
         },
         "Topic":{
             "properties":{
+                "academicSupervisors":{
+                    "type":"array",
+                    "items":{
+                        "$ref":"#/definitions/User"
+                    }
+                },
+                "creator":{
+                    "$ref":"#/definitions/User"
+                },
                 "degrees":{
                     "type":"string",
                     "enum":[
@@ -2605,8 +3696,17 @@
                 "description":{
                     "type":"string"
                 },
+                "enabled":{
+                    "type":"boolean"
+                },
                 "id":{
                     "type":"integer"
+                },
+                "secondaryDescription":{
+                    "type":"string"
+                },
+                "secondaryTitle":{
+                    "type":"string"
                 },
                 "shortAbstract":{
                     "type":"string"
@@ -2710,47 +3810,6 @@
                 }
             }
         },
-        "UpdateUserBean":{
-            "properties":{
-                "company":{
-                    "$ref":"#/definitions/Company"
-                },
-                "email":{
-                    "type":"string"
-                },
-                "faculty":{
-                    "$ref":"#/definitions/Faculty"
-                },
-                "lastLogin":{
-                    "type":"object"
-                },
-                "name":{
-                    "type":"string"
-                },
-                "phone":{
-                    "type":"string"
-                },
-                "roles":{
-                    "type":"string",
-                    "enum":[
-                        "AC_SUPERVISOR",
-                        "ADMIN",
-                        "COMPANY_REP",
-                        "STUDENT",
-                        "TECH_LEADER"
-                    ]
-                },
-                "tags":{
-                    "type":"array",
-                    "items":{
-                        "type":"string"
-                    }
-                },
-                "username":{
-                    "type":"string"
-                }
-            }
-        },
         "User":{
             "properties":{
                 "company":{
@@ -2780,6 +3839,7 @@
                         "AC_SUPERVISOR",
                         "ADMIN",
                         "COMPANY_REP",
+                        "PROJECT_LEADER",
                         "STUDENT",
                         "TECH_LEADER"
                     ]

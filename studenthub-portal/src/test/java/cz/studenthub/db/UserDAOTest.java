@@ -91,7 +91,7 @@ public class UserDAOTest {
       return userDAO.findByCompany(company);
     });
     assertNotNull(users);
-    assertEquals(2, users.size());
+    assertEquals(3, users.size());
   }
 
   @Test
@@ -112,9 +112,9 @@ public class UserDAOTest {
       List<User> supervisors = userDAO.findByRoleAndFaculty(UserRole.AC_SUPERVISOR, faculty);
 
       assertNotNull(students);
-      assertEquals(2, students.size());
+      assertEquals(3, students.size());
       assertNotNull(supervisors);
-      assertEquals(1, supervisors.size());
+      assertEquals(2, supervisors.size());
     });
   }
 

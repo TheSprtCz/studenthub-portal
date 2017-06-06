@@ -35,10 +35,16 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
+import javax.validation.GroupSequence;
 
+import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import cz.studenthub.validators.groups.NotNullChecks;
+import cz.studenthub.validators.groups.ValidationMethodChecks;
+import io.dropwizard.validation.ValidationMethod;
 
 @Entity
 @Table(name = "Users")
@@ -50,6 +56,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
     @NamedQuery(name = "User.findByTag", query = "SELECT user FROM User user join user.tags tag WHERE tag = :tag"),
     @NamedQuery(name = "User.findByEmail", query = "SELECT user FROM User user WHERE user.email = :email"),
     @NamedQuery(name = "User.findByUsername", query = "SELECT user FROM User user WHERE user.username = :username")})
+@GroupSequence({ NotNullChecks.class, ValidationMethodChecks.class, User.class })
 public class User implements Principal {
 
   @Id
@@ -63,8 +70,9 @@ public class User implements Principal {
   private String password;
 
   @Column(unique = true, nullable = false)
+  @Email
   private String email;
-  @NotEmpty
+  @NotEmpty(groups = NotNullChecks.class)
   private String name;
   private String phone;
 
@@ -85,7 +93,7 @@ public class User implements Principal {
   @ManyToOne
   private Company company;
 
-  @NotEmpty
+  @NotEmpty(groups = NotNullChecks.class)
   @Enumerated(EnumType.STRING)
   @ElementCollection(fetch = FetchType.EAGER)
   private Set<UserRole> roles;
@@ -220,5 +228,24 @@ public class User implements Principal {
   @Override
   public String toString() {
     return String.format("User[id=%s, name=%s, email=%s]", id, name, email);
+  }
+
+  //Validation methods
+  @ValidationMethod(message="User with COMPANY_REP or TECH_LEADER role must have specified company", groups = ValidationMethodChecks.class)
+  @JsonIgnore
+  public boolean isCompanyRoleCorrect() {
+    if (roles.contains(UserRole.COMPANY_REP) || roles.contains(UserRole.TECH_LEADER))
+      return company != null;
+
+    return true;
+  }
+
+  @ValidationMethod(message="User with STUDENT or AC_SUPERVISOR role must have specified faculty", groups = ValidationMethodChecks.class)
+  @JsonIgnore
+  public boolean isFacultyRoleCorrect() {
+    if (roles.contains(UserRole.STUDENT) || roles.contains(UserRole.AC_SUPERVISOR))
+      return faculty != null;
+
+    return true;
   }
 }

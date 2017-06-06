@@ -37,8 +37,8 @@ public class ProjectResourceTest {
   }
   
   private List<Project> fetchProjects() {
-    return IntegrationTestSuite.authorizedRequest(client.target(String.format("http://localhost:%d/api/projects", dropwizard.getLocalPort()))
-      .request(), client).get(new GenericType<List<Project>>(){});
+    return client.target(String.format("http://localhost:%d/api/projects", dropwizard.getLocalPort()))
+      .request().get(new GenericType<List<Project>>(){});
   }
 
   @Test(dependsOnGroups = "migrate")
@@ -59,10 +59,10 @@ public class ProjectResourceTest {
     assertEquals(topic.getName(), "Industry things");
   }
 
-  @Test(dependsOnMethods = "listProjects")
+  @Test(dependsOnMethods = "listProjects", dependsOnGroups = "login")
   public void createProject() {
     JSONObject creator = new JSONObject();
-    creator.put("id", 11);
+    creator.put("id", 20);
 
     JSONArray creators = new JSONArray();
     creators.add(creator);
@@ -83,7 +83,7 @@ public class ProjectResourceTest {
   @Test(dependsOnMethods = "createProject")
   public void updateProject() {
     JSONObject creator = new JSONObject();
-    creator.put("id", 11);
+    creator.put("id", 20);
 
     JSONArray creators = new JSONArray();
     creators.add(creator);
@@ -110,7 +110,7 @@ public class ProjectResourceTest {
     assertEquals(fetchProjects().size(), 2);
   }
 
-  @Test(dependsOnGroups = {"migrate", "fetchTopic", "fetchProject"})
+  @Test(dependsOnGroups = {"login", "fetchTopic", "fetchProject"})
   public void assignTopic() {
     Topic topic = client.target(String.format("http://localhost:%d/api/topics/3", dropwizard.getLocalPort())).request().get(Topic.class);
 

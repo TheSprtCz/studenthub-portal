@@ -17,6 +17,7 @@
 package cz.studenthub.resources;
 
 import javax.annotation.security.PermitAll;
+import javax.inject.Inject;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.Consumes;
@@ -51,13 +52,11 @@ import io.dropwizard.jersey.params.LongParam;
 @PermitAll
 public class TaskResource {
 
-  private final TopicApplicationDAO appDao;
-  private final TaskDAO taskDao;
+  @Inject
+  private TopicApplicationDAO appDao;
 
-  public TaskResource(TopicApplicationDAO appDao, TaskDAO taskDao) {
-    this.appDao = appDao;
-    this.taskDao = taskDao;
-  }
+  @Inject
+  private TaskDAO taskDao;
 
   @GET
   @Path("/{id}")

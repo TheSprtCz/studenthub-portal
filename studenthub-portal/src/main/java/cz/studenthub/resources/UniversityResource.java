@@ -19,6 +19,7 @@ package cz.studenthub.resources;
 import java.util.List;
 
 import javax.annotation.security.RolesAllowed;
+import javax.inject.Inject;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
@@ -55,13 +56,11 @@ import io.dropwizard.jersey.params.LongParam;
 @Consumes(MediaType.APPLICATION_JSON)
 public class UniversityResource {
 
-  private final UniversityDAO uniDao;
-  private final FacultyDAO facDao;
+  @Inject
+  private UniversityDAO uniDao;
 
-  public UniversityResource(UniversityDAO uniDao, FacultyDAO facDao) {
-    this.uniDao = uniDao;
-    this.facDao = facDao;
-  }
+  @Inject
+  private FacultyDAO facDao;
 
   @GET
   @UnitOfWork

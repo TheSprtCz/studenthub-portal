@@ -20,6 +20,7 @@ import java.util.List;
 
 import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
+import javax.inject.Inject;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
@@ -59,15 +60,14 @@ import io.dropwizard.jersey.params.LongParam;
 @Consumes(MediaType.APPLICATION_JSON)
 public class FacultyResource {
 
-  private final FacultyDAO facDao;
-  private final UserDAO userDao;
-  private final ProjectDAO projectDao;
+  @Inject
+  private FacultyDAO facDao;
 
-  public FacultyResource(FacultyDAO facDao, UserDAO userDao, ProjectDAO projectDao) {
-    this.facDao = facDao;
-    this.userDao = userDao;
-    this.projectDao = projectDao;
-  }
+  @Inject
+  private UserDAO userDao;
+
+  @Inject
+  private ProjectDAO projectDao;
 
   @GET
   @UnitOfWork

@@ -48,8 +48,8 @@
             <column name="password" value="$6$utr8Ibd0$83l4Rv.4m4QCdNy4jt5aDO9fC8mYpG6.Z3zPD.6azhSto6lfyNAIcJkE8cg2jjDhKDsiSdLrSkCTLo/xglEzi."/>
             <column name="phone" value="463 147 891"/>
             <column name="username" value="admin"/>
-            <column name="company_id"/>
-            <column name="faculty_id"/>
+            <column name="company_id" valueNumeric="1"/>
+            <column name="faculty_id" valueNumeric="1"/>
         </insert>
         <insert catalogName="studenthub" schemaName="public" tableName="users">
             <column name="id" valueNumeric="2"/>

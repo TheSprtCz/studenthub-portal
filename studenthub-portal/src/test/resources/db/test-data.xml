@@ -419,8 +419,8 @@
             <column name="PASSWORD" value="$6$UMtqjjBp$6t7ZYd9I.itX5HCv5xbVftBpAS248VHe241lj8cw6Yfj3JfWbTXNcXwXdGkShO.00UHWqrTXcFCUDAx.xh6FA."/>
             <column name="PHONE" value="463 147 891"/>
             <column name="USERNAME" value="superadmin"/>
-            <column name="COMPANY_ID"/>
-            <column name="FACULTY_ID"/>
+            <column name="COMPANY_ID" valueNumeric="1"/>
+            <column name="FACULTY_ID" valueNumeric="1"/>
         </insert>
         <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="USERS">
             <column name="ID" valueNumeric="20"/>
@@ -529,6 +529,10 @@
         </insert>
         <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="USER_ROLES">
             <column name="USER_ID" valueNumeric="19"/>
+            <column name="ROLES" value="PROJECT_LEADER"/>
+        </insert>
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="USER_ROLES">
+            <column name="USER_ID" valueNumeric="20"/>
             <column name="ROLES" value="PROJECT_LEADER"/>
         </insert>
     </changeSet>

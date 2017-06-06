@@ -20,6 +20,7 @@ import java.util.List;
 
 import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
+import javax.inject.Inject;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
@@ -49,23 +50,23 @@ import cz.studenthub.core.UserRole;
 import cz.studenthub.db.TaskDAO;
 import cz.studenthub.db.TopicApplicationDAO;
 import cz.studenthub.util.PagingUtil;
+import cz.studenthub.validators.groups.CreateUpdateChecks;
 import io.dropwizard.auth.Auth;
 import io.dropwizard.hibernate.UnitOfWork;
 import io.dropwizard.jersey.params.IntParam;
 import io.dropwizard.jersey.params.LongParam;
+import io.dropwizard.validation.Validated;
 
 @Path("/applications")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class TopicApplicationResource {
 
-  private final TopicApplicationDAO appDao;
-  private final TaskDAO taskDao;
+  @Inject
+  private TopicApplicationDAO appDao;
 
-  public TopicApplicationResource(TopicApplicationDAO appDao, TaskDAO taskDao) {
-    this.appDao = appDao;
-    this.taskDao = taskDao;
-  }
+  @Inject
+  private TaskDAO taskDao;
 
   @GET
   @Timed
@@ -103,7 +104,7 @@ public class TopicApplicationResource {
   @ExceptionMetered
   @Path("/{id}")
   @UnitOfWork
-  public Response update(@PathParam("id") LongParam idParam, @NotNull @Valid TopicApplication app, @Auth User user) {
+  public Response update(@PathParam("id") LongParam idParam, @NotNull @Valid @Validated(CreateUpdateChecks.class) TopicApplication app, @Auth User user) {
     
     long id = idParam.get();
     TopicApplication oldApp = appDao.findById(id);
@@ -127,7 +128,7 @@ public class TopicApplicationResource {
   @ExceptionMetered
   @UnitOfWork
   @RolesAllowed("STUDENT")
-  public Response create(@NotNull @Valid TopicApplication app) {
+  public Response create(@NotNull @Valid @Validated(CreateUpdateChecks.class) TopicApplication app) {
     appDao.create(app);
     if (app.getId() == null)
       throw new WebApplicationException(Status.INTERNAL_SERVER_ERROR);
