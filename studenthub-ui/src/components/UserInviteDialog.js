@@ -2,8 +2,6 @@ import React, { Component } from 'react';
 import Dialog from 'react-toolbox/lib/dialog/Dialog.js';
 import Input from 'react-toolbox/lib/input/Input.js';
 
-import PersonalDataProcDialog from './PersonalDataProcDialog.js';
-import TermsOfUseDialog from './TermsOfUseDialog.js';
 import InviteButton from './InviteButton.js';
 
 import _t from '../Translations.js';

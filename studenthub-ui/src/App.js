@@ -14,7 +14,7 @@ import MyTopics from './views/MyTopics.js';
 import MyApplications from './views/MyApplications.js';
 import Application from './views/Application.js';
 import Profile from './views/Profile.js';
-import CompanyReg from './views/CompanyReg.js';
+//import CompanyReg from './views/CompanyReg.js';
 
 // components
 import AboutDrawer from './components/AboutDrawer.js';
