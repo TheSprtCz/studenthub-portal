@@ -15,6 +15,7 @@ import org.junit.runners.Suite.SuiteClasses;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import cz.studenthub.core.Activation;
 import cz.studenthub.core.Company;
 import cz.studenthub.core.Faculty;
 import cz.studenthub.core.Task;
@@ -22,6 +23,7 @@ import cz.studenthub.core.Topic;
 import cz.studenthub.core.TopicApplication;
 import cz.studenthub.core.University;
 import cz.studenthub.core.User;
+import cz.studenthub.db.ActivationDAOTest;
 import cz.studenthub.db.CompanyDAOTest;
 import cz.studenthub.db.FacultyDAOTest;
 import cz.studenthub.db.TaskDAOTest;
@@ -41,7 +43,7 @@ import liquibase.resource.ClassLoaderResourceAccessor;
 
 @RunWith(Suite.class)
 @SuiteClasses({ CompanyDAOTest.class, FacultyDAOTest.class, TaskDAOTest.class, TopicApplicationDAOTest.class,
-   TopicDAOTest.class, UniversityDAOTest.class, UserDAOTest.class})
+   TopicDAOTest.class, UniversityDAOTest.class, UserDAOTest.class, ActivationDAOTest.class})
 public class DAOTestSuite {
 
   public static DAOTestRule database;
@@ -64,7 +66,8 @@ public class DAOTestSuite {
         .addEntityClass(Faculty.class)
         .addEntityClass(University.class)
         .addEntityClass(TopicApplication.class)
-        .addEntityClass(Task.class).build();
+        .addEntityClass(Task.class)
+        .addEntityClass(Activation.class).build();
   }
 
   public static void migrateDatabase() {

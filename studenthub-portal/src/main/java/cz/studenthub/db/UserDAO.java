@@ -55,6 +55,10 @@ public class UserDAO extends AbstractDAO<User> {
     return uniqueResult(namedQuery("User.findByEmail").setParameter("email", email));
   }
 
+  public User findByUsername(String username) {
+    return uniqueResult(namedQuery("User.findByUsername").setParameter("username", username));
+  }
+
   public List<User> findByRole(UserRole role) {
     return list(namedQuery("User.findByRole").setParameter("role", role));
   }

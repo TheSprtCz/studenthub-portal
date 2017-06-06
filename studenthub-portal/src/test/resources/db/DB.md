@@ -60,7 +60,7 @@ Test Database contains these entries:
 
 ## Users
 
-(Password field is not present because it is encoded and irrelevant when testing, password encoding test does not need DB)
+Password field is not present because it is encoded and irrelevant when testing and password encoding test does not need DB
 
 | id  | username           | email                       | name               | phone        | lastLogin      | company | faculty | roles                        | tags                     |
 | --- | ------------------ | --------------------------- | ------------------ | ------------ | -------------- | ------- | ------- | ---------------------------- | ------------------------ | 
@@ -84,6 +84,15 @@ Test Database contains these entries:
 | 18  | rep3               | rep3@example.com            | Rep Three          | 234 156 774  | 27.1.2017      | 7       | ------- | [COMPANY_REP]                | ------------------------ | 
 | 19  | superadmin         | superadmin@example.com      | Super Admin        | 463 147 891  | 5.11.2016      | ------- | ------- | [ALL]                        | ------------------------ |
 
+## Activations
+
+Codes were manually assigned to ease testing
+
+| id  | user  | code       |
+| --- | ----- | ---------- |
+| 1   | 18    | rep3       |
+| 2   | 15    | student4   |
+        
 ## Topics
 
 | id  | title               | enabled | shortAbstract                       | description                | creator | supervisors      | degrees                  | tags                      |
