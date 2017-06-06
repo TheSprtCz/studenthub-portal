@@ -117,7 +117,7 @@ public class TopicApplicationResourceTest {
    * Task tests
    */
 
-  @Test(dependsOnGroups = "login")
+  @Test(dependsOnGroups = "login", groups = "listTasks")
   public void listTasks() {
     List<Task> list = fetchTasks();
 

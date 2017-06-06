@@ -105,6 +105,10 @@ public class IntegrationTestSuite {
     return target.cookie("sh-token", TOKEN);
   }
 
+  public static Builder oneTimeAuthorizedRequest(Builder target, Client client, String username, String password) {
+    return target.cookie("sh-token", authorize(client, username, password));
+  }
+
   public static Builder authorizedRequest(Builder target, Client client) {
     return authorizedRequest(target, client, USERNAME, PASSWORD);
   }

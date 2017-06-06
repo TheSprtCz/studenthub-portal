@@ -36,7 +36,7 @@ public class TaskResourceTest {
     assertEquals(task.getTitle(), "Reduce size");
   }
 
-  @Test(dependsOnGroups = "login")
+  @Test(dependsOnGroups = {"login", "listTasks"})
   public void createTask() {
     JSONObject application = new JSONObject();
     application.put("id", 1);

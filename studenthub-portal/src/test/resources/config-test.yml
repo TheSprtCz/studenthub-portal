@@ -44,4 +44,4 @@ smtp:
   port: 3025
   fromEmail: admin@example.com
   fromName: admin
-  
+  async: false

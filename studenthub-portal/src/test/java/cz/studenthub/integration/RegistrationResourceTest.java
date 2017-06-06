@@ -63,6 +63,13 @@ public class RegistrationResourceTest {
       userDAO = new UserDAO(IntegrationTestSuite.getSessionFactory());
   }
 
+  @Test(groups = "testMail")
+  public void testMail() {
+    GreenMailUtil.sendTextEmailTest("to@localhost.com", "from@localhost.com", "subject", "body");
+    MimeMessage[] emails = greenMail.getReceivedMessages();
+    assertEquals(1, emails.length);
+  }
+
   @AfterClass
   public void tearDown() {
     greenMail.stop();
@@ -76,7 +83,7 @@ public class RegistrationResourceTest {
   }
 
   // This test both signUp and activate endpoints
-  @Test(dependsOnGroups = "login", groups = "signUp")
+  @Test(dependsOnGroups = {"login", "testMail"}, groups = "signUp")
   public void SignUpProcessTest() throws MessagingException, IOException {
     JSONObject faculty = new JSONObject();
     faculty.put("id", 5);
@@ -141,7 +148,7 @@ public class RegistrationResourceTest {
     assertNotNull(loginResponse.getCookies().get("sh-token"));
   }
 
-  @Test(dependsOnGroups = "migrate")
+  @Test(dependsOnGroups = {"migrate","testMail"})
   public void resendActivationTest() throws MessagingException {
     MultivaluedMap<String, String> formData = new MultivaluedHashMap<String, String>();
     formData.add("email", "rep3@example.com");
@@ -158,7 +165,7 @@ public class RegistrationResourceTest {
     assertEquals(messages[0].getSubject(), "Password Setup");
   }
 
-  @Test(dependsOnGroups = "migrate")
+  @Test(dependsOnGroups = {"migrate","testMail"})
   public void resetPasswordTest() throws MessagingException {
     MultivaluedMap<String, String> formData = new MultivaluedHashMap<String, String>();
     formData.add("email", "rep2@example.com");
@@ -180,7 +187,7 @@ public class RegistrationResourceTest {
     assertEquals(messages[0].getSubject(), "Password Setup");
   }
 
-  @Test(dependsOnGroups = "login")
+  @Test(dependsOnGroups = {"migrate","testMail"})
   public void changePasswordTest() throws MessagingException {
     String password = "xPo#|€@5897";
     JSONObject updateBean = new JSONObject();
@@ -188,7 +195,7 @@ public class RegistrationResourceTest {
     updateBean.put("newPwd", password);
 
     // Test response status
-    Response response = IntegrationTestSuite.authorizedRequest(
+    Response response = IntegrationTestSuite.oneTimeAuthorizedRequest(
         client.target(String.format("http://localhost:%d/api/account/16/password", dropwizard.getLocalPort())).request(MediaType.APPLICATION_JSON),
         client, "rep1@example.com", "test").put(Entity.json(updateBean.toJSONString()));
     assertEquals(response.getStatus(), 200);
