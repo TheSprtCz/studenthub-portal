@@ -7,6 +7,7 @@ import { tableFactory } from 'react-toolbox/lib/table/Table.js';
 
 import EditButton from './EditButton.js';
 import DeleteButton from './DeleteButton.js';
+import _t from '../Translations.js';
 
 class UniversityRow extends Component {
   render () {
@@ -55,27 +56,13 @@ class UniversityHead extends Component {
   render () {
     return (
       <TableHead>
-        <TableCell numeric key="id">
-          ID
-        </TableCell>
-        <TableCell key="logo">
-          Logo
-        </TableCell>
-        <TableCell key="name">
-          Name
-        </TableCell>
-        <TableCell key="city">
-          City
-        </TableCell>
-        <TableCell key="state">
-          Country
-        </TableCell>
-        <TableCell key="site"
-          >Website
-        </TableCell>
-        <TableCell key="actions">
-          Actions
-        </TableCell>
+        <TableCell numeric key="id">ID</TableCell>
+        <TableCell key="logo">Logo</TableCell>
+        <TableCell key="name">{ _t.translate('Name') }</TableCell>
+        <TableCell key="city">{ _t.translate('City') }</TableCell>
+        <TableCell key="state">{ _t.translate('Country') }</TableCell>
+        <TableCell key="site">{ _t.translate('Web page') }</TableCell>
+        <TableCell key="actions">{ _t.translate('Actions') }</TableCell>
       </TableHead>
     )
   }

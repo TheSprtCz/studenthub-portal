@@ -1,21 +1,29 @@
 import React from 'react';
 import { withRouter } from 'react-router-dom';
+import Avatar from 'react-toolbox/lib/avatar/Avatar.js';
 import Input from 'react-toolbox/lib/input/Input.js';
 import Button from 'react-toolbox/lib/button/Button.js';
 import Dropdown from 'react-toolbox/lib/dropdown/Dropdown.js';
 import Tab from 'react-toolbox/lib/tabs/Tab.js';
 import Tabs from 'react-toolbox/lib/tabs/Tabs.js';
+import Chip from 'react-toolbox/lib/chip/Chip.js';
 
 import SiteSnackbar from '../components/SiteSnackbar.js';
+
 import Auth from '../Auth.js';
 import Util from '../Util.js';
+import _t from '../Translations.js'
+
+const gravatar = require("gravatar")
 
 const LogoutButton = withRouter(({ history }) => (
-  <Button primary onClick={() => { Auth.signout(() => history.push('/')) }}>Sign out</Button>
+  <Button raised primary icon="person" onClick={() => { Auth.signout(() => history.push('/')) }}>
+    { _t.translate('Sign Out') }
+  </Button>
 ))
 
 class ProfileEditView extends React.Component {
-  state = { user: { name: "User" }, email: '', phone: '', roles: '',  tags: '',
+  state = { email: '', avatarUrl: '', name: '', phone: '', roles: [],  tags: '',
   lastLogin: [], snackbarActive: false, snackbarLabel: '' };
 
   componentDidMount() {
@@ -33,30 +41,22 @@ class ProfileEditView extends React.Component {
         throw new Error('There was a problem with network connection.');
       }
     }).then(function(json) {
-      var rolesState = "";
-      if (json.roles !== null)
-        for(let i = 0; i < json.roles.length; i++) {
-          rolesState += json.roles[i]+"; ";
-          if(i === json.roles.length-1) rolesState = rolesState.substring(0, rolesState.length-2);
-        }
       var tagsState = "";
       if(json.tags !== null)
         for(let i = 0; i < json.tags.length; i++) {
           tagsState += json.tags[i]+"; ";
         }
-      var lastLoginState = "";
-      if(json.lastLogin !== null)
-        for(let i = 0; i < json.lastLogin.length; i++) {
-          lastLoginState += json.lastLogin[i]+"; ";
-        }
 
       this.setState({
-        user: json,
+        faculty: json.faculty,
+        company: json.company,
+        name: json.name,
         email:	json.email,
+        avatarUrl: gravatar.url(json.email, {s: '300', protocol: 'https'}),
         phone: Util.isEmpty(json.phone) ? "" : json.phone,
-        roles: rolesState,
+        roles: json.roles,
         tags: tagsState,
-        lastLogin: lastLoginState
+        lastLogin: json.lastLogin
       });
     }.bind(this));
   }
@@ -73,11 +73,11 @@ class ProfileEditView extends React.Component {
         "Content-Type" : "application/json"
       },
       body: JSON.stringify({
-        name: this.state.user.name,
-        roles: this.state.user.roles,
-        lastLogin: this.state.user.lastLogin,
-        faculty: this.state.user.faculty,
-        company: this.state.user.company,
+        name: this.state.name,
+        roles: this.state.roles,
+        lastLogin: this.state.lastLogin,
+        faculty: this.state.faculty,
+        company: this.state.company,
         email:	this.state.email,
         phone:	this.state.phone,
         tags: this.getTags(),
@@ -104,6 +104,9 @@ class ProfileEditView extends React.Component {
     var tags = [];
     var stringTags = this.state.tags;
 
+    if(stringTags.indexOf(";") === stringTags.length-1)
+      stringTags = stringTags.substring(0, stringTags.indexOf(";"));
+
     while(stringTags.indexOf(";") !== -1) {
       tags.push(stringTags.substring(0, stringTags.indexOf(";")));
       stringTags = stringTags.substring(stringTags.indexOf(";")+1);
@@ -124,17 +127,24 @@ class ProfileEditView extends React.Component {
 
   render () {
     return (
-      <section className="col-md-offset-1 col-md-10">
-        <Input type='email' icon='email' label='Email'  hint="Change your email" required value={this.state.email} onChange={this.handleChange.bind(this, 'email')} />
-        <Input type='text' name='name' label='Name' icon='person' disabled value={this.state.user.name} />
-        <Input type='tel' name='phone' label='Phone number' icon='phone' hint="Change your phone number" required value={this.state.phone} onChange={this.handleChange.bind(this, 'phone')} maxLength={9} />
-        <Input type='text' name='faculty' label='Faculty' icon='business' disabled value={Util.isEmpty(this.state.user.faculty) ? "None" : this.state.user.faculty.name} />
-        <Input type='text' name='company' label='Company' icon='business' disabled value={Util.isEmpty(this.state.user.company) ? "None" : this.state.user.company.name} />
-        <Input type='text' name='roles' label='Assigned roles' icon='person' disabled value={this.state.roles} />
-        <Input type='text' name='tags' label='User tags' icon='flag' hint="Divide tags using ;" value={this.state.tags} onChange={this.handleChange.bind(this, 'tags')} />
-        <Button icon='edit' label='Save changes' raised primary className='pull-right' onClick={this.handleSubmit}/>
-        <SiteSnackbar active={this.state.snackbarActive} label={this.state.snackbarLabel} toggleHandler={() => this.toggleSnackbar()} />
-      </section>
+      <div className="row">
+        <div className="col-md-2 text-center">
+          <Avatar style={{width: '6em', height: '6em', marginBottom: '1em'}} image={this.state.avatarUrl} title={ _t.translate('Your Gravatar') } />
+          {this.state.roles.map( (role) => <Chip key={role}> { _t.translate(role) } </Chip> )}
+          <LogoutButton className="pull-left" />
+        </div>
+        <div className="col-md-10">
+          <Input type='email' icon='email' label='Email'  hint="Change your email" required value={this.state.email} onChange={this.handleChange.bind(this, 'email')} />
+          <Input type='text' name='name' label={ _t.translate('Name') } hint="Change your name" icon='person' required value={this.state.name} onChange={this.handleChange.bind(this, 'name')} />
+          <Input type='tel' name='phone' label={ _t.translate('Phone') } icon='phone' hint="Change your phone number" required value={this.state.phone} onChange={this.handleChange.bind(this, 'phone')} maxLength={9} />
+          <Input type='text' name='faculty' label={ _t.translate('Faculty') } icon='business' disabled value={Util.isEmpty(this.state.faculty) ? "None" : this.state.faculty.name} />
+          <Input type='text' name='company' label={ _t.translate('Company') } icon='business' disabled value={Util.isEmpty(this.state.company) ? "None" : this.state.company.name} />
+          <Input type='hidden' name='roles' label={ _t.translate('Role') } icon='person' disabled value={this.state.roles.toString()} />
+          <Input type='text' name='tags' label={ _t.translate('Tags') } icon='flag' hint="Divide tags using ;" value={this.state.tags} onChange={this.handleChange.bind(this, 'tags')} />
+          <Button icon='edit' label={ _t.translate('Save changes') } raised primary className='pull-right' onClick={this.handleSubmit}/>
+          <SiteSnackbar active={this.state.snackbarActive} label={this.state.snackbarLabel} toggleHandler={() => this.toggleSnackbar()} />
+        </div>
+      </div>
     );
   }
 }
@@ -226,41 +236,42 @@ class CompanyEditView extends React.Component {
 
   render () {
     return (
-      <section className="col-md-offset-1 col-md-10">
-        <Input type='name' label='Name' icon='textsms'  hint="Change company name" required value={this.state.name} onChange={this.handleChange.bind(this, 'name')} />
-        <Input type='text' label='City' icon='location_city'  hint="Change company city headquarters" required value={this.state.city} onChange={this.handleChange.bind(this, 'city')} />
-        <Dropdown
-          auto required
-          onChange={this.handleChange.bind(this, 'country')}
-          source={Util.countriesSource}
-          name='country'
-          hint='Select country'
-          value={this.state.country}
-          icon='public'
-          label='Country' />
-        <Input type='url' label='Website' icon='web'  hint="Change website url" required value={this.state.url} onChange={this.handleChange.bind(this, 'url')} />
-        <Input type='url' label='Logo' icon='photo'  hint="Change logo" required value={this.state.logoUrl} onChange={this.handleChange.bind(this, 'logoUrl')} />
-        <Dropdown
-          auto required
-          onChange={this.handleChange.bind(this, 'size')}
-          source={Util.companySizesSource}
-          name='size'
-          hint='Select company size'
-          value={this.state.size}
-          icon='business'
-          label='Size' />
+      <div className="row">
+        <div className="col-md-2">
+          <Avatar style={{width: '6em', height: '6em'}} image={Util.isEmpty(this.state.logoUrl) ? 'https://dummyimage.com/300x300/ffffff/ffffff.jpg' : this.state.logoUrl } title={ _t.translate('Your logo') } />
+        </div>
+        <div className="col-md-10">
+          <Input type='name' label={ _t.translate('Name') } icon='textsms'  hint="Change company name" required value={this.state.name} onChange={this.handleChange.bind(this, 'name')} />
+          <Input type='text' label={ _t.translate('City') } icon='location_city'  hint="Change company city headquarters" value={this.state.city} onChange={this.handleChange.bind(this, 'city')} />
           <Dropdown
             auto required
-            onChange={this.handleChange.bind(this, 'plan')}
-            source={Util.companyPlansSource}
-            name='plan'
-            hint='Select company plan'
-            value={this.state.plan}
+            onChange={this.handleChange.bind(this, 'country')}
+            source={Util.countriesSource}
+            name='country'
+            value={this.state.country}
+            icon='public'
+            label={ _t.translate('Country') } />
+          <Input type='url' label={ _t.translate('Web page') } icon='web'  hint="Change website url" value={this.state.url} onChange={this.handleChange.bind(this, 'url')} />
+          <Input type='url' label='Logo' icon='photo'  hint="Change logo" value={this.state.logoUrl} onChange={this.handleChange.bind(this, 'logoUrl')} />
+          <Dropdown
+            auto required
+            onChange={this.handleChange.bind(this, 'size')}
+            source={Util.companySizesSource}
+            name='size'
+            value={this.state.size}
             icon='business'
-            label='Plan' />
-        <Button icon='edit' label='Save changes' raised primary className='pull-right' onClick={this.handleSubmit}/>
-        <SiteSnackbar active={this.state.snackbarActive} label={this.state.snackbarLabel} toggleHandler={() => this.toggleSnackbar()} />
-      </section>
+            label={ _t.translate('Size') } />
+            <Dropdown
+              auto disabled
+              source={Util.companyPlansSource}
+              name='plan'
+              value={this.state.plan}
+              icon='business'
+              label={ _t.translate('Plan') } />
+            <Button icon='edit' label={ _t.translate('Save changes') } raised primary className='pull-right' onClick={this.handleSubmit}/>
+          <SiteSnackbar active={this.state.snackbarActive} label={this.state.snackbarLabel} toggleHandler={() => this.toggleSnackbar()} />
+        </div>
+      </div>
     );
   }
 }
@@ -276,8 +287,8 @@ class ProfileViewWithTabs extends React.Component {
     return (
       <section>
         <Tabs index={this.state.index} onChange={this.handleTabChange}>
-          <Tab label='User profile'><ProfileEditView /></Tab>
-          <Tab label='Your company'><CompanyEditView /></Tab>
+          <Tab label={ _t.translate('User profile') }><ProfileEditView /></Tab>
+          <Tab label={ _t.translate('Company profile') }><CompanyEditView /></Tab>
         </Tabs>
       </section>
     );
@@ -287,9 +298,8 @@ class ProfileViewWithTabs extends React.Component {
 const ProfileView = () => (
   <div>
     <h1>
-      Your profile
+      { _t.translate('Profile') }
     </h1>
-    <LogoutButton />
     {(Auth.hasRole("COMPANY_REP")) ? <ProfileViewWithTabs /> : <ProfileEditView />}
   </div>
 );

@@ -10,6 +10,7 @@ import PersonalDataProcDialog from '../components/PersonalDataProcDialog.js';
 import TermsOfUseDialog from '../components/TermsOfUseDialog.js';
 
 import Util from '../Util.js';
+import _t from '../Translations.js';
 
 class RoleSelect extends React.Component {
   state = { value: 'STUDENT' };
@@ -23,7 +24,7 @@ class RoleSelect extends React.Component {
     return (
       <Dropdown
         auto
-        label='Role'
+        label={ _t.translate("Role") }
         onChange={this.handleChange}
         source={Util.rolesSource}
         value={this.state.value}
@@ -78,7 +79,7 @@ class FacultySelect extends React.Component {
     return (
       <Dropdown
         auto required
-        label='Faculty'
+        label={ _t.translate("Faculty") }
         onChange={this.handleChange}
         source={this.state.labels}
         value={this.state.value}
@@ -145,26 +146,26 @@ class SignUpForm extends React.Component {
   render () {
     return (
       <section className="container">
-        <h1>Sign Up</h1>
-        <Input type='email' label='Email address' hint='Your email adress' icon='email' required value={this.state.email} onChange={this.handleChange.bind(this, 'email')} />
-        <Input type='text' label='Name' hint='Your name' name='name' icon='textsms' required value={this.state.name} onChange={this.handleChange.bind(this, 'name')} maxLength={16} />
-        <Input type='tel' label='Phone' hint='Your phone number' name='phone' icon='phone' value={this.state.phone} onChange={this.handleChange.bind(this, 'phone')} maxLength={9} />
+        <h1>{ _t.translate('Sign Up') }</h1>
+        <Input type='email' label={ _t.translate("Email address") } hint={ _t.translate('Your email adress') } icon='email' required value={this.state.email} onChange={this.handleChange.bind(this, 'email')} />
+        <Input type='text' label={ _t.translate("Name") } hint={ _t.translate('Your name') } name='name' icon='textsms' required value={this.state.name} onChange={this.handleChange.bind(this, 'name')} maxLength={16} />
+        <Input type='tel' label={ _t.translate("Phone") } hint={ _t.translate('Your phone number') } name='phone' icon='phone' value={this.state.phone} onChange={this.handleChange.bind(this, 'phone')} maxLength={9} />
         <RoleSelect changeHandler={(value) => this.handleChange("role", value)} />
         <FacultySelect changeHandler={(value) => this.handleChange("faculty", value)} />
         <table>
           <tbody>
             <tr>
-              <td>
+              <td style={{ paddingLeft: '1em'}}>
                 <Checkbox checked={this.state.terms} onChange={this.handleChange.bind(this, 'terms')} required />
               </td>
-              <td style={{ paddingBottom: '15px', paddingLeft: '10px', display: 'inline-flex'}}>
-                I have read and I do accept the &nbsp;<TermsOfUseDialog />&nbsp; and &nbsp;<PersonalDataProcDialog />.
+              <td style={{ paddingTop: '0px', addingBottom: '1.5em', paddingLeft: '1em', display: 'inline-flex', fontSize: '17px'}}>
+                { _t.translate('I have read and I do accept the')}: &nbsp; <TermsOfUseDialog /> &nbsp;{ _t.translate('and')}&nbsp; <PersonalDataProcDialog/>.
               </td>
             </tr>
           </tbody>
         </table>
         <br />
-        <Button icon='person_add' label='Sign Up' raised primary className='pull-right' onClick={this.handleSubmit}/>
+        <Button icon='person_add' label={ _t.translate('Sign Up') } raised primary className='pull-right' onClick={this.handleSubmit}/>
         <SiteSnackbar active={this.state.snackbarActive} label={this.state.snackbarLabel} toggleHandler={() => this.handleToggle()} />
           {this.generateRedirect()}
       </section>

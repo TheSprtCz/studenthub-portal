@@ -14,9 +14,18 @@ import Chip from 'react-toolbox/lib/chip/Chip.js';
 
 import DeleteButton from '../components/DeleteButton.js';
 import EditButton from '../components/EditButton.js';
+import SiteSnackbar from '../components/SiteSnackbar.js';
 
 import Auth from '../Auth.js';
 import Util from '../Util.js';
+import _t from '../Translations.js';
+
+const TopicTableHint = () => (
+  <div className="alert alert-info alert-dismissible" role="alert" style={{ marginTop: '1em'}}>
+    <button type="button" className="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+    <strong>{ _t.translate('Hint:') }</strong> { _t.translate('Here you can modify your topics.') }
+  </div>
+)
 
 class TopicTable extends Component {
   constructor(props) {
@@ -29,14 +38,70 @@ class TopicTable extends Component {
       snackbarLabel: "",
       snackbarActive: false
     };
-    this.getTopics();
+  }
+
+  componentDidMount() {
+    if (Auth.hasRole(Util.userRoles.companyRep) && !Auth.hasRole(Util.userRoles.admin))
+      this.getCompanyTopics();
+    else
+      this.getTopics();
   }
 
   /**
-   * Gets the list of all topics.
+   * Gets the list of all company topics.
+   */
+  getCompanyTopics = () => {
+    fetch('/api/users/' + Auth.getUserInfo().sub, {
+        credentials: 'same-origin',
+        method: 'get'
+      }).then(function(response) {
+        if (response.ok) {
+            return response.json();
+        } else {
+          throw new Error('There was a problem with network connection.');
+        }
+      }).then(function(json) {
+        if (Util.isEmpty(json.company)) {
+          this.setState({
+            snackbarLabel: "There is no company connected to your account!",
+            snackbarActive: true
+          });
+          return;
+        }
+        fetch('/api/companies/' + json.company.id + '/topics', {
+            credentials: 'same-origin',
+            method: 'get'
+          }).then(function(response) {
+            if (response.ok) {
+                return response.json();
+            } else {
+              throw new Error('There was a problem with network connection.');
+            }
+          }).then(function(json) {
+            var newData = [];
+
+            for(let i in json) {
+              newData.push({
+                degrees: json[i].degrees,
+                description: json[i].description,
+                id: json[i].id,
+                shortAbstract: json[i].shortAbstract,
+                tags: json[i].tags,
+                title: json[i].title
+              });
+            }
+            this.setState({
+              topics: newData
+            });
+          }.bind(this));
+      }.bind(this));
+  }
+
+  /**
+   * Gets the list of all user topics.
    */
   getTopics = () => {
-    fetch('/api/users/' + Auth.getUserInfo().sub + '/ownedTopics', {
+    fetch((Auth.hasRole(Util.userRoles.admin)) ? '/api/topics' : '/api/users/' + Auth.getUserInfo().sub + '/ownedTopics', {
         credentials: 'same-origin',
         method: 'get'
       }).then(function(response) {
@@ -122,19 +187,24 @@ class TopicTable extends Component {
     this.setState({dialogActive: !this.state.dialogActive, editId: id});
   }
 
+  toggleSnackbar = () => {
+    this.setState({snackbarActive: !this.state.snackbarActive});
+  }
+
   render () {
     return (
       <div>
+        <TopicTableHint />
         <h1>
-          My Topics { Auth.hasRole(Util.userRoles.techLeader) ? <NewTopicDialog active={this.state.dialogActive} dataHandler={(method, id, data) => this.manageData(method, id, data)} topic={this.getAssociatedTopic()} toggleHandler={() => this.toggleDialog(-1)}/> : '' }
+          { _t.translate('My Topics') } { Auth.hasRole(Util.userRoles.techLeader) ? <NewTopicDialog active={this.state.dialogActive} dataHandler={(method, id, data) => this.manageData(method, id, data)} topic={this.getAssociatedTopic()} toggleHandler={() => this.toggleDialog(-1)}/> : '' }
         </h1>
         <Table selectable={false}>
           <TableHead>
-            <TableCell>Title</TableCell>
-            <TableCell>Short Abstract</TableCell>
-            <TableCell>Degrees</TableCell>
-            <TableCell>Tags</TableCell>
-            <TableCell>Actions</TableCell>
+            <TableCell>{ _t.translate('Topic title') }</TableCell>
+            <TableCell>{ _t.translate('Short abstract') }</TableCell>
+            <TableCell>{ _t.translate('Degrees') }</TableCell>
+            <TableCell>{ _t.translate('Tags') }</TableCell>
+            <TableCell>{ _t.translate('Actions') }</TableCell>
           </TableHead>
           {this.state.topics.map((item, index) => (
             <TableRow key={item.id}>
@@ -142,13 +212,15 @@ class TopicTable extends Component {
               <TableCell>{item.shortAbstract}</TableCell>
               <TableCell>{item.degrees.map( (degree) => <Chip key={degree}> {degree} </Chip> )}</TableCell>
               <TableCell>{item.tags.map( (tag) => <Chip key={tag}> {tag} </Chip> )}</TableCell>
+              {(Auth.hasRole(Util.userRoles.companyRep) && !Auth.hasRole(Util.userRoles.admin)) ? '' :
               <TableCell>
                 <EditButton toggleHandler={() => this.toggleDialog(index)} />
                 <DeleteButton deleteHandler={() => this.manageData("delete", item.id, null)} />
-              </TableCell>
+              </TableCell>}
             </TableRow>
           ))}
         </Table>
+        <SiteSnackbar active={this.state.snackbarActive} label={this.state.snackbarLabel} toggleHandler={() => this.toggleSnackbar()} />
       </div>
     );
   }
@@ -157,10 +229,11 @@ class TopicTable extends Component {
 class NewTopicDialog extends Component {
 
   state = {
-    bachelor: false, master: false, phd: false, title: '', shortAbstract: '', description: '', tags: '', tagIndex: 0, dialogTitle: "New Topic",
+    bachelor: false, master: false, phd: false, highSchool: false, title: '',
+    shortAbstract: '', description: '', tags: '', tagIndex: 0, dialogTitle: _t.translate('New Topic'),
     actions : [
-      { label: "Add", onClick: () => this.handleAdd()},
-      { label: "Cancel", onClick: () => this.handleToggle() }
+      { label: _t.translate('Add'), onClick: () => this.handleAdd()},
+      { label: _t.translate('Cancel'), onClick: () => this.handleToggle() }
     ]
   };
 
@@ -173,6 +246,7 @@ class NewTopicDialog extends Component {
     var bachelorState = false;
     var masterState = false;
     var phdState = false;
+    var highSchoolState = false;
     var titleState;
     var shortAbstractState;
     var descriptionState;
@@ -184,10 +258,10 @@ class NewTopicDialog extends Component {
       titleState = "";
       shortAbstractState = "";
       descriptionState = "";
-      dialogTitleState = "New Topic";
+      dialogTitleState = _t.translate('New Topic');
       actionsState = [
-        { label: "Add", onClick: () => this.handleAdd()},
-        { label: "Cancel", onClick: () => this.handleToggle() }
+        { label: _t.translate('Add'), onClick: () => this.handleAdd()},
+        { label: _t.translate('Cancel'), onClick: () => this.handleToggle() }
       ];
     }
     else {
@@ -195,17 +269,19 @@ class NewTopicDialog extends Component {
         if(nextProps.topic.degrees[i] === "BACHELOR") bachelorState = true;
         else if(nextProps.topic.degrees[i] === "MASTER") masterState = true;
         else if(nextProps.topic.degrees[i] === "PhD") phdState = true;
+        else if(nextProps.topic.degrees[i] === "HIGH_SCHOOL") highSchoolState = true;
       }
       titleState = nextProps.topic.title;
       shortAbstractState = nextProps.topic.shortAbstract;
       descriptionState = nextProps.topic.description;
       for (let i = 0; i < nextProps.topic.tags.length; i++) {
-        tagsState += nextProps.topic.tags[i]+";";
+        tagsState += nextProps.topic.tags[i];
+        if ((i + 1) < nextProps.topic.tags.length) tagsState += ";"
       }
-      dialogTitleState = "Edit Topic";
+      dialogTitleState = _t.translate('Edit Topic');
       actionsState = [
-        { label: "Save", onClick: () => this.handleEdit()},
-        { label: "Cancel", onClick: () => this.handleToggle() }
+        { label: _t.translate('Save changes'), onClick: () => this.handleEdit()},
+        { label: _t.translate('Cancel'), onClick: () => this.handleToggle() }
       ];
     }
 
@@ -213,6 +289,7 @@ class NewTopicDialog extends Component {
       bachelor: bachelorState,
       master: masterState,
       phd: phdState,
+      highSchool: highSchoolState,
       title: titleState,
       shortAbstract: shortAbstractState,
       description: descriptionState,
@@ -240,6 +317,7 @@ class NewTopicDialog extends Component {
   handleAdd = () => {
     this.props.dataHandler("post", "",
       JSON.stringify({
+        creator: { id: Auth.getUserInfo().sub },
         degrees: this.getDegrees(),
         description: this.state.description,
         shortAbstract: this.state.shortAbstract,
@@ -256,6 +334,7 @@ class NewTopicDialog extends Component {
   handleEdit = () => {
     this.props.dataHandler("put", this.props.topic.id,
       JSON.stringify({
+        creator: { id: Auth.getUserInfo().sub },
         degrees: this.getDegrees(),
         description: this.state.description,
         shortAbstract: this.state.shortAbstract,
@@ -272,6 +351,7 @@ class NewTopicDialog extends Component {
     if(this.state.bachelor === true) degrees.push("BACHELOR");
     if(this.state.master === true) degrees.push("MASTER");
     if(this.state.phd === true) degrees.push("PhD");
+    if(this.state.highSchool === true) degrees.push("HIGH_SCHOOL");
 
     return degrees;
   }
@@ -279,6 +359,9 @@ class NewTopicDialog extends Component {
   getTags = () => {
     var tags = [];
     var stringTags = this.state.tags;
+
+    if(stringTags.indexOf(";") === stringTags.length-1)
+      stringTags = stringTags.substring(0, stringTags.indexOf(";"));
 
     while(stringTags.indexOf(";") !== -1) {
       tags.push(stringTags.substring(0, stringTags.indexOf(";")));
@@ -297,35 +380,61 @@ class NewTopicDialog extends Component {
           actions={this.state.actions}
           active={this.props.active}
           onEscKeyDown={this.handleToggle}
-          onOverlayClick={this.handleToggle}
-          title={this.state.dialogTitle}>
-            <p>Here you can create a new or edit an existing Thesis topic.</p>
-            <Input type='text' label='Title' hint="Topic title" name='title' required value={this.state.title} onChange={this.handleChange.bind(this, 'title')} />
-            <Input type='text' label='Short Abstract' hint="Short info about the topic"  multiline rows={2} name='shortAbstract' value={this.state.shortAbstract} onChange={this.handleChange.bind(this, 'shortAbstract')} />
-            <Tabs index={this.state.tabIndex} onChange={this.handleTabChange} >
-              <Tab label="Description">
-                <Input type='text' label='Description' hint="Full topic description in markdown" multiline rows={3} value={this.state.description} onChange={this.handleChange.bind(this, 'description')} />
-              </Tab>
-              <Tab label="Preview">
-                <ReactMarkdown source={ this.state.description } />
-              </Tab>
-            </Tabs>
-            <Input type='text' label='Tags' hint="Divide tags using ;" value={this.state.tags} onChange={this.handleChange.bind(this, 'tags')} />
-            <Checkbox
-              checked={this.state.bachelor}
-              label="Bachelor"
-              name='grades'
-              onChange={this.handleChange.bind(this, 'bachelor')} />
-            <Checkbox
-              checked={this.state.master}
-              label="Master"
-              name='grades'
-              onChange={this.handleChange.bind(this, 'master')} />
-            <Checkbox
-              checked={this.state.phd}
-              label="PhD"
-              name='grades'
-              onChange={this.handleChange.bind(this, 'phd')} />
+          onOverlayClick={this.handleToggle}>
+          <h2>{this.state.dialogTitle}</h2>
+          <Tabs index={this.state.tabIndex} onChange={this.handleTabChange} >
+            <Tab label={ _t.translate('Basic info') }>
+              <Input type='text' label={ _t.translate('Topic title') } hint="Topic title" name='title' required value={this.state.title} onChange={this.handleChange.bind(this, 'title')} />
+              <Input type='text' label={ _t.translate('Short abstract') } hint="Short info about the topic"  multiline rows={2} name='shortAbstract' value={this.state.shortAbstract} onChange={this.handleChange.bind(this, 'shortAbstract')} />
+              <Input type='text' label={ _t.translate('Tags') } hint="Divide tags using ;" value={this.state.tags} onChange={this.handleChange.bind(this, 'tags')} />
+              <table>
+                <thead>
+                  <tr>
+                    <th colSpan="4"><h4>{ _t.translate('Degrees') }</h4></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td style={{ paddingRight: '10px'}}>
+                      <Checkbox
+                        checked={this.state.bachelor}
+                        label={ _t.translate('Bachelor') }
+                        name='grades'
+                        onChange={this.handleChange.bind(this, 'bachelor')} />
+                    </td>
+                    <td style={{ paddingRight: '10px'}}>
+                      <Checkbox
+                        checked={this.state.master}
+                        label={ _t.translate('Master') }
+                        name='grades'
+                        onChange={this.handleChange.bind(this, 'master')} />
+                    </td>
+                    <td style={{ paddingRight: '10px'}}>
+                      <Checkbox
+                        checked={this.state.phd}
+                        label={ _t.translate('PhD') }
+                        name='grades'
+                        onChange={this.handleChange.bind(this, 'phd')} />
+                    </td>
+                    <td>
+                      <Checkbox
+                        checked={this.state.highSchool}
+                        label={ _t.translate('High school') }
+                        name='grades'
+                        onChange={this.handleChange.bind(this, 'highSchool')} />
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </Tab>
+            <Tab label={ _t.translate('Topic description') }>
+              <Input type='text' label={ _t.translate('Topic description') } hint="Full topic description in markdown" multiline rows={20} value={this.state.description} onChange={this.handleChange.bind(this, 'description')} />
+            </Tab>
+            <Tab label={ _t.translate('Preview') }>
+              <p>Below you can see a preview of the description. Uses <a href="https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet" target="_blank">Markdown</a>.</p>
+              <ReactMarkdown source={ this.state.description } />
+            </Tab>
+          </Tabs>
         </Dialog>
       </div>
     )

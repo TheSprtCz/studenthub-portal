@@ -6,6 +6,15 @@ h1, h2, h3 {
   margin: 0px;
 }
 
+#topNavBar button {
+  color: white !important;
+}
+
+.container-fluid h1, .container-fluid h2, .container-fluid h3 {
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
 .container h1, .container h2, .container h3 {
   margin-top: 20px;
   margin-bottom: 20px;

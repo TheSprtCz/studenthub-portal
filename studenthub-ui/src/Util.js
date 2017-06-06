@@ -1,3 +1,7 @@
+import _t from './Translations';
+
+var config = require('../config/config.json');
+
 var Util = function() { };
 
 /**
@@ -71,8 +75,8 @@ Util.userRoles = {
 }
 
 Util.rolesSource = [
-  { value: 'STUDENT', label: 'Student' },
-  { value: 'AC_SUPERVISOR', label: 'Academic Supervisor'}
+  { value: 'STUDENT', label: _t.translate('Student') },
+  { value: 'AC_SUPERVISOR', label: _t.translate('Academic supervisor')}
 ]
 
 /**
@@ -128,19 +132,17 @@ Util.gradesSource = [
 ]
 
 Util.degreesSource = [
-    { value: 'BACHELOR', label: 'Bachelor Degree' },
-    { value: 'MASTER', label: 'Master Degree'},
-    { value: 'PhD', label: 'PhD Degree'}
+    { value: 'HIGH_SCHOOL', label: _t.translate('High school')},
+    { value: 'BACHELOR', label: _t.translate('Bachelor')},
+    { value: 'MASTER', label: _t.translate('Master')},
+    { value: 'PhD', label: _t.translate('PhD')}
 ]
 
 Util.TOPICS_PER_PAGE = 5;
-
-Util.TERMS_OF_USE = 'Please read these Terms and Conditions ("Terms", "Terms and Conditions") carefully before using the http://www.mywebsite.com (change this) website and the My Mobile App (change this) mobile application (the "Service") operated by My Company (change this) ("us", "we", or "our").'
-
-Util.PERSONAL_DATA_PROCESSING = 'Please read these Terms and Conditions ("Terms", "Terms and Conditions") carefully before using the http://www.mywebsite.com (change this) website and the My Mobile App (change this) mobile application (the "Service") operated by My Company (change this) ("us", "we", or "our").';
-
-Util.PORTAL_VERSION = "1.0";
-
+Util.TERMS_OF_USE = config.termsOfUse;
+Util.PERSONAL_DATA_PROCESSING = config.personalDataProc;
+Util.PORTAL_VERSION = config.version;
 Util.TOKEN_COOKIE_NAME = "sh-token";
+Util.ADMIN_EMAIL = config.adminEmail;
 
 export default Util;

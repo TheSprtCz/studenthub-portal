@@ -3,6 +3,7 @@ import Dialog from 'react-toolbox/lib/dialog/Dialog.js';
 import Link from 'react-toolbox/lib/link/Link.js';
 import ReactMarkdown from 'react-markdown';
 import Util from '../Util.js';
+import _t from '../Translations.js';
 
 class TermsOfUseDialog extends React.Component {
   state = {
@@ -14,19 +15,19 @@ class TermsOfUseDialog extends React.Component {
   }
 
   actions = [
-    { label: "Close", onClick: this.handleToggle }
+    { label: _t.translate('Close'), onClick: this.handleToggle }
   ];
 
   render () {
     return (
       <div>
-        <Link label='Terms of Use' onClick={this.handleToggle} />
+        <Link label={ _t.translate('Terms of Use')} onClick={this.handleToggle} />
         <Dialog
           actions={this.actions}
           active={this.state.active}
           onEscKeyDown={this.handleToggle}
           onOverlayClick={this.handleToggle}
-          title='Terms of Use' >
+          title={ _t.translate('Terms of Use')} >
           <ReactMarkdown source={ Util.TERMS_OF_USE } />
         </Dialog>
       </div>

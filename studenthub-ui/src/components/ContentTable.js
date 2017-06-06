@@ -8,6 +8,8 @@ import UniversityDialog from './UniversityDialog.js';
 import { UniversityTable, UniversityRow, UniversityHead} from './UniversityTable.js';
 import { FacultyTable, FacultyRow, FacultyHead} from './FacultyTable.js';
 
+import _t from '../Translations.js'
+
 /**
  * Renders the content Table and all its inside elements.
  */
@@ -17,7 +19,7 @@ class ContentTable extends Component {
 
     this.state = {
       selectedUniversity: -1,
-      header: "Universities",
+      header: _t.translate("Universities"),
       universityData: [],
       facultyData: [],
       editId: -1,
@@ -63,7 +65,7 @@ class ContentTable extends Component {
       this.setState({
         universityData: newData,
         selectedUniversity: -1,
-        header: "Universities"
+        header: _t.translate("Universities")
       });
     }.bind(this));
   }
@@ -99,7 +101,7 @@ class ContentTable extends Component {
       this.setState({
         facultyData: newData,
         selectedUniversity: id,
-        header: this.state.universityData[id].name+" faculties"
+        header: this.state.universityData[id].name + " " + _t.translate("faculties")
       });
     }.bind(this));
   }

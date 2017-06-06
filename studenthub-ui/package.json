@@ -1,6 +1,6 @@
 {
-  "name": "studenthub-ui",
-  "version": "1.0.0",
+  "name": "studenthub-ui-dev",
+  "version": "0.1.0",
   "homepage": ".",
   "private": true,
   "devDependencies": {
@@ -12,8 +12,10 @@
     "react-toolbox-themr": "^1.0.2"
   },
   "dependencies": {
+    "gravatar": "^1.6.0",
     "js-cookie": "^2.1.4",
     "jwt-decode": "^2.2.0",
+    "localize": "^0.4.7",
     "react": "^15.4.2",
     "react-dom": "^15.4.2",
     "react-markdown": "^2.5.0",

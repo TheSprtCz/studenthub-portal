@@ -5,14 +5,18 @@ import DatePicker from 'react-toolbox/lib/date_picker/DatePicker.js';
 import Dropdown from 'react-toolbox/lib/dropdown/Dropdown.js';
 import Tab from 'react-toolbox/lib/tabs/Tab.js';
 import Tabs from 'react-toolbox/lib/tabs/Tabs.js';
-import List from 'react-toolbox/lib/list/List.js';
-import ListSubHeader from 'react-toolbox/lib/list/ListSubHeader.js';
 import ListCheckbox from 'react-toolbox/lib/list/ListCheckbox.js';
 
 import SiteSnackbar from '../components/SiteSnackbar.js';
+import AddButton from '../components/AddButton.js';
+import EditButton from '../components/EditButton.js';
+import DeleteButton from '../components/DeleteButton.js';
+import TaskDialog from '../components/TaskDialog.js';
+import TopicDetailsDialog from '../components/TopicDetailsDialog.js';
 
 import Util from '../Util.js';
 import Auth from '../Auth.js';
+import _t from '../Translations.js';
 
 class FacultySelect extends React.Component {
   constructor(props) {
@@ -71,7 +75,7 @@ class FacultySelect extends React.Component {
     return (
       <Dropdown
         auto required
-        label='Faculty'
+        label={ _t.translate('Faculty') }
         onChange={this.handleChange}
         source={this.state.labels}
         value={this.state.value}
@@ -81,23 +85,23 @@ class FacultySelect extends React.Component {
 }
 
 class ApplicationForm extends Component {
-  constructor(props) {
-    super(props);
+  state = {
+    techLeader: { },
+    academicSupervisor: { },
+    student: { },
+    officialAssignment: "",
+    grade: "",
+    degree: "",
+    thesisFinish: "",
+    thesisStarted: "",
+    topic: { },
+    faculty: "",
+    snackbarLabel: "",
+    snackbarActive: false,
+    editId: -1
+  };
 
-    this.state = {
-      student: "",
-      officialAssignment: "",
-      grade: "",
-      degree: "",
-      thesisFinish: "",
-      thesisStarted: "",
-      topic: "",
-      faculty: "",
-      academicSupervisor: "",
-      techLeader: "",
-      snackbarLabel: "",
-      snackbarActive: false
-    };
+  componentDidMount() {
     this.getData();
   }
 
@@ -113,16 +117,16 @@ class ApplicationForm extends Component {
       }
     }).then(function(json) {
       this.setState({
+        techLeader: json.techLeader,
+        academicSupervisor: json.academicSupervisor,
         student: json.student,
         officialAssignment: json.officialAssignment,
         grade: json.grade,
         degree: json.degree,
-        thesisFinish: json.thesisFinish,
-        thesisStarted: json.thesisStarted,
+        thesisFinish: new Date(json.thesisFinish),
+        thesisStarted: new Date(json.thesisStarted),
         topic: json.topic,
-        faculty: json.faculty,
-        academicSupervisor: json.academicSupervisor,
-        techLeader: json.techLeader
+        faculty: json.faculty
       });
     }.bind(this));
   }
@@ -134,6 +138,8 @@ class ApplicationForm extends Component {
       headers: { "Content-Type" : "application/json" },
       body: JSON.stringify({
         student: this.state.student,
+        techLeader: this.state.techLeader,
+        academicSupervisor: this.state.academicSupervisor,
         officialAssignment: this.state.officialAssignment,
         grade: this.state.grade,
         degree: this.state.degree,
@@ -152,7 +158,7 @@ class ApplicationForm extends Component {
       } else {
         throw new Error('There was a problem with network connection.');
       }
-    }).then(function(json) {});
+    }.bind(this));
   }
 
   handleLead = () => {
@@ -161,10 +167,16 @@ class ApplicationForm extends Component {
       credentials: 'same-origin',
       headers: { "Content-Type" : "application/json" },
       body: JSON.stringify({
-        techLeader: {id: Auth.getUserInfo().sub.substring(Auth.getUserInfo().sub.indexOf("#")+1)},
-        student: this.state.app.student,
-        topic: this.state.app.topic,
-        faculty: this.state.app.faculty
+        academicSupervisor: this.state.academicSupervisor,
+        techLeader: {id: Auth.getUserInfo().sub},
+        student: this.state.student,
+        topic: this.state.topic,
+        faculty: this.state.faculty,
+        officialAssignment: this.state.officialAssignment,
+        grade: this.state.grade,
+        degree: this.state.degree,
+        thesisFinish: this.state.thesisFinish,
+        thesisStarted: this.state.thesisStarted
       })
     }).then(function(response) {
       if (response.ok) {
@@ -176,7 +188,37 @@ class ApplicationForm extends Component {
       } else {
         throw new Error('There was a problem with network connection.');
       }
-    }).then(function(json) {});
+    }.bind(this));
+  };
+
+  handleSupervise = () => {
+    fetch('/api/applications/' + this.props.id, {
+      method: 'put',
+      credentials: 'same-origin',
+      headers: { "Content-Type" : "application/json" },
+      body: JSON.stringify({
+        academicSupervisor: {id: Auth.getUserInfo().sub},
+        techLeader: this.state.techLeader,
+        student: this.state.student,
+        topic: this.state.topic,
+        faculty: this.state.faculty,
+        officialAssignment: this.state.officialAssignment,
+        grade: this.state.grade,
+        degree: this.state.degree,
+        thesisFinish: this.state.thesisFinish,
+        thesisStarted: this.state.thesisStarted
+      })
+    }).then(function(response) {
+      if (response.ok) {
+        this.setState({
+          snackbarActive: true,
+          snackbarLabel: "You are now supervising this application!"
+        });
+        this.getData();
+      } else {
+        throw new Error('There was a problem with network connection.');
+      }
+    }.bind(this));
   };
 
   handleChange = (name, value) => {
@@ -190,53 +232,66 @@ class ApplicationForm extends Component {
   render() {
     return(
       <div className="col-md-12">
-        <div>Topic: <a href="#">{ this.state.topic.title }</a></div>
+        {(Util.isEmpty(this.state.topic.title)) ? '' :
+        <div className="text-center">
+          <TopicDetailsDialog topic={ this.state.topic } label={ _t.translate('Topic details') + ": " + this.state.topic.title} />
+          <hr />
+        </div>}
         <br />
         <div className="col-md-6">
-          <h3>Basic information</h3>
+          <h3>{ _t.translate('Basic info') }</h3>
           <DatePicker
-            label='Thesis started'
+            label={ _t.translate('Start') }
+            icon='date_range'
             onChange={this.handleChange.bind(this, 'thesisStarted')}
-            value={(Util.isEmpty(this.state.thesisStarted)) ? "" : this.state.thesisStarted} />
+            value={(Util.isEmpty(this.state.thesisStarted)) ? new Date() : this.state.thesisStarted} />
           <DatePicker
-            label='Thesis finish'
+            label={ _t.translate('Finish') }
+            icon='date_range'
             onChange={this.handleChange.bind(this, 'thesisFinish')}
-            value={(Util.isEmpty(this.state.thesisFinish)) ? "" : this.state.thesisFinish} />
+            value={(Util.isEmpty(this.state.thesisFinish)) ? new Date() : this.state.thesisFinish} />
           <Input
             type='text'
-            label='Official Assignment'
+            label={ _t.translate('Official Assignment') }
             multiline rows={8}
+            icon='assignment'
             value={(Util.isEmpty(this.state.officialAssignment)) ? "" : this.state.officialAssignment}
             onChange={this.handleChange.bind(this, 'officialAssignment')} />
         </div>
         <div className="col-md-6">
-          <h3>Administration</h3>
+          <h3>{ _t.translate('Administration') }</h3>
           <FacultySelect changeHandler={this.handleChange.bind(this, 'faculty')} baseValue={this.state.faculty} />
           <Input
             type='text'
-            label='Academic Supervisor'
-            value={(Util.isEmpty(this.state.academicSupervisor)) ? "" : this.state.academicSupervisor.email}
-            onChange={this.handleChange.bind(this, 'academicSupervisor')} disabled />
+            label={ _t.translate('Academic supervisor') }
+            icon='supervisor_account'
+            value={(Util.isEmpty(this.state.academicSupervisor)) ? "" : this.state.academicSupervisor.email} disabled />
           <Input
             type='text'
-            label='Tech Leader'
-            value={(Util.isEmpty(this.state.techLeader)) ? "" : this.state.techLeader.email}
-            onChange={this.handleChange.bind(this, 'techLeader')} disabled />
+            label={ _t.translate('Technical leader') }
+            icon='code'
+            value={(Util.isEmpty(this.state.techLeader)) ? "" : this.state.techLeader.email} disabled />
           <Dropdown
             name='grade'
-            label='Grade'
+            label={ _t.translate('Grade') }
+            icon='grade'
+            disabled={ Auth.hasRole(Util.userRoles.student) ? true : false }
             onChange={this.handleChange.bind(this, 'grade')}
             source={Util.gradesSource}
             value={this.state.grade} />
           <Dropdown
             name='degree'
-            label='Degree'
+            label={ _t.translate('Degree') }
+            icon='account_balance'
             onChange={this.handleChange.bind(this, 'degree')}
             source={Util.degreesSource}
             value={this.state.degree} />
         </div>
-        {(Auth.hasRole("TECH_LEADER") && (this.state.techLeader === null || typeof this.state.techLeader === 'undefined')) ? <Button icon='person_add' label='Lead this application' raised primary className='pull-right' onClick={this.handleLead}/> : '' }
-        <Button icon='save' label='Save changes' raised primary className='pull-right' onClick={this.handleSubmit} />
+        {/*
+        {(Auth.hasRole("TECH_LEADER")) ? <Button icon='person_add' label='Lead this application' raised primary className='pull-left' onClick={this.handleLead}/> : '' }
+        {(Auth.hasRole("AC_SUPERVISOR")) ? <Button icon='person_add' label='Supervise this application' raised primary className='pull-left' onClick={this.handleSupervise}/> : '' }
+        */}
+        <Button icon='save' label={ _t.translate('Save changes') } raised primary className='pull-right' onClick={this.handleSubmit} />
         <SiteSnackbar active={this.state.snackbarActive} label={this.state.snackbarLabel} toggleHandler={() => this.toggleSnackbar()} />
       </div>
     )
@@ -244,15 +299,28 @@ class ApplicationForm extends Component {
 }
 
 class TaskList extends React.Component {
-  constructor(props) {
-    super(props);
+  state = { tasks: [], app: { }, snackbarLabel: "", snackbarActive: false, dialogActive: false };
 
-    this.state = {
-      tasks: [],
-      snackbarLabel: "",
-      snackbarActive: false
-    };
+  componentDidMount() {
+    this.getApp();
     this.getTasks();
+  }
+
+  getApp = () => {
+    fetch('/api/applications/' + this.props.id, {
+      method: 'get',
+      credentials: 'same-origin'
+    }).then(function(response) {
+      if(response.ok) {
+        return response.json();
+      } else {
+        throw new Error('There was a problem with network connection.');
+      }
+    }).then(function(json) {
+      this.setState({
+        app: json
+      });
+    }.bind(this));
   }
 
   getTasks = () => {
@@ -272,7 +340,7 @@ class TaskList extends React.Component {
         newData.push({
           application: json[i].application,
           completed: json[i].completed,
-          deadline: json[i].deadline,
+          deadline: new Date(json[i].deadline),
           id: json[i].id,
           title: json[i].title
         });
@@ -284,7 +352,7 @@ class TaskList extends React.Component {
   }
 
   handleCompletionChange = (id) => {
-    fetch('/api/applications/' + this.props.id + '/tasks', {
+    fetch('/api/tasks/'+this.state.tasks[id].id, {
       method: 'put',
       credentials: 'same-origin',
       headers: { "Content-Type" : "application/json" },
@@ -299,7 +367,7 @@ class TaskList extends React.Component {
       if (response.ok) {
         this.setState({
           snackbarLabel: "Task status changed successfully!",
-          snackbarActive: false
+          snackbarActive: true
         });
         this.getTasks();
       } else {
@@ -308,20 +376,80 @@ class TaskList extends React.Component {
     }.bind(this));
   }
 
+  handleDelete = (id) => {
+    fetch('/api/tasks/'+id, {
+      method: 'delete',
+      credentials: 'same-origin'
+      }).then(function(response) {
+      if (response.ok) {
+        this.setState({
+          snackbarLabel: "The task has been deleted  successfully!",
+          snackbarActive: true
+        });
+        this.getTasks();
+      } else {
+        throw new Error('There was a problem with network connection.');
+      }
+    }.bind(this));
+  }
+
+  /**
+   * Toggles the visiblity of the Dialog.
+   * @param id     the id of the task to edit
+   * @param label  new snackbarLabel
+   */
+  toggleDialog = (id, label) => {
+    this.setState({
+      dialogActive: !this.state.dialogActive,
+      editId: id
+    })
+    if(label === "") return;
+    else {
+      this.setState({
+        snackbarLabel: label,
+        snackbarActive: true
+      })
+      this.getTasks();
+    }
+  }
+
+  toggleSnackbar = () => {
+    this.setState({ snackbarActive: !this.state.snackbarActive });
+  }
+
   render () {
     return (
       <div>
-        <List>
-          <ListSubHeader caption='TODO List' />
-          {this.state.tasks.map( (task, index) => (
-            <ListCheckbox
-              caption={task.title}
-              checked={task.completed}
-              legend={task.deadline}
-              onChange={() => this.handleCompletionChange(index)} />
-          ))}
-        </List>
+        <table width="100%">
+          <tbody>
+            <tr>
+              <td colSpan="2">
+                <AddButton toggleHandler={() => this.toggleDialog(-1, "")} />
+              </td>
+            </tr>
+            {this.state.tasks.map( (task, index) => (
+            <tr key={task.id}>
+              <td width="80%">
+                  <ListCheckbox
+                    key={task.id}
+                    caption={task.title}
+                    checked={task.completed}
+                    legend={(Util.isEmpty(task.deadline)) ? _t.translate('Has no deadline') : task.deadline.toString()}
+                    onChange={() => this.handleCompletionChange(index)} ripple selectable />
+              </td>
+              <td width="20%">
+                <span className="pull-right">
+                  <EditButton toggleHandler={() => this.toggleDialog(index, "")} />
+                  <DeleteButton deleteHandler={() => this.handleDelete(task.id)} />
+                </span>
+              </td>
+            </tr>
+            ))}
+          </tbody>
+        </table>
         <SiteSnackbar active={this.state.snackbarActive} label={this.state.snackbarLabel} toggleHandler={() => this.toggleSnackbar()} />
+        <TaskDialog active={this.state.dialogActive} task={(this.state.editId === -1) ? null : this.state.tasks[this.state.editId]}
+          toggleHandler={(label) => this.toggleDialog(this.state.editId, label)} app={this.state.app} />
       </div>
     );
   }
@@ -337,8 +465,8 @@ class TopicApplicationDetails extends Component {
   render () {
     return (
       <Tabs index={this.state.index} onChange={this.handleTabChange}>
-        <Tab label='Application Details'><ApplicationForm id={this.props.id} /></Tab>
-        <Tab label='Task List'><TaskList id={this.props.id} /></Tab>
+        <Tab label={ _t.translate('Application details') }><ApplicationForm id={this.props.id} /></Tab>
+        <Tab label={ _t.translate('Task list') }><TaskList id={this.props.id} /></Tab>
       </Tabs>
     );
   }
@@ -346,7 +474,7 @@ class TopicApplicationDetails extends Component {
 
 const Application = ({ match }) => (
   <div>
-    <h1>Application details</h1>
+    <h1>{ _t.translate('Application details') }</h1>
     <TopicApplicationDetails id={match.params.id} />
   </div>
 );
