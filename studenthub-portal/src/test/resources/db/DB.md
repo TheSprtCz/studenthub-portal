@@ -86,13 +86,13 @@ Test Database contains these entries:
 
 ## Topics
 
-| id  | title               | enabled | shortAbstract                       | description                | creator | supervisors      | degrees                  | tags                      |
-| --- | ------------------- | ------- | ----------------------------------- | -------------------------- | ------- | ---------------- | ------------------------ | ------------------------- |
-| 1   | Melon cutter        | true    | Create simple laser melon cutter    | Laser melon cutter         | 9       | [3,4,6]          | [PhD,MASTER]             | [Laser, Assembler, C]     |
-| 2   | Dropwizard          | true    | Simple app using Dropwizard stack   | REST endpoints             | 11      | [7,5,2]          | [BACHELOR, HIGH_SCHOOL]  | [Java, REST, Web]         |
-| 3   | Eclipse plugin      | true    | Create custom eclipse plugin        | Eclipse                    | 10      | [5,7,4]          | [MASTER, BACHELOR]       | [Java, C, Maven]          |
-| 4   | React UI            | true    | Create nice and functional UI       | JavaScript & React         | 9       | [6,3,2]          | [HIGH_SCHOOL,PhD]        | [JavaScript, Web]         |
-| 5   | Thesis management   | false   | Create new TMS                      | Web                        | 10      | [7]              | [PHD]                    | [Web]                     |
+| id  | title               | enabled | shortAbstract                       | description                | secondaryDescription    | creator | supervisors      | degrees                  | tags                      |
+| --- | ------------------- | ------- | ----------------------------------- | -------------------------- | ----------------------- | ------- | ---------------- | ------------------------ | ------------------------- |
+| 1   | Melon cutter        | true    | Create simple laser melon cutter    | Laser melon cutter         | Laserový kráječ melounů | 9       | [3,4,6]          | [PhD,MASTER]             | [Laser, Assembler, C]     |
+| 2   | Dropwizard          | true    | Simple app using Dropwizard stack   | REST endpoints             | RESTové endpointy       | 11      | [7,5,2]          | [BACHELOR, HIGH_SCHOOL]  | [Java, REST, Web]         |
+| 3   | Eclipse plugin      | true    | Create custom eclipse plugin        | Eclipse                    | Eclipse                 | 10      | [5,7,4]          | [MASTER, BACHELOR]       | [Java, C, Maven]          |
+| 4   | React UI            | true    | Create nice and functional UI       | JavaScript & React         | ----------------------- | 9       | [6,3,2]          | [HIGH_SCHOOL,PhD]        | [JavaScript, Web]         |
+| 5   | Thesis management   | false   | Create new TMS                      | Web                        | ----------------------- | 10      | [7]              | [PHD]                    | [Web]                     |
                 
 
 ## Topic Application
