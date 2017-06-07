@@ -192,7 +192,6 @@ public class StudentHubApplication extends Application<StudentHubConfiguration> 
         .setRealm(this.getName())
         .buildAuthFilter();
 
-    // TODO: merge with cookieCredentialAuthFilter into JwtAuthFilter?
     AuthFilter<String, User> oauthCredentialAuthFilter = new OAuthCredentialAuthFilter.Builder<User>()
         .setAuthenticator(tokenAuth)
         .setAuthorizer(authorizer)

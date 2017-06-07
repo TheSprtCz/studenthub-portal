@@ -132,8 +132,6 @@ public class TopicApplicationResource {
     if (app.getId() == null)
       throw new WebApplicationException(Status.INTERNAL_SERVER_ERROR);
 
-    // TODO: notify topic creator and supervisor(s)
-
     return Response.created(UriBuilder.fromResource(TopicApplicationResource.class).path("/{id}").build(app.getId()))
         .entity(app).build();
   }

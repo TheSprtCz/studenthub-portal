@@ -35,9 +35,6 @@ import javax.validation.constraints.NotNull;
 
 import org.hibernate.validator.constraints.NotEmpty;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 @Entity
 @Table(name = "Topics")
 @NamedQueries({ @NamedQuery(name = "Topic.findAll", query = "SELECT topic FROM Topic topic"),
@@ -58,10 +55,6 @@ public class Topic {
   private String secondaryDescription;
   private boolean enabled = true;
 
-  /*
-   * TODO: This is a possible data integrity issue (e.g. student can be a
-   * leader)
-   */
   @NotNull
   @ManyToOne(fetch = FetchType.EAGER)
   private User creator;
@@ -73,9 +66,6 @@ public class Topic {
   @ElementCollection(fetch = FetchType.EAGER)
   private Set<String> tags;
 
-  /*
-   * TODO: topic degrees should be stored/configurable in DB or conf file
-   */
   @ElementCollection(fetch = FetchType.EAGER)
   private Set<TopicDegree> degrees;
 
