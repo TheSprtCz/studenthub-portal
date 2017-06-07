@@ -34,10 +34,10 @@ All users have password "test".
 
 ## Topics
 
-| id  | title               | enabled | shortAbstract                       | description                | secondaryDescription     | creator | supervisors      | degrees                  | tags                      |
-| --- | ------------------- | ------- | ----------------------------------- | -------------------------- | -----------------------  | ------- | ---------------- | ------------------------ | ------------------------- |
-| 1   | Dropwizard          | true    | Simple app using Dropwizard stack   | REST endpoints             | RESTové endpointy        | 3       | [2]              | [BACHELOR, MASTER]       | [Java, REST, Web]         |
-| 2   | React UI            | false   | Create nice and functional UI       | JavaScript & React         | ------------------------ | 3       | [2]              | [HIGH_SCHOOL,PhD]        | [JavaScript, Web]         |
+| id  | title               | secondaryTitle | enabled | shortAbstract                       | description                | secondaryDescription     | creator | supervisors      | degrees                  | tags                      |
+| --- | ------------------- | -------------- | ------- | ----------------------------------- | -------------------------- | -----------------------  | ------- | ---------------- | ------------------------ | ------------------------- |
+| 1   | Dropwizard          | -------------- | true    | Simple app using Dropwizard stack   | REST endpoints             | RESTové endpointy        | 3       | [2]              | [BACHELOR, MASTER]       | [Java, REST, Web]         |
+| 2   | React UI            | Reactové UI    | false   | Create nice and functional UI       | JavaScript & React         | ------------------------ | 3       | [2]              | [HIGH_SCHOOL,PhD]        | [JavaScript, Web]         |
 
 ## Topic Application
 

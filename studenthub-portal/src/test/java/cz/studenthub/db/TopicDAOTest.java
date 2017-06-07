@@ -39,7 +39,7 @@ public class TopicDAOTest {
       HashSet<TopicDegree> degrees = new HashSet<TopicDegree>();
       degrees.add(TopicDegree.MASTER);
 
-      Topic topic = new Topic("Topic", "short", "description", null, user, null, null, degrees);
+      Topic topic = new Topic("Topic", null, "short", "description", null, user, null, null, degrees);
       Topic created = topicDAO.create(topic);
       assertNotNull(created.getId());
       assertEquals(topic, created);

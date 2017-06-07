@@ -35,9 +35,6 @@ import javax.validation.constraints.NotNull;
 
 import org.hibernate.validator.constraints.NotEmpty;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 @Entity
 @Table(name = "Topics")
 @NamedQueries({ @NamedQuery(name = "Topic.findAll", query = "SELECT topic FROM Topic topic"),
@@ -53,6 +50,7 @@ public class Topic {
 
   @NotEmpty
   private String title;
+  private String secondaryTitle;
   private String shortAbstract;
   private String description;
   private String secondaryDescription;
@@ -82,9 +80,10 @@ public class Topic {
   public Topic() {
   }
 
-  public Topic(String title, String shortAbstract, String description, String secondaryDescription, User creator, Set<User> academicSupervisors,
+  public Topic(String title, String secondaryTitle, String shortAbstract, String description, String secondaryDescription, User creator, Set<User> academicSupervisors,
       Set<String> tags, Set<TopicDegree> degrees) {
     this.title = title;
+    this.secondaryTitle = secondaryTitle;
     this.shortAbstract = shortAbstract;
     this.description = description;
     this.secondaryDescription = secondaryDescription;
@@ -108,6 +107,14 @@ public class Topic {
 
   public void setTitle(String title) {
     this.title = title;
+  }
+
+  public String getSecondaryTitle() {
+    return secondaryTitle;
+  }
+
+  public void setSecondaryTitle(String secondaryTitle) {
+    this.secondaryTitle = secondaryTitle;
   }
 
   public String getShortAbstract() {

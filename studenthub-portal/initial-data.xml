@@ -124,6 +124,7 @@
             <column name="enabled" valueBoolean="true"/>
             <column name="shortabstract" value="Create nice and functional UI"/>
             <column name="title" value="React UI"/>
+            <column name="secondarytitle" value="Reactové UI"/>
             <column name="creator_id" valueNumeric="3"/>
         </insert>
         <sql>SELECT setval('topics_id_seq', 2)</sql>
