@@ -51,6 +51,9 @@ database:
 # jwt secret
 jwtSecret: ${SH_JWT_SECRET:-superSecret12345}
 
+# basic auth
+useBasicAuth: ${SH_BASIC_AUTH:-false}
+
 # smtp config
 smtp:
   server: ${SMTP_SERVER:-localhost}
