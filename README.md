@@ -51,7 +51,7 @@ There are several ways of contribution to our project, all of them are more than
 
 ### Other
 
-However, we would appreciate also other forms of contribution, e.g. graphics, blgo post, bug report, etc. Read more at:
+However, we would appreciate also other forms of contribution, e.g. graphics, blog post, bug report, etc. Read more at:
 
 * [Contributing to Open Source on GitHub](https://guides.github.com/activities/contributing-to-open-source/)
 * [How getting started in open source can help your career](https://opensource.com/life/16/1/3-new-open-source-contributors-share-their-experiences)
