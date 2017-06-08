@@ -17,6 +17,7 @@ import org.testng.annotations.Test;
 
 import cz.studenthub.IntegrationTestSuite;
 import cz.studenthub.StudentHubConfiguration;
+import cz.studenthub.core.Project;
 import cz.studenthub.core.Topic;
 import cz.studenthub.core.TopicApplication;
 import cz.studenthub.core.User;
@@ -43,7 +44,7 @@ public class TopicResourceTest {
       .request(), client).get(new GenericType<List<User>>(){});
   }
 
-  @Test(dependsOnGroups = "migrate")
+  @Test(dependsOnGroups = "login")
   public void listTopics() {
     List<Topic> list = fetchTopics();
 
@@ -51,7 +52,7 @@ public class TopicResourceTest {
     assertEquals(list.size(), 5);
   }
 
-  @Test
+  @Test(dependsOnGroups = "migrate", groups = "fetchTopic")
   public void fetchTopic() {
     Topic topic = client.target(String.format("http://localhost:%d/api/topics/2", dropwizard.getLocalPort()))
         .request(MediaType.APPLICATION_JSON)
@@ -74,7 +75,6 @@ public class TopicResourceTest {
       .request(MediaType.APPLICATION_JSON), client).post(Entity.json(topic.toJSONString()));
 
     assertNotNull(response);
-    System.out.println(response);
     assertEquals(response.getStatus(), 201);
     assertEquals(fetchTopics().size(), 6);
     assertEquals((long) response.readEntity(Topic.class).getId(), 6);
@@ -170,5 +170,15 @@ public class TopicResourceTest {
 
     assertNotNull(topics);
     assertEquals(topics.size(), 1);
+  }
+
+  @Test(dependsOnGroups = "migrate")
+  public void fetchProjects() {
+    List<Project> projects = client.target(String.format("http://localhost:%d/api/topics/2/projects", dropwizard.getLocalPort())).request()
+        .get(new GenericType<List<Project>>(){}); 
+
+    assertNotNull(projects);
+    assertEquals(projects.size(), 1);
+    assertEquals((long) projects.get(0).getId(), 1);
   }
 }

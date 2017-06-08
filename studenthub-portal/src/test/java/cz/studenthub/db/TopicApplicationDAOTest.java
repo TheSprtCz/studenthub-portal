@@ -7,6 +7,8 @@ import java.util.List;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import com.google.common.collect.Lists;
+
 import cz.studenthub.DAOTestSuite;
 import cz.studenthub.core.Faculty;
 import cz.studenthub.core.Topic;
@@ -122,6 +124,20 @@ public class TopicApplicationDAOTest {
       assertEquals(2, apps.size());
       for (TopicApplication app : apps) {
         assertEquals(topic, app.getTopic());
+      }
+    });
+  }
+
+  @Test
+  public void listAllTopicApplicationByTopics() {
+    DATABASE.inTransaction(() -> {
+      List<Topic> topics = Lists.newArrayList(topicDAO.findById((long) 2), topicDAO.findById((long) 1));
+      List<TopicApplication> apps = appDAO.findByTopics(topics);
+
+      assertNotNull(apps);
+      assertEquals(5, apps.size());
+      for (TopicApplication app : apps) {
+        assertTrue(topics.contains(app.getTopic()));
       }
     });
   }

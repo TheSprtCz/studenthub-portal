@@ -23,5 +23,60 @@
             </column>
         </addColumn>
         <addForeignKeyConstraint baseColumnNames="plan_name" baseTableCatalogName="studenthub" baseTableName="companies" baseTableSchemaName="public" constraintName="fkh0lcq5n9spp872lv9lwrc0016" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="name" referencedTableCatalogName="studenthub" referencedTableName="plans" referencedTableSchemaName="public"/>
-    </changeSet>	
+    </changeSet>
+	<changeSet author="phala (generated)" id="projects">
+        <createTable catalogName="studenthub" schemaName="public" tableName="projects">
+            <column autoIncrement="true" name="id" type="BIGSERIAL">
+                <constraints primaryKey="true" primaryKeyName="projects_pkey"/>
+            </column>
+            <column name="description" type="TEXT"/>
+            <column name="name" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <createTable catalogName="studenthub" schemaName="public" tableName="projects_companies">
+            <column name="project_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="companies_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <createTable catalogName="studenthub" schemaName="public" tableName="projects_faculties">
+            <column name="project_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="faculties_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <createTable catalogName="studenthub" schemaName="public" tableName="projects_topics">
+            <column name="project_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="topics_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <createTable catalogName="studenthub" schemaName="public" tableName="projects_users">
+            <column name="project_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="creators_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <addPrimaryKey catalogName="studenthub" columnNames="project_id, companies_id" constraintName="projects_companies_pkey" schemaName="public" tableName="projects_companies"/>
+        <addPrimaryKey catalogName="studenthub" columnNames="project_id, faculties_id" constraintName="projects_faculties_pkey" schemaName="public" tableName="projects_faculties"/>
+        <addPrimaryKey catalogName="studenthub" columnNames="project_id, topics_id" constraintName="projects_topics_pkey" schemaName="public" tableName="projects_topics"/>
+        <addPrimaryKey catalogName="studenthub" columnNames="project_id, creators_id" constraintName="projects_users_pkey" schemaName="public" tableName="projects_users"/>
+        <addForeignKeyConstraint baseColumnNames="project_id" baseTableCatalogName="studenthub" baseTableName="projects_faculties" baseTableSchemaName="public" constraintName="fk1ca3r4x66woqg8cluw2lpbeh0" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableCatalogName="studenthub" referencedTableName="projects" referencedTableSchemaName="public"/>
+        <addForeignKeyConstraint baseColumnNames="project_id" baseTableCatalogName="studenthub" baseTableName="projects_topics" baseTableSchemaName="public" constraintName="fk34my07brsijndudk59skkk6yn" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableCatalogName="studenthub" referencedTableName="projects" referencedTableSchemaName="public"/>
+        <addForeignKeyConstraint baseColumnNames="project_id" baseTableCatalogName="studenthub" baseTableName="projects_companies" baseTableSchemaName="public" constraintName="fkosxa40hvcd3swvm5ikg5xgr28" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableCatalogName="studenthub" referencedTableName="projects" referencedTableSchemaName="public"/>
+        <addForeignKeyConstraint baseColumnNames="project_id" baseTableCatalogName="studenthub" baseTableName="projects_users" baseTableSchemaName="public" constraintName="fk6an6je8yxmy8gvarffdv9syiq" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableCatalogName="studenthub" referencedTableName="projects" referencedTableSchemaName="public"/>      
+        <addForeignKeyConstraint baseColumnNames="creators_id" baseTableCatalogName="studenthub" baseTableName="projects_users" baseTableSchemaName="public" constraintName="fk5bjfk9b53ixbkv35vav1w5tas" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableCatalogName="studenthub" referencedTableName="users" referencedTableSchemaName="public"/>
+        <addForeignKeyConstraint baseColumnNames="faculties_id" baseTableCatalogName="studenthub" baseTableName="projects_faculties" baseTableSchemaName="public" constraintName="fk62hjhwfbiuitxb2rfn0s9vjix" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableCatalogName="studenthub" referencedTableName="faculties" referencedTableSchemaName="public"/> 
+        <addForeignKeyConstraint baseColumnNames="companies_id" baseTableCatalogName="studenthub" baseTableName="projects_companies" baseTableSchemaName="public" constraintName="fkeb0oqe8lvypt1kux1q9p024nq" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableCatalogName="studenthub" referencedTableName="companies" referencedTableSchemaName="public"/>                      
+        <addForeignKeyConstraint baseColumnNames="topics_id" baseTableCatalogName="studenthub" baseTableName="projects_topics" baseTableSchemaName="public" constraintName="fkk28xel2db5tfwi3yjmhb7atar" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableCatalogName="studenthub" referencedTableName="topics" referencedTableSchemaName="public"/> 
+    </changeSet>
 </databaseChangeLog>

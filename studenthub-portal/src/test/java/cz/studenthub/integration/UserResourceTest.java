@@ -16,6 +16,7 @@ import org.testng.annotations.Test;
 
 import cz.studenthub.IntegrationTestSuite;
 import cz.studenthub.StudentHubConfiguration;
+import cz.studenthub.core.Project;
 import cz.studenthub.core.Topic;
 import cz.studenthub.core.TopicApplication;
 import cz.studenthub.core.User;
@@ -43,7 +44,7 @@ public class UserResourceTest {
     List<User> list = fetchUsers();
 
     assertNotNull(list);
-    assertEquals(list.size(), 20);
+    assertEquals(list.size(), 21);
   }
 
   @Test(dependsOnGroups = "login")
@@ -81,7 +82,7 @@ public class UserResourceTest {
 
     assertNotNull(response);
     assertEquals(response.getStatus(), 204);
-    assertEquals(fetchUsers().size(), 19);
+    assertEquals(fetchUsers().size(), 20);
   }
 
   @Test(dependsOnGroups = "login")
@@ -127,5 +128,15 @@ public class UserResourceTest {
 
     assertNotNull(topics);
     assertEquals(topics.size(), 2);
+  }
+
+  @Test(dependsOnGroups = "login")
+  public void fetchOwnedProjects() {
+    List<Project> projects = IntegrationTestSuite.authorizedRequest(client.target(String.format("http://localhost:%d/api/users/9/projects", dropwizard.getLocalPort())).request(), client)
+        .get(new GenericType<List<Project>>(){}); 
+
+    assertNotNull(projects);
+    assertEquals(projects.size(), 1);
+    assertEquals((long) projects.get(0).getId(), 1);
   }
 }

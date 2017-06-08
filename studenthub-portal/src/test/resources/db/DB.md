@@ -94,6 +94,7 @@ Password field is not present because it is encoded and irrelevant when testing 
 | 17  | rep2               | rep2@example.com            | Rep Two            | 871 423 698  | 27.4.2016      | 8       | ------- | [COMPANY_REP]                | ------------------------ | 
 | 18  | rep3               | rep3@example.com            | Rep Three          | 234 156 774  | 27.1.2017      | 7       | ------- | [COMPANY_REP]                | ------------------------ | 
 | 19  | superadmin         | superadmin@example.com      | Super Admin        | 463 147 891  | 5.11.2016      | ------- | ------- | [ALL]                        | ------------------------ |
+| 20  | project            | project@example.com         | Project Leader     | 205 709 548  | 10.6.2017      | ------- | ------- | [PROJECT_LEADER]             | ------------------------ |
 
 ## Activations
 
@@ -114,6 +115,12 @@ Codes were manually assigned to ease testing
 | 4   | React UI            | --------------- | true    | Create nice and functional UI       | JavaScript & React         | ----------------------- | 9       | [6,3,2]          | [HIGH_SCHOOL,PhD]        | [JavaScript, Web]         |
 | 5   | Thesis management   | Správa diplomek | false   | Create new TMS                      | Web                        | ----------------------- | 10      | [7]              | [PHD]                    | [Web]                     |
                 
+## Projects
+
+| id | name                 | description                 | creators     | topics    | faculties | companies |
+| -- | -------------------- | --------------------------- | ------------ | --------- | --------- | --------- |
+| 1  | Web stuff            | All stuff regarding web     | [8,9]        | [2,4]     | [1,2,6,5] | [2,5]     |
+| 2  | Industry things      | Ehm, no idea                | [10]         | [1,5]     | [5,8,6,2] | [6]       |
 
 ## Topic Application
 

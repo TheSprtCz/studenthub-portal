@@ -19,6 +19,7 @@ import cz.studenthub.core.Activation;
 import cz.studenthub.core.Company;
 import cz.studenthub.core.CompanyPlan;
 import cz.studenthub.core.Faculty;
+import cz.studenthub.core.Project;
 import cz.studenthub.core.Task;
 import cz.studenthub.core.Topic;
 import cz.studenthub.core.TopicApplication;
@@ -28,6 +29,7 @@ import cz.studenthub.db.ActivationDAOTest;
 import cz.studenthub.db.CompanyDAOTest;
 import cz.studenthub.db.CompanyPlanDAOTest;
 import cz.studenthub.db.FacultyDAOTest;
+import cz.studenthub.db.ProjectDAOTest;
 import cz.studenthub.db.TaskDAOTest;
 import cz.studenthub.db.TopicApplicationDAOTest;
 import cz.studenthub.db.TopicDAOTest;
@@ -45,7 +47,8 @@ import liquibase.resource.ClassLoaderResourceAccessor;
 
 @RunWith(Suite.class)
 @SuiteClasses({ CompanyDAOTest.class, FacultyDAOTest.class, TaskDAOTest.class, TopicApplicationDAOTest.class,
-   TopicDAOTest.class, UniversityDAOTest.class, UserDAOTest.class, ActivationDAOTest.class, CompanyPlanDAOTest.class})
+   TopicDAOTest.class, UniversityDAOTest.class, UserDAOTest.class, ActivationDAOTest.class, CompanyPlanDAOTest.class,
+   ProjectDAOTest.class})
 public class DAOTestSuite {
 
   public static DAOTestRule database;
@@ -70,6 +73,7 @@ public class DAOTestSuite {
         .addEntityClass(TopicApplication.class)
         .addEntityClass(Task.class)
         .addEntityClass(Activation.class)
+        .addEntityClass(Project.class)
         .addEntityClass(CompanyPlan.class).build();
   }
 
