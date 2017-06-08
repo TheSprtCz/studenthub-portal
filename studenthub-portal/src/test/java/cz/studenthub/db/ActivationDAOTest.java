@@ -14,7 +14,7 @@ import io.dropwizard.testing.junit.DAOTestRule;
 
 public class ActivationDAOTest {
 
-  public static final DAOTestRule DATABASE = DAOTestSuite.database;
+  private static final DAOTestRule DATABASE = DAOTestSuite.database;
   private static ActivationDAO actDAO;
   private static UserDAO userDAO;
 

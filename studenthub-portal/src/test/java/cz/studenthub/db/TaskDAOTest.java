@@ -17,7 +17,7 @@ import io.dropwizard.testing.junit.DAOTestRule;
 
 public class TaskDAOTest {
 
-  public static final DAOTestRule DATABASE = DAOTestSuite.database;
+  private static final DAOTestRule DATABASE = DAOTestSuite.database;
   private static TaskDAO taskDao;
   private static TopicApplicationDAO appDao;
 
