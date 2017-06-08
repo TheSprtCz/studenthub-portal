@@ -41,7 +41,8 @@ import org.hibernate.validator.constraints.NotEmpty;
   @NamedQuery(name = "Topic.findByCreator", query = "SELECT topic FROM Topic topic WHERE topic.creator = :creator"),
   @NamedQuery(name = "Topic.findBySupervisor", query = "SELECT topic FROM Topic topic join topic.academicSupervisors supervisor WHERE supervisor = :supervisor"),
   @NamedQuery(name = "Topic.findByTag", query = "SELECT topic FROM Topic topic join topic.tags tag WHERE tag = :tag AND enabled = TRUE"),
-  @NamedQuery(name = "Topic.findByCompany", query = "SELECT topic FROM Topic topic WHERE topic.creator.company = :company AND enabled = TRUE") })
+  @NamedQuery(name = "Topic.findByCompany", query = "SELECT topic FROM Topic topic WHERE topic.creator.company = :company AND enabled = TRUE"),
+  @NamedQuery(name = "Topic.countByCompany", query = "SELECT COUNT(topic) FROM Topic topic WHERE topic.creator.company = :company AND enabled = TRUE") })
 public class Topic {
 
   @Id

@@ -2,6 +2,7 @@ package cz.studenthub.integration;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertNull;
 
 import java.util.List;
 
@@ -17,6 +18,7 @@ import org.testng.annotations.Test;
 import cz.studenthub.StudentHubConfiguration;
 import cz.studenthub.IntegrationTestSuite;
 import cz.studenthub.core.Company;
+import cz.studenthub.core.CompanyPlan;
 import cz.studenthub.core.Topic;
 import cz.studenthub.core.User;
 import io.dropwizard.testing.DropwizardTestSupport;
@@ -33,14 +35,14 @@ public class CompanyResourceTest {
       client = IntegrationTestSuite.BUILDER.build("CompanyTest");
   }
 
-  private List<Company> fetchFaculties() {
+  private List<Company> fetchCompanies() {
     return client.target(String.format("http://localhost:%d/api/companies/", DROPWIZARD.getLocalPort()))
       .request().get(new GenericType<List<Company>>(){});
   }
 
   @Test(dependsOnGroups = "migrate")
   public void listCompanies() {
-    List<Company> list = fetchFaculties();
+    List<Company> list = fetchCompanies();
 
     assertNotNull(list);
     assertEquals(list.size(), 8);
@@ -57,22 +59,31 @@ public class CompanyResourceTest {
 
   @Test(dependsOnMethods = "listCompanies")
   public void createCompany() {
+    JSONObject plan = new JSONObject();
+    plan.put("name", "TIER_1");
+
     JSONObject company = new JSONObject();
     company.put("name", "New Company");
-
+    company.put("plan", plan);
+    
     Response response = IntegrationTestSuite.authorizedRequest(client.target(String.format("http://localhost:%d/api/companies", DROPWIZARD.getLocalPort()))
       .request(MediaType.APPLICATION_JSON), client).post(Entity.json(company.toJSONString()));
 
     assertNotNull(response);
     assertEquals(response.getStatus(), 201);
-    assertEquals(fetchFaculties().size(), 9);
+    assertNull(response.readEntity(Company.class).getPlan());
+    assertEquals(fetchCompanies().size(), 9);
   }
 
   @Test(dependsOnMethods = "createCompany")
   public void updateCompany() {
+    JSONObject plan = new JSONObject();
+    plan.put("name", "TIER_1");
+
     JSONObject company = new JSONObject();
     company.put("url", "past.me");
     company.put("name", "New Company");
+    company.put("plan", plan);
 
     Response response = IntegrationTestSuite.authorizedRequest(client.target(String.format("http://localhost:%d/api/companies/9", DROPWIZARD.getLocalPort()))
       .request(MediaType.APPLICATION_JSON), client).put(Entity.json(company.toJSONString()));
@@ -86,7 +97,7 @@ public class CompanyResourceTest {
   public void deleteCompany() {
     Response response = IntegrationTestSuite.authorizedRequest(client.target(String.format("http://localhost:%d/api/companies/9", DROPWIZARD.getLocalPort())).request(), client)
       .delete();
-    List<Company> list = fetchFaculties();
+    List<Company> list = fetchCompanies();
 
     assertNotNull(response);
     assertEquals(response.getStatus(), 204);
@@ -109,6 +120,15 @@ public class CompanyResourceTest {
 
     assertNotNull(topics);
     assertEquals(2, topics.size());
+  }
+
+  @Test(dependsOnGroups = "login")
+  public void getPlan() {
+    CompanyPlan plan = IntegrationTestSuite.authorizedRequest(client.target(String.format("http://localhost:%d/api/companies/5/plan", DROPWIZARD.getLocalPort()))
+        .request(MediaType.APPLICATION_JSON), client).get(CompanyPlan.class);
+
+    assertNotNull(plan);
+    assertEquals("TIER_3", plan.getName());
   }
 
 }

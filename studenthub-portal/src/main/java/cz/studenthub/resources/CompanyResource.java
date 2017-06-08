@@ -43,6 +43,7 @@ import com.codahale.metrics.annotation.ExceptionMetered;
 import com.codahale.metrics.annotation.Timed;
 
 import cz.studenthub.core.Company;
+import cz.studenthub.core.CompanyPlan;
 import cz.studenthub.core.Topic;
 import cz.studenthub.core.User;
 import cz.studenthub.core.UserRole;
@@ -50,6 +51,7 @@ import cz.studenthub.db.CompanyDAO;
 import cz.studenthub.db.TopicDAO;
 import cz.studenthub.db.UserDAO;
 import cz.studenthub.util.PagingUtil;
+import io.dropwizard.auth.Auth;
 import io.dropwizard.hibernate.UnitOfWork;
 import io.dropwizard.jersey.params.IntParam;
 import io.dropwizard.jersey.params.LongParam;
@@ -158,4 +160,22 @@ public class CompanyResource {
     return PagingUtil.paging(topicDao.findByCompany(company), startParam.get(), sizeParam.get());
   }
 
+  @GET
+  @Path("/{id}/plan")
+  @UnitOfWork
+  @RolesAllowed({"COMPANY_REP", "ADMIN"})
+  public CompanyPlan fetchPlan(@PathParam("id") LongParam id, @Auth User user) {
+    Company company = companyDao.findById(id.get());
+    if (company == null)
+      throw new WebApplicationException(Status.NOT_FOUND);
+
+    Company userCompany = user.getCompany();
+    // If user's company is the same as the company he want to view or he is admin
+    if ((userCompany != null && userCompany.getId().equals(company.getId())) || user.getRoles().contains(UserRole.ADMIN)) {
+      return company.getPlan();
+    }
+    else {
+      throw new WebApplicationException(Status.FORBIDDEN);
+    }
+  }  
 }

@@ -14,11 +14,17 @@ Initial Database migration file contains these entries:
 | --- | ---------------------------------- |
 | 1   | Faculty of Informatics             |
 
+## Company Plans
+
+| name   | maxTopics | description      |
+| ------ | --------- | ---------------- |
+| TIER_1 | 3         | For basic use    |
+
 ## Companies
 
 | id  | name                               | logoUrl                | city       | country | url            | size      | plan    |
 | --- | ---------------------------------- | ---------------------- | ---------- | ------  | -------------- | --------- | ------- |
-| 1   | Company One                        | c1.com/logo.png        | Brno       | CZ      | www.c1.com     | CORPORATE | TIER_3  | 
+| 1   | Company One                        | c1.com/logo.png        | Brno       | CZ      | www.c1.com     | CORPORATE | TIER_1  | 
 
 ## Users
 

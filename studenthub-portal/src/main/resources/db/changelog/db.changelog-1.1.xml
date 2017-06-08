@@ -1,8 +1,27 @@
 <?xml version="1.1" encoding="UTF-8" standalone="no"?>
 <databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
-	<changeSet author="phala" id="secondaryTitle">
+  	<changeSet author="phala" id="secondaryTitle">
 	    <addColumn catalogName="studenthub" schemaName="public" tableName="topics">
-	        <column name="secondarytitle" type="VARCHAR(255)"/>
-	    </addColumn>
-	</changeSet>
+            <column name="secondarytitle" type="VARCHAR(255)"/>
+        </addColumn>
+    </changeSet>
+    <changeSet author="phala (generated)" id="companyPlans">
+        <createTable catalogName="studenthub" schemaName="public" tableName="plans">
+            <column name="name" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="maxtopics" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="description" type="Text"/>
+        </createTable>
+        <addPrimaryKey catalogName="studenthub" columnNames="name" constraintName="plans_pkey" schemaName="public" tableName="plans"/>
+        <dropColumn columnName="plan" catalogName="studenthub" schemaName="public" tableName="companies"/>
+        <addColumn catalogName="studenthub" schemaName="public" tableName="companies">
+            <column name="plan_name" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="plan_name" baseTableCatalogName="studenthub" baseTableName="companies" baseTableSchemaName="public" constraintName="fkh0lcq5n9spp872lv9lwrc0016" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="name" referencedTableCatalogName="studenthub" referencedTableName="plans" referencedTableSchemaName="public"/>
+    </changeSet>	
 </databaseChangeLog>

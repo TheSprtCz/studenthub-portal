@@ -1,5 +1,27 @@
 <?xml version="1.1" encoding="UTF-8" standalone="no"?>
 <databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+    <changeSet author="phala (generated)" id="1489653927422-29" objectQuotingStrategy="QUOTE_ALL_OBJECTS">
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="PLANS">
+            <column name="NAME" value="TIER_1"/>
+            <column name="MAXTOPICS" valueNumeric="3"/>
+            <column name="DESCRIPTION" value="For basic use"/>
+        </insert>
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="PLANS">
+            <column name="NAME" value="TIER_2"/>
+            <column name="MAXTOPICS" valueNumeric="5"/>
+            <column name="DESCRIPTION" value="Meh"/>
+        </insert>
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="PLANS">
+            <column name="NAME" value="TIER_3"/>
+            <column name="MAXTOPICS" valueNumeric="10"/>
+            <column name="DESCRIPTION" value="Good enough"/>
+        </insert>
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="PLANS">
+            <column name="NAME" value="TIER_4"/>
+            <column name="MAXTOPICS" valueNumeric="0"/>
+            <column name="DESCRIPTION" value="Godlike"/>
+        </insert>        
+    </changeSet>
     <changeSet author="phala (generated)" id="1489653927422-18" objectQuotingStrategy="QUOTE_ALL_OBJECTS">
         <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="COMPANIES">
             <column name="ID" valueNumeric="2"/>
@@ -7,7 +29,7 @@
             <column name="COUNTRY" value="SK"/>
             <column name="LOGOURL" value="c2.com/logo.jpg"/>
             <column name="NAME" value="Company Two"/>
-            <column name="PLAN" value="TIER_2"/>
+            <column name="PLAN_NAME" value="TIER_2"/>
             <column name="SIZE" value="MEDIUM"/>
             <column name="URL" value="www.c2.com"/>
         </insert>
@@ -17,7 +39,7 @@
             <column name="COUNTRY" value="CZ"/>
             <column name="LOGOURL" value="c1.com/logo.png"/>
             <column name="NAME" value="Company One"/>
-            <column name="PLAN" value="TIER_3"/>
+            <column name="PLAN_NAME" value="TIER_3"/>
             <column name="SIZE" value="CORPORATE"/>
             <column name="URL" value="www.c1.com"/>
         </insert>
@@ -27,7 +49,7 @@
             <column name="COUNTRY" value="CZ"/>
             <column name="LOGOURL" value="c3.com/img.jpg"/>
             <column name="NAME" value="Company Three"/>
-            <column name="PLAN" value="TIER_3"/>
+            <column name="PLAN_NAME" value="TIER_3"/>
             <column name="SIZE" value="SMALL"/>
             <column name="URL" value="www.c3.com"/>
         </insert>
@@ -37,7 +59,7 @@
             <column name="COUNTRY" value="CZ"/>
             <column name="LOGOURL" value="c4.com/picture.jpg"/>
             <column name="NAME" value="Company Four"/>
-            <column name="PLAN" value="TIER_1"/>
+            <column name="PLAN_NAME" value="TIER_1"/>
             <column name="SIZE" value="STARTUP"/>
             <column name="URL" value="www.c4.com"/>
         </insert>
@@ -47,7 +69,7 @@
             <column name="COUNTRY" value="CZ"/>
             <column name="LOGOURL" value="c5.com/us.jpg"/>
             <column name="NAME" value="Company Five"/>
-            <column name="PLAN" value="TIER_3"/>
+            <column name="PLAN_NAME" value="TIER_3"/>
             <column name="SIZE" value="MEDIUM"/>
             <column name="URL" value="www.c5.com"/>
         </insert>
@@ -57,7 +79,7 @@
             <column name="COUNTRY" value="CZ"/>
             <column name="LOGOURL" value="c6.com/us.gif"/>
             <column name="NAME" value="Company Six"/>
-            <column name="PLAN" value="TIER_2"/>
+            <column name="PLAN_NAME" value="TIER_2"/>
             <column name="SIZE" value="CORPORATE"/>
             <column name="URL" value="www.c6.com"/>
         </insert>
@@ -67,7 +89,7 @@
             <column name="COUNTRY" value="SK"/>
             <column name="LOGOURL" value="c7.com/img.png"/>
             <column name="NAME" value="Company Seven"/>
-            <column name="PLAN" value="TIER_3"/>
+            <column name="PLAN_NAME" value="TIER_3"/>
             <column name="SIZE" value="MEDIUM"/>
             <column name="URL" value="www.c7.com"/>
         </insert>
@@ -77,7 +99,7 @@
             <column name="COUNTRY" value="SK"/>
             <column name="LOGOURL" value="c8.com/logo.jpg"/>
             <column name="NAME" value="Company Eight"/>
-            <column name="PLAN" value="TIER_1"/>
+            <column name="PLAN_NAME" value="TIER_1"/>
             <column name="SIZE" value="STARTUP"/>
             <column name="URL" value="www.c8.com"/>
         </insert>
@@ -690,7 +712,7 @@
             <column name="CREATOR_ID" valueNumeric="10"/>
         </insert>
     </changeSet>
-     <changeSet author="phala (generated)" id="1489653927422-20" objectQuotingStrategy="QUOTE_ALL_OBJECTS">
+    <changeSet author="phala (generated)" id="1489653927422-20" objectQuotingStrategy="QUOTE_ALL_OBJECTS">
         <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="TOPIC_DEGREES">
             <column name="TOPIC_ID" valueNumeric="2"/>
             <column name="DEGREES" valueNumeric="0"/>

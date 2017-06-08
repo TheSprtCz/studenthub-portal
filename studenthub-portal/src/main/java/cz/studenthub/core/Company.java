@@ -24,11 +24,16 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 
 import org.hibernate.validator.constraints.NotEmpty;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonProperty.Access;
 
 @Entity
 @Table(name = "Companies")
@@ -52,7 +57,9 @@ public class Company {
   @Enumerated(EnumType.STRING)
   private CompanySize size;
 
-  @Enumerated(EnumType.STRING)
+  @ManyToOne
+  @NotNull
+  @JsonProperty(access = Access.WRITE_ONLY)
   private CompanyPlan plan;
 
   public Company() {
@@ -66,6 +73,7 @@ public class Company {
     this.country = country;
     this.logoUrl = logoUrl;
     this.size = size;
+    this.plan = plan;
   }
 
   public Long getId() {
