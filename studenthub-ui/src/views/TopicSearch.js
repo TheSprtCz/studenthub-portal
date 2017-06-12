@@ -20,7 +20,7 @@ import _t from '../Translations.js';
 const PER_PAGE = Util.TOPICS_PER_PAGE;
 
 class TopicCard extends React.Component {
-state = {snackbarActive: false, snackbarLabel: '', confirmActive: false, confirmText: "",
+  state = {snackbarActive: false, snackbarLabel: '', confirmActive: false, confirmText: "",
     confirmActions: [], redirect: -1};
 
   handleConfirmToggle = (apply) => {
@@ -113,6 +113,14 @@ state = {snackbarActive: false, snackbarLabel: '', confirmActive: false, confirm
     }.bind(this));
   }
 
+  isSupervising = () => {
+    for (var i = 0; i < this.props.topic.academicSupervisors.length; i++) {
+      if (this.props.topic.academicSupervisors[i].id === Auth.getUserInfo().sub)
+        return true;
+    }
+    return false;
+  }
+
   render() {
     return(
       <Card>
@@ -123,8 +131,10 @@ state = {snackbarActive: false, snackbarLabel: '', confirmActive: false, confirm
         <CardText>{ this.props.topic.tags.map( (tag) => <Chip key={tag}> {tag} </Chip> ) }</CardText>
         <CardActions>
            <TopicDetailsDialog topic={this.props.topic} label={ _t.translate("Details") } />
-          { Auth.hasRole(Util.userRoles.student) ? <Button label={ _t.translate("Apply") } primary icon='send' onClick={() => this.handleConfirmToggle(1)} /> : ''}
-          { Auth.hasRole(Util.userRoles.superviser) ? <Button label={ _t.translate("Supervise") } primary icon='supervisor_account' onClick={() => this.handleConfirmToggle(0)} /> : ''}
+          { (Auth.hasRole(Util.userRoles.student)) ? <Button label={ _t.translate("Apply") } primary icon='send'
+            disabled={this.props.isApplied} onClick={() => this.handleConfirmToggle(1)} /> : '' }
+          { (Auth.hasRole(Util.userRoles.superviser)) ? <Button label={ _t.translate("Supervise") } primary icon='supervisor_account'
+            disabled={this.isSupervising()} onClick={() => this.handleConfirmToggle(0)} /> : '' }
         </CardActions>
         <Dialog
           actions={this.state.confirmActions}
@@ -166,7 +176,8 @@ class TopicCards extends React.Component {
 
   render() {
     const topicCards = this.props.topics.map((topic) =>
-      <TopicCard topic={topic} key={topic.id} id={topic.id} redirectHandler={(id) => this.handleRedirect(id)} />
+      <TopicCard topic={topic} key={topic.id} id={topic.id} isApplied={(this.props.applications.indexOf(topic.id) === -1) ? false : true }
+        redirectHandler={(id) => this.handleRedirect(id)} />
     );
 
     return (
@@ -181,10 +192,12 @@ class TopicCards extends React.Component {
 }
 
 class TopicSearch extends React.Component {
-  state = { query: '', topics: [], page: 0, max: 0, typing: false, fetched: false};
+  state = { query: '', topics: [], applications: [], supervisedTopics: [],
+    page: 0, max: 0, typing: false, fetched: false};
 
   componentDidMount() {
     this.getTopics();
+    if (Auth.hasRole(Util.userRoles.student)) this.getApplications();
     setInterval(function() {
       if(!this.state.typing && !this.state.fetched)
         this.getTopics();
@@ -217,6 +230,28 @@ class TopicSearch extends React.Component {
     this.setState({fetched: true});
   }
 
+  getApplications = () => {
+    fetch('/api/users/' + Auth.getUserInfo().sub + '/applications', {
+      credentials: 'same-origin',
+      method: 'get' }).then(function(response) {
+      if(response.ok) {
+        return response.json();
+      } else {
+        throw new Error('There was a problem with network connection.');
+      }
+    }).then(function(json) {
+      var newData = [];
+
+      for(let i in json) {
+        newData.push(json[i].topic.id);
+      }
+      this.setState({
+        applications: newData
+      });
+    }.bind(this));
+    this.setState({fetched: true});
+  }
+
   changePage = (offset) => {
     if (this.state.page === 0 && offset === -1) return;
 
@@ -234,7 +269,7 @@ class TopicSearch extends React.Component {
         <Input type='text' label={ _t.translate("What topics are you interested in?") } name='query' icon='search'
           required value={this.state.query} onChange={this.handleChange.bind(this, 'query')} />
         <br />
-        <TopicCards topics={this.state.topics}/>
+        <TopicCards topics={this.state.topics} applications={this.state.applications} />
         <div className="col-md-12">
           <nav>
             <ul className="pager">
