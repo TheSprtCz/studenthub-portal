@@ -45,6 +45,17 @@ Test Database contains these entries:
 | 12   | Faculty of Chemical and Food Technology                                |
 | 13   | Faculty of Civil Engineering                                           |
 
+## Company Plans
+
+Infinite is represented as 0 in DB
+
+| name   | maxTopics | description      |
+| ------ | --------- | ---------------- |
+| TIER_1 | 3         | For basic use    |
+| TIER_2 | 5         | Meh              |
+| TIER_3 | 10        | Good enough      |
+| TIER_4 | INFINITE  | Godlike          |
+
 ## Companies
 
 | id  | name                               | logoUrl                | city       | country | url            | size      | plan    |

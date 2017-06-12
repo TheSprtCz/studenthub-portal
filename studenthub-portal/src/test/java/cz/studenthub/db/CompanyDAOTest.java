@@ -16,19 +16,22 @@ import io.dropwizard.testing.junit.DAOTestRule;
 
 public class CompanyDAOTest {
 
-  public static final DAOTestRule DATABASE = DAOTestSuite.database;
+  private static final DAOTestRule DATABASE = DAOTestSuite.database;
   private static CompanyDAO companyDAO;
+  private static CompanyPlanDAO cpDAO;
 
   @BeforeClass
   public static void setUp() {
     companyDAO = new CompanyDAO(DATABASE.getSessionFactory());
+    cpDAO = new CompanyPlanDAO(DATABASE.getSessionFactory());
   }
 
   @Test
   public void createCompany() {
-    Company company = new Company("New", "www.nothing.eu", "Liberec", Country.CZ, "www.nothing.eu/logo.png",
-        CompanySize.SMALL, CompanyPlan.TIER_2);
     DAOTestSuite.inRollbackTransaction(() -> {
+      CompanyPlan cPlan = cpDAO.findByName("TIER_2");
+      Company company = new Company("New", "www.nothing.eu", "Liberec", Country.CZ, "www.nothing.eu/logo.png",
+          CompanySize.SMALL, cPlan);
       Company created = companyDAO.create(company);
       List<Company> companies = companyDAO.findAll();
       assertNotNull(created.getId());

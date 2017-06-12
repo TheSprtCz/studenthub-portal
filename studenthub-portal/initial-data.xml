@@ -1,5 +1,12 @@
 <?xml version="1.1" encoding="UTF-8" standalone="no"?>
 <databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+    <changeSet author="phala (generated)" id="1496646751908-29">
+        <insert catalogName="studenthub" schemaName="public" tableName="plans">
+            <column name="maxtopics" valueNumeric="3"/>
+            <column name="name" value="TIER_1"/>
+            <column name="description" value="For basic use"/>
+        </insert>
+    </changeSet>
     <changeSet author="phala (generated)" id="1496646751908-13">
         <insert catalogName="studenthub" schemaName="public" tableName="companies">
             <column name="id" valueNumeric="1"/>
@@ -7,7 +14,7 @@
             <column name="country" value="CZ"/>
             <column name="logourl" value="c1.com/logo.png"/>
             <column name="name" value="Company One"/>
-            <column name="plan" value="TIER_3"/>
+            <column name="plan_name" value="TIER_1"/>
             <column name="size" value="CORPORATE"/>
             <column name="url" value="www.c1.com"/>
         </insert>
@@ -106,6 +113,10 @@
         <insert catalogName="studenthub" schemaName="public" tableName="user_roles">
             <column name="user_id" valueNumeric="1"/>
             <column name="roles" value="STUDENT"/>
+        </insert>
+        <insert catalogName="studenthub" schemaName="public" tableName="user_roles">
+            <column name="user_id" valueNumeric="1"/>
+            <column name="roles" value="COMPANY_REP"/>
         </insert>
     </changeSet>
     <changeSet author="phala (generated)" id="1496646751908-19">

@@ -42,12 +42,14 @@ import javax.ws.rs.core.UriBuilder;
 import com.codahale.metrics.annotation.ExceptionMetered;
 import com.codahale.metrics.annotation.Timed;
 
+import cz.studenthub.core.Company;
 import cz.studenthub.core.Topic;
 import cz.studenthub.core.TopicApplication;
 import cz.studenthub.core.User;
 import cz.studenthub.core.UserRole;
 import cz.studenthub.db.TopicApplicationDAO;
 import cz.studenthub.db.TopicDAO;
+import cz.studenthub.db.UserDAO;
 import cz.studenthub.util.PagingUtil;
 import io.dropwizard.auth.Auth;
 import io.dropwizard.hibernate.UnitOfWork;
@@ -61,10 +63,12 @@ public class TopicResource {
 
   private final TopicDAO topicDao;
   private final TopicApplicationDAO appDao;
+  private final UserDAO userDao;
 
-  public TopicResource(TopicDAO topicDao, TopicApplicationDAO taDao) {
+  public TopicResource(TopicDAO topicDao, TopicApplicationDAO taDao, UserDAO userDao) {
     this.topicDao = topicDao;
     this.appDao = taDao;
+    this.userDao = userDao;
   }
 
   @GET
@@ -123,6 +127,17 @@ public class TopicResource {
     if ((oldCreatorId.equals(user.getId()) && oldCreatorId.equals(newCreatorId))
         || user.getRoles().contains(UserRole.ADMIN)) {
 
+      // If topic went from disabled to enabled state
+      if (topic.isEnabled() && !oldTopic.isEnabled()) {
+        // Because creator info is available only after persisting it to DB, I have to fetch him manually
+        User creator = userDao.findById(topic.getCreator().getId());
+        Company company = creator.getCompany();
+        int count = topicDao.countByCompany(company);
+        int maxTopics = company.getPlan().getMaxTopics();
+        if (count >= maxTopics && maxTopics != 0 )
+          throw new WebApplicationException("Over topic limit.",Status.NOT_ACCEPTABLE);
+      }
+
       topic.setId(id);
       topicDao.update(topic);
       return Response.ok(topic).build();
@@ -139,6 +154,14 @@ public class TopicResource {
 
     // If user is topic creator or is an admin
     if (topic.getCreator().equals(user) || user.getRoles().contains(UserRole.ADMIN)) {
+
+     // Because creator info is available only after persisting it to DB, I have to fetch him manually
+      User creator = userDao.findById(topic.getCreator().getId());
+      Company company = creator.getCompany();
+      int count = topicDao.countByCompany(company);
+      int maxTopics = company.getPlan().getMaxTopics();
+      if (count >= maxTopics && maxTopics != 0 && topic.isEnabled())
+        throw new WebApplicationException("Over topic limit.",Status.NOT_ACCEPTABLE);
 
       topicDao.create(topic);
       if (topic.getId() == null)

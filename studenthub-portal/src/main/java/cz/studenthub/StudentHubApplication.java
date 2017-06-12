@@ -32,6 +32,7 @@ import cz.studenthub.auth.StudentHubAuthorizer;
 import cz.studenthub.auth.TokenAuthenticator;
 import cz.studenthub.core.Activation;
 import cz.studenthub.core.Company;
+import cz.studenthub.core.CompanyPlan;
 import cz.studenthub.core.Faculty;
 import cz.studenthub.core.Task;
 import cz.studenthub.core.Topic;
@@ -40,6 +41,7 @@ import cz.studenthub.core.University;
 import cz.studenthub.core.User;
 import cz.studenthub.db.ActivationDAO;
 import cz.studenthub.db.CompanyDAO;
+import cz.studenthub.db.CompanyPlanDAO;
 import cz.studenthub.db.FacultyDAO;
 import cz.studenthub.db.TaskDAO;
 import cz.studenthub.db.TopicApplicationDAO;
@@ -47,6 +49,7 @@ import cz.studenthub.db.TopicDAO;
 import cz.studenthub.db.UniversityDAO;
 import cz.studenthub.db.UserDAO;
 import cz.studenthub.health.StudentHubHealthCheck;
+import cz.studenthub.resources.CompanyPlanResource;
 import cz.studenthub.resources.CompanyResource;
 import cz.studenthub.resources.FacultyResource;
 import cz.studenthub.resources.LoginResource;
@@ -92,7 +95,8 @@ public class StudentHubApplication extends Application<StudentHubConfiguration> 
    */
   private final HibernateBundle<StudentHubConfiguration> hibernate = new HibernateBundle<StudentHubConfiguration>(
       // list of entities
-      User.class, Topic.class, TopicApplication.class, Company.class, University.class, Faculty.class, Task.class, Activation.class) {
+      User.class, Topic.class, TopicApplication.class, Company.class, University.class, Faculty.class, Task.class,
+      Activation.class, CompanyPlan.class) {
 
     @Override
     public DataSourceFactory getDataSourceFactory(StudentHubConfiguration configuration) {
@@ -142,6 +146,7 @@ public class StudentHubApplication extends Application<StudentHubConfiguration> 
     final TopicApplicationDAO taDao = new TopicApplicationDAO(hibernate.getSessionFactory());
     final TaskDAO taskDao = new TaskDAO(hibernate.getSessionFactory());
     final ActivationDAO actDao = new ActivationDAO(hibernate.getSessionFactory());
+    final CompanyPlanDAO cpDao = new CompanyPlanDAO(hibernate.getSessionFactory());
 
     // enable session manager
     environment.servlets().setSessionHandler(new SessionHandler());
@@ -151,12 +156,13 @@ public class StudentHubApplication extends Application<StudentHubConfiguration> 
     environment.jersey().register(new UniversityResource(uniDao, facDao));
     environment.jersey().register(new FacultyResource(facDao, userDao));
     environment.jersey().register(new UserResource(userDao, topicDao, taDao));
-    environment.jersey().register(new TopicResource(topicDao, taDao));
+    environment.jersey().register(new TopicResource(topicDao, taDao, userDao));
     environment.jersey().register(new TopicApplicationResource(taDao, taskDao));
     environment.jersey().register(new TaskResource(taDao, taskDao));
     environment.jersey().register(new LoginResource(userDao, configuration.getJwtSecret()));
     environment.jersey().register(new RegistrationResource(userDao, actDao, configuration.getSmtpConfig()));
     environment.jersey().register(new TagResource(userDao, topicDao));
+    environment.jersey().register(new CompanyPlanResource(cpDao));
 
     // set up auth
     configureAuth(configuration, environment, userDao);

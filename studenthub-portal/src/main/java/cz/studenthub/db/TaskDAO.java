@@ -8,6 +8,12 @@ import cz.studenthub.core.Task;
 import cz.studenthub.core.TopicApplication;
 import io.dropwizard.hibernate.AbstractDAO;
 
+/**
+ * Data(base) Access Object for Task objects.
+ * 
+ * @author phala
+ * @since 1.0
+ */
 public class TaskDAO extends AbstractDAO<Task> {
 
   public TaskDAO(SessionFactory sessionFactory) {

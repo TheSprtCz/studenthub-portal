@@ -20,45 +20,40 @@ import java.util.List;
 
 import org.hibernate.SessionFactory;
 
-import cz.studenthub.core.Activation;
-import cz.studenthub.core.User;
+import cz.studenthub.core.CompanyPlan;
 import io.dropwizard.hibernate.AbstractDAO;
 
 /**
- * Data(base) Access Object for Activation objects.
+ * Data(base) Access Object for CompanyPlan objects.
  * 
  * @author phala
- * @since 1.0
+ * @since 1.1
  */
-public class ActivationDAO extends AbstractDAO<Activation> {
+public class CompanyPlanDAO extends AbstractDAO<CompanyPlan> {
 
-  public ActivationDAO(SessionFactory sessionFactory) {
+  public CompanyPlanDAO(SessionFactory sessionFactory) {
     super(sessionFactory);
   }
 
-  public Activation update(Activation activation) {
+  public CompanyPlan update(CompanyPlan company) {
     currentSession().clear();
-    return persist(activation);
+    return persist(company);
   }
   
-  public Activation create(Activation activation) {
-    return persist(activation);
+  public CompanyPlan create(CompanyPlan company) {
+    return persist(company);
   }
-
-  public Activation findById(long id) {
-    return get(id);
+  
+  public CompanyPlan findByName(String name) {
+    return get(name);
   }
-
-  public Activation findByUser(User user) {
-    return uniqueResult(namedQuery("Activation.findByUser").setParameter("user", user));
+  
+  public List<CompanyPlan> findAll() {
+    return list(namedQuery("CompanyPlan.findAll"));
   }
-
-  public List<Activation> findAll() {
-    return list(namedQuery("Activation.findAll"));
-  }
-
-  public void delete(Activation activation) {
-    currentSession().delete(activation);
+  
+  public void delete(CompanyPlan company) {
+    currentSession().delete(company);
   }
 
 }
