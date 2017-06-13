@@ -40,7 +40,6 @@ import javax.ws.rs.core.Response.Status;
 import com.codahale.metrics.annotation.ExceptionMetered;
 import com.codahale.metrics.annotation.Timed;
 
-import cz.studenthub.api.UpdateUserBean;
 import cz.studenthub.core.Topic;
 import cz.studenthub.core.TopicApplication;
 import cz.studenthub.core.User;
@@ -115,23 +114,16 @@ public class UserResource {
   @ExceptionMetered
   @Path("/{id}")
   @UnitOfWork
-  public Response update(@PathParam("id") LongParam idParam, @NotNull @Valid UpdateUserBean updateUserBean,
+  public Response update(@PathParam("id") LongParam idParam, @NotNull @Valid User user,
       @Auth User authUser) {
     
     Long id = idParam.get();
-    User user = userDao.findById(id);
+    User oldUser = userDao.findById(id);
 
-    // roles update allowed only to admin
-    if (authUser.getRoles().contains(UserRole.ADMIN))
-      user.setRoles(updateUserBean.getRoles());
-    
-    if (id.equals(authUser.getId()) || authUser.getRoles().contains(UserRole.ADMIN)) {
-      user.setName(updateUserBean.getName());
-      user.setEmail(updateUserBean.getEmail());
-      user.setFaculty(updateUserBean.getFaculty());
-      user.setCompany(updateUserBean.getCompany());
-      user.setPhone(updateUserBean.getPhone());
-      user.setTags(updateUserBean.getTags());
+    // If user is updating himself and doesn't change his roles or is admin
+    if ((id.equals(authUser.getId()) && oldUser.getRoles().equals(user.getRoles())) || authUser.getRoles().contains(UserRole.ADMIN)) {
+      user.setId(id);
+      user.setPassword(oldUser.getPassword());
       userDao.update(user);
       return Response.ok(user).build();
     } else {
