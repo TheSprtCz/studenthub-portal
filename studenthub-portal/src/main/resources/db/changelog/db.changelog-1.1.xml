@@ -24,6 +24,11 @@
         </addColumn>
         <addForeignKeyConstraint baseColumnNames="plan_name" baseTableCatalogName="studenthub" baseTableName="companies" baseTableSchemaName="public" constraintName="fkh0lcq5n9spp872lv9lwrc0016" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="name" referencedTableCatalogName="studenthub" referencedTableName="plans" referencedTableSchemaName="public"/>
     </changeSet>
+    <changeSet author="phala" id="activationType">
+        <addColumn catalogName="studenthub" schemaName="public" tableName="activations">
+            <column name="type" type="VARCHAR(255)" defaultValue="REGISTER"/>
+        </addColumn>
+    </changeSet>
 	<changeSet author="phala (generated)" id="projects">
         <createTable catalogName="studenthub" schemaName="public" tableName="projects">
             <column autoIncrement="true" name="id" type="BIGSERIAL">

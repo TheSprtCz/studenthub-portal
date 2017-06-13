@@ -21,6 +21,7 @@ import java.util.List;
 import org.hibernate.SessionFactory;
 
 import cz.studenthub.core.Activation;
+import cz.studenthub.core.ActivationType;
 import cz.studenthub.core.User;
 import io.dropwizard.hibernate.AbstractDAO;
 
@@ -51,6 +52,10 @@ public class ActivationDAO extends AbstractDAO<Activation> {
 
   public Activation findByUser(User user) {
     return uniqueResult(namedQuery("Activation.findByUser").setParameter("user", user));
+  }
+
+  public Activation findByUserAndType(User user, ActivationType type) {
+    return uniqueResult(namedQuery("Activation.findByUserAndType").setParameter("user", user).setParameter("type", type));
   }
 
   public List<Activation> findAll() {
