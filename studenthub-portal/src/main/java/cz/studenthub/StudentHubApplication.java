@@ -190,13 +190,6 @@ public class StudentHubApplication extends Application<StudentHubConfiguration> 
     
     TokenAuthenticator tokenAuth = new UnitOfWorkAwareProxyFactory(hibernate).create(TokenAuthenticator.class, types, args);
     Authorizer<User> authorizer = new StudentHubAuthorizer();
-  
-    AuthFilter<BasicCredentials, User> basicCredentialAuthFilter = new BasicCredentialAuthFilter.Builder<User>()
-        .setAuthenticator(basicAuth)
-        .setAuthorizer(authorizer)
-        .setPrefix("Basic")
-        .setRealm(this.getName())
-        .buildAuthFilter();
 
     AuthFilter<String, User> oauthCredentialAuthFilter = new OAuthCredentialAuthFilter.Builder<User>()
         .setAuthenticator(tokenAuth)
@@ -212,7 +205,19 @@ public class StudentHubApplication extends Application<StudentHubConfiguration> 
         .setRealm(this.getName())
         .buildAuthFilter();
 
-    List<AuthFilter> filters = Lists.newArrayList(basicCredentialAuthFilter, oauthCredentialAuthFilter, cookieCredentialAuthFilter);
+    List<AuthFilter> filters = Lists.newArrayList(oauthCredentialAuthFilter, cookieCredentialAuthFilter);
+
+    if (configuration.isBasicAuthEnabled()) {
+      AuthFilter<BasicCredentials, User> basicCredentialAuthFilter = new BasicCredentialAuthFilter.Builder<User>()
+          .setAuthenticator(basicAuth)
+          .setAuthorizer(authorizer)
+          .setPrefix("Basic")
+          .setRealm(this.getName())
+          .buildAuthFilter();
+
+      filters.add(basicCredentialAuthFilter);
+    }
+
     environment.jersey().register(new AuthDynamicFeature(new ChainedAuthFilter(filters)));
     environment.jersey().register(RolesAllowedDynamicFeature.class);
     // If you want to use @Auth to inject a custom Principal type into your resource

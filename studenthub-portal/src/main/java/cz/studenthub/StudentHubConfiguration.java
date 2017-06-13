@@ -42,6 +42,8 @@ public class StudentHubConfiguration extends Configuration {
   private SmtpConfig smtp = new SmtpConfig();
 
   private String jwtSecret;
+
+  private boolean enableBasicAuth = false;
   
   @JsonProperty("database")
   public DataSourceFactory getDataSourceFactory() {
@@ -72,4 +74,16 @@ public class StudentHubConfiguration extends Configuration {
   public String getJwtSecret() {
     return jwtSecret;
   }
+
+  @JsonProperty("enableBasicAuth")
+  public boolean isBasicAuthEnabled() {
+    return enableBasicAuth;
+  }
+
+  @JsonProperty("enableBasicAuth")
+  public void setEnabledBasicAuth(boolean enableBasicAuth) {
+    this.enableBasicAuth = enableBasicAuth;
+  }
+
+  
 }
