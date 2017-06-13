@@ -24,23 +24,22 @@ import io.dropwizard.testing.DropwizardTestSupport;
 import net.minidev.json.JSONObject;
 
 public class TopicResourceTest {
-  public static DropwizardTestSupport<StudentHubConfiguration> DROPWIZARD;
-
-  private static Client client;
+  private DropwizardTestSupport<StudentHubConfiguration> dropwizard;
+  private Client client;
 
   @BeforeClass
   public void setup() {
-      DROPWIZARD = IntegrationTestSuite.DROPWIZARD;
+      dropwizard = IntegrationTestSuite.DROPWIZARD;
       client = IntegrationTestSuite.BUILDER.build("TopicTest");
   }
   
   private List<Topic> fetchTopics() {
-    return IntegrationTestSuite.authorizedRequest(client.target(String.format("http://localhost:%d/api/topics", DROPWIZARD.getLocalPort()))
+    return IntegrationTestSuite.authorizedRequest(client.target(String.format("http://localhost:%d/api/topics", dropwizard.getLocalPort()))
       .request(), client).get(new GenericType<List<Topic>>(){});
   }
 
   private List<User> getSupervisors(int id) {
-    return IntegrationTestSuite.authorizedRequest(client.target(String.format("http://localhost:%d/api/topics/%d/supervisors", DROPWIZARD.getLocalPort(), id))
+    return IntegrationTestSuite.authorizedRequest(client.target(String.format("http://localhost:%d/api/topics/%d/supervisors", dropwizard.getLocalPort(), id))
       .request(), client).get(new GenericType<List<User>>(){});
   }
 
@@ -54,7 +53,7 @@ public class TopicResourceTest {
 
   @Test
   public void fetchTopic() {
-    Topic topic = client.target(String.format("http://localhost:%d/api/topics/2", DROPWIZARD.getLocalPort()))
+    Topic topic = client.target(String.format("http://localhost:%d/api/topics/2", dropwizard.getLocalPort()))
         .request(MediaType.APPLICATION_JSON)
         .get(Topic.class);
 
@@ -71,7 +70,7 @@ public class TopicResourceTest {
     topic.put("title", "New Topic");
     topic.put("creator", creator);
 
-    Response response = IntegrationTestSuite.authorizedRequest(client.target(String.format("http://localhost:%d/api/topics", DROPWIZARD.getLocalPort()))
+    Response response = IntegrationTestSuite.authorizedRequest(client.target(String.format("http://localhost:%d/api/topics", dropwizard.getLocalPort()))
       .request(MediaType.APPLICATION_JSON), client).post(Entity.json(topic.toJSONString()));
 
     assertNotNull(response);
@@ -90,7 +89,7 @@ public class TopicResourceTest {
     topic.put("title", "Another Topic");
     topic.put("creator", creator);
 
-    Response response = IntegrationTestSuite.authorizedRequest(client.target(String.format("http://localhost:%d/api/topics/6", DROPWIZARD.getLocalPort()))
+    Response response = IntegrationTestSuite.authorizedRequest(client.target(String.format("http://localhost:%d/api/topics/6", dropwizard.getLocalPort()))
       .request(MediaType.APPLICATION_JSON), client).put(Entity.json(topic.toJSONString()));
 
     assertNotNull(response);
@@ -100,7 +99,7 @@ public class TopicResourceTest {
 
   @Test(dependsOnMethods = "updateTopic")
   public void deleteTopic() {
-    Response response = IntegrationTestSuite.authorizedRequest(client.target(String.format("http://localhost:%d/api/topics/6", DROPWIZARD.getLocalPort()))
+    Response response = IntegrationTestSuite.authorizedRequest(client.target(String.format("http://localhost:%d/api/topics/6", dropwizard.getLocalPort()))
       .request(), client).delete();
 
     assertNotNull(response);
@@ -110,10 +109,10 @@ public class TopicResourceTest {
 
   @Test(dependsOnGroups = "login")
   public void superviseTopic() {
-    User superadmin = IntegrationTestSuite.authorizedRequest(client.target(String.format("http://localhost:%d/api/users/19", DROPWIZARD.getLocalPort())).request(), client)
+    User superadmin = IntegrationTestSuite.authorizedRequest(client.target(String.format("http://localhost:%d/api/users/19", dropwizard.getLocalPort())).request(), client)
         .get(User.class);
 
-    Response response = IntegrationTestSuite.authorizedRequest(client.target(String.format("http://localhost:%d/api/topics/1/supervise", DROPWIZARD.getLocalPort())).request(), client)
+    Response response = IntegrationTestSuite.authorizedRequest(client.target(String.format("http://localhost:%d/api/topics/1/supervise", dropwizard.getLocalPort())).request(), client)
         .put(Entity.json(""));
 
     List<User> supervisors = getSupervisors(1);
@@ -133,7 +132,7 @@ public class TopicResourceTest {
 
   @Test(dependsOnGroups = "login")
   public void fetchApplications() {
-    List<TopicApplication> apps = IntegrationTestSuite.authorizedRequest(client.target(String.format("http://localhost:%d/api/topics/1/applications", DROPWIZARD.getLocalPort()))
+    List<TopicApplication> apps = IntegrationTestSuite.authorizedRequest(client.target(String.format("http://localhost:%d/api/topics/1/applications", dropwizard.getLocalPort()))
         .request(), client).get(new GenericType<List<TopicApplication>>(){});
 
     assertNotNull(apps);
@@ -142,7 +141,7 @@ public class TopicResourceTest {
 
   @Test(dependsOnGroups = "login")
   public void fetchCreator() {
-    User creator = IntegrationTestSuite.authorizedRequest(client.target(String.format("http://localhost:%d/api/topics/2/creator", DROPWIZARD.getLocalPort()))
+    User creator = IntegrationTestSuite.authorizedRequest(client.target(String.format("http://localhost:%d/api/topics/2/creator", dropwizard.getLocalPort()))
         .request(), client).get(User.class);
 
     assertNotNull(creator);
@@ -151,21 +150,21 @@ public class TopicResourceTest {
 
   @Test(dependsOnGroups = "migrate")
   public void search() {
-    List<Topic> topics = client.target(String.format("http://localhost:%d/api/topics/search", DROPWIZARD.getLocalPort()))
+    List<Topic> topics = client.target(String.format("http://localhost:%d/api/topics/search", dropwizard.getLocalPort()))
         .queryParam("text", "java")
         .request().get(new GenericType<List<Topic>>(){});
 
     assertNotNull(topics);
     assertEquals(topics.size(), 3);
 
-    topics = client.target(String.format("http://localhost:%d/api/topics/search", DROPWIZARD.getLocalPort()))
+    topics = client.target(String.format("http://localhost:%d/api/topics/search", dropwizard.getLocalPort()))
         .queryParam("text", "Dropwizard")
         .request().get(new GenericType<List<Topic>>(){});
 
     assertNotNull(topics);
     assertEquals(topics.size(), 1);
 
-     topics = client.target(String.format("http://localhost:%d/api/topics/search", DROPWIZARD.getLocalPort()))
+     topics = client.target(String.format("http://localhost:%d/api/topics/search", dropwizard.getLocalPort()))
         .queryParam("text", "UI")
         .request().get(new GenericType<List<Topic>>(){});
 

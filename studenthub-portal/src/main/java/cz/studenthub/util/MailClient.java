@@ -55,7 +55,7 @@ public class MailClient {
         .build();
 
     // send mail asynchronously
-    mailer.sendMail(email, true);
+    mailer.sendMail(email, config.isAsync());
   }
 
   private String loadHtmlFromTemplate(String templateFile, Map<String, String> args) {

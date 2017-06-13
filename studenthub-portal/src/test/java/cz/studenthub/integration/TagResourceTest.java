@@ -17,19 +17,19 @@ import cz.studenthub.core.User;
 import io.dropwizard.testing.DropwizardTestSupport;
 
 public class TagResourceTest {
-  public static DropwizardTestSupport<StudentHubConfiguration> DROPWIZARD;
+  private DropwizardTestSupport<StudentHubConfiguration> dropwizard;
 
-  private static Client client;
+  private Client client;
 
   @BeforeClass
   public void setup() {
-      DROPWIZARD = IntegrationTestSuite.DROPWIZARD;
+      dropwizard = IntegrationTestSuite.DROPWIZARD;
       client = IntegrationTestSuite.BUILDER.build("TagTest");
   }
 
   @Test(dependsOnGroups = "login")
   public void listUsers() {
-    List<User> list = IntegrationTestSuite.authorizedRequest(client.target(String.format("http://localhost:%d/api/tags/Java/users", DROPWIZARD.getLocalPort()))
+    List<User> list = IntegrationTestSuite.authorizedRequest(client.target(String.format("http://localhost:%d/api/tags/Java/users", dropwizard.getLocalPort()))
         .request(), client).get(new GenericType<List<User>>(){});
 
     assertNotNull(list);
@@ -38,7 +38,7 @@ public class TagResourceTest {
 
   @Test(dependsOnGroups = "migrate")
   public void listTopic() {
-    List<Topic> list = client.target(String.format("http://localhost:%d/api/tags/Java/topics", DROPWIZARD.getLocalPort()))
+    List<Topic> list = client.target(String.format("http://localhost:%d/api/tags/Java/topics", dropwizard.getLocalPort()))
         .request()
         .get(new GenericType<List<Topic>>(){});
 

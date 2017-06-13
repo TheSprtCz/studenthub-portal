@@ -94,7 +94,6 @@
     <dependency>
       <groupId>org.testng</groupId>
       <artifactId>testng</artifactId>
-      <version>6.11</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -105,6 +104,11 @@
       <groupId>org.simplejavamail</groupId>
       <artifactId>simple-java-mail</artifactId>
     </dependency>
+    <dependency>
+	  <groupId>com.icegreen</groupId>
+	  <artifactId>greenmail</artifactId>
+	  <scope>test</scope>
+	</dependency>
   </dependencies>
 
   <build>

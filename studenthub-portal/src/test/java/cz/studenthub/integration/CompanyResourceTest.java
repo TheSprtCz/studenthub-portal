@@ -25,18 +25,17 @@ import io.dropwizard.testing.DropwizardTestSupport;
 import net.minidev.json.JSONObject;
 
 public class CompanyResourceTest {
-  public static DropwizardTestSupport<StudentHubConfiguration> DROPWIZARD;
-
-  private static Client client;
+  private DropwizardTestSupport<StudentHubConfiguration> dropwizard;
+  private Client client;
 
   @BeforeClass
   public void setup() {
-      DROPWIZARD = IntegrationTestSuite.DROPWIZARD;
+      dropwizard = IntegrationTestSuite.DROPWIZARD;
       client = IntegrationTestSuite.BUILDER.build("CompanyTest");
   }
 
   private List<Company> fetchCompanies() {
-    return client.target(String.format("http://localhost:%d/api/companies/", DROPWIZARD.getLocalPort()))
+    return client.target(String.format("http://localhost:%d/api/companies/", dropwizard.getLocalPort()))
       .request().get(new GenericType<List<Company>>(){});
   }
 
@@ -50,7 +49,7 @@ public class CompanyResourceTest {
 
   @Test(dependsOnGroups = "login")
   public void fetchCompany() {
-    Company company = IntegrationTestSuite.authorizedRequest(client.target(String.format("http://localhost:%d/api/companies/5", DROPWIZARD.getLocalPort()))
+    Company company = IntegrationTestSuite.authorizedRequest(client.target(String.format("http://localhost:%d/api/companies/5", dropwizard.getLocalPort()))
         .request(MediaType.APPLICATION_JSON), client).get(Company.class);
 
     assertNotNull(company);
@@ -66,7 +65,7 @@ public class CompanyResourceTest {
     company.put("name", "New Company");
     company.put("plan", plan);
     
-    Response response = IntegrationTestSuite.authorizedRequest(client.target(String.format("http://localhost:%d/api/companies", DROPWIZARD.getLocalPort()))
+    Response response = IntegrationTestSuite.authorizedRequest(client.target(String.format("http://localhost:%d/api/companies", dropwizard.getLocalPort()))
       .request(MediaType.APPLICATION_JSON), client).post(Entity.json(company.toJSONString()));
 
     assertNotNull(response);
@@ -85,7 +84,7 @@ public class CompanyResourceTest {
     company.put("name", "New Company");
     company.put("plan", plan);
 
-    Response response = IntegrationTestSuite.authorizedRequest(client.target(String.format("http://localhost:%d/api/companies/9", DROPWIZARD.getLocalPort()))
+    Response response = IntegrationTestSuite.authorizedRequest(client.target(String.format("http://localhost:%d/api/companies/9", dropwizard.getLocalPort()))
       .request(MediaType.APPLICATION_JSON), client).put(Entity.json(company.toJSONString()));
 
     assertNotNull(response);
@@ -95,7 +94,7 @@ public class CompanyResourceTest {
 
   @Test(dependsOnMethods = "updateCompany")
   public void deleteCompany() {
-    Response response = IntegrationTestSuite.authorizedRequest(client.target(String.format("http://localhost:%d/api/companies/9", DROPWIZARD.getLocalPort())).request(), client)
+    Response response = IntegrationTestSuite.authorizedRequest(client.target(String.format("http://localhost:%d/api/companies/9", dropwizard.getLocalPort())).request(), client)
       .delete();
     List<Company> list = fetchCompanies();
 
@@ -106,7 +105,7 @@ public class CompanyResourceTest {
 
   @Test(dependsOnGroups = "login")
   public void getLeaders() {
-    List<User> users = IntegrationTestSuite.authorizedRequest(client.target(String.format("http://localhost:%d/api/companies/5/leaders", DROPWIZARD.getLocalPort()))
+    List<User> users = IntegrationTestSuite.authorizedRequest(client.target(String.format("http://localhost:%d/api/companies/5/leaders", dropwizard.getLocalPort()))
         .request(MediaType.APPLICATION_JSON), client).get(new GenericType<List<User>>(){});
 
     assertNotNull(users);
@@ -115,7 +114,7 @@ public class CompanyResourceTest {
 
   @Test(dependsOnGroups = "login")
   public void getTopics() {
-    List<Topic> topics = IntegrationTestSuite.authorizedRequest(client.target(String.format("http://localhost:%d/api/companies/5/topics", DROPWIZARD.getLocalPort()))
+    List<Topic> topics = IntegrationTestSuite.authorizedRequest(client.target(String.format("http://localhost:%d/api/companies/5/topics", dropwizard.getLocalPort()))
         .request(MediaType.APPLICATION_JSON), client).get(new GenericType<List<Topic>>(){});
 
     assertNotNull(topics);
@@ -124,7 +123,7 @@ public class CompanyResourceTest {
 
   @Test(dependsOnGroups = "login")
   public void getPlan() {
-    CompanyPlan plan = IntegrationTestSuite.authorizedRequest(client.target(String.format("http://localhost:%d/api/companies/5/plan", DROPWIZARD.getLocalPort()))
+    CompanyPlan plan = IntegrationTestSuite.authorizedRequest(client.target(String.format("http://localhost:%d/api/companies/5/plan", dropwizard.getLocalPort()))
         .request(MediaType.APPLICATION_JSON), client).get(CompanyPlan.class);
 
     assertNotNull(plan);

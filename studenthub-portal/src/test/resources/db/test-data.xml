@@ -220,7 +220,6 @@
             <column name="EMAIL" value="student4@example.com"/>
             <column name="LASTLOGIN" valueDate="2016-09-05 02:00:00.0"/>
             <column name="NAME" value="Student Four"/>
-            <column name="PASSWORD" value="$6$Zw7J1cpP$wFZmokksM1HUYJe.McUolV67XTBbLcapYc.dyn0thGhLInuFZA3TSO4iNNQKC2JAJyx7gkBDw/Vimyy2HLisD1"/>
             <column name="PHONE" value="568 426 377"/>
             <column name="USERNAME" value="student4"/>
             <column name="COMPANY_ID"/>
@@ -253,7 +252,6 @@
             <column name="EMAIL" value="rep3@example.com"/>
             <column name="LASTLOGIN" valueDate="2017-01-27 01:00:00.0"/>
             <column name="NAME" value="Rep Three"/>
-            <column name="PASSWORD" value="$6$nWdIFcdv$C9A3qq/3NJRLb40EW.sAPfxyas3pM8UHs1nZGUuZAT5uhUgca1KIGE6L0Mj4czTq.bijscMH0k1ecHOT0Mf820"/>
             <column name="PHONE" value="234 156 774"/>
             <column name="USERNAME" value="rep3"/>
             <column name="COMPANY_ID" valueNumeric="7"/>

@@ -34,17 +34,19 @@ public class SmtpConfig {
   private String fromName;
   private String username;
   private String password;
+  private boolean async = true;
 
   public SmtpConfig() {
   }
 
-  public SmtpConfig(String fromEmail, String fromName, String server, int port, String username, String password) {
+  public SmtpConfig(String fromEmail, String fromName, String server, int port, String username, String password, boolean async) {
     this.fromEmail = fromEmail;
     this.fromName = fromName;
     this.server = server;
     this.port = port;
     this.username = username;
     this.password = password;
+    this.async = async;
   }
 
   public String getFromEmail() {
@@ -93,6 +95,14 @@ public class SmtpConfig {
 
   public void setPassword(String password) {
     this.password = password;
+  }
+
+  public boolean isAsync() {
+    return async;
+  }
+
+  public void setAsync(boolean async) {
+    this.async = async;
   }
 
 }

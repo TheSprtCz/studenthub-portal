@@ -18,26 +18,25 @@ import io.dropwizard.testing.DropwizardTestSupport;
 import net.minidev.json.JSONObject;
 
 public class TaskResourceTest {
-  public static DropwizardTestSupport<StudentHubConfiguration> DROPWIZARD;
-
-  private static Client client;
+  private DropwizardTestSupport<StudentHubConfiguration> dropwizard;
+  private Client client;
 
   @BeforeClass
   public void setup() {
-      DROPWIZARD = IntegrationTestSuite.DROPWIZARD;
+      dropwizard = IntegrationTestSuite.DROPWIZARD;
       client = IntegrationTestSuite.BUILDER.build("TaskTest");
   }
 
   @Test(dependsOnGroups = "login")
   public void fetchTask() {
-    Task task = IntegrationTestSuite.authorizedRequest(client.target(String.format("http://localhost:%d/api/tasks/1", DROPWIZARD.getLocalPort()))
+    Task task = IntegrationTestSuite.authorizedRequest(client.target(String.format("http://localhost:%d/api/tasks/1", dropwizard.getLocalPort()))
         .request(MediaType.APPLICATION_JSON), client).get(Task.class);
 
     assertNotNull(task);
     assertEquals(task.getTitle(), "Reduce size");
   }
 
-  @Test(dependsOnGroups = "login")
+  @Test(dependsOnGroups = {"login", "listTasks"})
   public void createTask() {
     JSONObject application = new JSONObject();
     application.put("id", 1);
@@ -46,7 +45,7 @@ public class TaskResourceTest {
     app.put("title", "Something");
     app.put("application", application);
 
-    Response response = IntegrationTestSuite.authorizedRequest(client.target(String.format("http://localhost:%d/api/tasks", DROPWIZARD.getLocalPort()))
+    Response response = IntegrationTestSuite.authorizedRequest(client.target(String.format("http://localhost:%d/api/tasks", dropwizard.getLocalPort()))
       .request(MediaType.APPLICATION_JSON), client).post(Entity.json(app.toJSONString()));
 
     assertNotNull(response);
@@ -63,7 +62,7 @@ public class TaskResourceTest {
     app.put("title", "New");
     app.put("application", application);
 
-    Response response = IntegrationTestSuite.authorizedRequest(client.target(String.format("http://localhost:%d/api/tasks/7", DROPWIZARD.getLocalPort()))
+    Response response = IntegrationTestSuite.authorizedRequest(client.target(String.format("http://localhost:%d/api/tasks/7", dropwizard.getLocalPort()))
       .request(MediaType.APPLICATION_JSON), client).put(Entity.json(app.toJSONString()));
 
     assertNotNull(response);
@@ -76,7 +75,7 @@ public class TaskResourceTest {
 
   @Test(dependsOnMethods = "updateTask")
   public void deleteTask() {
-    Response response = IntegrationTestSuite.authorizedRequest(client.target(String.format("http://localhost:%d/api/tasks/7", DROPWIZARD.getLocalPort())).request(), client)
+    Response response = IntegrationTestSuite.authorizedRequest(client.target(String.format("http://localhost:%d/api/tasks/7", dropwizard.getLocalPort())).request(), client)
       .delete();
 
     assertNotNull(response);

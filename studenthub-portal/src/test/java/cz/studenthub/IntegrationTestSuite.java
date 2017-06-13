@@ -38,15 +38,15 @@ public class IntegrationTestSuite {
   public static JerseyClientBuilder BUILDER;
 
   // Superadmin credentials
-  public static String USERNAME = "superadmin@example.com";
-  public static String PASSWORD = "test";
+  public static final String USERNAME = "superadmin@example.com";
+  public static final String PASSWORD = "test";
 
-  private static String superToken;
+  private static String TOKEN;
 
   @BeforeSuite
   public void beforeClass() {
       DROPWIZARD.before();
-      BUILDER = new JerseyClientBuilder(DROPWIZARD.getEnvironment()).withProperty(ClientProperties.READ_TIMEOUT, 1000);
+      BUILDER = new JerseyClientBuilder(DROPWIZARD.getEnvironment()).withProperty(ClientProperties.READ_TIMEOUT, 0);
   }
 
   @AfterSuite(alwaysRun = true)
@@ -94,19 +94,23 @@ public class IntegrationTestSuite {
     return response.getCookies().get("sh-token").getValue();
   }
 
-  public static String authorize(Client client) {
-    return authorize(client, USERNAME, PASSWORD);
-  }
-
   public static Builder authorizedRequest(Builder target, String token) {
     return target.cookie("sh-token", token);
   }
 
-  public static Builder authorizedRequest(Builder target, Client client) {
-    if (superToken == null) {
-      superToken = authorize(client);
+  public static Builder authorizedRequest(Builder target, Client client, String username, String password) {
+    if (TOKEN == null) {
+      TOKEN = authorize(client, username, password);
     }
-    return target.cookie("sh-token", superToken);
+    return target.cookie("sh-token", TOKEN);
+  }
+
+  public static Builder oneTimeAuthorizedRequest(Builder target, Client client, String username, String password) {
+    return target.cookie("sh-token", authorize(client, username, password));
+  }
+
+  public static Builder authorizedRequest(Builder target, Client client) {
+    return authorizedRequest(target, client, USERNAME, PASSWORD);
   }
 
   public static SessionFactory getSessionFactory() {

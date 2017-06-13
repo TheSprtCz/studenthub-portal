@@ -22,24 +22,23 @@ import io.dropwizard.testing.DropwizardTestSupport;
 import net.minidev.json.JSONObject;
 
 public class TopicApplicationResourceTest {
-  public static DropwizardTestSupport<StudentHubConfiguration> DROPWIZARD;
-
-  private static Client client;
+  private static DropwizardTestSupport<StudentHubConfiguration> DROPWIZARD;
+  private static Client CLIENT;
 
   @BeforeClass
   public void setup() {
       DROPWIZARD = IntegrationTestSuite.DROPWIZARD;
-      client = IntegrationTestSuite.BUILDER.build("TopicApplicationTest");
+      CLIENT = IntegrationTestSuite.BUILDER.build("TopicApplicationTest");
   }
   
   private List<TopicApplication> fetchApplications() {
-    return IntegrationTestSuite.authorizedRequest(client.target(String.format("http://localhost:%d/api/applications", DROPWIZARD.getLocalPort()))
-      .request(), client).get(new GenericType<List<TopicApplication>>(){});
+    return IntegrationTestSuite.authorizedRequest(CLIENT.target(String.format("http://localhost:%d/api/applications", DROPWIZARD.getLocalPort()))
+      .request(), CLIENT).get(new GenericType<List<TopicApplication>>(){});
   }
 
   public static List<Task> fetchTasks() {
-    return IntegrationTestSuite.authorizedRequest(client.target(String.format("http://localhost:%d/api/applications/1/tasks", DROPWIZARD.getLocalPort()))
-      .request(), client).get(new GenericType<List<Task>>(){});
+    return IntegrationTestSuite.authorizedRequest(CLIENT.target(String.format("http://localhost:%d/api/applications/1/tasks", DROPWIZARD.getLocalPort()))
+      .request(), CLIENT).get(new GenericType<List<Task>>(){});
   }
 
   @Test(dependsOnGroups = "login")
@@ -52,8 +51,8 @@ public class TopicApplicationResourceTest {
 
   @Test(dependsOnGroups = "login")
   public void fetchApplication() {
-    TopicApplication app = IntegrationTestSuite.authorizedRequest(client.target(String.format("http://localhost:%d/api/applications/6", DROPWIZARD.getLocalPort()))
-        .request(MediaType.APPLICATION_JSON), client).get(TopicApplication.class);
+    TopicApplication app = IntegrationTestSuite.authorizedRequest(CLIENT.target(String.format("http://localhost:%d/api/applications/6", DROPWIZARD.getLocalPort()))
+        .request(MediaType.APPLICATION_JSON), CLIENT).get(TopicApplication.class);
 
     assertNotNull(app);
     assertEquals(app.getOfficialAssignment(), ".JSX editor plugin");
@@ -73,8 +72,8 @@ public class TopicApplicationResourceTest {
     app.put("topic", topic);
     app.put("student", student);
 
-    Response response = IntegrationTestSuite.authorizedRequest(client.target(String.format("http://localhost:%d/api/applications", DROPWIZARD.getLocalPort()))
-      .request(MediaType.APPLICATION_JSON), client).post(Entity.json(app.toJSONString()));
+    Response response = IntegrationTestSuite.authorizedRequest(CLIENT.target(String.format("http://localhost:%d/api/applications", DROPWIZARD.getLocalPort()))
+      .request(MediaType.APPLICATION_JSON), CLIENT).post(Entity.json(app.toJSONString()));
 
     assertNotNull(response);
     assertEquals(response.getStatus(), 201);
@@ -96,8 +95,8 @@ public class TopicApplicationResourceTest {
     app.put("topic", topic);
     app.put("student", student);
 
-    Response response = IntegrationTestSuite.authorizedRequest(client.target(String.format("http://localhost:%d/api/applications/7", DROPWIZARD.getLocalPort()))
-      .request(MediaType.APPLICATION_JSON), client).put(Entity.json(app.toJSONString()));
+    Response response = IntegrationTestSuite.authorizedRequest(CLIENT.target(String.format("http://localhost:%d/api/applications/7", DROPWIZARD.getLocalPort()))
+      .request(MediaType.APPLICATION_JSON), CLIENT).put(Entity.json(app.toJSONString()));
 
     assertNotNull(response);
     assertEquals(response.getStatus(), 200);
@@ -106,7 +105,7 @@ public class TopicApplicationResourceTest {
 
   @Test(dependsOnMethods = "updateApplication")
   public void deleteApplication() {
-    Response response = IntegrationTestSuite.authorizedRequest(client.target(String.format("http://localhost:%d/api/applications/8", DROPWIZARD.getLocalPort())).request(), client)
+    Response response = IntegrationTestSuite.authorizedRequest(CLIENT.target(String.format("http://localhost:%d/api/applications/8", DROPWIZARD.getLocalPort())).request(), CLIENT)
       .delete();
 
     assertNotNull(response);
@@ -118,7 +117,7 @@ public class TopicApplicationResourceTest {
    * Task tests
    */
 
-  @Test(dependsOnGroups = "login")
+  @Test(dependsOnGroups = "login", groups = "listTasks")
   public void listTasks() {
     List<Task> list = fetchTasks();
 

@@ -4,6 +4,7 @@
 	<test name="Integration Tests"   >
 	    <classes>
 	        <class name="cz.studenthub.IntegrationTestSuite"/>
+	        <class name="cz.studenthub.integration.RegistrationResourceTest"/>
 	        <class name="cz.studenthub.integration.LoginResourceTest"/>
 	        <class name="cz.studenthub.integration.CompanyPlanResourceTest"/>
 	        <class name="cz.studenthub.integration.CompanyResourceTest"/>
