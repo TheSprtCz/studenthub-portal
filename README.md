@@ -13,15 +13,34 @@
 1. Start application with `java -jar studenthub-portal/target/studenthub-portal-1.1-SNAPSHOT.jar server config.yml`
 1. To check that your application is running enter url `http://localhost:8080`
 
+## Environment variables
+
+Most changes to Student Hub Portal configuration can be done just by using environment variables.
+
+### General
+
+| ENV VAR          | PURPOSE                         | DEFAULT VALUE    |
+| ---------------- |-------------------------------- | ---------------- |
+| SH_BASIC_AUTH    | Enables/disables basic auth     | false            |
+| SH_SH_JWT_SECRET | Secret for JWT token generation | superSecret12345 |
+
+### Database
+
+| ENV VAR         | PURPOSE                       | DEFAULT VALUE                             |
+| --------------- |------------------------------ | ----------------------------------------- |
+| SH_DB_USERNAME  | Database username             | postgres                                  |
+| SH_DB_PASSWORD  | Database password             | -                                         |
+| SH_DB_URL       | Adress of the Database        | jdbc:postgresql://localhost:5432/postgres |
+
 ### SMTP Configuration
 
 Student Hub Portal uses SMTP protocol for sending email notifications. You can configure it via the following env variables:
 
-| ENV VAR         | PURPOSE        | EXAMPLE             |
+| ENV VAR         | PURPOSE        | DEFAULT VALUE       |
 | --------------- |----------------| --------------------|
 | SMTP_FROM_EMAIL | Sender email   | admin@example.com   |
-| SMTP_FROM_NAME  | Sender name    | Student Hub Admin   |
-| SMTP_SERVER     | Server address | smtp.emample.com     |
+| SMTP_FROM_NAME  | Sender name    | admin               |
+| SMTP_SERVER     | Server address | smtp.emample.com    |
 | SMTP_PORT       | Server port    | 587                 |
 | SMTP_USERNAME   | Username       | -                   |
 | SMTP_PASSWORD   | Password       | -                   |
@@ -35,7 +54,7 @@ To see your applications health enter url `http://localhost:8081/healthcheck`
 
 ### Docker
 
-Running ```mvn clean package -Pdocker``` generates a new Docker file.
+Running ```mvn clean package -Pdocker``` generates a new Docker image.
 
 ### Swagger
 
