@@ -135,7 +135,7 @@ public class UserResource {
   @Timed
   @Path("/{id}/applications")
   @UnitOfWork
-  @RolesAllowed("STUDENT")
+  @RolesAllowed({"ADMIN", "STUDENT"})
   public List<TopicApplication> fetchApplications(@Auth User user, @PathParam("id") LongParam id,
       @Min(0) @DefaultValue("0") @QueryParam("start") IntParam startParam,
       @Min(0) @DefaultValue("0") @QueryParam("size") IntParam sizeParam) {
@@ -152,7 +152,7 @@ public class UserResource {
   @Timed
   @Path("/{id}/ledApplications")
   @UnitOfWork
-  @RolesAllowed("TECH_LEADER")
+  @RolesAllowed({"ADMIN", "TECH_LEADER"})
   public List<TopicApplication> fetchLedApps(@Auth User user, @PathParam("id") LongParam id,
       @Min(0) @DefaultValue("0") @QueryParam("start") IntParam startParam,
       @Min(0) @DefaultValue("0") @QueryParam("size") IntParam sizeParam) {
@@ -169,7 +169,7 @@ public class UserResource {
   @Timed
   @Path("/{id}/ownedTopics")
   @UnitOfWork
-  @RolesAllowed("TECH_LEADER")
+  @RolesAllowed({"ADMIN", "TECH_LEADER"})
   public List<Topic> fetchOwnedTopics(@Auth User user, @PathParam("id") LongParam id,
       @Min(0) @DefaultValue("0") @QueryParam("start") IntParam startParam,
       @Min(0) @DefaultValue("0") @QueryParam("size") IntParam sizeParam) {
@@ -186,7 +186,7 @@ public class UserResource {
   @Timed
   @Path("/{id}/supervisedTopics")
   @UnitOfWork
-  @RolesAllowed("AC_SUPERVISOR")
+  @RolesAllowed({"ADMIN", "AC_SUPERVISOR"})
   public List<Topic> fetchSupervisedTopics(@Auth User user, @PathParam("id") LongParam id,
       @Min(0) @DefaultValue("0") @QueryParam("start") IntParam startParam,
       @Min(0) @DefaultValue("0") @QueryParam("size") IntParam sizeParam) {
@@ -203,7 +203,7 @@ public class UserResource {
   @Timed
   @Path("/{id}/supervisedApplications")
   @UnitOfWork
-  @RolesAllowed("AC_SUPERVISOR")
+  @RolesAllowed({"ADMIN", "AC_SUPERVISOR"})
   public List<TopicApplication> fetchSupervisedApplications(@Auth User user, @PathParam("id") LongParam id,
       @Min(0) @DefaultValue("0") @QueryParam("start") IntParam startParam,
       @Min(0) @DefaultValue("0") @QueryParam("size") IntParam sizeParam) {

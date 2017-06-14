@@ -113,7 +113,7 @@ public class TopicResource {
   @ExceptionMetered
   @Path("/{id}")
   @UnitOfWork
-  @RolesAllowed("TECH_LEADER")
+  @RolesAllowed({"ADMIN", "TECH_LEADER"})
   public Response update(@PathParam("id") LongParam idParam, @NotNull @Valid Topic topic, @Auth User user) {
 
     Long id = idParam.get();
@@ -149,7 +149,7 @@ public class TopicResource {
   @POST
   @ExceptionMetered
   @UnitOfWork
-  @RolesAllowed("TECH_LEADER")
+  @RolesAllowed({"ADMIN", "TECH_LEADER"})
   public Response create(@NotNull @Valid Topic topic, @Auth User user) {
 
     // If user is topic creator or is an admin
