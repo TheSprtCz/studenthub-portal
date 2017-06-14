@@ -37,6 +37,7 @@ All users have password "test".
 | 3   | leader             | leader@example.com          | Leader One         | 875 687 149  | 9.1.2017       | 1       | ------- | [LEADER]                     | [C++, Oracle, Ruby ]     |
 | 4   | student            | student@example.com         | Student One        | 654 712 354  | 26.8.2016      | ------- | 1       | [STUDENT]                    | [MU, JavaScript, React]  |
 | 5   | rep                | rep@example.com             | Rep One            | 154 798 416  | 6.5.2016       | 1       | ------- | [COMPANY_REP]                | ------------------------ |
+| 5   | project            | project@example.com         | Project Leader     | 205 789 460  | 12.6.2017      | ------- | ------- | [PROJECT_LEADER]             | ------------------------ |
 
 ## Topics
 
@@ -44,6 +45,12 @@ All users have password "test".
 | --- | ------------------- | -------------- | ------- | ----------------------------------- | -------------------------- | -----------------------  | ------- | ---------------- | ------------------------ | ------------------------- |
 | 1   | Dropwizard          | -------------- | true    | Simple app using Dropwizard stack   | REST endpoints             | RESTové endpointy        | 3       | [2]              | [BACHELOR, MASTER]       | [Java, REST, Web]         |
 | 2   | React UI            | Reactové UI    | false   | Create nice and functional UI       | JavaScript & React         | ------------------------ | 3       | [2]              | [HIGH_SCHOOL,PhD]        | [JavaScript, Web]         |
+
+## Projects
+
+| id | name                 | description                 | creators     | topics    | faculties | companies |
+| -- | -------------------- | --------------------------- | ------------ | --------- | --------- | --------- |
+| 1  | Web stuff            | All stuff regarding web     | [3]          | [1]       | [1]       | [1]       |
 
 ## Topic Application
 

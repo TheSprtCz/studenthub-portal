@@ -16,6 +16,7 @@
  *******************************************************************************/
 package cz.studenthub.db;
 
+import java.util.Collection;
 import java.util.List;
 
 import org.hibernate.SessionFactory;
@@ -61,6 +62,10 @@ public class TopicApplicationDAO extends AbstractDAO<TopicApplication> {
 
   public List<TopicApplication> findByTopic(Topic topic) {
     return list(namedQuery("TopicApplication.findByTopic").setParameter("topic", topic));
+  }
+
+  public List<TopicApplication> findByTopics(Collection<Topic> topics) {
+    return list(namedQuery("TopicApplication.findByTopics").setParameter("topics", topics));
   }
 
   public List<TopicApplication> findByStudent(User student) {

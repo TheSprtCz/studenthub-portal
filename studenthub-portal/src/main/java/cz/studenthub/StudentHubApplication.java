@@ -34,6 +34,7 @@ import cz.studenthub.core.Activation;
 import cz.studenthub.core.Company;
 import cz.studenthub.core.CompanyPlan;
 import cz.studenthub.core.Faculty;
+import cz.studenthub.core.Project;
 import cz.studenthub.core.Task;
 import cz.studenthub.core.Topic;
 import cz.studenthub.core.TopicApplication;
@@ -43,6 +44,7 @@ import cz.studenthub.db.ActivationDAO;
 import cz.studenthub.db.CompanyDAO;
 import cz.studenthub.db.CompanyPlanDAO;
 import cz.studenthub.db.FacultyDAO;
+import cz.studenthub.db.ProjectDAO;
 import cz.studenthub.db.TaskDAO;
 import cz.studenthub.db.TopicApplicationDAO;
 import cz.studenthub.db.TopicDAO;
@@ -53,6 +55,7 @@ import cz.studenthub.resources.CompanyPlanResource;
 import cz.studenthub.resources.CompanyResource;
 import cz.studenthub.resources.FacultyResource;
 import cz.studenthub.resources.LoginResource;
+import cz.studenthub.resources.ProjectResource;
 import cz.studenthub.resources.RegistrationResource;
 import cz.studenthub.resources.TagResource;
 import cz.studenthub.resources.TaskResource;
@@ -96,7 +99,7 @@ public class StudentHubApplication extends Application<StudentHubConfiguration> 
   private final HibernateBundle<StudentHubConfiguration> hibernate = new HibernateBundle<StudentHubConfiguration>(
       // list of entities
       User.class, Topic.class, TopicApplication.class, Company.class, University.class, Faculty.class, Task.class,
-      Activation.class, CompanyPlan.class) {
+      Activation.class, CompanyPlan.class, Project.class) {
 
     @Override
     public DataSourceFactory getDataSourceFactory(StudentHubConfiguration configuration) {
@@ -147,22 +150,24 @@ public class StudentHubApplication extends Application<StudentHubConfiguration> 
     final TaskDAO taskDao = new TaskDAO(hibernate.getSessionFactory());
     final ActivationDAO actDao = new ActivationDAO(hibernate.getSessionFactory());
     final CompanyPlanDAO cpDao = new CompanyPlanDAO(hibernate.getSessionFactory());
+    final ProjectDAO projectDao = new ProjectDAO(hibernate.getSessionFactory());
 
     // enable session manager
     environment.servlets().setSessionHandler(new SessionHandler());
 
     // register resource classes (REST Endpoints)
-    environment.jersey().register(new CompanyResource(companyDao, userDao, topicDao));
+    environment.jersey().register(new CompanyResource(companyDao, userDao, topicDao, projectDao));
     environment.jersey().register(new UniversityResource(uniDao, facDao));
-    environment.jersey().register(new FacultyResource(facDao, userDao));
-    environment.jersey().register(new UserResource(userDao, topicDao, taDao));
-    environment.jersey().register(new TopicResource(topicDao, taDao, userDao));
+    environment.jersey().register(new FacultyResource(facDao, userDao, projectDao));
+    environment.jersey().register(new UserResource(userDao, topicDao, taDao, projectDao));
+    environment.jersey().register(new TopicResource(topicDao, taDao, userDao, projectDao));
     environment.jersey().register(new TopicApplicationResource(taDao, taskDao));
     environment.jersey().register(new TaskResource(taDao, taskDao));
     environment.jersey().register(new LoginResource(userDao, configuration.getJwtSecret()));
     environment.jersey().register(new RegistrationResource(userDao, actDao, configuration.getSmtpConfig()));
     environment.jersey().register(new TagResource(userDao, topicDao));
     environment.jersey().register(new CompanyPlanResource(cpDao));
+    environment.jersey().register(new ProjectResource(projectDao, taDao, topicDao));
 
     // set up auth
     configureAuth(configuration, environment, userDao);

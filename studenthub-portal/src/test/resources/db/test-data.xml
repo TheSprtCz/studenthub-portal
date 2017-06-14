@@ -422,6 +422,17 @@
             <column name="COMPANY_ID"/>
             <column name="FACULTY_ID"/>
         </insert>
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="USERS">
+            <column name="ID" valueNumeric="20"/>
+            <column name="EMAIL" value="project@example.com"/>
+            <column name="LASTLOGIN" valueDate="2017-06-10 01:00:00.0"/>
+            <column name="NAME" value="Project Leader"/>
+            <column name="PASSWORD" value="$6$UMtqjjBp$6t7ZYd9I.itX5HCv5xbVftBpAS248VHe241lj8cw6Yfj3JfWbTXNcXwXdGkShO.00UHWqrTXcFCUDAx.xh6FA."/>
+            <column name="PHONE" value="205 709 548"/>
+            <column name="USERNAME" value="project"/>
+            <column name="COMPANY_ID"/>
+            <column name="FACULTY_ID"/>
+        </insert>
     </changeSet>
     <changeSet author="phala (generated)" id="1489653927422-26" objectQuotingStrategy="QUOTE_ALL_OBJECTS">
         <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="USER_ROLES">
@@ -515,6 +526,10 @@
         <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="USER_ROLES">
             <column name="USER_ID" valueNumeric="19"/>
             <column name="ROLES" value="ADMIN"/>
+        </insert>
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="USER_ROLES">
+            <column name="USER_ID" valueNumeric="19"/>
+            <column name="ROLES" value="PROJECT_LEADER"/>
         </insert>
     </changeSet>
     <changeSet author="phala (generated)" id="1489653927422-27" objectQuotingStrategy="QUOTE_ALL_OBJECTS">
@@ -999,6 +1014,98 @@
             <column name="ID" valueNumeric="2"/>
             <column name="ACTIVATIONCODE" value="student4"/>
             <column name="USER_ID" valueNumeric="15"/>
+        </insert>
+    </changeSet>
+    <changeSet author="phala (generated)" id="1496737117875-30">
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="PROJECTS">
+            <column name="ID" valueNumeric="1"/>
+            <column name="NAME" value="Web stuff"/>
+            <column name="DESCRIPTION" value="All stuff regarding web"/>
+        </insert>
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="PROJECTS">
+            <column name="ID" valueNumeric="2"/>
+            <column name="NAME" value="Industry things"/>
+            <column name="DESCRIPTION" value="Ehm, no idea"/>
+        </insert>
+    </changeSet>
+    <changeSet author="phala (generated)" id="1496737117875-31">
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="PROJECTS_USERS">
+            <column name="CREATORS_ID" valueNumeric="8"/>
+            <column name="PROJECT_ID" valueNumeric="1"/>
+        </insert>
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="PROJECTS_USERS">
+            <column name="CREATORS_ID" valueNumeric="9"/>
+            <column name="PROJECT_ID" valueNumeric="1"/>
+        </insert>
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="PROJECTS_USERS">
+            <column name="CREATORS_ID" valueNumeric="10"/>
+            <column name="PROJECT_ID" valueNumeric="2"/>
+        </insert>
+    </changeSet>
+    <changeSet author="phala (generated)" id="1496737117875-32">
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="PROJECTS_TOPICS">
+            <column name="TOPICS_ID" valueNumeric="2"/>
+            <column name="PROJECT_ID" valueNumeric="1"/>
+        </insert>
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="PROJECTS_TOPICS">
+            <column name="TOPICS_ID" valueNumeric="4"/>
+            <column name="PROJECT_ID" valueNumeric="1"/>
+        </insert>
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="PROJECTS_TOPICS">
+            <column name="TOPICS_ID" valueNumeric="1"/>
+            <column name="PROJECT_ID" valueNumeric="2"/>
+        </insert>
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="PROJECTS_TOPICS">
+            <column name="TOPICS_ID" valueNumeric="5"/>
+            <column name="PROJECT_ID" valueNumeric="2"/>
+        </insert>
+    </changeSet>
+    <changeSet author="phala (generated)" id="1496737117875-33">
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="PROJECTS_FACULTIES">
+            <column name="FACULTIES_ID" valueNumeric="1"/>
+            <column name="PROJECT_ID" valueNumeric="1"/>
+        </insert>
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="PROJECTS_FACULTIES">
+            <column name="FACULTIES_ID" valueNumeric="2"/>
+            <column name="PROJECT_ID" valueNumeric="1"/>
+        </insert>
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="PROJECTS_FACULTIES">
+            <column name="FACULTIES_ID" valueNumeric="6"/>
+            <column name="PROJECT_ID" valueNumeric="1"/>
+        </insert>
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="PROJECTS_FACULTIES">
+            <column name="FACULTIES_ID" valueNumeric="5"/>
+            <column name="PROJECT_ID" valueNumeric="1"/>
+        </insert>
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="PROJECTS_FACULTIES">
+            <column name="FACULTIES_ID" valueNumeric="5"/>
+            <column name="PROJECT_ID" valueNumeric="2"/>
+        </insert>
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="PROJECTS_FACULTIES">
+            <column name="FACULTIES_ID" valueNumeric="8"/>
+            <column name="PROJECT_ID" valueNumeric="2"/>
+        </insert>
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="PROJECTS_FACULTIES">
+            <column name="FACULTIES_ID" valueNumeric="6"/>
+            <column name="PROJECT_ID" valueNumeric="2"/>
+        </insert>
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="PROJECTS_FACULTIES">
+            <column name="FACULTIES_ID" valueNumeric="2"/>
+            <column name="PROJECT_ID" valueNumeric="2"/>
+        </insert>
+    </changeSet>
+    <changeSet author="phala (generated)" id="1496737117875-37">
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="PROJECTS_COMPANIES">
+            <column name="COMPANIES_ID" valueNumeric="2"/>
+            <column name="PROJECT_ID" valueNumeric="1"/>
+        </insert>
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="PROJECTS_COMPANIES">
+            <column name="COMPANIES_ID" valueNumeric="5"/>
+            <column name="PROJECT_ID" valueNumeric="1"/>
+        </insert>
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="PROJECTS_COMPANIES">
+            <column name="COMPANIES_ID" valueNumeric="6"/>
+            <column name="PROJECT_ID" valueNumeric="2"/>
         </insert>
     </changeSet>
 </databaseChangeLog>

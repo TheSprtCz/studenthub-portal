@@ -95,7 +95,18 @@
             <column name="company_id"/>
             <column name="faculty_id" valueNumeric="1"/>
         </insert>
-        <sql>SELECT setval('users_id_seq', 5)</sql>
+        <insert catalogName="studenthub" schemaName="public" tableName="users">
+            <column name="id" valueNumeric="6"/>
+            <column name="email" value="project@example.com"/>
+            <column name="lastlogin" valueDate="2017-06-12 00:00:00.0"/>
+            <column name="name" value="Project Leader"/>
+            <column name="password" value="$6$utr8Ibd0$83l4Rv.4m4QCdNy4jt5aDO9fC8mYpG6.Z3zPD.6azhSto6lfyNAIcJkE8cg2jjDhKDsiSdLrSkCTLo/xglEzi."/>
+            <column name="phone" value="205 789 460"/>
+            <column name="username" value="project"/>
+            <column name="company_id"/>
+            <column name="faculty_id"/>
+        </insert>
+        <sql>SELECT setval('users_id_seq', 6)</sql>
     </changeSet>
     <changeSet author="phala (generated)" id="1496646751908-21">
         <insert catalogName="studenthub" schemaName="public" tableName="user_roles">
@@ -119,6 +130,10 @@
             <column name="roles" value="COMPANY_REP"/>
         </insert>
         <insert catalogName="studenthub" schemaName="public" tableName="user_roles">
+            <column name="user_id" valueNumeric="1"/>
+            <column name="roles" value="PROJECT_LEADER"/>
+        </insert>
+        <insert catalogName="studenthub" schemaName="public" tableName="user_roles">
             <column name="user_id" valueNumeric="5"/>
             <column name="roles" value="COMPANY_REP"/>
         </insert>
@@ -134,6 +149,10 @@
             <column name="user_id" valueNumeric="4"/>
             <column name="roles" value="STUDENT"/>
         </insert>   
+        <insert catalogName="studenthub" schemaName="public" tableName="user_roles">
+            <column name="user_id" valueNumeric="6"/>
+            <column name="roles" value="PROJECT_LEADER"/>
+        </insert>
     </changeSet>
     <changeSet author="phala (generated)" id="1496646751908-19">
         <insert catalogName="studenthub" schemaName="public" tableName="topics">

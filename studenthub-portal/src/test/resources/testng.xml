@@ -15,6 +15,7 @@
 	        <class name="cz.studenthub.integration.TopicApplicationResourceTest"/>
 	        <class name="cz.studenthub.integration.TaskResourceTest"/>
 	        <class name="cz.studenthub.integration.TagResourceTest"/>
+	        <class name="cz.studenthub.integration.ProjectResourceTest"/>
 	    </classes>
     </test>
 </suite>
