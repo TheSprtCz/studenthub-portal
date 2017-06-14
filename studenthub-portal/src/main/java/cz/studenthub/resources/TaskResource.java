@@ -53,7 +53,6 @@ public class TaskResource {
 
   private final TopicApplicationDAO appDao;
   private final TaskDAO taskDao;
-  // private static final Logger LOG = LoggerFactory.getLogger(TaskResource.class);
 
   public TaskResource(TopicApplicationDAO appDao, TaskDAO taskDao) {
     this.appDao = appDao;

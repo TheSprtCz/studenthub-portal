@@ -62,9 +62,6 @@ public class UserResource {
   private final TopicApplicationDAO appDao;
   private final TopicDAO topicDao;
 
-  // private static final Logger LOG =
-  // LoggerFactory.getLogger(UserResource.class);
-
   public UserResource(UserDAO userDao, TopicDAO topicDao, TopicApplicationDAO taDao) {
     this.userDao = userDao;
     this.appDao = taDao;
