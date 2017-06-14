@@ -43,9 +43,11 @@ import com.codahale.metrics.annotation.ExceptionMetered;
 import com.codahale.metrics.annotation.Timed;
 
 import cz.studenthub.core.Faculty;
+import cz.studenthub.core.Project;
 import cz.studenthub.core.User;
 import cz.studenthub.core.UserRole;
 import cz.studenthub.db.FacultyDAO;
+import cz.studenthub.db.ProjectDAO;
 import cz.studenthub.db.UserDAO;
 import cz.studenthub.util.PagingUtil;
 import io.dropwizard.hibernate.UnitOfWork;
@@ -59,10 +61,12 @@ public class FacultyResource {
 
   private final FacultyDAO facDao;
   private final UserDAO userDao;
+  private final ProjectDAO projectDao;
 
-  public FacultyResource(FacultyDAO facDao, UserDAO userDao) {
+  public FacultyResource(FacultyDAO facDao, UserDAO userDao, ProjectDAO projectDao) {
     this.facDao = facDao;
     this.userDao = userDao;
+    this.projectDao = projectDao;
   }
 
   @GET
@@ -154,4 +158,18 @@ public class FacultyResource {
     return PagingUtil.paging(userDao.findByRoleAndFaculty(UserRole.AC_SUPERVISOR, faculty), startParam.get(), sizeParam.get());
   }
 
+  @GET
+  @Path("/{id}/projects")
+  @UnitOfWork
+  @PermitAll
+  public List<Project> fetchProjects(@PathParam("id") LongParam id,
+          @Min(0) @DefaultValue("0") @QueryParam("start") IntParam startParam,
+          @Min(0) @DefaultValue("0") @QueryParam("size") IntParam sizeParam) {
+
+    Faculty faculty = facDao.findById(id.get());
+    if (faculty == null)
+      throw new WebApplicationException(Status.NOT_FOUND);
+
+    return PagingUtil.paging(projectDao.findByFaculty(faculty), startParam.get(), sizeParam.get());
+  }
 }

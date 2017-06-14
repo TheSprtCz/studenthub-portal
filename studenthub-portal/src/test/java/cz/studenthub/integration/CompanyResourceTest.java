@@ -19,6 +19,7 @@ import cz.studenthub.StudentHubConfiguration;
 import cz.studenthub.IntegrationTestSuite;
 import cz.studenthub.core.Company;
 import cz.studenthub.core.CompanyPlan;
+import cz.studenthub.core.Project;
 import cz.studenthub.core.Topic;
 import cz.studenthub.core.User;
 import io.dropwizard.testing.DropwizardTestSupport;
@@ -112,10 +113,10 @@ public class CompanyResourceTest {
     assertEquals(1, users.size());
   }
 
-  @Test(dependsOnGroups = "login")
+  @Test(dependsOnGroups = "migrate")
   public void getTopics() {
-    List<Topic> topics = IntegrationTestSuite.authorizedRequest(client.target(String.format("http://localhost:%d/api/companies/5/topics", dropwizard.getLocalPort()))
-        .request(MediaType.APPLICATION_JSON), client).get(new GenericType<List<Topic>>(){});
+    List<Topic> topics = client.target(String.format("http://localhost:%d/api/companies/5/topics", dropwizard.getLocalPort()))
+        .request(MediaType.APPLICATION_JSON).get(new GenericType<List<Topic>>(){});
 
     assertNotNull(topics);
     assertEquals(2, topics.size());
@@ -128,6 +129,16 @@ public class CompanyResourceTest {
 
     assertNotNull(plan);
     assertEquals("TIER_3", plan.getName());
+  }
+
+  @Test(dependsOnGroups = "migrate")
+  public void fetchProjects() {
+    List<Project> projects = client.target(String.format("http://localhost:%d/api/companies/2/projects", dropwizard.getLocalPort())).request()
+        .get(new GenericType<List<Project>>(){}); 
+
+    assertNotNull(projects);
+    assertEquals(projects.size(), 1);
+    assertEquals((long) projects.get(0).getId(), 1);
   }
 
 }

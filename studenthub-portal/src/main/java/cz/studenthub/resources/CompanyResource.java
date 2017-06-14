@@ -44,10 +44,12 @@ import com.codahale.metrics.annotation.Timed;
 
 import cz.studenthub.core.Company;
 import cz.studenthub.core.CompanyPlan;
+import cz.studenthub.core.Project;
 import cz.studenthub.core.Topic;
 import cz.studenthub.core.User;
 import cz.studenthub.core.UserRole;
 import cz.studenthub.db.CompanyDAO;
+import cz.studenthub.db.ProjectDAO;
 import cz.studenthub.db.TopicDAO;
 import cz.studenthub.db.UserDAO;
 import cz.studenthub.util.PagingUtil;
@@ -64,11 +66,13 @@ public class CompanyResource {
   private final CompanyDAO companyDao;
   private final UserDAO userDao;
   private final TopicDAO topicDao;
+  private final ProjectDAO projectDao;
 
-  public CompanyResource(CompanyDAO companyDao, UserDAO userDao, TopicDAO topicDao) {
+  public CompanyResource(CompanyDAO companyDao, UserDAO userDao, TopicDAO topicDao, ProjectDAO projectDao) {
     this.companyDao = companyDao;
     this.userDao = userDao;
     this.topicDao = topicDao;
+    this.projectDao = projectDao;
   }
 
   @GET
@@ -177,5 +181,20 @@ public class CompanyResource {
     else {
       throw new WebApplicationException(Status.FORBIDDEN);
     }
-  }  
+  }
+
+  @GET
+  @Timed
+  @Path("/{id}/projects")
+  @UnitOfWork
+  public List<Project> fetchProjects(@PathParam("id") LongParam id,
+          @Min(0) @DefaultValue("0") @QueryParam("start") IntParam startParam,
+          @Min(0) @DefaultValue("0") @QueryParam("size") IntParam sizeParam) {
+
+    Company company = companyDao.findById(id.get());
+    if (company == null)
+      throw new WebApplicationException(Status.NOT_FOUND);
+
+    return PagingUtil.paging(projectDao.findByCompany(company), startParam.get(), sizeParam.get());
+  }
 }

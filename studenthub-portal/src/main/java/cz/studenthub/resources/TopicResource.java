@@ -43,10 +43,12 @@ import com.codahale.metrics.annotation.ExceptionMetered;
 import com.codahale.metrics.annotation.Timed;
 
 import cz.studenthub.core.Company;
+import cz.studenthub.core.Project;
 import cz.studenthub.core.Topic;
 import cz.studenthub.core.TopicApplication;
 import cz.studenthub.core.User;
 import cz.studenthub.core.UserRole;
+import cz.studenthub.db.ProjectDAO;
 import cz.studenthub.db.TopicApplicationDAO;
 import cz.studenthub.db.TopicDAO;
 import cz.studenthub.db.UserDAO;
@@ -64,11 +66,13 @@ public class TopicResource {
   private final TopicDAO topicDao;
   private final TopicApplicationDAO appDao;
   private final UserDAO userDao;
+  private final ProjectDAO projectDao;
 
-  public TopicResource(TopicDAO topicDao, TopicApplicationDAO taDao, UserDAO userDao) {
+  public TopicResource(TopicDAO topicDao, TopicApplicationDAO taDao, UserDAO userDao, ProjectDAO projectDao) {
     this.topicDao = topicDao;
     this.appDao = taDao;
     this.userDao = userDao;
+    this.projectDao = projectDao;
   }
 
   @GET
@@ -206,12 +210,23 @@ public class TopicResource {
   @Path("/{id}/supervisors")
   @UnitOfWork
   @PermitAll
-  public List<User> getTopicSupervisors(@PathParam("id") LongParam id,
+  public List<User> fetchTopicSupervisors(@PathParam("id") LongParam id,
       @Min(0) @DefaultValue("0") @QueryParam("start") IntParam startParam,
       @Min(0) @DefaultValue("0") @QueryParam("size") IntParam sizeParam) {
 
     Topic topic = topicDao.findById(id.get());
     return PagingUtil.paging(topic.getAcademicSupervisors(), startParam.get(), sizeParam.get());
+  }
+
+  @GET
+  @Path("/{id}/projects")
+  @UnitOfWork
+  public List<Project> fetchProjects(@PathParam("id") LongParam id,
+      @Min(0) @DefaultValue("0") @QueryParam("start") IntParam startParam,
+      @Min(0) @DefaultValue("0") @QueryParam("size") IntParam sizeParam) {
+
+    Topic topic = topicDao.findById(id.get());
+    return PagingUtil.paging(projectDao.findByTopic(topic), startParam.get(), sizeParam.get());
   }
 
   @GET

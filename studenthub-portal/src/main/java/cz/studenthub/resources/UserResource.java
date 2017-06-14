@@ -40,10 +40,12 @@ import javax.ws.rs.core.Response.Status;
 import com.codahale.metrics.annotation.ExceptionMetered;
 import com.codahale.metrics.annotation.Timed;
 
+import cz.studenthub.core.Project;
 import cz.studenthub.core.Topic;
 import cz.studenthub.core.TopicApplication;
 import cz.studenthub.core.User;
 import cz.studenthub.core.UserRole;
+import cz.studenthub.db.ProjectDAO;
 import cz.studenthub.db.TopicApplicationDAO;
 import cz.studenthub.db.TopicDAO;
 import cz.studenthub.db.UserDAO;
@@ -61,11 +63,16 @@ public class UserResource {
   private final UserDAO userDao;
   private final TopicApplicationDAO appDao;
   private final TopicDAO topicDao;
+  private final ProjectDAO projectDao;
 
-  public UserResource(UserDAO userDao, TopicDAO topicDao, TopicApplicationDAO taDao) {
+  // private static final Logger LOG =
+  // LoggerFactory.getLogger(UserResource.class);
+
+  public UserResource(UserDAO userDao, TopicDAO topicDao, TopicApplicationDAO taDao, ProjectDAO projectDao) {
     this.userDao = userDao;
     this.appDao = taDao;
     this.topicDao = topicDao;
+    this.projectDao = projectDao;
   }
 
   @GET
@@ -208,6 +215,23 @@ public class UserResource {
     if (id.get().equals(user.getId()) || user.getRoles().contains(UserRole.ADMIN)) {
       User supervisor = userDao.findById(id.get());
       return PagingUtil.paging(appDao.findBySupervisor(supervisor), startParam.get(), sizeParam.get());
+    } else {
+      throw new WebApplicationException(Status.FORBIDDEN);
+    }
+  }
+
+  @GET
+  @Timed
+  @Path("/{id}/projects")
+  @UnitOfWork
+  @RolesAllowed({"ADMIN", "PROJECT_LEADER"})
+  public List<Project> fetchProjects(@Auth User user, @PathParam("id") LongParam id,
+      @Min(0) @DefaultValue("0") @QueryParam("start") IntParam startParam,
+      @Min(0) @DefaultValue("0") @QueryParam("size") IntParam sizeParam) {
+
+    if (id.get().equals(user.getId()) || user.getRoles().contains(UserRole.ADMIN)) {
+      User creator = userDao.findById(id.get());
+      return PagingUtil.paging(projectDao.findByCreator(creator), startParam.get(), sizeParam.get());
     } else {
       throw new WebApplicationException(Status.FORBIDDEN);
     }

@@ -1,7 +1,7 @@
 package cz.studenthub.integration;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
 
 import java.util.List;
 
@@ -17,6 +17,7 @@ import org.testng.annotations.Test;
 import cz.studenthub.IntegrationTestSuite;
 import cz.studenthub.StudentHubConfiguration;
 import cz.studenthub.core.Faculty;
+import cz.studenthub.core.Project;
 import cz.studenthub.core.User;
 import io.dropwizard.testing.DropwizardTestSupport;
 import net.minidev.json.JSONObject;
@@ -115,4 +116,12 @@ public class FacultyResourceTest {
     assertEquals(users.size(), 2);
   }
 
+  @Test(dependsOnGroups = "login")
+  public void fetchProjects() {
+    List<Project> projects = IntegrationTestSuite.authorizedRequest(client.target(String.format("http://localhost:%d/api/faculties/2/projects", dropwizard.getLocalPort())).request(), client)
+        .get(new GenericType<List<Project>>(){}); 
+
+    assertNotNull(projects);
+    assertEquals(projects.size(), 2);
+  }
 }
