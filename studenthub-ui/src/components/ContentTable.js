@@ -3,39 +3,44 @@ import React, { Component } from 'react';
 import AddButton from './AddButton';
 import ReturnButton from './ReturnButton.js';
 import SiteSnackbar from './SiteSnackbar.js';
+import Pager from './Pager.js';
 import FacultyDialog from './FacultyDialog.js';
 import UniversityDialog from './UniversityDialog.js';
 import { UniversityTable, UniversityRow, UniversityHead} from './UniversityTable.js';
 import { FacultyTable, FacultyRow, FacultyHead} from './FacultyTable.js';
 
 import _t from '../Translations.js'
+import Util from '../Util.js'
 
 /**
  * Renders the content Table and all its inside elements.
  */
 class ContentTable extends Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {
+  state = {
       selectedUniversity: -1,
       header: _t.translate("Universities"),
       universityData: [],
+      nextUniversities: [],
       facultyData: [],
+      nextFaculties: [],
+      page: -1,
       editId: -1,
       snackbarActive: false,
       snackbarLabel: "",
       universityDialogActive: false,
       facultyDialogActive: false
-    };
+    }
+
+  componentDidMount() {
     this.getUniversities();
+    this.changePage(1);
   }
 
   /**
    * Connects to the server to update current data using GET.
    */
   getUniversities = () => {
-    fetch('/api/universities', {
+    fetch("/api/universities?size=" + Util.UNIVERSITIES_PER_PAGE + "&start=" + ((this.state.page+1) * Util.UNIVERSITIES_PER_PAGE), {
       credentials: 'same-origin',
       method: 'get'
     }).then(function(response) {
@@ -45,25 +50,9 @@ class ContentTable extends Component {
         throw new Error('There was a problem with network connection.');
       }
     }).then(function(json) {
-      var newData = [];
-
-      for(let i in json) {
-        newData.push({
-          city: json[i].city,
-          country: json[i].country,
-          id: json[i].id,
-          logoUrl: json[i].logoUrl,
-          name: json[i].name,
-          url: json[i].url
-        });
-      }
-      newData = newData.sort(function(a, b){
-          if(a.id < b.id) return -1;
-          if(a.id > b.id) return 1;
-          return 0;
-      });
       this.setState({
-        universityData: newData,
+        universityData: this.state.nextUniversities,
+        nextUniversities: json,
         selectedUniversity: -1,
         header: _t.translate("Universities")
       });
@@ -74,7 +63,8 @@ class ContentTable extends Component {
    * Connects to the server to update current data using GET.
    */
   getFaculties = (id) => {
-    fetch('/api/universities/' + this.state.universityData[id].id + '/faculties', {
+    fetch('/api/universities/' + this.state.universityData[id].id + "/faculties?size=" + Util.FACULTIES_PER_PAGE
+      + "&start=" + ((this.state.page+1) * Util.FACULTIES_PER_PAGE), {
       credentials: 'same-origin',
       method: 'get'
     }).then(function(response) {
@@ -84,22 +74,9 @@ class ContentTable extends Component {
         throw new Error('There was a problem with network connection.');
       }
     }).then(function(json) {
-      var newData = [];
-
-      for(let i in json) {
-        newData.push({
-          id: json[i].id,
-          name: json[i].name,
-          university: json[i].university
-        });
-      }
-      newData = newData.sort(function(a, b){
-          if(a.id < b.id) return -1;
-          if(a.id > b.id) return 1;
-          return 0;
-      });
       this.setState({
-        facultyData: newData,
+        facultyData: this.state.nextFaculties,
+        nextFaculties: json,
         selectedUniversity: id,
         header: this.state.universityData[id].name + " " + _t.translate("faculties")
       });
@@ -111,8 +88,17 @@ class ContentTable extends Component {
    * @param id selectedUniversity value to be set onClick
    */
   handleCellClick = (id) => {
-    if (this.state.selectedUniversity === -1) this.getFaculties(id);
-    else this.getUniversities();
+    this.setState({ page: -1 });
+    setTimeout(function() {
+      if (this.state.selectedUniversity === -1) {
+        this.getFaculties(id);
+        this.changePage(1);
+      }
+      else {
+        this.getUniversities();
+        this.changePage(1);
+      }
+    }.bind(this), 2);
   }
 
   /**
@@ -249,6 +235,17 @@ class ContentTable extends Component {
     }
   }
 
+  changePage = (offset) => {
+    this.setState({ page: this.state.page + offset });
+
+    setTimeout(function() {
+      if (this.state.selectedUniversity === -1)
+        this.getUniversities();
+      else
+        this.getFaculties(this.state.selectedUniversity);
+    }.bind(this), 2);
+  }
+
   render() {
     return(
       <div className="Table-container">
@@ -263,6 +260,8 @@ class ContentTable extends Component {
           active={this.state.snackbarActive}
           toggleHandler={this.toggleSnackbar}
           label={this.state.snackbarLabel} />
+        <Pager currentPage={this.state.page} nextData={(this.state.selectedUniversity === -1) ? this.state.nextUniversities : this.state.nextFaculties}
+          pageChanger={(offset) => this.changePage(offset)} />
       </div>
     );
   }

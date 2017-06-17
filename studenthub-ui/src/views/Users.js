@@ -3,6 +3,7 @@ import React, { Component } from 'react';
 import AdminUsersView from '../components/AdminUsersView.js';
 import CompanyRepUsersView from '../components/CompanyRepUsersView.js';
 import SiteSnackbar from '../components/SiteSnackbar.js';
+import Pager from '../components/Pager.js';
 
 import Auth from '../Auth.js';
 import Util from '../Util.js';
@@ -10,20 +11,22 @@ import Util from '../Util.js';
 import _t from '../Translations.js';
 
 class Users extends Component {
-  state = { users: [], companyId: -1, snackbarActive: false, snackbarLabel: "" }
+  state = { users: [], nextUsers: [], companyId: -1, snackbarActive: false,
+    snackbarLabel: "", page: -1 }
 
   componentDidMount() {
     if (Auth.hasRole(Util.userRoles.admin))
       this.getUsers();
     else if (Auth.hasRole(Util.userRoles.companyRep))
       this.getCompanyUsers();
+    this.changePage(1);
   }
 
   /**
    * Gets the list of all users.
    */
   getUsers = () => {
-    fetch('/api/users', {
+    fetch("/api/users" + Util.USERS_PER_PAGE + "&start=" + ((this.state.page+1) * Util.USERS_PER_PAGE), {
         method: 'get',
         credentials: 'same-origin'
       }).then(function(response) {
@@ -31,31 +34,16 @@ class Users extends Component {
             return response.json();
         } else throw new Error('There was a problem with network connection.');
       }).then(function(json) {
-        var newData = [];
-
-        for(let i in json) {
-          newData.push({
-            company: json[i].company,
-            email:	json[i].email,
-            faculty:	json[i].faculty,
-            id: json[i].id,
-            lastLogin:	json[i].lastLogin,
-            name: json[i].name,
-            phone: json[i].phone,
-            roles: json[i].roles,
-            tags: json[i].tags,
-            username: json[i].username
-          });
-        }
         this.setState({
-          users: newData
+          users: this.state.nextUsers,
+          nextUsers: json
         });
       }.bind(this));
   }
 
   /**
-   * Gets the list of only company users.
-   */
+  * Gets the list of only company users.
+  */
   getCompanyUsers = () => {
     fetch('/api/users/' + Auth.getUserInfo().sub, {
         method: 'get',
@@ -68,7 +56,8 @@ class Users extends Component {
         this.setState({
           companyId: json.company.id
         });
-        fetch('/api/companies/' + json.company.id + '/leaders', {
+        fetch('/api/companies/' + json.company.id + "/leaders?size=" + Util.USERS_PER_PAGE + "&start=" +
+          ((this.state.page+1) * Util.USERS_PER_PAGE), {
             method: 'get',
             credentials: 'same-origin'
           }).then(function(response) {
@@ -78,25 +67,10 @@ class Users extends Component {
               throw new Error("There was a problem with network connection. The GET request couldn't be processed!");
             }
           }).then(function(json) {
-          var newData = [];
-
-          for(let i in json) {
-            newData.push({
-              company: json[i].company,
-              email:	json[i].email,
-              faculty:	json[i].faculty,
-              id: json[i].id,
-              lastLogin:	json[i].lastLogin,
-              name: json[i].name,
-              phone: json[i].phone,
-              roles: json[i].roles,
-              tags: json[i].tags,
-              username: json[i].username
+            this.setState({
+              users: this.state.nextUsers,
+              nextUsers: json
             });
-          }
-          this.setState({
-            users: newData
-        });
       }.bind(this));
     }.bind(this));
   }
@@ -176,12 +150,25 @@ class Users extends Component {
         snackbarSetter={(label) => this.setSnackbarResponse(label)} />);
   }
 
+  changePage = (offset) => {
+    this.setState({ page: this.state.page + offset });
+
+    setTimeout(function() {
+      if (Auth.hasRole(Util.userRoles.admin))
+        this.getUsers();
+      else if (Auth.hasRole(Util.userRoles.companyRep))
+        this.getCompanyUsers();
+    }.bind(this), 2);
+  }
+
   render() {
     return(
       <div>
         <h1>{ _t.translate('Users') }</h1>
         {this.generateView()}
         <SiteSnackbar active={this.state.snackbarActive} toggleHandler={this.toggleSnackbar} label={this.state.snackbarLabel} />
+        <Pager currentPage={this.state.page} nextData={this.state.nextUsers}
+          pageChanger={(offset) => this.changePage(offset)} />
       </div>
     );
   }
