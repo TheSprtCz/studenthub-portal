@@ -52,7 +52,7 @@ database:
 jwtSecret: ${SH_JWT_SECRET:-superSecret12345}
 
 # basic auth
-useBasicAuth: ${SH_BASIC_AUTH:-false}
+enableBasicAuth: ${SH_BASIC_AUTH:-false}
 
 # smtp config
 smtp:
