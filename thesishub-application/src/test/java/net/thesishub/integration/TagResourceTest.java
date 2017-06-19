@@ -37,7 +37,7 @@ public class TagResourceTest {
   }
 
   @Test(dependsOnGroups = "migrate")
-  public void listTopic() {
+  public void listTopics() {
     List<Topic> list = client.target(String.format("http://localhost:%d/api/tags/Java/topics", dropwizard.getLocalPort()))
         .request()
         .get(new GenericType<List<Topic>>(){});

@@ -260,6 +260,7 @@
             <column name="USERNAME" value="student4"/>
             <column name="COMPANY_ID"/>
             <column name="FACULTY_ID" valueNumeric="2"/>
+            <column name="SENDMAIL" valueBoolean="true"/>
         </insert>
         <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="USERS">
             <column name="ID" valueNumeric="16"/>
@@ -271,6 +272,7 @@
             <column name="USERNAME" value="rep1"/>
             <column name="COMPANY_ID" valueNumeric="1"/>
             <column name="FACULTY_ID"/>
+            <column name="SENDMAIL" valueBoolean="true"/>
         </insert>
         <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="USERS">
             <column name="ID" valueNumeric="17"/>
@@ -282,6 +284,7 @@
             <column name="USERNAME" value="rep2"/>
             <column name="COMPANY_ID" valueNumeric="8"/>
             <column name="FACULTY_ID"/>
+            <column name="SENDMAIL" valueBoolean="true"/>
         </insert>
         <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="USERS">
             <column name="ID" valueNumeric="18"/>
@@ -292,6 +295,7 @@
             <column name="USERNAME" value="rep3"/>
             <column name="COMPANY_ID" valueNumeric="7"/>
             <column name="FACULTY_ID"/>
+            <column name="SENDMAIL" valueBoolean="true"/>
         </insert>
         <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="USERS">
             <column name="ID" valueNumeric="1"/>
@@ -303,6 +307,7 @@
             <column name="USERNAME" value="admin"/>
             <column name="COMPANY_ID"/>
             <column name="FACULTY_ID"/>
+            <column name="SENDMAIL" valueBoolean="true"/>
         </insert>
         <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="USERS">
             <column name="ID" valueNumeric="3"/>
@@ -314,6 +319,7 @@
             <column name="USERNAME" value="supervisor2"/>
             <column name="COMPANY_ID"/>
             <column name="FACULTY_ID" valueNumeric="5"/>
+            <column name="SENDMAIL" valueBoolean="true"/>
         </insert>
         <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="USERS">
             <column name="ID" valueNumeric="2"/>
@@ -325,6 +331,7 @@
             <column name="USERNAME" value="supervisor1"/>
             <column name="COMPANY_ID"/>
             <column name="FACULTY_ID" valueNumeric="1"/>
+            <column name="SENDMAIL" valueBoolean="true"/>
         </insert>
         <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="USERS">
             <column name="ID" valueNumeric="4"/>
@@ -336,6 +343,7 @@
             <column name="USERNAME" value="supervisor3"/>
             <column name="COMPANY_ID"/>
             <column name="FACULTY_ID" valueNumeric="8"/>
+            <column name="SENDMAIL" valueBoolean="true"/>
         </insert>
         <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="USERS">
             <column name="ID" valueNumeric="5"/>
@@ -347,6 +355,7 @@
             <column name="USERNAME" value="supervisor4"/>
             <column name="COMPANY_ID"/>
             <column name="FACULTY_ID" valueNumeric="2"/>
+            <column name="SENDMAIL" valueBoolean="true"/>
         </insert>
         <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="USERS">
             <column name="ID" valueNumeric="6"/>
@@ -358,6 +367,7 @@
             <column name="USERNAME" value="supervisor5"/>
             <column name="COMPANY_ID"/>
             <column name="FACULTY_ID" valueNumeric="2"/>
+            <column name="SENDMAIL" valueBoolean="true"/>
         </insert>
         <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="USERS">
             <column name="ID" valueNumeric="7"/>
@@ -369,6 +379,7 @@
             <column name="USERNAME" value="supervisor6"/>
             <column name="COMPANY_ID"/>
             <column name="FACULTY_ID" valueNumeric="6"/>
+            <column name="SENDMAIL" valueBoolean="true"/>
         </insert>
         <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="USERS">
             <column name="ID" valueNumeric="8"/>
@@ -380,6 +391,7 @@
             <column name="USERNAME" value="leader1"/>
             <column name="COMPANY_ID" valueNumeric="1"/>
             <column name="FACULTY_ID"/>
+            <column name="SENDMAIL" valueBoolean="true"/>
         </insert>
         <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="USERS">
             <column name="ID" valueNumeric="9"/>
@@ -391,6 +403,7 @@
             <column name="USERNAME" value="leader2"/>
             <column name="COMPANY_ID" valueNumeric="5"/>
             <column name="FACULTY_ID"/>
+            <column name="SENDMAIL" valueBoolean="true"/>
         </insert>
         <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="USERS">
             <column name="ID" valueNumeric="10"/>
@@ -402,6 +415,7 @@
             <column name="USERNAME" value="leader3"/>
             <column name="COMPANY_ID" valueNumeric="6"/>
             <column name="FACULTY_ID"/>
+            <column name="SENDMAIL" valueBoolean="true"/>
         </insert>
         <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="USERS">
             <column name="ID" valueNumeric="11"/>
@@ -413,6 +427,7 @@
             <column name="USERNAME" value="leader4"/>
             <column name="COMPANY_ID" valueNumeric="2"/>
             <column name="FACULTY_ID"/>
+            <column name="SENDMAIL" valueBoolean="true"/>
         </insert>
         <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="USERS">
             <column name="ID" valueNumeric="12"/>
@@ -424,6 +439,7 @@
             <column name="USERNAME" value="student1"/>
             <column name="COMPANY_ID"/>
             <column name="FACULTY_ID" valueNumeric="1"/>
+            <column name="SENDMAIL" valueBoolean="true"/>
         </insert>
         <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="USERS">
             <column name="ID" valueNumeric="13"/>
@@ -435,6 +451,7 @@
             <column name="USERNAME" value="student2"/>
             <column name="COMPANY_ID"/>
             <column name="FACULTY_ID" valueNumeric="5"/>
+            <column name="SENDMAIL" valueBoolean="true"/>
         </insert>
         <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="USERS">
             <column name="ID" valueNumeric="14"/>
@@ -446,6 +463,7 @@
             <column name="USERNAME" value="student3"/>
             <column name="COMPANY_ID"/>
             <column name="FACULTY_ID" valueNumeric="1"/>
+            <column name="SENDMAIL" valueBoolean="true"/>
         </insert>
         <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="USERS">
             <column name="ID" valueNumeric="19"/>
@@ -457,6 +475,7 @@
             <column name="USERNAME" value="superadmin"/>
             <column name="COMPANY_ID" valueNumeric="1"/>
             <column name="FACULTY_ID" valueNumeric="1"/>
+            <column name="SENDMAIL" valueBoolean="true"/>
         </insert>
         <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="USERS">
             <column name="ID" valueNumeric="20"/>
@@ -468,6 +487,7 @@
             <column name="USERNAME" value="project"/>
             <column name="COMPANY_ID"/>
             <column name="FACULTY_ID"/>
+            <column name="SENDMAIL" valueBoolean="true"/>
         </insert>
         <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="USERS">
             <column name="ID" valueNumeric="21"/>
@@ -479,6 +499,7 @@
             <column name="USERNAME" value="ambassador"/>
             <column name="COMPANY_ID"/>
             <column name="FACULTY_ID" valueNumeric="1"/>
+            <column name="SENDMAIL" valueBoolean="true"/>
         </insert>
     </changeSet>
     <changeSet author="phala (generated)" id="1489653927422-26" objectQuotingStrategy="QUOTE_ALL_OBJECTS">
@@ -1212,6 +1233,48 @@
         <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="PROJECTS_COMPANIES">
             <column name="COMPANIES_ID" valueNumeric="6"/>
             <column name="PROJECT_ID" valueNumeric="2"/>
+        </insert>
+    </changeSet>
+    <changeSet author="phala (generated)" id="1496737117875-39">
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="NOTIFICATIONS">
+            <column name="ID" valueNumeric="1"/>
+            <column name="TYPE" value="APPLICATION_CREATED"/>
+            <column name="DATE" valueDate="2017-07-17 01:00:00.0"/>
+            <column name="FROM_ID" valueNumeric="13"/>
+            <column name="TARGET_ID" valueNumeric="9"/>
+            <column name="READ" valueBoolean="false"/>
+        </insert>
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="NOTIFICATIONS">
+            <column name="ID" valueNumeric="2"/>
+            <column name="TYPE" value="APPLICATION_GRADED"/>
+            <column name="DATE" valueDate="2017-05-20 01:00:00.0"/>
+            <column name="FROM_ID" valueNumeric="2"/>
+            <column name="TARGET_ID" valueNumeric="13"/>
+            <column name="READ" valueBoolean="true"/>
+        </insert>
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="NOTIFICATIONS">
+            <column name="ID" valueNumeric="3"/>
+            <column name="TYPE" value="TASK_CREATED"/>
+            <column name="DATE" valueDate="2017-05-10 01:00:00.0"/>
+            <column name="FROM_ID" valueNumeric="10"/>
+            <column name="TARGET_ID" valueNumeric="14"/>
+            <column name="READ" valueBoolean="false"/>
+        </insert>
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="NOTIFICATIONS">
+            <column name="ID" valueNumeric="4"/>
+            <column name="TYPE" value="TASK_CREATED"/>
+            <column name="DATE" valueDate="2017-05-10 01:00:00.0"/>
+            <column name="FROM_ID" valueNumeric="10"/>
+            <column name="TARGET_ID" valueNumeric="5"/>
+            <column name="READ" valueBoolean="true"/>
+        </insert>
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="NOTIFICATIONS">
+            <column name="ID" valueNumeric="5"/>
+            <column name="TYPE" value="STATUS_CHANGED"/>
+            <column name="DATE" valueDate="2017-03-17 01:00:00.0"/>
+            <column name="FROM_ID" valueNumeric="2"/>
+            <column name="TARGET_ID" valueNumeric="13"/>
+            <column name="READ" valueBoolean="false"/>
         </insert>
     </changeSet>
 </databaseChangeLog>

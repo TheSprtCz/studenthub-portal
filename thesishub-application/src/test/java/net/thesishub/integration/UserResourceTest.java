@@ -19,16 +19,18 @@ import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
 import net.thesishub.IntegrationTestSuite;
 import net.thesishub.ThesisHubConfiguration;
+import net.thesishub.core.Notification;
 import net.thesishub.core.Project;
 import net.thesishub.core.Topic;
 import net.thesishub.core.TopicApplication;
 import net.thesishub.core.User;
+import net.thesishub.db.NotificationDAOTest;
 
 public class UserResourceTest {
   
   private static final int COUNT = 23;
-  private DropwizardTestSupport<ThesisHubConfiguration> dropwizard;
-  private Client client;
+  private static DropwizardTestSupport<ThesisHubConfiguration> dropwizard;
+  private static Client client;
 
   @BeforeClass
   public void setup() {
@@ -39,6 +41,11 @@ public class UserResourceTest {
   private List<User> fetchUsers() {
     return IntegrationTestSuite.authorizedRequest(client.target(String.format("http://localhost:%d/api/users", dropwizard.getLocalPort()))
       .request(), client).get(new GenericType<List<User>>(){});
+  }
+
+  public static List<Notification> fetchNotifications() {
+    return IntegrationTestSuite.oneTimeAuthorizedRequest(client.target(String.format("http://localhost:%d/api/users/notifications", dropwizard.getLocalPort()))
+        .request(), client, "student2@example.com", "test").get(new GenericType<List<Notification>>(){});    
   }
 
   @Test(dependsOnGroups = {"login", "invite"})
@@ -140,5 +147,14 @@ public class UserResourceTest {
     assertNotNull(projects);
     assertEquals(projects.size(), 1);
     assertEquals((long) projects.get(0).getId(), 1);
+  }
+
+  @Test(dependsOnGroups = "login", groups = "listNotifications")
+  public void listNotifications() {
+    List<Notification> notifications = fetchNotifications();
+
+    assertNotNull(notifications);
+    assertEquals(notifications.size(), NotificationDAOTest.COUNT);
+    assertEquals((long) notifications.get(0).getId(), 2);
   }
 }

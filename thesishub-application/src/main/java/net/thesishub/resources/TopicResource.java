@@ -48,6 +48,7 @@ import javax.ws.rs.core.UriBuilder;
 
 import com.codahale.metrics.annotation.ExceptionMetered;
 import com.codahale.metrics.annotation.Timed;
+import com.fasterxml.jackson.core.JsonProcessingException;
 
 import io.dropwizard.auth.Auth;
 import io.dropwizard.hibernate.UnitOfWork;
@@ -64,6 +65,7 @@ import net.thesishub.db.TopicApplicationDAO;
 import net.thesishub.db.TopicDAO;
 import net.thesishub.db.UserDAO;
 import net.thesishub.util.Equals;
+import net.thesishub.util.NotificationUtil;
 import net.thesishub.util.PagingUtil;
 import net.thesishub.validators.groups.CreateUpdateChecks;
 
@@ -83,6 +85,9 @@ public class TopicResource {
 
   @Inject
   private ProjectDAO projectDao;
+
+  @Inject
+  private NotificationUtil notifUtil;
 
   @GET
   @Timed
@@ -194,10 +199,16 @@ public class TopicResource {
   @Path("/{id}/supervise")
   @UnitOfWork
   @RolesAllowed("AC_SUPERVISOR")
-  public Response superviseTopic(@PathParam("id") LongParam id, @Auth User supervisor) {
+  public Response superviseTopic(@PathParam("id") LongParam id, @Auth User supervisor) throws JsonProcessingException {
     Topic topic = topicDao.findById(id.get());
+    if (topic == null)
+      throw new WebApplicationException(Status.NOT_FOUND);
+
     topic.getAcademicSupervisors().add(supervisor);
     topicDao.update(topic);
+
+    notifUtil.supervisorAdded(topic, supervisor);
+
     return Response.ok(topic).build();
   }
 
@@ -228,6 +239,9 @@ public class TopicResource {
       @Context HttpServletResponse response) {
 
     Topic topic = topicDao.findById(id.get());
+    if (topic == null)
+      throw new WebApplicationException(Status.NOT_FOUND);
+
     return PagingUtil.paging(topic.getAcademicSupervisors(), startParam.get(), sizeParam.get(), response);
   }
 
@@ -240,6 +254,9 @@ public class TopicResource {
       @Context HttpServletResponse response) {
 
     Topic topic = topicDao.findById(id.get());
+    if (topic == null)
+      throw new WebApplicationException(Status.NOT_FOUND);
+
     return PagingUtil.paging(projectDao.findByTopic(topic), startParam.get(), sizeParam.get(), response);
   }
 
@@ -249,6 +266,9 @@ public class TopicResource {
   @PermitAll
   public User getTopicCreator(@PathParam("id") LongParam id) {
     Topic topic = topicDao.findById(id.get());
+    if (topic == null)
+      throw new WebApplicationException(Status.NOT_FOUND);
+
     return topic.getCreator();
   }
 

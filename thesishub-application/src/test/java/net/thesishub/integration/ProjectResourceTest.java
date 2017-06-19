@@ -1,11 +1,14 @@
 package net.thesishub.integration;
 
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
 
 import java.util.List;
 
+import javax.mail.Message;
+import javax.mail.MessagingException;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.GenericType;
@@ -13,7 +16,10 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.testng.annotations.BeforeClass;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+
+import com.icegreen.greenmail.util.GreenMail;
 
 import io.dropwizard.testing.DropwizardTestSupport;
 import net.minidev.json.JSONArray;
@@ -28,15 +34,22 @@ import net.thesishub.core.User;
 import net.thesishub.db.ProjectDAOTest;
 
 public class ProjectResourceTest {
-  public DropwizardTestSupport<ThesisHubConfiguration> dropwizard;
+  private DropwizardTestSupport<ThesisHubConfiguration> dropwizard;
   private Client client;
+  private GreenMail greenMail;
 
   @BeforeClass
   public void setup() {
       dropwizard = IntegrationTestSuite.DROPWIZARD;
       client = IntegrationTestSuite.BUILDER.build("ProjectTest");
+      greenMail = IntegrationTestSuite.MAIL;
   }
-  
+
+  @BeforeMethod
+  public void reset() {
+    greenMail.reset();
+  }
+
   private List<Project> fetchProjects() {
     return client.target(String.format("http://localhost:%d/api/projects", dropwizard.getLocalPort()))
       .request().get(new GenericType<List<Project>>(){});
@@ -81,8 +94,8 @@ public class ProjectResourceTest {
     assertEquals((long) response.readEntity(Project.class).getId(), 3);
   }
 
-  @Test(dependsOnMethods = "createProject")
-  public void updateProject() {
+  @Test(dependsOnMethods = "createProject", dependsOnGroups = "testMail")
+  public void updateProject() throws MessagingException {
     JSONObject creator = new JSONObject();
     creator.put("id", 20);
 
@@ -99,6 +112,17 @@ public class ProjectResourceTest {
     assertNotNull(response);
     assertEquals(response.getStatus(), 200);
     assertEquals(response.readEntity(Project.class).getName(), "Projects 101");
+
+    // Test that exactly one email arrived
+    assertTrue(greenMail.waitForIncomingEmail(IntegrationTestSuite.MAIL_TIMEOUT, 1));
+    Message[] messages = greenMail.getReceivedMessages();
+    assertEquals(messages.length, 1);
+
+    // Test that correct email arrived to correct person (Project creation email to project creator)
+    Message msg = messages[0];
+    assertFalse(IntegrationTestSuite.hasUnfilledArguments(msg));
+    assertTrue(msg.getSubject().contains("Project New Project was updated"));
+    assertEquals(msg.getAllRecipients()[0].toString(), "project@example.com");
   }
 
   @Test(dependsOnMethods = "updateProject")

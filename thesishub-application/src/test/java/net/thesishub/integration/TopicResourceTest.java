@@ -1,11 +1,14 @@
 package net.thesishub.integration;
 
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
 
 import java.util.List;
 
+import javax.mail.Message;
+import javax.mail.MessagingException;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.GenericType;
@@ -13,7 +16,10 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.testng.annotations.BeforeClass;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+
+import com.icegreen.greenmail.util.GreenMail;
 
 import io.dropwizard.testing.DropwizardTestSupport;
 import net.minidev.json.JSONArray;
@@ -29,11 +35,18 @@ import net.thesishub.db.TopicDAOTest;
 public class TopicResourceTest {
   private DropwizardTestSupport<ThesisHubConfiguration> dropwizard;
   private Client client;
+  private GreenMail greenMail;
 
   @BeforeClass
   public void setup() {
       dropwizard = IntegrationTestSuite.DROPWIZARD;
       client = IntegrationTestSuite.BUILDER.build("TopicTest");
+      greenMail = IntegrationTestSuite.MAIL;
+  }
+
+  @BeforeMethod
+  public void reset() {
+    greenMail.reset();
   }
   
   private List<Topic> fetchTopics() {
@@ -124,7 +137,7 @@ public class TopicResourceTest {
   }
 
   @Test(dependsOnGroups = "login")
-  public void superviseTopic() {
+  public void superviseTopic() throws MessagingException {
     User superadmin = IntegrationTestSuite.authorizedRequest(client.target(String.format("http://localhost:%d/api/users/19", dropwizard.getLocalPort())).request(), client)
         .get(User.class);
 
@@ -136,6 +149,17 @@ public class TopicResourceTest {
     assertNotNull(response);
     assertEquals(response.getStatus(), 200);
     assertTrue(supervisors.contains(superadmin));
+
+    // Test that exactly one email arrived
+    assertTrue(greenMail.waitForIncomingEmail(IntegrationTestSuite.MAIL_TIMEOUT, 1));
+    Message[] messages = greenMail.getReceivedMessages();
+    assertEquals(messages.length, 1);
+
+    // Test that correct email arrived to correct person (SupervisorAdded to creator)
+    Message msg = messages[0];
+    assertFalse(IntegrationTestSuite.hasUnfilledArguments(msg));
+    assertEquals(msg.getSubject(), "Supervisor was added to your Topic Melon cutter");
+    assertEquals(msg.getAllRecipients()[0].toString(), "leader2@example.com");
   }
 
   @Test(dependsOnGroups = "login")

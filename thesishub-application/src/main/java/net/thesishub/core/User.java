@@ -92,6 +92,7 @@ public class User extends GenericEntity<Long> implements Principal {
   @ElementCollection(fetch = FetchType.EAGER)
   private Set<UserRole> roles;
 
+  private boolean sendMail = true;
   /*
    * Interests of a Student, Skills of a Leader/Supervisor
    */
@@ -184,6 +185,14 @@ public class User extends GenericEntity<Long> implements Principal {
 
   public void setRoles(Set<UserRole> roles) {
     this.roles = roles;
+  }
+
+  public boolean isSendMail() {
+    return sendMail;
+  }
+
+  public void setSendMail(boolean sendMail) {
+    this.sendMail = sendMail;
   }
 
   public Set<String> getTags() {

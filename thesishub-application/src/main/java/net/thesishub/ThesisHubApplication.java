@@ -26,6 +26,7 @@ import org.glassfish.jersey.server.filter.RolesAllowedDynamicFeature;
 import org.glassfish.jersey.servlet.ServletProperties;
 import org.hibernate.SessionFactory;
 import com.codahale.metrics.health.HealthCheck;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
 
 import io.dropwizard.Application;
@@ -57,6 +58,7 @@ import net.thesishub.core.Company;
 import net.thesishub.core.CompanyPlan;
 import net.thesishub.core.Country;
 import net.thesishub.core.Faculty;
+import net.thesishub.core.Notification;
 import net.thesishub.core.Project;
 import net.thesishub.core.Task;
 import net.thesishub.core.Topic;
@@ -71,6 +73,7 @@ import net.thesishub.resources.CompanyResource;
 import net.thesishub.resources.CountryResource;
 import net.thesishub.resources.FacultyResource;
 import net.thesishub.resources.LoginResource;
+import net.thesishub.resources.NotificationResource;
 import net.thesishub.resources.ProjectResource;
 import net.thesishub.resources.RegistrationResource;
 import net.thesishub.resources.TagResource;
@@ -98,7 +101,7 @@ public class ThesisHubApplication extends Application<ThesisHubConfiguration> {
   private final HibernateBundle<ThesisHubConfiguration> hibernate = new HibernateBundle<ThesisHubConfiguration>(
       // list of entities
       User.class, Topic.class, TopicApplication.class, Company.class, University.class, Faculty.class, Task.class,
-      Activation.class, CompanyPlan.class, Project.class, TopicDegree.class, Country.class) {
+      Activation.class, CompanyPlan.class, Project.class, TopicDegree.class, Country.class, Notification.class) {
 
     @Override
     public DataSourceFactory getDataSourceFactory(ThesisHubConfiguration configuration) {
@@ -142,8 +145,8 @@ public class ThesisHubApplication extends Application<ThesisHubConfiguration> {
   @Override
   public void run(final ThesisHubConfiguration configuration, final Environment environment) {
 
-    Class<?>[] types = {SessionFactory.class, ThesisHubConfiguration.class};
-    Object[] args = {hibernate.getSessionFactory(), configuration};
+    Class<?>[] types = {SessionFactory.class, ThesisHubConfiguration.class, ObjectMapper.class};
+    Object[] args = {hibernate.getSessionFactory(), configuration, environment.getObjectMapper()};
 
     // Load DAOs into HK2
     ServiceLocator locator = (ServiceLocator) environment.getApplicationContext().getAttribute(ServletProperties.SERVICE_LOCATOR);
@@ -168,6 +171,7 @@ public class ThesisHubApplication extends Application<ThesisHubConfiguration> {
     environment.jersey().register(new ProjectResource());
     environment.jersey().register(new TopicDegreeResource());
     environment.jersey().register(new CountryResource());
+    environment.jersey().register(new NotificationResource());
 
     // set up auth
     configureAuth(configuration, environment, locator);

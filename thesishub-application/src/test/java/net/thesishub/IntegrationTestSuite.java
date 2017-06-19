@@ -1,10 +1,18 @@
 package net.thesishub;
 
+import static org.testng.Assert.assertTrue;
+
+import java.util.Map;
+import java.util.regex.Pattern;
+
+import javax.mail.Message;
+import javax.mail.MessagingException;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.Invocation.Builder;
 import javax.ws.rs.core.MultivaluedHashMap;
 import javax.ws.rs.core.MultivaluedMap;
+import javax.ws.rs.core.NewCookie;
 import javax.ws.rs.core.Response;
 
 import org.glassfish.jersey.client.ClientProperties;
@@ -16,6 +24,10 @@ import org.slf4j.LoggerFactory;
 import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
+
+import com.icegreen.greenmail.util.GreenMail;
+import com.icegreen.greenmail.util.GreenMailUtil;
+import com.icegreen.greenmail.util.ServerSetupTest;
 
 import io.dropwizard.client.JerseyClientBuilder;
 import io.dropwizard.testing.DropwizardTestSupport;
@@ -36,6 +48,8 @@ public class IntegrationTestSuite {
   public static final DropwizardTestSupport<ThesisHubConfiguration> DROPWIZARD =
             new DropwizardTestSupport<ThesisHubConfiguration>(ThesisHubApplication.class, "config-test.yml");
   public static final Logger LOG = LoggerFactory.getLogger(IntegrationTestSuite.class);
+  public static final GreenMail MAIL = new GreenMail(ServerSetupTest.SMTP);
+  public static final int MAIL_TIMEOUT = 2000;
   public static JerseyClientBuilder BUILDER;
 
   // Superadmin credentials
@@ -46,12 +60,14 @@ public class IntegrationTestSuite {
 
   @BeforeSuite
   public void beforeClass() {
+      MAIL.start();
       DROPWIZARD.before();
       BUILDER = new JerseyClientBuilder(DROPWIZARD.getEnvironment()).withProperty(ClientProperties.READ_TIMEOUT, 0);
   }
 
   @AfterSuite(alwaysRun = true)
   public void afterClass() {
+      MAIL.stop();
       DROPWIZARD.after();
   }
 
@@ -67,6 +83,7 @@ public class IntegrationTestSuite {
         database = DatabaseFactory.getInstance().findCorrectDatabaseImplementation(new JdbcConnection(connection));
       } catch (DatabaseException e) {
         LOG.error("Error establishing connection into DB!", e);
+        assertTrue(false);
       }
       Liquibase liquibase;
       try {
@@ -74,6 +91,7 @@ public class IntegrationTestSuite {
         liquibase.update(new Contexts());
       } catch (LiquibaseException e) {
         LOG.error("Error migration test DB!", e);
+        assertTrue(false);
       }
     });
     transaction.commit();
@@ -91,8 +109,10 @@ public class IntegrationTestSuite {
 
   public static String authorize(Client client, String username, String password) {
     Response response = authorizationRequest(client, username, password);
- 
-    return response.getCookies().get(LoginResource.COOKIE_NAME).getValue();
+
+    Map<String, NewCookie> cookies = response.getCookies();
+    NewCookie cookie = cookies.get(LoginResource.COOKIE_NAME);
+    return cookie.getValue();
   }
 
   public static Builder authorizedRequest(Builder target, String token) {
@@ -118,4 +138,13 @@ public class IntegrationTestSuite {
     return ((ThesisHubApplication) DROPWIZARD.getApplication()).getSessionFactory();
   }
 
+  // Checks if there are any unfilled arguments in the message
+  public static boolean hasUnfilledArguments(Message msg) throws MessagingException {
+    Pattern pattern = Pattern.compile("(?<=\\$\\{)([a-zA-Z0-9_-]+)(?=\\})");
+    if (pattern.matcher(msg.getSubject()).matches() ||
+        pattern.matcher(GreenMailUtil.getBody(msg)).matches()) {
+      return true;
+    }
+    return false;
+  }
 }

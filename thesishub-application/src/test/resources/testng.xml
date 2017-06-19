@@ -18,6 +18,7 @@
 	        <class name="net.thesishub.integration.TaskResourceTest"/>
 	        <class name="net.thesishub.integration.TagResourceTest"/>
 	        <class name="net.thesishub.integration.ProjectResourceTest"/>
+            <class name="net.thesishub.integration.NotificationResourceTest"/>
 	    </classes>
     </test>
 </suite>

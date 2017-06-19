@@ -55,8 +55,8 @@ public class RegistrationResourceTest {
   @BeforeClass
   public void setup() {
       dropwizard = IntegrationTestSuite.DROPWIZARD;
+      greenMail = IntegrationTestSuite.MAIL;
       client = IntegrationTestSuite.BUILDER.build("RegistrationTest");
-      greenMail.start();
       session = IntegrationTestSuite.getSessionFactory().openSession();
       ManagedSessionContext.bind(session);
 
@@ -110,13 +110,14 @@ public class RegistrationResourceTest {
     assertNotNull(act);
 
     // Test that exactly one email arrived
-    assertTrue(greenMail.waitForIncomingEmail(MAIL_TIMEOUT, 1));
+    assertTrue(greenMail.waitForIncomingEmail(IntegrationTestSuite.MAIL_TIMEOUT, 1));
     Message[] messages = greenMail.getReceivedMessages();
     assertEquals(messages.length, 1);
 
     // Test that email has correct subject
     Message msg = messages[0];
     assertEquals(msg.getSubject(), "Password Setup");
+    assertFalse(IntegrationTestSuite.hasUnfilledArguments(msg));
 
     // Test that activation email contains activationCode
     String content = GreenMailUtil.getBody(msg);
@@ -134,10 +135,11 @@ public class RegistrationResourceTest {
     assertEquals(actResponse.getStatus(), 200);
 
     // Test that confirmation email was received
-    assertTrue(greenMail.waitForIncomingEmail(MAIL_TIMEOUT, 1));
+    assertTrue(greenMail.waitForIncomingEmail(IntegrationTestSuite.MAIL_TIMEOUT, 1));
     messages = greenMail.getReceivedMessages();
     assertEquals(messages.length, 2);
     assertEquals(messages[1].getSubject(), "User Activation");
+    assertFalse(IntegrationTestSuite.hasUnfilledArguments(messages[1]));
     // Ensure that password is not present in body
     assertFalse(GreenMailUtil.getBody(messages[1]).contains(password));
 
@@ -176,13 +178,14 @@ public class RegistrationResourceTest {
     assertNotNull(act);
     
     // Test that exactly one email arrived
-    assertTrue(greenMail.waitForIncomingEmail(MAIL_TIMEOUT, 1));
+    assertTrue(greenMail.waitForIncomingEmail(IntegrationTestSuite.MAIL_TIMEOUT, 1));
     Message[] messages = greenMail.getReceivedMessages();
     assertEquals(messages.length, 1);
 
     // Test that email has correct subject
     Message msg = messages[0];
     assertEquals(msg.getSubject(), "You have been invited");
+    assertFalse(IntegrationTestSuite.hasUnfilledArguments(msg));
 
     // Test that activation email contains activationCode
     String content = GreenMailUtil.getBody(msg);
@@ -200,10 +203,11 @@ public class RegistrationResourceTest {
     assertEquals(response.getStatus(), 200);
 
     // Test received email
-    assertTrue(greenMail.waitForIncomingEmail(MAIL_TIMEOUT, 1));
+    assertTrue(greenMail.waitForIncomingEmail(IntegrationTestSuite.MAIL_TIMEOUT, 1));
     MimeMessage[] messages = greenMail.getReceivedMessages();
     assertEquals(messages.length, 1);
     assertEquals(messages[0].getSubject(), "Password Setup");
+    assertFalse(IntegrationTestSuite.hasUnfilledArguments(messages[0]));
   }
 
   @Test(dependsOnGroups = { "migrate", "testMail" })
@@ -222,7 +226,7 @@ public class RegistrationResourceTest {
     assertNotNull(act);
 
     // Test if correct mail was sent
-    assertTrue(greenMail.waitForIncomingEmail(MAIL_TIMEOUT, 1));
+    assertTrue(greenMail.waitForIncomingEmail(IntegrationTestSuite.MAIL_TIMEOUT, 1));
     MimeMessage[] messages = greenMail.getReceivedMessages();
     assertEquals(messages.length, 1);
     assertEquals(messages[0].getSubject(), "Password Reset");
@@ -249,9 +253,10 @@ public class RegistrationResourceTest {
     MimeMessage[] messages = greenMail.getReceivedMessages();
     assertEquals(messages.length, 1);
     assertEquals(messages[0].getSubject(), "Password Setup");
+    assertFalse(IntegrationTestSuite.hasUnfilledArguments(messages[0]));
   }
 
-  @Test(dependsOnGroups = {"migrate","testMail"})
+  @Test(dependsOnGroups = { "migrate", "testMail" })
   public void changePasswordTest() throws MessagingException {
     String password = "xPo#|€@5897";
     JSONObject updateBean = new JSONObject();
@@ -265,10 +270,11 @@ public class RegistrationResourceTest {
     assertEquals(response.getStatus(), 200);
 
     // Test if correct mail was sent
-    assertTrue(greenMail.waitForIncomingEmail(MAIL_TIMEOUT, 1));
+    assertTrue(greenMail.waitForIncomingEmail(IntegrationTestSuite.MAIL_TIMEOUT, 1));
     MimeMessage[] messages = greenMail.getReceivedMessages();
     assertEquals(messages.length, 1);
     assertEquals(messages[0].getSubject(), "Password Updated");
+    assertFalse(IntegrationTestSuite.hasUnfilledArguments(messages[0]));
     // Ensure that password is not present in body
     assertFalse(GreenMailUtil.getBody(messages[0]).contains(password));
 

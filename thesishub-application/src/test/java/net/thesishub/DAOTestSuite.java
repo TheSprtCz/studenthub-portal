@@ -29,6 +29,7 @@ import net.thesishub.core.Company;
 import net.thesishub.core.CompanyPlan;
 import net.thesishub.core.Country;
 import net.thesishub.core.Faculty;
+import net.thesishub.core.Notification;
 import net.thesishub.core.Project;
 import net.thesishub.core.Task;
 import net.thesishub.core.Topic;
@@ -41,6 +42,7 @@ import net.thesishub.db.CompanyDAOTest;
 import net.thesishub.db.CompanyPlanDAOTest;
 import net.thesishub.db.CountryDAOTest;
 import net.thesishub.db.FacultyDAOTest;
+import net.thesishub.db.NotificationDAOTest;
 import net.thesishub.db.ProjectDAOTest;
 import net.thesishub.db.TaskDAOTest;
 import net.thesishub.db.TopicApplicationDAOTest;
@@ -52,7 +54,7 @@ import net.thesishub.db.UserDAOTest;
 @RunWith(Suite.class)
 @SuiteClasses({ CompanyDAOTest.class, FacultyDAOTest.class, TaskDAOTest.class, TopicApplicationDAOTest.class,
    TopicDAOTest.class, UniversityDAOTest.class, UserDAOTest.class, ActivationDAOTest.class, CompanyPlanDAOTest.class,
-   ProjectDAOTest.class, TopicDegreeDAOTest.class, CountryDAOTest.class})
+   ProjectDAOTest.class, TopicDegreeDAOTest.class, CountryDAOTest.class, NotificationDAOTest.class})
 public class DAOTestSuite {
 
   public static DAOTestRule database;
@@ -80,6 +82,7 @@ public class DAOTestSuite {
         .addEntityClass(Project.class)
         .addEntityClass(TopicDegree.class)
         .addEntityClass(Country.class)
+        .addEntityClass(Notification.class)
         .addEntityClass(CompanyPlan.class).build();
   }
 

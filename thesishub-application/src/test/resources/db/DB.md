@@ -153,6 +153,7 @@ Codes were manually assigned to ease testing
 | 6   | 3     | .JSX editor plugin                                  | ----- | MASTER     | FAILED       | ------------ | 5.3.2017      | 2       | 10         | 14      | 5          | ---------------------------------------------------------------- |
 | 7   | 4     | UI for thesis management system                     | B     | HIGH_SCHOOL| FINISHED     | 10.4.2017    | 18.12.2016    | 1       | 9          | 13      | 2          | https://github.com/StudentHubCZ/studenthub-portal                |
 | 8   | 4     | Notification library for React                      | ----- | BACHELOR   | WAITING      | ------------ | ------------- | 2       | 10         | 15      | 6          | ---------------------------------------------------------------- |
+
 ## Tasks
 
 | id  | application | title                              | deadline   | completed |
@@ -163,3 +164,15 @@ Codes were manually assigned to ease testing
 | 4   | 3           | Upgrade to better laser            | 31.12.2016 | true      |
 | 5   | 4           | Add support for GFM                | 12.11.2016 | false     |
 | 6   | 6           | Create prototype                   | 18.5.2017  | false     |
+
+## Notifications
+
+Content is not displayed because it is too large and useless for testing
+
+| id  | from | target | date        | type                  | read    |
+| --- | -----| ------ | ----------- | --------------------- | --------|
+| 1   | 13   | 9      | 20.7.2017   | APPLICATION_CREATED   | false   |
+| 2   | 2    | 13     | 20.5.2017   | APPLICATION_GRADED    | true    |
+| 3   | 10   | 14     | 10.5.2017   | TASK_CREATED          | false   |
+| 4   | 10   | 5      | 10.5.2017   | TASK_CREATED          | true    |
+| 5   | 2    | 13     | 17.3.2017   | STATUS_CHANGED        | false   |

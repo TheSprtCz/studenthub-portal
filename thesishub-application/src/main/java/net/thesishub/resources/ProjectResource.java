@@ -43,6 +43,7 @@ import javax.ws.rs.core.UriBuilder;
 
 import com.codahale.metrics.annotation.ExceptionMetered;
 import com.codahale.metrics.annotation.Timed;
+import com.fasterxml.jackson.core.JsonProcessingException;
 
 import io.dropwizard.auth.Auth;
 import io.dropwizard.hibernate.UnitOfWork;
@@ -60,6 +61,7 @@ import net.thesishub.db.ProjectDAO;
 import net.thesishub.db.TopicApplicationDAO;
 import net.thesishub.db.TopicDAO;
 import net.thesishub.util.Equals;
+import net.thesishub.util.NotificationUtil;
 import net.thesishub.util.PagingUtil;
 import net.thesishub.validators.groups.CreateUpdateChecks;
 
@@ -76,6 +78,9 @@ public class ProjectResource {
 
   @Inject
   private TopicDAO topicDao;
+
+  @Inject
+  private NotificationUtil notifUtil;
 
   @GET
   @Timed
@@ -101,8 +106,8 @@ public class ProjectResource {
 
     // If user is creator or admin
     if (project.getCreators().contains(user) || user.isAdmin()) {
-      Project returned = projectDao.create(project);
-      if (returned.getId() == null)
+      projectDao.create(project);
+      if (project.getId() == null)
         throw new WebApplicationException(Status.INTERNAL_SERVER_ERROR);
   
       return Response.created(UriBuilder.fromResource(ProjectResource.class).path("/{id}").build(project.getId()))
@@ -118,7 +123,7 @@ public class ProjectResource {
   @Path("/{id}")
   @UnitOfWork
   @RolesAllowed({"ADMIN", "PROJECT_LEADER"})
-  public Response update(@PathParam("id") LongParam idParam, @NotNull @Valid @Validated(CreateUpdateChecks.class) Project project, @Auth User user) {
+  public Response update(@PathParam("id") LongParam idParam, @NotNull @Valid @Validated(CreateUpdateChecks.class) Project project, @Auth User user) throws JsonProcessingException {
     Long id = idParam.get();
     Project oldProject = projectDao.findById(id);
     if (oldProject == null) 
@@ -127,8 +132,10 @@ public class ProjectResource {
     // If user is creator or admin
     if (oldProject.getCreators().contains(user) || user.isAdmin()) {
       project.setId(id);
-      Project updated = projectDao.update(project);
-      return Response.ok(updated).build();
+      projectDao.update(project);
+      notifUtil.projectUpdated(oldProject, project, user);
+
+      return Response.ok(project).build();
     }
     else {
       throw new WebApplicationException(Status.FORBIDDEN);

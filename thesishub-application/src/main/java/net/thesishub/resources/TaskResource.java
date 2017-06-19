@@ -36,6 +36,7 @@ import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriBuilder;
 
 import com.codahale.metrics.annotation.ExceptionMetered;
+import com.fasterxml.jackson.core.JsonProcessingException;
 
 import io.dropwizard.auth.Auth;
 import io.dropwizard.hibernate.UnitOfWork;
@@ -46,6 +47,7 @@ import net.thesishub.core.User;
 import net.thesishub.db.TaskDAO;
 import net.thesishub.db.TopicApplicationDAO;
 import net.thesishub.util.Equals;
+import net.thesishub.util.NotificationUtil;
 
 @Path("/tasks")
 @Produces(MediaType.APPLICATION_JSON)
@@ -59,6 +61,9 @@ public class TaskResource {
   @Inject
   private TaskDAO taskDao;
 
+  @Inject
+  private NotificationUtil notifUtil;
+
   @GET
   @Path("/{id}")
   @UnitOfWork
@@ -70,7 +75,7 @@ public class TaskResource {
   @ExceptionMetered
   @UnitOfWork
   @RolesAllowed({ "ADMIN", "AC_SUPERVISOR", "STUDENT", "TECH_LEADER" })
-  public Response createTask(@NotNull @Valid Task task, @Auth User user) {
+  public Response createTask(@NotNull @Valid Task task, @Auth User user) throws JsonProcessingException {
 
     TopicApplication app = appDao.findById(task.getApplication().getId());
     // allow only app student, leader and/or supervisor
@@ -79,6 +84,8 @@ public class TaskResource {
 
     task.setApplication(app);
     taskDao.create(task);
+
+    notifUtil.taskCreated(task, user);
 
     if (task.getId() == null)
       throw new WebApplicationException(Status.INTERNAL_SERVER_ERROR);
@@ -112,6 +119,9 @@ public class TaskResource {
   public Response deleteTask(@PathParam("id") LongParam taskId, @Auth User user) {
 
     Task task = taskDao.findById(taskId.get());
+    if (task == null)
+      throw new WebApplicationException(Status.NOT_FOUND);
+
     TopicApplication app = task.getApplication();
 
     // allow only app student, leader and/or supervisor

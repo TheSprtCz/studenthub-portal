@@ -47,10 +47,12 @@ import io.dropwizard.auth.Auth;
 import io.dropwizard.hibernate.UnitOfWork;
 import io.dropwizard.jersey.params.IntParam;
 import io.dropwizard.jersey.params.LongParam;
+import net.thesishub.core.Notification;
 import net.thesishub.core.Project;
 import net.thesishub.core.Topic;
 import net.thesishub.core.TopicApplication;
 import net.thesishub.core.User;
+import net.thesishub.db.NotificationDAO;
 import net.thesishub.db.ProjectDAO;
 import net.thesishub.db.TopicApplicationDAO;
 import net.thesishub.db.TopicDAO;
@@ -74,6 +76,9 @@ public class UserResource {
 
   @Inject
   private ProjectDAO projectDao;
+
+  @Inject
+  private NotificationDAO notifDao;
 
   @GET
   @Timed
@@ -252,5 +257,18 @@ public class UserResource {
     } else {
       throw new WebApplicationException(Status.FORBIDDEN);
     }
+  }
+
+  @GET
+  @Timed
+  @Path("/notifications")
+  @UnitOfWork
+  @PermitAll
+  public List<Notification> fetchNotifications(@Auth User user,@PathParam("id") LongParam idParam,
+      @Min(0) @DefaultValue("0") @QueryParam("start") IntParam startParam,
+      @Min(0) @DefaultValue("0") @QueryParam("size") IntParam sizeParam,
+      @Context HttpServletResponse response) {
+
+    return PagingUtil.paging(notifDao.findByUser(user), startParam.get(), sizeParam.get(), response);
   }
 }

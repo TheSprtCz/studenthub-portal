@@ -45,6 +45,7 @@ import javax.ws.rs.core.UriBuilder;
 
 import com.codahale.metrics.annotation.ExceptionMetered;
 import com.codahale.metrics.annotation.Timed;
+import com.fasterxml.jackson.core.JsonProcessingException;
 
 import io.dropwizard.auth.Auth;
 import io.dropwizard.hibernate.UnitOfWork;
@@ -57,6 +58,7 @@ import net.thesishub.core.TopicApplication;
 import net.thesishub.core.User;
 import net.thesishub.db.TaskDAO;
 import net.thesishub.db.TopicApplicationDAO;
+import net.thesishub.util.NotificationUtil;
 import net.thesishub.util.PagingUtil;
 import net.thesishub.util.Equals;
 import net.thesishub.validators.groups.CreateUpdateChecks;
@@ -71,6 +73,9 @@ public class TopicApplicationResource {
 
   @Inject
   private TaskDAO taskDao;
+
+  @Inject
+  private NotificationUtil notifUtil;
 
   @GET
   @Timed
@@ -110,7 +115,7 @@ public class TopicApplicationResource {
   @Path("/{id}")
   @UnitOfWork
   @RolesAllowed({ "ADMIN", "AC_SUPERVISOR", "STUDENT", "TECH_LEADER" })
-  public Response update(@PathParam("id") LongParam idParam, @NotNull @Valid @Validated(CreateUpdateChecks.class) TopicApplication app, @Auth User user) {
+  public Response update(@PathParam("id") LongParam idParam, @NotNull @Valid @Validated(CreateUpdateChecks.class) TopicApplication app, @Auth User user) throws JsonProcessingException {
     
     long id = idParam.get();
     TopicApplication oldApp = appDao.findById(id);
@@ -124,6 +129,15 @@ public class TopicApplicationResource {
         || user.isAdmin()) {
       app.setId(id);
       appDao.update(app);
+
+      if (oldApp.getGrade() == null && app.getGrade() != null) {
+        notifUtil.applicationGraded(oldApp, app, user);
+      } else if (oldApp.getStatus() != app.getStatus()) {
+        notifUtil.statusChanged(oldApp, app, user);
+      } else {
+        notifUtil.applicationUpdated(oldApp, app, user);
+      }
+
       return Response.ok(app).build();
     } else {
       throw new WebApplicationException(Status.FORBIDDEN);
@@ -134,7 +148,7 @@ public class TopicApplicationResource {
   @ExceptionMetered
   @UnitOfWork
   @RolesAllowed("STUDENT")
-  public Response create(@NotNull @Valid @Validated(CreateUpdateChecks.class) TopicApplication app, @Auth User user) {
+  public Response create(@NotNull @Valid @Validated(CreateUpdateChecks.class) TopicApplication app, @Auth User user) throws JsonProcessingException {
 
     // Student can only create applications for himself.
     if ((Equals.id(app.getStudent(), user) && app.getStatus() == ApplicationStatus.WAITING_APPROVAL) || user.isAdmin()) {
@@ -142,6 +156,7 @@ public class TopicApplicationResource {
       if (app.getId() == null)
         throw new WebApplicationException(Status.INTERNAL_SERVER_ERROR);
   
+      notifUtil.applicationCreated(app);
       return Response.created(UriBuilder.fromResource(TopicApplicationResource.class).path("/{id}").build(app.getId()))
           .entity(app).build();
     } else {
