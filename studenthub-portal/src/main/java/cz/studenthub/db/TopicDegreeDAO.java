@@ -20,40 +20,40 @@ import java.util.List;
 
 import org.hibernate.SessionFactory;
 
-import cz.studenthub.core.CompanyPlan;
+import cz.studenthub.core.TopicDegree;
 import io.dropwizard.hibernate.AbstractDAO;
 
 /**
- * Data(base) Access Object for CompanyPlan objects.
+ * Data(base) Access Object for TopicDegree objects.
  * 
  * @author phala
  * @since 1.1
  */
-public class CompanyPlanDAO extends AbstractDAO<CompanyPlan> {
+public class TopicDegreeDAO extends AbstractDAO<TopicDegree> {
 
-  public CompanyPlanDAO(SessionFactory sessionFactory) {
+  public TopicDegreeDAO(SessionFactory sessionFactory) {
     super(sessionFactory);
   }
 
-  public CompanyPlan update(CompanyPlan companyPlan) {
+  public TopicDegree update(TopicDegree degree) {
     currentSession().clear();
-    return persist(companyPlan);
+    return persist(degree);
   }
   
-  public CompanyPlan create(CompanyPlan companyPlan) {
-    return persist(companyPlan);
+  public TopicDegree create(TopicDegree degree) {
+    return persist(degree);
   }
   
-  public CompanyPlan findByName(String name) {
+  public TopicDegree findByName(String name) {
     return get(name);
   }
   
-  public List<CompanyPlan> findAll() {
-    return list(namedQuery("CompanyPlan.findAll"));
+  public List<TopicDegree> findAll() {
+    return list(namedQuery("TopicDegree.findAll"));
   }
   
-  public void delete(CompanyPlan companyPlan) {
-    currentSession().delete(companyPlan);
+  public void delete(TopicDegree degree) {
+    currentSession().delete(degree);
   }
 
 }

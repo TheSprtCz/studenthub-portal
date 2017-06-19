@@ -12,7 +12,6 @@ import cz.studenthub.core.Company;
 import cz.studenthub.core.Faculty;
 import cz.studenthub.core.Project;
 import cz.studenthub.core.Topic;
-import cz.studenthub.core.TopicDegree;
 import cz.studenthub.core.User;
 import io.dropwizard.testing.junit.DAOTestRule;
 

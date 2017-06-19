@@ -23,6 +23,7 @@ import cz.studenthub.core.Project;
 import cz.studenthub.core.Task;
 import cz.studenthub.core.Topic;
 import cz.studenthub.core.TopicApplication;
+import cz.studenthub.core.TopicDegree;
 import cz.studenthub.core.University;
 import cz.studenthub.core.User;
 import cz.studenthub.db.ActivationDAOTest;
@@ -33,6 +34,7 @@ import cz.studenthub.db.ProjectDAOTest;
 import cz.studenthub.db.TaskDAOTest;
 import cz.studenthub.db.TopicApplicationDAOTest;
 import cz.studenthub.db.TopicDAOTest;
+import cz.studenthub.db.TopicDegreeDAOTest;
 import cz.studenthub.db.UniversityDAOTest;
 import cz.studenthub.db.UserDAOTest;
 import io.dropwizard.testing.junit.DAOTestRule;
@@ -48,7 +50,7 @@ import liquibase.resource.ClassLoaderResourceAccessor;
 @RunWith(Suite.class)
 @SuiteClasses({ CompanyDAOTest.class, FacultyDAOTest.class, TaskDAOTest.class, TopicApplicationDAOTest.class,
    TopicDAOTest.class, UniversityDAOTest.class, UserDAOTest.class, ActivationDAOTest.class, CompanyPlanDAOTest.class,
-   ProjectDAOTest.class})
+   ProjectDAOTest.class, TopicDegreeDAOTest.class})
 public class DAOTestSuite {
 
   public static DAOTestRule database;
@@ -74,6 +76,7 @@ public class DAOTestSuite {
         .addEntityClass(Task.class)
         .addEntityClass(Activation.class)
         .addEntityClass(Project.class)
+        .addEntityClass(TopicDegree.class)
         .addEntityClass(CompanyPlan.class).build();
   }
 

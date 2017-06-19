@@ -45,11 +45,11 @@ public class CompanyPlanDAOTest {
 
   @Test
   public void listAllCompanyPlans() {
-    List<CompanyPlan> companies = DATABASE.inTransaction(() -> {
+    List<CompanyPlan> cPlans = DATABASE.inTransaction(() -> {
       return cpDAO.findAll();
     });
-    assertNotNull(companies);
-    assertEquals(4, companies.size());
+    assertNotNull(cPlans);
+    assertEquals(4, cPlans.size());
   }
 
   @Test

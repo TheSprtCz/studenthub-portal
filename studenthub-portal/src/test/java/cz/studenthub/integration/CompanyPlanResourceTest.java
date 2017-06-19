@@ -31,11 +31,11 @@ public class CompanyPlanResourceTest {
   }
 
   private List<CompanyPlan> fetchCompanyPlans() {
-    return IntegrationTestSuite.authorizedRequest(client.target(String.format("http://localhost:%d/api/plans/", dropwizard.getLocalPort()))
-      .request(), client).get(new GenericType<List<CompanyPlan>>(){});
+    return client.target(String.format("http://localhost:%d/api/plans/", dropwizard.getLocalPort()))
+      .request().get(new GenericType<List<CompanyPlan>>(){});
   }
 
-  @Test(dependsOnGroups = "login")
+  @Test(dependsOnGroups = "migrate")
   public void listCompanyPlans() {
     List<CompanyPlan> list = fetchCompanyPlans();
 
@@ -43,16 +43,16 @@ public class CompanyPlanResourceTest {
     assertEquals(list.size(), 4);
   }
 
-  @Test(dependsOnGroups = "login")
+  @Test(dependsOnGroups = "migrate")
   public void fetchCompanyPlan() {
-    CompanyPlan company = IntegrationTestSuite.authorizedRequest(client.target(String.format("http://localhost:%d/api/plans/TIER_1", dropwizard.getLocalPort()))
-        .request(MediaType.APPLICATION_JSON), client).get(CompanyPlan.class);
+    CompanyPlan companyPlan = client.target(String.format("http://localhost:%d/api/plans/TIER_1", dropwizard.getLocalPort()))
+        .request(MediaType.APPLICATION_JSON).get(CompanyPlan.class);
 
-    assertNotNull(company);
-    assertEquals(company.getMaxTopics(), 3);
+    assertNotNull(companyPlan);
+    assertEquals(companyPlan.getMaxTopics(), 3);
   }
 
-  @Test(dependsOnMethods = "listCompanyPlans")
+  @Test(dependsOnMethods = "listCompanyPlans", dependsOnGroups = "login")
   public void createCompanyPlan() {
     JSONObject plan = new JSONObject();
     plan.put("name", "TIER_5");

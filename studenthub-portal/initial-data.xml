@@ -7,6 +7,24 @@
             <column name="description" value="For basic use"/>
         </insert>
     </changeSet>
+    <changeSet author="phala (generated)" id="1496646751908-30">
+        <insert catalogName="studenthub" schemaName="public" tableName="degrees">
+            <column name="name" value="BACHELOR"/>
+            <column name="description" value="Undergraduate"/>
+        </insert>
+        <insert catalogName="studenthub" schemaName="public" tableName="degrees">
+            <column name="name" value="MASTER"/>
+            <column name="description" value="Graduate"/>
+        </insert>
+        <insert catalogName="studenthub" schemaName="public" tableName="degrees">
+            <column name="name" value="PhD"/>
+            <column name="description" value="Simply PHD"/>
+        </insert>
+        <insert catalogName="studenthub" schemaName="public" tableName="degrees">
+            <column name="name" value="HIGH_SCHOOL"/>
+            <column name="description" value="High school"/>
+        </insert>
+    </changeSet>
     <changeSet author="phala (generated)" id="1496646751908-13">
         <insert catalogName="studenthub" schemaName="public" tableName="companies">
             <column name="id" valueNumeric="1"/>
@@ -176,21 +194,21 @@
         <sql>SELECT setval('topics_id_seq', 2)</sql>
     </changeSet>
     <changeSet author="phala (generated)" id="1496646751908-16">
-        <insert catalogName="studenthub" schemaName="public" tableName="topic_degrees">
+        <insert catalogName="studenthub" schemaName="public" tableName="topics_degrees">
             <column name="topic_id" valueNumeric="1"/>
-            <column name="degrees" valueNumeric="1"/>
+            <column name="degrees_name" value="BACHELOR"/>
         </insert>
-        <insert catalogName="studenthub" schemaName="public" tableName="topic_degrees">
+        <insert catalogName="studenthub" schemaName="public" tableName="topics_degrees">
             <column name="topic_id" valueNumeric="1"/>
-            <column name="degrees" valueNumeric="2"/>
+            <column name="degrees_name" value="MASTER"/>
         </insert>
-        <insert catalogName="studenthub" schemaName="public" tableName="topic_degrees">
+        <insert catalogName="studenthub" schemaName="public" tableName="topics_degrees">
             <column name="topic_id" valueNumeric="2"/>
-            <column name="degrees" valueNumeric="0"/>
+            <column name="degrees_name" value="HIGH_SCHOOL"/>
         </insert>
-        <insert catalogName="studenthub" schemaName="public" tableName="topic_degrees">
+        <insert catalogName="studenthub" schemaName="public" tableName="topics_degrees">
             <column name="topic_id" valueNumeric="2"/>
-            <column name="degrees" valueNumeric="3"/>
+            <column name="degrees_name" value="PhD"/>
         </insert>
     </changeSet>
     <changeSet author="phala (generated)" id="1496646751908-17">
@@ -218,7 +236,7 @@
     <changeSet author="phala (generated)" id="1496646751908-18">
         <insert catalogName="studenthub" schemaName="public" tableName="topicapplications">
             <column name="id" valueNumeric="1"/>
-            <column name="degree" value="BACHELOR"/>
+            <column name="degree_name" value="BACHELOR"/>
             <column name="grade" value="A"/>
             <column name="officialassignment" value="Static HTML page generator, powered by markdown"/>
             <column name="thesisfinish" valueDate="2017-03-17 01:00:00.0"/>
@@ -232,7 +250,7 @@
         </insert>
         <insert catalogName="studenthub" schemaName="public" tableName="topicapplications">
             <column name="id" valueNumeric="2"/>
-            <column name="degree" value="HIGH_SCHOOL"/>
+            <column name="degree_name" value="HIGH_SCHOOL"/>
             <column name="grade"/>
             <column name="officialassignment" value="UI for thesis management system"/>
             <column name="thesisfinish"/>

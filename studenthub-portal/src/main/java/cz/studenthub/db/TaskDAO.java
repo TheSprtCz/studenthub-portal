@@ -20,13 +20,13 @@ public class TaskDAO extends AbstractDAO<Task> {
     super(sessionFactory);
   }
 
-  public Task update(Task t) {
+  public Task update(Task task) {
     currentSession().clear();
-    return persist(t);
+    return persist(task);
   }
   
-  public Task create(Task t) {
-    return persist(t);
+  public Task create(Task task) {
+    return persist(task);
   }
   
   public Task findById(Long id) {
@@ -37,8 +37,8 @@ public class TaskDAO extends AbstractDAO<Task> {
     return list(namedQuery("Task.findByApplication").setParameter("application", app));
   }
   
-  public void delete(Task t) {
-    currentSession().delete(t);
+  public void delete(Task task) {
+    currentSession().delete(task);
   }
   
 }

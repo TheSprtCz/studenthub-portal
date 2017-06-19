@@ -65,7 +65,7 @@ public class TopicApplication {
   @Enumerated(EnumType.STRING)
   private TopicGrade grade;
 
-  @Enumerated(EnumType.STRING)
+  @ManyToOne
   private TopicDegree degree;
 
   private Date thesisFinish;

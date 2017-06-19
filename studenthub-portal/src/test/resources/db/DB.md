@@ -104,7 +104,17 @@ Codes were manually assigned to ease testing
 | --- | ----- | ---------- |
 | 1   | 18    | rep3       |
 | 2   | 15    | student4   |
-        
+
+## TopicDegrees
+
+| name        | description      |
+| ----------- | ---------------- |
+| BACHELOR    | Undergraduate    |
+| MASTER      | Graduate         |
+| PhD         | Simply PHD       |
+| HIGH_SCHOOL | High school      |
+| DELETABLE   | Useless          |
+
 ## Topics
 
 | id  | title               | secondaryTitle  | enabled | shortAbstract                       | description                | secondaryDescription    | creator | supervisors      | degrees                  | tags                      |
@@ -113,7 +123,7 @@ Codes were manually assigned to ease testing
 | 2   | Dropwizard          | --------------- | true    | Simple app using Dropwizard stack   | REST endpoints             | RESTové endpointy       | 11      | [7,5,2]          | [BACHELOR, HIGH_SCHOOL]  | [Java, REST, Web]         |
 | 3   | Eclipse plugin      | --------------- | true    | Create custom eclipse plugin        | Eclipse                    | Eclipse                 | 10      | [5,7,4]          | [MASTER, BACHELOR]       | [Java, C, Maven]          |
 | 4   | React UI            | --------------- | true    | Create nice and functional UI       | JavaScript & React         | ----------------------- | 9       | [6,3,2]          | [HIGH_SCHOOL,PhD]        | [JavaScript, Web]         |
-| 5   | Thesis management   | Správa diplomek | false   | Create new TMS                      | Web                        | ----------------------- | 10      | [7]              | [PHD]                    | [Web]                     |
+| 5   | Thesis management   | Správa diplomek | false   | Create new TMS                      | Web                        | ----------------------- | 10      | [7]              | [PhD]                    | [Web]                     |
                 
 ## Projects
 
