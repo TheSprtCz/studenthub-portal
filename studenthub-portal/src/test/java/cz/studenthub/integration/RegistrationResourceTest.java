@@ -35,7 +35,6 @@ import cz.studenthub.core.Activation;
 import cz.studenthub.core.User;
 import cz.studenthub.db.ActivationDAO;
 import cz.studenthub.db.UserDAO;
-import io.dropwizard.client.JerseyClientBuilder;
 import io.dropwizard.testing.DropwizardTestSupport;
 import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
@@ -54,7 +53,7 @@ public class RegistrationResourceTest {
   @BeforeClass
   public void setup() {
       dropwizard = IntegrationTestSuite.DROPWIZARD;
-      client = new JerseyClientBuilder(dropwizard.getEnvironment()).build("RegistrationTest");
+      client = IntegrationTestSuite.BUILDER.build("RegistrationTest");
       greenMail.start();
       session = IntegrationTestSuite.getSessionFactory().openSession();
       ManagedSessionContext.bind(session);
