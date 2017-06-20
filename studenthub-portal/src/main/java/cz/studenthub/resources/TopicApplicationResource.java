@@ -103,7 +103,7 @@ public class TopicApplicationResource {
   @ExceptionMetered
   @Path("/{id}")
   @UnitOfWork
-  @RolesAllowed({"ADMIN", "AC_SUPERVISOR", "STUDENT", "TECH_LEADER"})
+  @RolesAllowed({ "ADMIN", "AC_SUPERVISOR", "STUDENT", "TECH_LEADER" })
   public Response update(@PathParam("id") LongParam idParam, @NotNull @Valid @Validated(CreateUpdateChecks.class) TopicApplication app, @Auth User user) {
     
     long id = idParam.get();
@@ -151,7 +151,7 @@ public class TopicApplicationResource {
   @Timed
   @Path("/{id}/tasks")
   @UnitOfWork
-  @RolesAllowed({"ADMIN", "AC_SUPERVISOR", "STUDENT", "TECH_LEADER"})
+  @RolesAllowed({ "ADMIN", "AC_SUPERVISOR", "STUDENT", "TECH_LEADER" })
   public List<Task> getTasksByApplication(@PathParam("id") LongParam id, @Auth User user,
           @Min(0) @DefaultValue("0") @QueryParam("start") IntParam startParam,
           @Min(0) @DefaultValue("0") @QueryParam("size") IntParam sizeParam) {

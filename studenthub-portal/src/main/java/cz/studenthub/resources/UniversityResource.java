@@ -113,7 +113,7 @@ public class UniversityResource {
   @ExceptionMetered
   @Path("/{id}")
   @UnitOfWork
-  @RolesAllowed({"ADMIN", "UNIVERSITY_AMB"})
+  @RolesAllowed({ "ADMIN", "UNIVERSITY_AMB" })
   public Response update(@PathParam("id") LongParam idParam, @NotNull @Valid University university, @Auth User user) {
     Long id = idParam.get();
     University oldUni = uniDao.findById(id);

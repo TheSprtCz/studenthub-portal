@@ -20,6 +20,7 @@ import io.dropwizard.testing.junit.DAOTestRule;
 
 public class TopicApplicationDAOTest {
 
+  public static final int COUNT = 7;
   private static final DAOTestRule DATABASE = DAOTestSuite.database;
   private static FacultyDAO facDAO;
   private static UserDAO userDAO;
@@ -50,7 +51,7 @@ public class TopicApplicationDAOTest {
 
       assertNotNull(created.getId());
       assertEquals(app, created);
-      assertEquals(8, appDAO.findAll().size());
+      assertEquals(COUNT + 1, appDAO.findAll().size());
     });
   }
 
@@ -71,7 +72,7 @@ public class TopicApplicationDAOTest {
     });
 
     assertNotNull(apps);
-    assertEquals(7, apps.size());
+    assertEquals(COUNT, apps.size());
   }
 
   @Test
@@ -151,7 +152,7 @@ public class TopicApplicationDAOTest {
       appDAO.delete(app);
       List<TopicApplication> apps = appDAO.findAll();
 
-      assertEquals(6, apps.size());
+      assertEquals(COUNT - 1, apps.size());
       assertFalse(apps.contains(app));
     });
   }

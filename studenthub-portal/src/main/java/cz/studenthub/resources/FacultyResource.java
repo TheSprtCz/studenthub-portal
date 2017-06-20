@@ -89,7 +89,7 @@ public class FacultyResource {
   @ExceptionMetered
   @Path("/{id}")
   @UnitOfWork
-  @RolesAllowed({"ADMIN", "UNIVERSITY_AMB"})
+  @RolesAllowed({ "ADMIN", "UNIVERSITY_AMB" })
   public Response delete(@PathParam("id") LongParam idParam, @Auth User user) {
     Long id = idParam.get();
     Faculty faculty = facDao.findById(id);
@@ -109,7 +109,7 @@ public class FacultyResource {
   @ExceptionMetered
   @Path("/{id}")
   @UnitOfWork
-  @RolesAllowed({"ADMIN", "UNIVERSITY_AMB"})
+  @RolesAllowed({ "ADMIN", "UNIVERSITY_AMB" })
   public Response update(@PathParam("id") LongParam idParam, @NotNull @Valid Faculty faculty, @Auth User user) {
     Long id = idParam.get();
     Faculty oldFaculty = facDao.findById(id);
@@ -132,7 +132,7 @@ public class FacultyResource {
   @POST
   @ExceptionMetered
   @UnitOfWork
-  @RolesAllowed({"ADMIN", "UNIVERSITY_AMB"})
+  @RolesAllowed({ "ADMIN", "UNIVERSITY_AMB" })
   public Response create(@NotNull @Valid Faculty faculty, @Auth User user) {
     // User can create only faculties for his university
     if (faculty.getUniversity().getId().equals(user.getFaculty().getUniversity().getId()) || user.isAdmin()) {

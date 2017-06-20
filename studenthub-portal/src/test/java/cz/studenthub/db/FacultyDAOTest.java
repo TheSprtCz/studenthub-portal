@@ -14,6 +14,7 @@ import io.dropwizard.testing.junit.DAOTestRule;
 
 public class FacultyDAOTest {
 
+  public static final int COUNT = 13;
   private static final DAOTestRule DATABASE = DAOTestSuite.database;
   private static FacultyDAO facDAO;
   private static UniversityDAO uniDAO;
@@ -33,7 +34,7 @@ public class FacultyDAOTest {
       Faculty created = facDAO.create(faculty);
       assertNotNull(created.getId());
       assertEquals(faculty, created);
-      assertEquals(14, facDAO.findAll().size());
+      assertEquals(COUNT + 1, facDAO.findAll().size());
     });
   }
 
@@ -55,14 +56,14 @@ public class FacultyDAOTest {
       return facDAO.findAll();
     });
     assertNotNull(faculties);
-    assertEquals(faculties.size(), 13);
+    assertEquals(COUNT, faculties.size());
   }
 
   @Test
   public void listAllFacultiesByUniversity() {
     List<Faculty> faculties = DATABASE.inTransaction(() -> {
-      University uni = uniDAO.findById((long) 2);
-      return facDAO.findAllByUniversity(uni);
+      University university = uniDAO.findById((long) 2);
+      return facDAO.findAllByUniversity(university);
     });
     assertNotNull(faculties);
     assertEquals(3, faculties.size());
@@ -75,7 +76,7 @@ public class FacultyDAOTest {
       facDAO.delete(faculty);
       List<Faculty> faculties = facDAO.findAll();
       assertNotNull(faculty);
-      assertEquals(12, faculties.size());
+      assertEquals(COUNT - 1, faculties.size());
       assertFalse(faculties.contains(faculty));
     });
   }

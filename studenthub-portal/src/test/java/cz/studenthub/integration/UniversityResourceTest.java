@@ -45,7 +45,7 @@ public class UniversityResourceTest {
     List<University> list = fetchUniversities();
 
     assertNotNull(list);
-    assertEquals(list.size(), 5);
+    assertEquals(list.size(), UniversityDAOTest.COUNT);
   }
 
   @Test(dependsOnGroups = "login")
@@ -69,7 +69,7 @@ public class UniversityResourceTest {
 
     assertNotNull(response);
     assertEquals(response.getStatus(), 201);
-    assertEquals(fetchUniversities().size(), 6);
+    assertEquals(fetchUniversities().size(), UniversityDAOTest.COUNT + 1);
   }
 
   @Test(dependsOnMethods = "createUniversity")
@@ -92,7 +92,7 @@ public class UniversityResourceTest {
 
     assertNotNull(response);
     assertEquals(response.getStatus(), 204);
-    assertEquals(fetchUniversities().size(), 5);
+    assertEquals(fetchUniversities().size(), UniversityDAOTest.COUNT);
   }
 
   @Test(dependsOnGroups = "login")

@@ -116,8 +116,8 @@ public class CompanyResource {
     if (oldCompany == null) 
       throw new WebApplicationException(Status.NOT_FOUND);
 
-    // Only admin can change CompanyPlan
-    if ((id.equals(user.getCompany().getId()) && oldCompany.getPlan().equals(company.getPlan())) || user.isAdmin()) {
+    // Only admin can change companyPlan
+    if ((id.equals(user.getCompany().getId()) && oldCompany.getPlan().getName().equals(company.getPlan().getName())) || user.isAdmin()) {
       company.setId(id);
       companyDao.update(company);
       return Response.ok(company).build();
@@ -176,7 +176,7 @@ public class CompanyResource {
   @GET
   @Path("/{id}/plan")
   @UnitOfWork
-  @RolesAllowed({"COMPANY_REP", "ADMIN"})
+  @RolesAllowed({ "COMPANY_REP", "ADMIN" })
   public CompanyPlan fetchPlan(@PathParam("id") LongParam id, @Auth User user) {
     Company company = companyDao.findById(id.get());
     if (company == null)
@@ -184,7 +184,7 @@ public class CompanyResource {
 
     Company userCompany = user.getCompany();
     // If user's company is the same as the company he want to view or he is admin
-    if ((userCompany != null && userCompany.getId().equals(company.getId())) || user.getRoles().contains(UserRole.ADMIN)) {
+    if ((userCompany != null && userCompany.getId().equals(company.getId())) || user.isAdmin()) {
       return company.getPlan();
     }
     else {

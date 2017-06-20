@@ -17,6 +17,7 @@ import io.dropwizard.testing.junit.DAOTestRule;
 
 public class UserDAOTest {
 
+  private static final int COUNT = 21;
   private static final DAOTestRule DATABASE = DAOTestSuite.database;
   private static FacultyDAO facDAO;
   private static CompanyDAO companyDAO;
@@ -38,17 +39,16 @@ public class UserDAOTest {
   @Test
   public void createAndDeleteUser() {
     DATABASE.inTransaction(() -> {
-      Faculty faculty = facDAO.findById((long) 12);
       HashSet<UserRole> roles = new HashSet<UserRole>();
       roles.add(UserRole.ADMIN);
 
-      User user = new User("test", "test", "email@mail.me", "Test Tester", "000 222 555", faculty, null, roles, null);
+      User user = new User("test", "test", "email@mail.me", "Test Tester", "000 222 555", null, null, roles, null);
       User created = userDAO.create(user);
       assertNotNull(created.getId());
       assertEquals(user, created);
-      assertEquals(21, userDAO.findAll().size());
+      assertEquals(COUNT + 1, userDAO.findAll().size());
       userDAO.delete(created);
-      assertEquals(20, userDAO.findAll().size());
+      assertEquals(COUNT, userDAO.findAll().size());
     });
   }
 
@@ -69,7 +69,7 @@ public class UserDAOTest {
       return userDAO.findAll();
     });
     assertNotNull(users);
-    assertEquals(20, users.size());
+    assertEquals(COUNT, users.size());
   }
 
   @Test

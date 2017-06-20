@@ -83,7 +83,7 @@ public class RegistrationResourceTest {
   }
 
   // This test both signUp and activate endpoints
-  @Test(dependsOnGroups = {"login", "testMail"}, groups = "signUp")
+  @Test(dependsOnGroups = { "login", "testMail" }, groups = "signUp")
   public void SignUpProcessTest() throws MessagingException, IOException {
     JSONObject faculty = new JSONObject();
     faculty.put("id", 5);
@@ -106,6 +106,7 @@ public class RegistrationResourceTest {
     // Test that activation was created
     User usr = response.readEntity(User.class);
     Activation act = actDAO.findByUser(usr);
+    assertNotNull(act);
 
     // Test that exactly one email arrived
     assertTrue(greenMail.waitForIncomingEmail(MAIL_TIMEOUT, 1));
@@ -148,7 +149,46 @@ public class RegistrationResourceTest {
     assertNotNull(loginResponse.getCookies().get("sh-token"));
   }
 
-  @Test(dependsOnGroups = {"migrate","testMail"})
+  @Test(dependsOnGroups = { "login", "testMail", "signUp" }, groups = "invite")
+  public void inviteTest() throws MessagingException, IOException {
+    JSONObject faculty = new JSONObject();
+    faculty.put("id", 5);
+
+    JSONArray roles = new JSONArray();
+    roles.add("AC_SUPERVISOR");
+
+    JSONObject user = new JSONObject();
+    user.put("name", "Not one");
+    user.put("username", "two");
+    user.put("email", "exactly@gmail.com");    
+    user.put("faculty", faculty);
+    user.put("roles", roles);
+
+    // test response code
+    Response response = IntegrationTestSuite.authorizedRequest(client.target(String.format("http://localhost:%d/api/account/invite", dropwizard.getLocalPort()))
+        .request(MediaType.APPLICATION_JSON), client).post(Entity.json(user.toJSONString()));
+    assertEquals(response.getStatus(), 201);
+
+    // Test that activation was created
+    User usr = response.readEntity(User.class);
+    Activation act = actDAO.findByUser(usr);
+    assertNotNull(act);
+    
+    // Test that exactly one email arrived
+    assertTrue(greenMail.waitForIncomingEmail(MAIL_TIMEOUT, 1));
+    Message[] messages = greenMail.getReceivedMessages();
+    assertEquals(messages.length, 1);
+
+    // Test that email has correct subject
+    Message msg = messages[0];
+    assertEquals(msg.getSubject(), "You have been invited");
+
+    // Test that activation email contains activationCode
+    String content = GreenMailUtil.getBody(msg);
+    assertTrue(content.contains(act.getActivationCode()));
+  }
+
+  @Test(dependsOnGroups = { "migrate", "testMail" })
   public void resendActivationTest() throws MessagingException {
     MultivaluedMap<String, String> formData = new MultivaluedHashMap<String, String>();
     formData.add("email", "rep3@example.com");
@@ -165,7 +205,7 @@ public class RegistrationResourceTest {
     assertEquals(messages[0].getSubject(), "Password Setup");
   }
 
-  @Test(dependsOnGroups = {"migrate","testMail"})
+  @Test(dependsOnGroups = { "migrate", "testMail" })
   public void resetPasswordTest() throws MessagingException {
     MultivaluedMap<String, String> formData = new MultivaluedHashMap<String, String>();
     formData.add("email", "rep2@example.com");
@@ -236,5 +276,4 @@ public class RegistrationResourceTest {
     assertNotNull(loginResponse);
     assertNotNull(loginResponse.getCookies().get("sh-token"));
   }
-  
 }

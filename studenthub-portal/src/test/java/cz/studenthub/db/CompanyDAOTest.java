@@ -16,6 +16,7 @@ import io.dropwizard.testing.junit.DAOTestRule;
 
 public class CompanyDAOTest {
 
+  public static final int COUNT = 8;
   private static final DAOTestRule DATABASE = DAOTestSuite.database;
   private static CompanyDAO companyDAO;
   private static CompanyPlanDAO cpDAO;
@@ -36,7 +37,7 @@ public class CompanyDAOTest {
       List<Company> companies = companyDAO.findAll();
       assertNotNull(created.getId());
       assertEquals(company, created);
-      assertEquals(9, companies.size());
+      assertEquals(COUNT + 1, companies.size());
     });
   }
 
@@ -58,7 +59,7 @@ public class CompanyDAOTest {
       return companyDAO.findAll();
     });
     assertNotNull(companies);
-    assertEquals(8, companies.size());
+    assertEquals(COUNT, companies.size());
   }
 
   @Test
@@ -68,7 +69,7 @@ public class CompanyDAOTest {
       companyDAO.delete(company);
       List<Company> companies = companyDAO.findAll();
       assertNotNull(company);
-      assertEquals(7, companies.size());
+      assertEquals(COUNT - 1, companies.size());
       assertFalse(companies.contains(company));
     });
   }

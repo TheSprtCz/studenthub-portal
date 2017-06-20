@@ -68,7 +68,7 @@ public class TaskResource {
   @POST
   @ExceptionMetered
   @UnitOfWork
-  @RolesAllowed({"ADMIN", "AC_SUPERVISOR", "STUDENT", "TECH_LEADER"})
+  @RolesAllowed({ "ADMIN", "AC_SUPERVISOR", "STUDENT", "TECH_LEADER" })
   public Response createTask(@NotNull @Valid Task task, @Auth User user) {
 
     TopicApplication app = appDao.findById(task.getApplication().getId());
@@ -90,7 +90,7 @@ public class TaskResource {
   @ExceptionMetered
   @Path("/{id}")
   @UnitOfWork
-  @RolesAllowed({"ADMIN", "AC_SUPERVISOR", "STUDENT", "TECH_LEADER"})
+  @RolesAllowed({ "ADMIN", "AC_SUPERVISOR", "STUDENT", "TECH_LEADER" })
   public Response updateTask(@PathParam("id") LongParam taskId, @NotNull @Valid Task task, @Auth User user) {
 
     TopicApplication app = appDao.findById(task.getApplication().getId());
@@ -107,7 +107,7 @@ public class TaskResource {
   @ExceptionMetered
   @Path("/{id}")
   @UnitOfWork
-  @RolesAllowed({"ADMIN", "AC_SUPERVISOR", "STUDENT", "TECH_LEADER"})
+  @RolesAllowed({ "ADMIN", "AC_SUPERVISOR", "STUDENT", "TECH_LEADER" })
   public Response deleteTask(@PathParam("id") LongParam taskId, @Auth User user) {
 
     Task task = taskDao.findById(taskId.get());

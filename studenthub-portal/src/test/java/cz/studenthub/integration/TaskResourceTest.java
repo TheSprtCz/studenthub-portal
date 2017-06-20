@@ -14,6 +14,7 @@ import org.testng.annotations.Test;
 import cz.studenthub.IntegrationTestSuite;
 import cz.studenthub.StudentHubConfiguration;
 import cz.studenthub.core.Task;
+import cz.studenthub.db.TaskDAOTest;
 import io.dropwizard.testing.DropwizardTestSupport;
 import net.minidev.json.JSONObject;
 
@@ -50,7 +51,7 @@ public class TaskResourceTest {
 
     assertNotNull(response);
     assertEquals(response.getStatus(), 201);
-    assertEquals(TopicApplicationResourceTest.fetchTasks().size(), 4);
+    assertEquals(TopicApplicationResourceTest.fetchTasks().size(), TaskDAOTest.COUNT + 1);
   }
 
   @Test(dependsOnMethods = "createTask")
@@ -80,6 +81,6 @@ public class TaskResourceTest {
 
     assertNotNull(response);
     assertEquals(response.getStatus(), 204);
-    assertEquals(TopicApplicationResourceTest.fetchTasks().size(), 3);
+    assertEquals(TopicApplicationResourceTest.fetchTasks().size(), TaskDAOTest.COUNT);
   }
 }
