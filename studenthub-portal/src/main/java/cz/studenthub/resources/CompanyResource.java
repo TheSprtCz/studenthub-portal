@@ -97,8 +97,8 @@ public class CompanyResource {
   @UnitOfWork
   @RolesAllowed("ADMIN")
   public Response create(@NotNull @Valid Company company) {
-    Company returned = companyDao.create(company);
-    if (returned.getId() == null)
+    companyDao.create(company);
+    if (company.getId() == null)
       throw new WebApplicationException(Status.INTERNAL_SERVER_ERROR);
 
     return Response.created(UriBuilder.fromResource(CompanyResource.class).path("/{id}").build(company.getId()))
@@ -109,15 +109,22 @@ public class CompanyResource {
   @ExceptionMetered
   @Path("/{id}")
   @UnitOfWork
-  @RolesAllowed("ADMIN")
-  public Response update(@PathParam("id") LongParam idParam, @NotNull @Valid Company company) {
+  @RolesAllowed({ "ADMIN", "COMPANY_REP" })
+  public Response update(@PathParam("id") LongParam idParam, @NotNull @Valid Company company, @Auth User user) {
     Long id = idParam.get();
-    if (companyDao.findById(id) == null) 
+    Company oldCompany = companyDao.findById(id);
+    if (oldCompany == null) 
       throw new WebApplicationException(Status.NOT_FOUND);
 
-    company.setId(id);
-    companyDao.update(company);
-    return Response.ok(company).build();
+    // Only admin can change CompanyPlan
+    if ((id.equals(user.getCompany().getId()) && oldCompany.getPlan().equals(company.getPlan())) || user.getRoles().contains(UserRole.ADMIN)) {
+      company.setId(id);
+      companyDao.update(company);
+      return Response.ok(company).build();
+    }
+    else {
+      throw new WebApplicationException(Status.FORBIDDEN);
+    }
   }
 
   @DELETE
