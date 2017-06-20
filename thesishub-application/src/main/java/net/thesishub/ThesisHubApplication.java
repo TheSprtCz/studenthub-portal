@@ -47,7 +47,7 @@ import io.dropwizard.hibernate.UnitOfWorkAwareProxyFactory;
 import io.dropwizard.migrations.MigrationsBundle;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
-import net.thesishub.api.DAOBinder;
+import net.thesishub.api.ThesisHubBinder;
 import net.thesishub.auth.BasicAuthenticator;
 import net.thesishub.auth.JwtCookieAuthFilter;
 import net.thesishub.auth.ThesisHubAuthorizer;
@@ -142,10 +142,13 @@ public class ThesisHubApplication extends Application<ThesisHubConfiguration> {
   @Override
   public void run(final ThesisHubConfiguration configuration, final Environment environment) {
 
+    Class<?>[] types = {SessionFactory.class, ThesisHubConfiguration.class};
+    Object[] args = {hibernate.getSessionFactory(), configuration};
+
     // Load DAOs into HK2
     ServiceLocator locator = (ServiceLocator) environment.getApplicationContext().getAttribute(ServletProperties.SERVICE_LOCATOR);
     ServiceLocatorUtilities.bind(locator, new UnitOfWorkAwareProxyFactory(hibernate)
-        .create(DAOBinder.class, SessionFactory.class, hibernate.getSessionFactory()));
+        .create(ThesisHubBinder.class, types, args));
 
     // enable session manager
     environment.servlets().setSessionHandler(new SessionHandler());
@@ -159,7 +162,7 @@ public class ThesisHubApplication extends Application<ThesisHubConfiguration> {
     environment.jersey().register(new TopicApplicationResource());
     environment.jersey().register(new TaskResource());
     environment.jersey().register(new LoginResource(configuration.getJwtSecret()));
-    environment.jersey().register(new RegistrationResource(configuration.getSmtpConfig()));
+    environment.jersey().register(new RegistrationResource());
     environment.jersey().register(new TagResource());
     environment.jersey().register(new CompanyPlanResource());
     environment.jersey().register(new ProjectResource());

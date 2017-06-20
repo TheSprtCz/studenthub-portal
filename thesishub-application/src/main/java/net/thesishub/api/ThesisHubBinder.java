@@ -3,6 +3,7 @@ package net.thesishub.api;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
 import org.hibernate.SessionFactory;
 
+import net.thesishub.ThesisHubConfiguration;
 import net.thesishub.db.ActivationDAO;
 import net.thesishub.db.CompanyDAO;
 import net.thesishub.db.CompanyPlanDAO;
@@ -15,17 +16,22 @@ import net.thesishub.db.TopicDAO;
 import net.thesishub.db.TopicDegreeDAO;
 import net.thesishub.db.UniversityDAO;
 import net.thesishub.db.UserDAO;
+import net.thesishub.util.MailClient;
+import net.thesishub.util.UrlUtil;
 
-public class DAOBinder extends AbstractBinder {
+public class ThesisHubBinder extends AbstractBinder {
 
   private SessionFactory factory;
+  private ThesisHubConfiguration configuration;
 
-  public DAOBinder(SessionFactory factory) {
+  public ThesisHubBinder(SessionFactory factory, ThesisHubConfiguration config) {
     this.factory = factory;
+    this.configuration = config;
   }
 
   @Override
   protected void configure() {
+    // Bind DAOs
     bind(new TopicDAO(factory)).to(TopicDAO.class);
     bind(new CompanyDAO(factory)).to(CompanyDAO.class);
     bind(new FacultyDAO(factory)).to(FacultyDAO.class);
@@ -38,6 +44,10 @@ public class DAOBinder extends AbstractBinder {
     bind(new ProjectDAO(factory)).to(ProjectDAO.class);
     bind(new TopicDegreeDAO(factory)).to(TopicDegreeDAO.class);
     bind(new CountryDAO(factory)).to(CountryDAO.class);
+
+    // Bind other stuff
+    bind(new MailClient(configuration.getSmtpConfig())).to(MailClient.class);
+    bind(new UrlUtil(configuration.getDomain())).to(UrlUtil.class);
   }
   
 }

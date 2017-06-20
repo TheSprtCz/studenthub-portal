@@ -54,9 +54,12 @@ jwtSecret: ${SH_JWT_SECRET:-superSecret12345}
 # basic auth
 enableBasicAuth: ${SH_BASIC_AUTH:-false}
 
+# domain
+domain: ${SH_DOMAIN:-localhost:8080/api}
+
 # smtp config
 smtp:
-  server: ${SMTP_SERVER:-localhost}
+  server: ${SMTP_SERVER:-smtp.emample.com}
   port: ${SMTP_PORT:-587}
   username: ${SMTP_USERNAME}
   password: ${SMTP_PASSWORD}

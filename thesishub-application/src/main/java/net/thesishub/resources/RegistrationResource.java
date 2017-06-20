@@ -55,7 +55,7 @@ import net.thesishub.db.FacultyDAO;
 import net.thesishub.db.UserDAO;
 import net.thesishub.util.Equals;
 import net.thesishub.util.MailClient;
-import net.thesishub.util.SmtpConfig;
+import net.thesishub.util.UrlUtil;
 
 /**
  * User registration and password manipulation endpoints
@@ -68,8 +68,6 @@ import net.thesishub.util.SmtpConfig;
 @Consumes(MediaType.APPLICATION_JSON)
 public class RegistrationResource {
 
-  private final MailClient mailer;
-
   @Inject
   private UserDAO userDao;
 
@@ -79,9 +77,11 @@ public class RegistrationResource {
   @Inject
   private FacultyDAO facDao;
 
-  public RegistrationResource(SmtpConfig smtpConfig) {
-    this.mailer = new MailClient(smtpConfig);
-  }
+  @Inject
+  private MailClient mailer;
+
+  @Inject
+  private UrlUtil urlUtil;
 
   @POST
   @Path("/signUp")
@@ -195,7 +195,7 @@ public class RegistrationResource {
       user.setPassword(ThesisHubPasswordEncoder.encode(password));
       userDao.update(user);
       // send conf. mail
-      mailer.sendMessage(user.getEmail(), "User Activation", "activated.html", null);
+      mailer.sendMessage(user.getEmail(), "User Activation", "activated.html", urlUtil.createLoginUrl());
       // remove user from "inactive" users
       actDao.delete(act);
       return Response.ok().build();
@@ -300,7 +300,7 @@ public class RegistrationResource {
         // set new password
         user.setPassword(ThesisHubPasswordEncoder.encode(updateBean.getNewPwd()));
         userDao.update(user);
-        mailer.sendMessage(user.getEmail(), "Password Updated", "pwdUpdated.html", null);
+        mailer.sendMessage(user.getEmail(), "Password Updated", "pwdUpdated.html", urlUtil.createLoginUrl());
         return Response.ok().build();
       } else {
         // passwords don't match
@@ -314,26 +314,42 @@ public class RegistrationResource {
   private void sendActivationEmail(User user, String secretKey) {
     // send conf. email with activation link
     Map<String, String> args = new HashMap<String, String>();
-    args.put("secret", secretKey);
+
+    // Build activationURL
+    UriBuilder builder = urlUtil.getUri("account", "activate");
+    builder.queryParam("secret", secretKey);
+    builder.queryParam("id", user.getId());
+
+    args.put("url", builder.toString());
     args.put("name", user.getName());
-    args.put("id", user.getId().toString());
     mailer.sendMessage(user.getEmail(), "Password Setup", "setPassword.html", args);
   }
 
   private void sendResetEmail(User user, String secretKey) {
     // send conf. email with activation link
     Map<String, String> args = new HashMap<String, String>();
-    args.put("secret", secretKey);
+    
+    // Build activationURL
+    UriBuilder builder = urlUtil.getUri("account", "confirmReset");
+    builder.queryParam("secret", secretKey);
+    builder.queryParam("id", user.getId());
+    
+    args.put("url", builder.toString());
     args.put("name", user.getName());
-    args.put("id", user.getId().toString());
     mailer.sendMessage(user.getEmail(), "Password Reset", "resetPassword.html", args);
   }
 
   private void sendInviteEmail(User user, String name, String secretKey) {
     // send conf. email with activation link
     Map<String, String> args = new HashMap<String, String>();
-    args.put("secret", secretKey);
-    args.put("id", user.getId().toString());
+
+    // Build activationURL
+    UriBuilder builder = urlUtil.getUri("account", "activate");
+    builder.queryParam("secret", secretKey);
+    builder.queryParam("id", user.getId());
+
+    args.put("url", builder.toString());
+    args.put("name", user.getName());
     args.put("by", name);
     mailer.sendMessage(user.getEmail(), "You have been invited", "invited.html", args);
   }
