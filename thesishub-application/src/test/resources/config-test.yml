@@ -38,6 +38,7 @@ database:
 
 # jwt secret
 jwtSecret: superSecret12345
+domain: http://localhost:8080/api
 
 smtp:
   server: localhost

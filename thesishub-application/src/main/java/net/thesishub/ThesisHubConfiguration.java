@@ -19,6 +19,8 @@ package net.thesishub;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
+import org.hibernate.validator.constraints.URL;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import io.dropwizard.Configuration;
@@ -42,6 +44,10 @@ public class ThesisHubConfiguration extends Configuration {
   private SmtpConfig smtp = new SmtpConfig();
 
   private String jwtSecret;
+
+  @NotNull
+  @URL
+  private String domain;
 
   private boolean enableBasicAuth = false;
   
@@ -73,6 +79,14 @@ public class ThesisHubConfiguration extends Configuration {
   @JsonProperty("jwtSecret")
   public String getJwtSecret() {
     return jwtSecret;
+  }
+
+  public String getDomain() {
+    return domain;
+  }
+
+  public void setDomain(String domain) {
+    this.domain = domain;
   }
 
   @JsonProperty("enableBasicAuth")

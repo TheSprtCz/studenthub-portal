@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.text.StrSubstitutor;
 import org.simplejavamail.email.Email;
 import org.simplejavamail.email.EmailBuilder;
@@ -49,18 +50,23 @@ public class MailClient {
   }
 
   public void sendMessage(String recipient, String subject, String templateFile, Map<String, ? extends Object> args) {
+    // Inject arguments into subject
+    StrSubstitutor sub = new StrSubstitutor(args);
+    subject = StringUtils.capitalize(sub.replace(subject));
+
     Email email = new EmailBuilder()
         .from(config.getFromName(), config.getFromEmail())
         .to(recipient)
         .subject(subject)
-        .textHTML(loadHtmlFromTemplate(templateFile, subject, args))
+        .textHTML(loadHtmlFromTemplate(templateFile, subject, args, sub))
         .build();
 
     // send mail asynchronously
     mailer.sendMail(email, config.isAsync());
   }
 
-  private String loadHtmlFromTemplate(String templateFile, String title, Map<String, ? extends Object> args) {
+  // Loads HTML template from a file and injects arguments
+  private String loadHtmlFromTemplate(String templateFile, String title, Map<String, ? extends Object> args, StrSubstitutor sub) {
     String htmlContent = "";
     try {
       // load genericEmail
@@ -69,7 +75,6 @@ public class MailClient {
 
       // inject arguments into specific template
       String template = IOUtils.toString(MailClient.class.getResourceAsStream("/templates/" + templateFile), "UTF-8");
-      StrSubstitutor sub = new StrSubstitutor(args);
       template = sub.replace(template);
 
       // Inject body and title into generic template
