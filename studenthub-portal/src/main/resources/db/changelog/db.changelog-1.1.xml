@@ -79,4 +79,8 @@
         <addForeignKeyConstraint baseColumnNames="companies_id" baseTableCatalogName="studenthub" baseTableName="projects_companies" baseTableSchemaName="public" constraintName="fkeb0oqe8lvypt1kux1q9p024nq" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableCatalogName="studenthub" referencedTableName="companies" referencedTableSchemaName="public"/>                      
         <addForeignKeyConstraint baseColumnNames="topics_id" baseTableCatalogName="studenthub" baseTableName="projects_topics" baseTableSchemaName="public" constraintName="fkk28xel2db5tfwi3yjmhb7atar" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableCatalogName="studenthub" referencedTableName="topics" referencedTableSchemaName="public"/> 
     </changeSet>
+    <changeSet author="phala" id="activationCascade">
+        <dropForeignKeyConstraint baseTableName="activations" constraintName="fko7msy6sghrksg7w9up2m9pl0n"/>
+        <addForeignKeyConstraint baseColumnNames="user_id" baseTableCatalogName="studenthub" baseTableName="activations" baseTableSchemaName="public" constraintName="fko7msy6sghrksg7w9up2m9pl0n" deferrable="false" initiallyDeferred="false" onDelete="CASCADE" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableCatalogName="studenthub" referencedTableName="users" referencedTableSchemaName="public"/>
+    </changeSet>
 </databaseChangeLog>
