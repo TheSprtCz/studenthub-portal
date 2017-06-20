@@ -117,7 +117,7 @@ public class CompanyResource {
       throw new WebApplicationException(Status.NOT_FOUND);
 
     // Only admin can change CompanyPlan
-    if ((id.equals(user.getCompany().getId()) && oldCompany.getPlan().equals(company.getPlan())) || user.getRoles().contains(UserRole.ADMIN)) {
+    if ((id.equals(user.getCompany().getId()) && oldCompany.getPlan().equals(company.getPlan())) || user.isAdmin()) {
       company.setId(id);
       companyDao.update(company);
       return Response.ok(company).build();

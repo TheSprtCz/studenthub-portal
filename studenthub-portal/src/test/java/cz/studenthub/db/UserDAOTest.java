@@ -10,6 +10,7 @@ import org.junit.Test;
 import cz.studenthub.DAOTestSuite;
 import cz.studenthub.core.Company;
 import cz.studenthub.core.Faculty;
+import cz.studenthub.core.University;
 import cz.studenthub.core.User;
 import cz.studenthub.core.UserRole;
 import io.dropwizard.testing.junit.DAOTestRule;
@@ -20,12 +21,14 @@ public class UserDAOTest {
   private static FacultyDAO facDAO;
   private static CompanyDAO companyDAO;
   private static UserDAO userDAO;
+  private static UniversityDAO uniDAO;
 
   @BeforeClass
   public static void setUp() {
     facDAO = new FacultyDAO(DATABASE.getSessionFactory());
     companyDAO = new CompanyDAO(DATABASE.getSessionFactory());
     userDAO = new UserDAO(DATABASE.getSessionFactory());
+    uniDAO = new UniversityDAO(DATABASE.getSessionFactory());
   }
 
   /*
@@ -115,6 +118,28 @@ public class UserDAOTest {
       assertEquals(3, students.size());
       assertNotNull(supervisors);
       assertEquals(2, supervisors.size());
+    });
+  }
+
+  @Test
+  public void listAllUsersByRoleAndUniversity() {
+    DATABASE.inTransaction(() -> {
+      University university = uniDAO.findById((long) 1);
+
+      List<User> students = userDAO.findByRoleAndUniversity(UserRole.STUDENT, university);
+      List<User> supervisors = userDAO.findByRoleAndUniversity(UserRole.AC_SUPERVISOR, university);
+
+      assertNotNull(students);
+      assertEquals(4, students.size());
+      for (User student : students) {
+        assertTrue(student.hasRole(UserRole.STUDENT));
+      }
+
+      assertNotNull(supervisors);
+      assertEquals(4, supervisors.size());
+      for (User supervisor : supervisors) {
+        assertTrue(supervisor.hasRole(UserRole.AC_SUPERVISOR));
+      }
     });
   }
 

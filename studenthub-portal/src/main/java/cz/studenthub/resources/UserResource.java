@@ -45,7 +45,6 @@ import cz.studenthub.core.Project;
 import cz.studenthub.core.Topic;
 import cz.studenthub.core.TopicApplication;
 import cz.studenthub.core.User;
-import cz.studenthub.core.UserRole;
 import cz.studenthub.db.ProjectDAO;
 import cz.studenthub.db.TopicApplicationDAO;
 import cz.studenthub.db.TopicDAO;
@@ -91,7 +90,7 @@ public class UserResource {
   @PermitAll
   public User findById(@Auth User user, @PathParam("id") LongParam id) {
     // only admin or profile owner is allowed
-    if (id.get().equals(user.getId()) || user.getRoles().contains(UserRole.ADMIN)) {
+    if (id.get().equals(user.getId()) || user.isAdmin()) {
       return userDao.findById(id.get());
     } else {
       throw new WebApplicationException(Status.FORBIDDEN);
@@ -107,7 +106,7 @@ public class UserResource {
     User user = userDao.findById(id);
 
     // only admin or profile owner is allowed
-    if (id.equals(authUser.getId()) || authUser.getRoles().contains(UserRole.ADMIN)) {
+    if (id.equals(authUser.getId()) || authUser.isAdmin()) {
       userDao.delete(user);
       return Response.noContent().build();
     } else {
@@ -126,7 +125,7 @@ public class UserResource {
     User oldUser = userDao.findById(id);
 
     // If user is updating himself and doesn't change his roles or is admin
-    if ((id.equals(authUser.getId()) && oldUser.getRoles().equals(user.getRoles())) || authUser.getRoles().contains(UserRole.ADMIN)) {
+    if ((id.equals(authUser.getId()) && oldUser.getRoles().equals(user.getRoles())) || authUser.isAdmin()) {
       user.setId(id);
       user.setPassword(oldUser.getPassword());
       userDao.update(user);
@@ -145,7 +144,7 @@ public class UserResource {
       @Min(0) @DefaultValue("0") @QueryParam("start") IntParam startParam,
       @Min(0) @DefaultValue("0") @QueryParam("size") IntParam sizeParam) {
 
-    if (id.get().equals(user.getId()) || user.getRoles().contains(UserRole.ADMIN)) {
+    if (id.get().equals(user.getId()) || user.isAdmin()) {
       User student = userDao.findById(id.get());
       return PagingUtil.paging(appDao.findByStudent(student), startParam.get(), sizeParam.get());
     } else {
@@ -162,7 +161,7 @@ public class UserResource {
       @Min(0) @DefaultValue("0") @QueryParam("start") IntParam startParam,
       @Min(0) @DefaultValue("0") @QueryParam("size") IntParam sizeParam) {
 
-    if (id.get().equals(user.getId()) || user.getRoles().contains(UserRole.ADMIN)) {
+    if (id.get().equals(user.getId()) || user.isAdmin()) {
       User leader = userDao.findById(id.get());
       return PagingUtil.paging(appDao.findByLeader(leader), startParam.get(), sizeParam.get());
     } else {
@@ -179,7 +178,7 @@ public class UserResource {
       @Min(0) @DefaultValue("0") @QueryParam("start") IntParam startParam,
       @Min(0) @DefaultValue("0") @QueryParam("size") IntParam sizeParam) {
 
-    if (id.get().equals(user.getId()) || user.getRoles().contains(UserRole.ADMIN)) {
+    if (id.get().equals(user.getId()) || user.isAdmin()) {
       User creator = userDao.findById(id.get());
       return PagingUtil.paging(topicDao.findByCreator(creator), startParam.get(), sizeParam.get());
     } else {
@@ -196,7 +195,7 @@ public class UserResource {
       @Min(0) @DefaultValue("0") @QueryParam("start") IntParam startParam,
       @Min(0) @DefaultValue("0") @QueryParam("size") IntParam sizeParam) {
 
-    if (id.get().equals(user.getId()) || user.getRoles().contains(UserRole.ADMIN)) {
+    if (id.get().equals(user.getId()) || user.isAdmin()) {
       User supervisor = userDao.findById(id.get());
       return PagingUtil.paging(topicDao.findBySupervisor(supervisor), startParam.get(), sizeParam.get());
     } else {
@@ -213,7 +212,7 @@ public class UserResource {
       @Min(0) @DefaultValue("0") @QueryParam("start") IntParam startParam,
       @Min(0) @DefaultValue("0") @QueryParam("size") IntParam sizeParam) {
 
-    if (id.get().equals(user.getId()) || user.getRoles().contains(UserRole.ADMIN)) {
+    if (id.get().equals(user.getId()) || user.isAdmin()) {
       User supervisor = userDao.findById(id.get());
       return PagingUtil.paging(appDao.findBySupervisor(supervisor), startParam.get(), sizeParam.get());
     } else {
@@ -230,7 +229,7 @@ public class UserResource {
       @Min(0) @DefaultValue("0") @QueryParam("start") IntParam startParam,
       @Min(0) @DefaultValue("0") @QueryParam("size") IntParam sizeParam) {
 
-    if (id.get().equals(user.getId()) || user.getRoles().contains(UserRole.ADMIN)) {
+    if (id.get().equals(user.getId()) || user.isAdmin()) {
       User creator = userDao.findById(id.get());
       return PagingUtil.paging(projectDao.findByCreator(creator), startParam.get(), sizeParam.get());
     } else {

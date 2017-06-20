@@ -17,6 +17,7 @@
 package cz.studenthub.resources;
 
 import javax.annotation.security.PermitAll;
+import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -39,7 +40,6 @@ import com.codahale.metrics.annotation.ExceptionMetered;
 import cz.studenthub.core.Task;
 import cz.studenthub.core.TopicApplication;
 import cz.studenthub.core.User;
-import cz.studenthub.core.UserRole;
 import cz.studenthub.db.TaskDAO;
 import cz.studenthub.db.TopicApplicationDAO;
 import io.dropwizard.auth.Auth;
@@ -68,6 +68,7 @@ public class TaskResource {
   @POST
   @ExceptionMetered
   @UnitOfWork
+  @RolesAllowed({"ADMIN", "AC_SUPERVISOR", "STUDENT", "TECH_LEADER"})
   public Response createTask(@NotNull @Valid Task task, @Auth User user) {
 
     TopicApplication app = appDao.findById(task.getApplication().getId());
@@ -89,6 +90,7 @@ public class TaskResource {
   @ExceptionMetered
   @Path("/{id}")
   @UnitOfWork
+  @RolesAllowed({"ADMIN", "AC_SUPERVISOR", "STUDENT", "TECH_LEADER"})
   public Response updateTask(@PathParam("id") LongParam taskId, @NotNull @Valid Task task, @Auth User user) {
 
     TopicApplication app = appDao.findById(task.getApplication().getId());
@@ -105,6 +107,7 @@ public class TaskResource {
   @ExceptionMetered
   @Path("/{id}")
   @UnitOfWork
+  @RolesAllowed({"ADMIN", "AC_SUPERVISOR", "STUDENT", "TECH_LEADER"})
   public Response deleteTask(@PathParam("id") LongParam taskId, @Auth User user) {
 
     Task task = taskDao.findById(taskId.get());
@@ -122,7 +125,7 @@ public class TaskResource {
     return (app.getAcademicSupervisor() != null && app.getAcademicSupervisor().equals(user)) 
         || app.getStudent().equals(user) 
         || (app.getTechLeader() != null && app.getTechLeader().equals(user))
-        || user.getRoles().contains(UserRole.ADMIN);
+        || user.isAdmin();
   }
 
 }
