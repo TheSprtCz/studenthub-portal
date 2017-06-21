@@ -93,7 +93,9 @@ class TopicCard extends React.Component {
           topic: { id: this.props.id },
           faculty: { id: json.faculty.id },
           techLeader: { id: json.creator.id },
-          student: {id: json.id}
+          student: {id: json.id},
+          thesisStarted: new Date(),
+          thesisFinish: new Date()
         })
       }).then(function(response) {
         if(response.ok) {
