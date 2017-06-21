@@ -21,7 +21,7 @@ const ApplicationTableHint = () => (
 )
 
 class ApplicationTable extends Component {
-  state = { applications: [], nextAppllications: [], redirect: -1, page: -1};
+  state = { applications: [], nextAppllications: [], redirect: -1, page: -1, offsetWentDown: false };
 
   componentDidMount() {
     this.getApplications();
@@ -33,19 +33,20 @@ class ApplicationTable extends Component {
    */
   getApplications = () => {
     var url = "";
+    let page = (this.state.offsetWentDown) ? this.state.page : (this.state.page+1);
 
     if (Auth.hasRole(Util.userRoles.admin))
       url = "/api/applications?size=" + Util.APPLICATIONS_PER_PAGE + "&start=" +
-      ((this.state.page+1) * Util.APPLICATIONS_PER_PAGE);
+      (page * Util.APPLICATIONS_PER_PAGE);
     else if (Auth.hasRole(Util.userRoles.techLeader))
       url = '/api/users/'+ Auth.getUserInfo().sub + "/ledApplications?size=" + Util.APPLICATIONS_PER_PAGE + "&start=" +
-      ((this.state.page+1) * Util.APPLICATIONS_PER_PAGE);
+      (page * Util.APPLICATIONS_PER_PAGE);
     else if (Auth.hasRole(Util.userRoles.superviser))
       url = '/api/users/'+ Auth.getUserInfo().sub + "/supervisedApplications?size=" +
-      Util.APPLICATIONS_PER_PAGE + "&start=" + ((this.state.page+1) * Util.APPLICATIONS_PER_PAGE);
+      Util.APPLICATIONS_PER_PAGE + "&start=" + (page * Util.APPLICATIONS_PER_PAGE);
     else if (Auth.hasRole(Util.userRoles.student))
       url = '/api/users/'+ Auth.getUserInfo().sub + "/applications?size=" + Util.APPLICATIONS_PER_PAGE +
-      "&start=" + ((this.state.page+1) * Util.APPLICATIONS_PER_PAGE);
+      "&start=" + (page * Util.APPLICATIONS_PER_PAGE);
 
     fetch(url, {
       credentials: 'same-origin',
@@ -53,14 +54,29 @@ class ApplicationTable extends Component {
     }).then(function(response) {
       if (response.ok) {
         return response.json();
+      } else if (response.status === 400) {
+        this.setState({
+          applications: (this.state.nextAppllications === null || typeof this.state.nextAppllications === 'undefined') ?
+            this.state.appllications : this.state.nextAppllications,
+          nextAppllications: null
+        });
       } else {
         throw new Error('There was a problem with network connection.');
       }
-    }).then(function(json) {
-      this.setState({
-        applications: this.state.nextAppllications,
-        nextAppllications: json
-      });
+    }.bind(this)).then(function(json) {
+      if (this.state.offsetWentDown) {
+        this.setState({
+          applications: json,
+          nextAppllications: this.state.applications
+        });
+      }
+      else {
+        this.setState({
+          applications: (this.state.nextAppllications === null || typeof this.state.nextAppllications === 'undefined') ?
+            this.state.appllications : this.state.nextAppllications,
+          nextAppllications: json
+        });
+      };
     }.bind(this));
   }
 
@@ -79,7 +95,7 @@ class ApplicationTable extends Component {
   }
 
   changePage = (offset) => {
-    this.setState({ page: this.state.page + offset });
+    this.setState({ page: this.state.page + offset, offsetWentDown: (offset < 0) ? true : false });
 
     setTimeout(function() {
       this.getApplications();

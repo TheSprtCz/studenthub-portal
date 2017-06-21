@@ -28,7 +28,8 @@ class ContentTable extends Component {
       snackbarActive: false,
       snackbarLabel: "",
       universityDialogActive: false,
-      facultyDialogActive: false
+      facultyDialogActive: false,
+      offsetWentDown: false
     }
 
   componentDidMount() {
@@ -36,26 +37,70 @@ class ContentTable extends Component {
     this.changePage(1);
   }
 
+  resetPages() {
+    if(this.state.selectedUniversity === -1) {
+      this.setState({
+        page: -1,
+        universityData: [],
+        nextUniversities: []
+      });
+      setTimeout(function(){
+        this.getUniversities();
+        this.changePage(1);
+      }.bind(this), 2);
+    } else {
+      this.setState({
+        page: -1,
+        facultyData: [],
+        nextFaculties: []
+      });
+      setTimeout(function(){
+        this.getFaculties(this.state.selectedUniversity);
+        this.changePage(1);
+      }.bind(this), 2);
+    }
+  }
+
   /**
    * Connects to the server to update current data using GET.
    */
   getUniversities = () => {
-    fetch("/api/universities?size=" + Util.UNIVERSITIES_PER_PAGE + "&start=" + ((this.state.page+1) * Util.UNIVERSITIES_PER_PAGE), {
+    let page = (this.state.offsetWentDown) ? this.state.page : (this.state.page+1);
+    fetch("/api/universities?size=" + Util.UNIVERSITIES_PER_PAGE + "&start=" + (page * Util.UNIVERSITIES_PER_PAGE), {
       credentials: 'same-origin',
       method: 'get'
     }).then(function(response) {
       if (response.ok) {
         return response.json();
-      } else {
-        throw new Error('There was a problem with network connection.');
-      }
-    }).then(function(json) {
+      } else if (response.status === 404) {
       this.setState({
-        universityData: this.state.nextUniversities,
-        nextUniversities: json,
+        universityData: (this.state.nextUniversities === null || typeof this.state.nextUniversities === 'undefined') ?
+          this.state.universityData : this.state.nextUniversities,
+        nextUniversities: null,
         selectedUniversity: -1,
         header: _t.translate("Universities")
       });
+      } else {
+        throw new Error('There was a problem with network connection.');
+      }
+    }.bind(this)).then(function(json) {
+      if (this.state.offsetWentDown) {
+        this.setState({
+          universityData: json,
+          nextUniversities: this.state.universityData,
+          selectedUniversity: -1,
+          header: _t.translate("Universities")
+        });
+      }
+      else {
+        this.setState({
+          universityData: (this.state.nextUniversities === null || typeof this.state.nextUniversities === 'undefined') ?
+            this.state.universityData : this.state.nextUniversities,
+          nextUniversities: json,
+          selectedUniversity: -1,
+          header: _t.translate("Universities")
+        });
+      }
     }.bind(this));
   }
 
@@ -63,23 +108,43 @@ class ContentTable extends Component {
    * Connects to the server to update current data using GET.
    */
   getFaculties = (id) => {
+    let page = (this.state.offsetWentDown) ? this.state.page : (this.state.page+1);
     fetch('/api/universities/' + this.state.universityData[id].id + "/faculties?size=" + Util.FACULTIES_PER_PAGE
-      + "&start=" + ((this.state.page+1) * Util.FACULTIES_PER_PAGE), {
+      + "&start=" + (page * Util.FACULTIES_PER_PAGE), {
       credentials: 'same-origin',
       method: 'get'
     }).then(function(response) {
       if (response.ok) {
         return response.json();
+      } else if (response.status === 404) {
+        this.setState({
+          facultyData: (this.state.nextFaculties === null || typeof this.state.nextFaculties === 'undefined') ?
+            this.state.facultyData : this.state.nextFaculties,
+          nextFaculties: null,
+          selectedUniversity: id,
+          header: this.state.universityData[id].name + " " + _t.translate("faculties")
+        });
       } else {
         throw new Error('There was a problem with network connection.');
       }
-    }).then(function(json) {
-      this.setState({
-        facultyData: this.state.nextFaculties,
-        nextFaculties: json,
-        selectedUniversity: id,
-        header: this.state.universityData[id].name + " " + _t.translate("faculties")
-      });
+    }.bind(this)).then(function(json) {
+      if (this.state.offsetWentDown) {
+        this.setState({
+          facultyData: json,
+          nextFaculties: this.state.facultyData,
+          selectedUniversity: id,
+          header: this.state.universityData[id].name + " " + _t.translate("faculties")
+        });
+      }
+      else {
+        this.setState({
+          facultyData: (this.state.nextFaculties === null || typeof this.state.nextFaculties === 'undefined') ?
+            this.state.facultyData : this.state.nextFaculties,
+          nextFaculties: json,
+          selectedUniversity: id,
+          header: this.state.universityData[id].name + " " + _t.translate("faculties")
+        });
+      }
     }.bind(this));
   }
 
@@ -91,12 +156,16 @@ class ContentTable extends Component {
     this.setState({ page: -1 });
     setTimeout(function() {
       if (this.state.selectedUniversity === -1) {
-        this.getFaculties(id);
-        this.changePage(1);
+        this.setState({ selectedUniversity: id });
+        setTimeout(function(){
+          this.resetPages();
+        }.bind(this), 2);
       }
       else {
-        this.getUniversities();
-        this.changePage(1);
+        this.setState({ selectedUniversity: -1 });
+        setTimeout(function(){
+          this.resetPages();
+        }.bind(this), 2);
       }
     }.bind(this), 2);
   }
@@ -236,7 +305,7 @@ class ContentTable extends Component {
   }
 
   changePage = (offset) => {
-    this.setState({ page: this.state.page + offset });
+    this.setState({ page: this.state.page + offset, offsetWentDown: (offset < 0) ? true : false });
 
     setTimeout(function() {
       if (this.state.selectedUniversity === -1)

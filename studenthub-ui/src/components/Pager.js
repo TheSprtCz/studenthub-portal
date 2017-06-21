@@ -10,7 +10,7 @@ class Pager extends Component {
         <ul className="pager">
           { (this.props.currentPage === 0) ? "" :
             <li><a href="#" onClick={() => this.props.pageChanger(-1)}>{ _t.translate("Previous") }</a></li> }
-          { (this.props.nextData.lenght === 0 || typeof (this.props.nextData === "undefined") || this.props.nextData === null) ? "" :
+          { (typeof this.props.nextData === "undefined" || this.props.nextData === null) ? "" :
             <li><a href="#" onClick={() => this.props.pageChanger(1)}>{ _t.translate("Next") }</a></li> }
         </ul>
       </nav>

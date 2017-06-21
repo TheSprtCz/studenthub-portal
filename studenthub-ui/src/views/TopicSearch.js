@@ -195,7 +195,7 @@ class TopicCards extends React.Component {
 
 class TopicSearch extends React.Component {
   state = { query: '', topics: [], nextTopics: [], applications: [], supervisedTopics: [],
-    page: -1, typing: false, fetched: false};
+    page: -1, typing: false, fetched: false };
 
   componentDidMount() {
     this.getTopics();
@@ -203,8 +203,20 @@ class TopicSearch extends React.Component {
     this.changePage(1);
     setInterval(function() {
       if(!this.state.typing && !this.state.fetched)
-        this.getTopics();
+        this.resetPages();
     }.bind(this), 300);
+  }
+
+  resetPages() {
+    this.setState({
+      page: -1,
+      topics: [],
+      nextTopics: []
+    });
+    setTimeout(function(){
+      this.getTopics();
+      this.changePage(1);
+    }.bind(this), 2);
   }
 
   handleChange = (name, value) => {
@@ -216,40 +228,23 @@ class TopicSearch extends React.Component {
 
   getTopics = () => {
     fetch("/api/topics/search?size=" + Util.TOPICS_PER_PAGE + "&start=" + ((this.state.page+1) * Util.TOPICS_PER_PAGE) +
-      "&text=" + this.state.query, {
+      "&text="+this.state.query, {
       credentials: 'same-origin',
       method: 'get' }).then(function(response) {
       if(response.ok) {
         return response.json();
+      } else if (response.status === 404) {
+        this.setState({
+          topics: (this.state.nextTopics === null || typeof this.state.nextTopics === 'undefined') ? this.state.topics : this.state.nextTopics,
+          nextTopics: null
+        });
       } else {
         throw new Error('There was a problem with network connection.');
       }
-    }).then(function(json) {
+    }.bind(this)).then(function(json) {
       this.setState({
-        topics: this.state.nextTopics,
+        topics: (this.state.nextTopics === null || typeof this.state.nextTopics === 'undefined') ? this.state.topics : this.state.nextTopics,
         nextTopics: json
-      });
-    }.bind(this));
-    this.setState({fetched: true});
-  }
-
-  getApplications = () => {
-    fetch('/api/users/' + Auth.getUserInfo().sub + '/applications', {
-      credentials: 'same-origin',
-      method: 'get' }).then(function(response) {
-      if(response.ok) {
-        return response.json();
-      } else {
-        throw new Error('There was a problem with network connection.');
-      }
-    }).then(function(json) {
-      var newData = [];
-
-      for(let i in json) {
-        newData.push(json[i].topic.id);
-      }
-      this.setState({
-        applications: newData
       });
     }.bind(this));
     this.setState({fetched: true});
