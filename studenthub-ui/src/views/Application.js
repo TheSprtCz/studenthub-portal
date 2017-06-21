@@ -84,6 +84,148 @@ class FacultySelect extends React.Component {
   }
 }
 
+class LeaderSelect extends React.Component {
+  state = { value: "", leaders: [] };
+
+  componentDidMount() {
+    if (!Util.isEmpty(this.props.currentLeader)) {
+      this.setState({
+        value: this.props.currentLeader.id,
+        leaders: [{
+          value: this.props.currentLeader.id,
+          label: this.props.currentLeader.email
+        }]
+      });
+    }
+    this.getLeaders();
+  }
+
+  /**
+   * Sets default input values on props change.
+   */
+  componentWillReceiveProps(nextProps) {
+    if (this.props === nextProps) return;
+
+    this.setState({
+      value: (Util.isEmpty(nextProps.currentLeader)) ? "" : nextProps.currentLeader.id
+    });
+  }
+
+  handleChange = (value) => {
+    this.setState({value: value});
+    this.props.changeHandler({id: value});
+  };
+
+  getLeaders() {
+    fetch('/api/users', {
+      credentials: 'same-origin',
+      method: 'get'
+    }).then(function(response) {
+      if (response.ok) {
+        return response.json();
+      } else {
+        throw new Error('There was a problem with network connection.');
+      }
+    }).then(function(json) {
+      var newData = [];
+
+      for(let i in json) {
+        if (json[i].roles.indexOf(Util.userRoles.techLeader) !== -1)
+          newData.push({
+            value: json[i].id,
+            label: json[i].email
+          });
+      }
+      this.setState({
+        leaders: newData
+      });
+    }.bind(this));
+  }
+
+  render () {
+    return (
+      <Dropdown
+        auto required
+        label={ _t.translate("Technical leader") }
+        onChange={this.handleChange}
+        source={this.state.leaders}
+        value={this.state.value}
+        icon='code' />
+    );
+  }
+}
+
+class SupervisorSelect extends React.Component {
+  state = { value: "", supervisors: [] };
+
+  componentDidMount() {
+    if (!Util.isEmpty(this.props.currentSupervisor)) {
+      this.setState({
+        value: this.props.currentSupervisor.id,
+        leaders: [{
+          value: this.props.currentSupervisor.id,
+          label: this.props.currentSupervisor.email
+        }]
+      });
+    }
+    this.getSupervisors();
+  }
+
+  /**
+   * Sets default input values on props change.
+   */
+  componentWillReceiveProps(nextProps) {
+    if (this.props === nextProps) return;
+
+    this.setState({
+      value: (Util.isEmpty(nextProps.currentSupervisor)) ? "" : nextProps.currentSupervisor.id
+    });
+  }
+
+  handleChange = (value) => {
+    this.setState({value: value});
+    this.props.changeHandler({id: value});
+  };
+
+  getSupervisors() {
+    fetch('/api/users', {
+      credentials: 'same-origin',
+      method: 'get'
+    }).then(function(response) {
+      if (response.ok) {
+        return response.json();
+      } else {
+        throw new Error('There was a problem with network connection.');
+      }
+    }).then(function(json) {
+      var newData = [];
+
+      for(let i in json) {
+        if (json[i].roles.indexOf(Util.userRoles.superviser) !== -1)
+          newData.push({
+            value: json[i].id,
+            label: json[i].email
+          });
+      }
+      this.setState({
+        supervisors: newData
+      });
+    }.bind(this));
+  }
+
+  render () {
+    return (
+      <Dropdown
+        auto
+        label={ _t.translate("Academic supervisor") }
+        onChange={this.handleChange}
+        source={this.state.supervisors}
+        value={this.state.value}
+        icon='supervisor_account' />
+    );
+  }
+}
+
 class ApplicationForm extends Component {
   state = {
     techLeader: { },
@@ -161,64 +303,12 @@ class ApplicationForm extends Component {
     }.bind(this));
   }
 
-  handleLead = () => {
-    fetch('/api/applications/' + this.props.id, {
-      method: 'put',
-      credentials: 'same-origin',
-      headers: { "Content-Type" : "application/json" },
-      body: JSON.stringify({
-        academicSupervisor: this.state.academicSupervisor,
-        techLeader: {id: Auth.getUserInfo().sub},
-        student: this.state.student,
-        topic: this.state.topic,
-        faculty: this.state.faculty,
-        officialAssignment: this.state.officialAssignment,
-        grade: this.state.grade,
-        degree: this.state.degree,
-        thesisFinish: this.state.thesisFinish,
-        thesisStarted: this.state.thesisStarted
-      })
-    }).then(function(response) {
-      if (response.ok) {
-        this.setState({
-          snackbarActive: true,
-          snackbarLabel: "You are now leading this application!"
-        });
-        this.getData();
-      } else {
-        throw new Error('There was a problem with network connection.');
-      }
-    }.bind(this));
+  changeLeader = (leader) => {
+    this.setState({ techLeader: leader });
   };
 
-  handleSupervise = () => {
-    fetch('/api/applications/' + this.props.id, {
-      method: 'put',
-      credentials: 'same-origin',
-      headers: { "Content-Type" : "application/json" },
-      body: JSON.stringify({
-        academicSupervisor: {id: Auth.getUserInfo().sub},
-        techLeader: this.state.techLeader,
-        student: this.state.student,
-        topic: this.state.topic,
-        faculty: this.state.faculty,
-        officialAssignment: this.state.officialAssignment,
-        grade: this.state.grade,
-        degree: this.state.degree,
-        thesisFinish: this.state.thesisFinish,
-        thesisStarted: this.state.thesisStarted
-      })
-    }).then(function(response) {
-      if (response.ok) {
-        this.setState({
-          snackbarActive: true,
-          snackbarLabel: "You are now supervising this application!"
-        });
-        this.getData();
-      } else {
-        throw new Error('There was a problem with network connection.');
-      }
-    }.bind(this));
+  changeSupervisor = (supervisor) => {
+    this.setState({ academicSupervisor: supervisor });
   };
 
   handleChange = (name, value) => {
@@ -261,16 +351,20 @@ class ApplicationForm extends Component {
         <div className="col-md-6">
           <h3>{ _t.translate('Administration') }</h3>
           <FacultySelect changeHandler={this.handleChange.bind(this, 'faculty')} baseValue={this.state.faculty} />
-          <Input
-            type='text'
-            label={ _t.translate('Academic supervisor') }
-            icon='supervisor_account'
-            value={(Util.isEmpty(this.state.academicSupervisor)) ? "" : this.state.academicSupervisor.email} disabled />
-          <Input
-            type='text'
-            label={ _t.translate('Technical leader') }
-            icon='code'
-            value={(Util.isEmpty(this.state.techLeader)) ? "" : this.state.techLeader.email} disabled />
+          {(Auth.hasRole(Util.userRoles.admin) || Auth.hasRole(Util.userRoles.techLeader)) ?
+            <SupervisorSelect currentSupervisor={this.state.academicSupervisor} changeHandler={(supervisor) => this.changeSupervisor(supervisor)} /> :
+            <Input
+              type='text'
+              label={ _t.translate('Academic supervisor') }
+              icon='supervisor_account'
+              value={(Util.isEmpty(this.state.academicSupervisor)) ? "" : this.state.academicSupervisor.email} disabled />}
+          {(Auth.hasRole(Util.userRoles.admin) || Auth.hasRole(Util.userRoles.techLeader)) ?
+            <LeaderSelect currentLeader={this.state.techLeader} changeHandler={(leader) => this.changeLeader(leader)} /> :
+            <Input
+              type='text'
+              label={ _t.translate('Technical leader') }
+              icon='code'
+              value={(Util.isEmpty(this.state.techLeader)) ? "" : this.state.techLeader.email} disabled />}
           <Dropdown
             name='grade'
             label={ _t.translate('Grade') }
@@ -287,10 +381,6 @@ class ApplicationForm extends Component {
             source={Util.degreesSource}
             value={this.state.degree} />
         </div>
-        {/*
-        {(Auth.hasRole("TECH_LEADER")) ? <Button icon='person_add' label='Lead this application' raised primary className='pull-left' onClick={this.handleLead}/> : '' }
-        {(Auth.hasRole("AC_SUPERVISOR")) ? <Button icon='person_add' label='Supervise this application' raised primary className='pull-left' onClick={this.handleSupervise}/> : '' }
-        */}
         <Button icon='save' label={ _t.translate('Save changes') } raised primary className='pull-right' onClick={this.handleSubmit} />
         <SiteSnackbar active={this.state.snackbarActive} label={this.state.snackbarLabel} toggleHandler={() => this.toggleSnackbar()} />
       </div>
