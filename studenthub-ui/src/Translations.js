@@ -181,6 +181,9 @@ const myLocalize = new Localize({
     "Add": {
       "cs": "Přidej"
     },
+    "Delete": {
+      "cs": "Smaž"
+    },
     "Submit": {
       "cs": "Odešli"
     },
@@ -279,6 +282,12 @@ const myLocalize = new Localize({
     },
     'Here you can manage all system users.': {
       'cs': 'Zde ůžete spravovat všechni uživatele portálu.'
+    },
+    'Are you sure you want to proceed?': {
+      'cs': 'Doopravdy chcete pokračovat?'
+    },
+    'Deleting is a permanent action!': {
+      'cs': 'Smazání je nenávratná akce!'
     },
     'here': {
       'cs': 'zde'
