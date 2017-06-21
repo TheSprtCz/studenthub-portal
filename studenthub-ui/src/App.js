@@ -28,6 +28,9 @@ import Auth from './Auth.js';
 import Util from './Util.js';
 import _t from './Translations.js';
 
+// set page title
+document.title = Util.PORTAL_NAME;
+
 /**
  * '404' page - displayed when no route is matched
  */
