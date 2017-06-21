@@ -43,9 +43,9 @@ public class UserDAOTest {
       User created = userDAO.create(user);
       assertNotNull(created.getId());
       assertEquals(user, created);
-      assertEquals(20, userDAO.findAll().size());
+      assertEquals(21, userDAO.findAll().size());
       userDAO.delete(created);
-      assertEquals(19, userDAO.findAll().size());
+      assertEquals(20, userDAO.findAll().size());
     });
   }
 
@@ -66,7 +66,7 @@ public class UserDAOTest {
       return userDAO.findAll();
     });
     assertNotNull(users);
-    assertEquals(19, users.size());
+    assertEquals(20, users.size());
   }
 
   @Test

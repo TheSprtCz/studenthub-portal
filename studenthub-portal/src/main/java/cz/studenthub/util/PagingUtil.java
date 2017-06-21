@@ -15,7 +15,7 @@ public class PagingUtil {
             return list;
 
         if (start >= listSize)
-            throw new WebApplicationException(Status.BAD_REQUEST);
+            throw new WebApplicationException(Status.NOT_FOUND);
 
         int remaining = listSize - start;
 
