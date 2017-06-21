@@ -74,7 +74,8 @@ class TopicCard extends React.Component {
       } else {
         throw new Error('There was a problem with network connection.');
       }
-    }).then(function(json) {
+    })
+    .then(function(json) {
       if (Util.isEmpty(json.faculty)) {
         this.setState({
           snackbarLabel: "Your request couldn't be processed as don't have a faculty! Please choose a faculty in profile view!",
@@ -92,7 +93,7 @@ class TopicCard extends React.Component {
         body: JSON.stringify({
           topic: { id: this.props.id },
           faculty: { id: json.faculty.id },
-          techLeader: { id: json.creator.id },
+          techLeader: { id: this.props.topic.creator.id },
           student: {id: json.id},
           thesisStarted: new Date(),
           thesisFinish: new Date()
