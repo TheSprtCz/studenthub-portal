@@ -151,7 +151,7 @@ class ProfileEditView extends React.Component {
 
 class CompanyEditView extends React.Component {
   state = { id: 0, name: '', city: '', country: '',  url: '', logoUrl: '',
-    size: '', plan: "", snackbarActive: false, snackbarLabel: '' };
+    size: '', snackbarActive: false, snackbarLabel: '' };
 
   componentDidMount() {
     this.getCompany();
@@ -182,8 +182,7 @@ class CompanyEditView extends React.Component {
         country:	json.company.country,
         url:	json.company.url,
         logoUrl:	json.company.logoUrl,
-        size:	json.company.size,
-        plan: json.company.plan
+        size:	json.company.size
       });
     }.bind(this));
   }
@@ -205,8 +204,7 @@ class CompanyEditView extends React.Component {
           country:	this.state.country,
           url:	this.state.url,
           logoUrl:	this.state.logoUrl,
-          size:	this.state.size,
-          plan: this.state.plan
+          size:	this.state.size
         })
     }).then(function(response) {
         if (response.ok) {
@@ -238,7 +236,7 @@ class CompanyEditView extends React.Component {
     return (
       <div className="row">
         <div className="col-md-2">
-          <Avatar style={{width: '6em', height: '6em'}} image={Util.isEmpty(this.state.logoUrl) ? 'https://dummyimage.com/300x300/ffffff/ffffff.jpg' : this.state.logoUrl } title={ _t.translate('Your logo') } />
+          <img style={{maxWidth: '100%'}} src={this.state.logoUrl} alt={ _t.translate('Your logo')}/>
         </div>
         <div className="col-md-10">
           <Input type='name' label={ _t.translate('Name') } icon='textsms'  hint="Change company name" required value={this.state.name} onChange={this.handleChange.bind(this, 'name')} />
@@ -261,14 +259,7 @@ class CompanyEditView extends React.Component {
             value={this.state.size}
             icon='business'
             label={ _t.translate('Size') } />
-            <Dropdown
-              auto disabled
-              source={Util.companyPlansSource}
-              name='plan'
-              value={this.state.plan}
-              icon='business'
-              label={ _t.translate('Plan') } />
-            <Button icon='edit' label={ _t.translate('Save changes') } raised primary className='pull-right' onClick={this.handleSubmit}/>
+          <Button icon='edit' label={ _t.translate('Save changes') } raised primary className='pull-right' onClick={this.handleSubmit}/>
           <SiteSnackbar active={this.state.snackbarActive} label={this.state.snackbarLabel} toggleHandler={() => this.toggleSnackbar()} />
         </div>
       </div>
