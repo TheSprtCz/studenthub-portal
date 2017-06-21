@@ -75,6 +75,7 @@ public class Topic {
   private Set<String> tags;
 
   @ManyToMany
+  @NotEmpty
   private Set<TopicDegree> degrees;
 
   public Topic() {

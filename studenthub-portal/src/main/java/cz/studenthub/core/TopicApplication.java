@@ -66,6 +66,7 @@ public class TopicApplication {
   private TopicGrade grade;
 
   @ManyToOne
+  @NotNull
   private TopicDegree degree;
 
   private Date thesisFinish;

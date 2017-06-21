@@ -60,6 +60,8 @@ public class TopicApplicationResourceTest {
 
   @Test(dependsOnMethods = "listApplications")
   public void createApplication() {
+    JSONObject degree = new JSONObject();
+    degree.put("name", "HIGH_SCHOOL");
     JSONObject faculty = new JSONObject();
     faculty.put("id", 2);
     JSONObject topic = new JSONObject();
@@ -71,6 +73,7 @@ public class TopicApplicationResourceTest {
     app.put("faculty", faculty);
     app.put("topic", topic);
     app.put("student", student);
+    app.put("degree", degree);
 
     Response response = IntegrationTestSuite.authorizedRequest(CLIENT.target(String.format("http://localhost:%d/api/applications", DROPWIZARD.getLocalPort()))
       .request(MediaType.APPLICATION_JSON), CLIENT).post(Entity.json(app.toJSONString()));
@@ -82,6 +85,8 @@ public class TopicApplicationResourceTest {
 
   @Test(dependsOnMethods = "createApplication")
   public void updateApplication() {
+    JSONObject degree = new JSONObject();
+    degree.put("name", "HIGH_SCHOOL");
     JSONObject faculty = new JSONObject();
     faculty.put("id", 2);
     JSONObject topic = new JSONObject();
@@ -95,6 +100,7 @@ public class TopicApplicationResourceTest {
     app.put("topic", topic);
     app.put("student", student);
     app.put("link", "http://www.google.com");
+    app.put("degree", degree);
 
     Response response = IntegrationTestSuite.authorizedRequest(CLIENT.target(String.format("http://localhost:%d/api/applications/7", DROPWIZARD.getLocalPort()))
       .request(MediaType.APPLICATION_JSON), CLIENT).put(Entity.json(app.toJSONString()));

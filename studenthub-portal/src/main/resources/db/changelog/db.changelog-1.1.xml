@@ -106,7 +106,9 @@
         <dropColumn columnName="degree" catalogName="studenthub" schemaName="public" tableName="topicapplications"/>
         <dropColumn columnName="degrees" catalogName="studenthub" schemaName="public" tableName="topics_degrees"/>
         <addColumn catalogName="studenthub" schemaName="public" tableName="topicapplications">
-            <column name="degree_name" type="VARCHAR(255)"/>
+            <column name="degree_name" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
         </addColumn>
         <addColumn catalogName="studenthub" schemaName="public" tableName="topics_degrees">
             <column name="degrees_name" type="VARCHAR(255)"/>
