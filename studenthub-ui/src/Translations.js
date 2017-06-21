@@ -109,6 +109,9 @@ const myLocalize = new Localize({
     "Topic title": {
       "cs": "Název tématu"
     },
+    "Topic overview": {
+      "cs": "Přehled tématu"
+    },
     "Start": {
       "cs": "Začátek"
     },
@@ -144,6 +147,9 @@ const myLocalize = new Localize({
     },
     "Save changes": {
       "cs": "Ulož změny"
+    },
+    "Enabled for use": {
+      "cs": "Povolen k použití"
     },
     "Diploma thesis topic search": {
       "cs": "Vyhledávání témat závěrečných prací"
@@ -199,6 +205,9 @@ const myLocalize = new Localize({
     "Please confirm your action": {
       "cs": "Prosím potvrďte"
     },
+    'Go to topic page': {
+      'cs': 'Jdi na stránku téma'
+    },
     'Your phone number': {
       'cs': 'Váš telefon'
     },
@@ -219,6 +228,12 @@ const myLocalize = new Localize({
     },
     'Here you can modify your topics.': {
       'cs': 'Zde ůžete upravovat svá témata.'
+    },
+    'This topic is ready to be used.': {
+      'cs': 'Toto téma je připraveno k použití.'
+    },
+    'This topic is disabled for use.': {
+      'cs': 'Toto téma má zakázané použití.'
     },
     'Hint:': {
       'cs': 'Tip:'

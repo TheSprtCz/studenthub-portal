@@ -87,7 +87,8 @@ class TopicTable extends Component {
                 id: json[i].id,
                 shortAbstract: json[i].shortAbstract,
                 tags: json[i].tags,
-                title: json[i].title
+                title: json[i].title,
+                enabled: json[i].enabled
               });
             }
             this.setState({
@@ -120,7 +121,8 @@ class TopicTable extends Component {
             id: json[i].id,
             shortAbstract: json[i].shortAbstract,
             tags: json[i].tags,
-            title: json[i].title
+            title: json[i].title,
+            enabled: json[i].enabled
           });
         }
         this.setState({
@@ -227,9 +229,8 @@ class TopicTable extends Component {
 }
 
 class NewTopicDialog extends Component {
-
   state = {
-    bachelor: false, master: false, phd: false, highSchool: false, title: '',
+    bachelor: false, master: false, phd: false, highSchool: false, title: '', enabled: true,
     shortAbstract: '', description: '', tags: '', tagIndex: 0, dialogTitle: _t.translate('New Topic'),
     actions : [
       { label: _t.translate('Add'), onClick: () => this.handleAdd()},
@@ -247,6 +248,7 @@ class NewTopicDialog extends Component {
     var masterState = false;
     var phdState = false;
     var highSchoolState = false;
+    var enabledState = true;
     var titleState;
     var shortAbstractState;
     var descriptionState;
@@ -271,6 +273,7 @@ class NewTopicDialog extends Component {
         else if(nextProps.topic.degrees[i] === "PhD") phdState = true;
         else if(nextProps.topic.degrees[i] === "HIGH_SCHOOL") highSchoolState = true;
       }
+      enabledState = nextProps.topic.enabled;
       titleState = nextProps.topic.title;
       shortAbstractState = nextProps.topic.shortAbstract;
       descriptionState = nextProps.topic.description;
@@ -295,7 +298,8 @@ class NewTopicDialog extends Component {
       description: descriptionState,
       tags: tagsState,
       dialogTitle: dialogTitleState,
-      actions: actionsState
+      actions: actionsState,
+      enabled: enabledState
     });
   }
 
@@ -322,7 +326,8 @@ class NewTopicDialog extends Component {
         description: this.state.description,
         shortAbstract: this.state.shortAbstract,
         tags: this.getTags(),
-        title: this.state.title
+        title: this.state.title,
+        enabled: this.state.enabled
       })
     );
     this.handleToggle();
@@ -339,7 +344,8 @@ class NewTopicDialog extends Component {
         description: this.state.description,
         shortAbstract: this.state.shortAbstract,
         tags: this.getTags(),
-        title: this.state.title
+        title: this.state.title,
+        enabled: this.state.enabled
       })
     );
     this.handleToggle();
@@ -426,6 +432,11 @@ class NewTopicDialog extends Component {
                   </tr>
                 </tbody>
               </table>
+              <Checkbox
+                checked={this.state.enabled}
+                label={ _t.translate('Enabled for use') }
+                name='enabled'
+                onChange={this.handleChange.bind(this, 'enabled')} />
             </Tab>
             <Tab label={ _t.translate('Topic description') }>
               <Input type='text' label={ _t.translate('Topic description') } hint="Full topic description in markdown" multiline rows={20} value={this.state.description} onChange={this.handleChange.bind(this, 'description')} />
