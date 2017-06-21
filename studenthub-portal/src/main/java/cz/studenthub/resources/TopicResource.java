@@ -153,19 +153,20 @@ public class TopicResource {
   @POST
   @ExceptionMetered
   @UnitOfWork
-  @RolesAllowed({"ADMIN", "TECH_LEADER"})
+  @RolesAllowed({ "ADMIN", "TECH_LEADER" })
   public Response create(@NotNull @Valid Topic topic, @Auth User user) {
 
     // If user is topic creator or is an admin
-    if (topic.getCreator().equals(user) || user.getRoles().contains(UserRole.ADMIN)) {
+    if (topic.getCreator().getId().equals(user.getId()) || user.getRoles().contains(UserRole.ADMIN)) {
 
-     // Because creator info is available only after persisting it to DB, I have to fetch him manually
+      // Because creator info is available only after persisting it to DB, I
+      // have to fetch him manually
       User creator = userDao.findById(topic.getCreator().getId());
       Company company = creator.getCompany();
       int count = topicDao.countByCompany(company);
       int maxTopics = company.getPlan().getMaxTopics();
       if (count >= maxTopics && maxTopics != 0 && topic.isEnabled())
-        throw new WebApplicationException("Over topic limit.",Status.NOT_ACCEPTABLE);
+        throw new WebApplicationException("Over topic limit.", Status.NOT_ACCEPTABLE);
 
       topicDao.create(topic);
       if (topic.getId() == null)
