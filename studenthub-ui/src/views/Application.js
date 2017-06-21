@@ -6,6 +6,7 @@ import Dropdown from 'react-toolbox/lib/dropdown/Dropdown.js';
 import Tab from 'react-toolbox/lib/tabs/Tab.js';
 import Tabs from 'react-toolbox/lib/tabs/Tabs.js';
 import ListCheckbox from 'react-toolbox/lib/list/ListCheckbox.js';
+import ReactMarkdown from 'react-markdown';
 
 import SiteSnackbar from '../components/SiteSnackbar.js';
 import AddButton from '../components/AddButton.js';
@@ -240,7 +241,12 @@ class ApplicationForm extends Component {
     faculty: "",
     snackbarLabel: "",
     snackbarActive: false,
-    editId: -1
+    editId: -1,
+    index: 0
+  };
+
+  handleTabChange = (index) => {
+    this.setState({index});
   };
 
   componentDidMount() {
@@ -340,13 +346,13 @@ class ApplicationForm extends Component {
             icon='date_range'
             onChange={this.handleChange.bind(this, 'thesisFinish')}
             value={(Util.isEmpty(this.state.thesisFinish)) ? new Date() : this.state.thesisFinish} />
-          <Input
-            type='text'
-            label={ _t.translate('Official Assignment') }
-            multiline rows={8}
-            icon='assignment'
-            value={(Util.isEmpty(this.state.officialAssignment)) ? "" : this.state.officialAssignment}
-            onChange={this.handleChange.bind(this, 'officialAssignment')} />
+          <Dropdown
+            name='degree'
+            label={ _t.translate('Degree') }
+            icon='account_balance'
+            onChange={this.handleChange.bind(this, 'degree')}
+            source={Util.degreesSource}
+            value={this.state.degree} />
         </div>
         <div className="col-md-6">
           <h3>{ _t.translate('Administration') }</h3>
@@ -373,13 +379,23 @@ class ApplicationForm extends Component {
             onChange={this.handleChange.bind(this, 'grade')}
             source={Util.gradesSource}
             value={this.state.grade} />
-          <Dropdown
-            name='degree'
-            label={ _t.translate('Degree') }
-            icon='account_balance'
-            onChange={this.handleChange.bind(this, 'degree')}
-            source={Util.degreesSource}
-            value={this.state.degree} />
+        </div>
+        {/* Official Assignment tabs */}
+        <div className='col-md-12'>
+          <Tabs index={this.state.index} onChange={this.handleTabChange}>
+            <Tab label={ _t.translate('Official Assignment') }>
+              <Input
+                type='text'
+                label={ _t.translate('Official Assignment') }
+                multiline rows={14}
+                icon='assignment'
+                value={(Util.isEmpty(this.state.officialAssignment)) ? "" : this.state.officialAssignment}
+                onChange={this.handleChange.bind(this, 'officialAssignment')} />
+            </Tab>
+            <Tab label={ _t.translate('Preview') }>
+              <ReactMarkdown source={ this.state.officialAssignment } />
+            </Tab>
+          </Tabs>
         </div>
         <Button icon='save' label={ _t.translate('Save changes') } raised primary className='pull-right' onClick={this.handleSubmit} />
         <SiteSnackbar active={this.state.snackbarActive} label={this.state.snackbarLabel} toggleHandler={() => this.toggleSnackbar()} />
