@@ -345,6 +345,24 @@ const myLocalize = new Localize({
     },
     'Max topics for plan': {
       'cs': 'Maximum témat pro plán'
+    },
+    'New plan': {
+      'cs': 'Nový plán'
+    },
+    'This plan limits the number of topics to: ': {
+      'cs': 'Tento plán liminuje počet témat na: '
+    },
+    'Basic Company Information': {
+      'cs': 'Obecné Informace o Organizaci '
+    },
+    'Company Representative': {
+      'cs': 'Zástupce Organizace'
+    },
+    'Company Registration': {
+      'cs': 'Registrace organizace'
+    },
+    'Company Plan': {
+      'cs': 'Plán Organizace'
     }
 });
 

@@ -112,6 +112,26 @@ Util.companyPlans = {
 }
 
 /**
+ * Holds Company plan descriptions
+ * @type {Enum}
+ */
+Util.companyPlanDescriptions = {
+  t1: "TIER_1 description",
+  t2: "TIER_2 description",
+  t3: "TIER_3 description"
+}
+
+/**
+ * Holds Company plan topic limits
+ * @type {Enum}
+ */
+Util.companyPlanTopicLimits = {
+  t1: 10,
+  t2: 20,
+  t3: 30
+}
+
+/**
  * Holds Company plan codes for source use
  * @type {Enum}
  */

@@ -16,7 +16,7 @@ import Topic from './views/Topic.js';
 import MyApplications from './views/MyApplications.js';
 import Application from './views/Application.js';
 import Profile from './views/Profile.js';
-//import CompanyReg from './views/CompanyReg.js';
+import CompanyReg from './views/CompanyReg.js';
 
 // components
 import AboutDrawer from './components/AboutDrawer.js';
@@ -118,7 +118,7 @@ class App extends Component {
               <PrivateRoute exact path="/my-topics" component={MyTopics}/>
               <PrivateRoute exact path="/profile" component={Profile}/>
               <PrivateRoute path="/applications/:id" component={Application}/>
-              {/* <Route exact path="/company-reg" component={CompanyReg}/> */}
+              <Route exact path="/company-reg" component={CompanyReg}/>
               <Route component={NoMatch}/>
             </Switch>
           </div>

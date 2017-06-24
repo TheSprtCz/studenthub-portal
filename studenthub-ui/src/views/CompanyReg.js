@@ -5,53 +5,71 @@ import Tabs from 'react-toolbox/lib/tabs/Tabs.js';
 import Input from 'react-toolbox/lib/input/Input.js';
 import Button from 'react-toolbox/lib/button/Button.js';
 import IconButton from 'react-toolbox/lib/button/IconButton.js';
-import RadioGroup from 'react-toolbox/lib/radio/RadioGroup.js';
-import RadioButton from 'react-toolbox/lib/radio/RadioButton.js';
 import Dropdown from 'react-toolbox/lib/dropdown/Dropdown.js';
 
-import Util from '../Util.js';
 import SiteSnackbar from '../components/SiteSnackbar.js';
 
+import Util from '../Util.js';
+import _t from '../Translations';
+
 const Tier1 = () => (
-  <div className='col-sm-4'>
+  <div>
     <div className="panel panel-default">
       <div className="panel-heading">
         <h3 className="panel-title">
-          <RadioButton label='TIER_1' value='TIER_1'/>
+          {Util.companyPlans.t1}
         </h3>
       </div>
       <div className="panel-body">
-        SOME DESCRIPTION
+        <p>
+          {Util.companyPlanDescriptions.t1}
+        </p>
+        <hr />
+        <p>
+          { _t.translate('This plan limits the number of topics to: ')+Util.companyPlanTopicLimits.t1 }
+        </p>
       </div>
     </div>
   </div>
 )
 
 const Tier2 = () => (
-  <div className='col-sm-4'>
-    <div className="panel panel-info">
+  <div>
+    <div className="panel panel-default">
       <div className="panel-heading">
         <h3 className="panel-title">
-          <RadioButton label='TIER_2' value='TIER_2'/>
+          {Util.companyPlans.t2}
         </h3>
       </div>
       <div className="panel-body">
-        SOME DESCRIPTION
+        <p>
+          {Util.companyPlanDescriptions.t2}
+        </p>
+        <hr />
+        <p>
+          { _t.translate('This plan limits the number of topics to: ')+Util.companyPlanTopicLimits.t2 }
+        </p>
       </div>
     </div>
   </div>
 )
 
 const Tier3 = () => (
-  <div className='col-sm-4'>
+  <div>
     <div className="panel panel-default">
       <div className="panel-heading">
         <h3 className="panel-title">
-          <RadioButton label='TIER_3' value='TIER_3'/>
+          {Util.companyPlans.t3}
         </h3>
       </div>
       <div className="panel-body">
-        SOME DESCRIPTION
+        <p>
+          {Util.companyPlanDescriptions.t3}
+        </p>
+        <hr />
+        <p>
+          { _t.translate('This plan limits the number of topics to: ')+Util.companyPlanTopicLimits.t3 }
+        </p>
       </div>
     </div>
   </div>
@@ -59,8 +77,8 @@ const Tier3 = () => (
 
 class CompanyRegForm extends Component {
 
-  state = { company_name: '', rep_name: '', city:'', url: '', logo: '', country: '', size: '', phone: '', email: '', password: '', plan: 'TIER_2', index: 0,
-  snackbarActive: false, snackbarLabel: '',  redirect: false };
+  state = { company_name: '', rep_name: '', city:'', url: '', logo: '', country: '', size: '', phone: '', email: '', password: '',
+    planName: '', planDescription: '', planTopicLimit: 10, index: 0, planIndex: 1, snackbarActive: false, snackbarLabel: '',  redirect: false };
 
   handleChange = (name, value) => {
     this.setState({...this.state, [name]: value});
@@ -70,11 +88,36 @@ class CompanyRegForm extends Component {
     this.setState({index: i});
   };
 
+  handlePlanTabChange = (i) => {
+    this.setState({planIndex: i});
+  };
+
   next = () => {
     this.setState({index: this.state.index+1});
   }
 
   submitData = () => {
+    var plan = { };
+    switch (this.state.planIndex) {
+      case 0:
+        plan = { name: Util.companyPlans.t1, description: Util.companyPlanDescriptions.t1,
+          maxTopics: Util.companyPlanTopicLimits.t1 }
+        break;
+      case 1:
+        plan = { name: Util.companyPlans.t2, description: Util.companyPlanDescriptions.t2,
+          maxTopics: Util.companyPlanTopicLimits.t2 }
+        break;
+      case 2:
+        plan = { name: Util.companyPlans.t3, description: Util.companyPlanDescriptions.t3,
+          maxTopics: Util.companyPlanTopicLimits.t3 }
+        break;
+      case 3:
+        plan = { name: this.state.planName, description: this.state.planDescription,
+          maxTopics: parseInt(this.state.planTopicLimit, 10) }
+        break;
+      default:
+        throw new Error('There was a problem with tier selection.');
+    }
     fetch('/api/companies', {
         method: 'post',
         credentials: 'same-origin',
@@ -84,7 +127,7 @@ class CompanyRegForm extends Component {
           country: this.state.country,
           logoUrl: this.state.logo,
           name:	this.state.company_name,
-          plan:	this.state.plan,
+          plan: plan,
           size:	this.state.size,
           url:	this.state.url
         })
@@ -133,23 +176,25 @@ class CompanyRegForm extends Component {
     return(
       <div>
         <Tabs index={this.state.index} onChange={this.handleTabChange}>
-          <Tab label='Basic Company Information'>
+          <Tab label={ _t.translate('Basic Company Information') }>
             <section>
-              <Input type='text' label='Name' name='name' icon='textsms' required value={this.state.company_name} onChange={this.handleChange.bind(this, 'company_name')} />
-              <Input type='text' label='City' name='name' icon='location_city' required value={this.state.city} onChange={this.handleChange.bind(this, 'city')} />
+              <Input type='text' label={ _t.translate('Name') } name='name' icon='textsms' required value={this.state.company_name}
+                onChange={this.handleChange.bind(this, 'company_name')} />
+              <Input type='text' label={ _t.translate('City') } name='name' icon='location_city' required value={this.state.city}
+                onChange={this.handleChange.bind(this, 'city')} />
               <Dropdown
                 auto required
-                label='Country'
+                label={ _t.translate('Country') }
                 onChange={this.handleChange.bind(this, 'country')}
                 source={Util.countriesSource}
                 name='country'
                 value={this.state.country}
                 icon='public' />
-              <Input type='url' label='Web' name='name' icon='web' required value={this.state.url} onChange={this.handleChange.bind(this, 'url')} />
+              <Input type='url' label={ _t.translate('Web page') } name='name' icon='web' required value={this.state.url} onChange={this.handleChange.bind(this, 'url')} />
               <Input type='url' label='Logo' name='logo' icon='photo' required value={this.state.logo} onChange={this.handleChange.bind(this, 'logo')} />
               <Dropdown
                 auto required
-                label='Size'
+                label={ _t.translate('Size') }
                 onChange={this.handleChange.bind(this, 'size')}
                 source={Util.companySizesSource}
                 name='size'
@@ -158,26 +203,41 @@ class CompanyRegForm extends Component {
               <IconButton icon='navigate_next' className='pull-right' onClick={this.next} />
             </section>
           </Tab>
-          <Tab label='Company Representative'>
+          <Tab label={ _t.translate('Company Representative') }>
             <section>
-              <Input type='text' label='Name' name='rep_name' icon='textsms' required value={this.state.rep_name} onChange={this.handleChange.bind(this, 'rep_name')} />
-              <Input type='password' label='Password' name='password' icon='lock' required value={this.state.password} onChange={this.handleChange.bind(this, 'password')} />
-              <Input type='email' label='Email address' icon='email' required value={this.state.email} onChange={this.handleChange.bind(this, 'email')} />
-              <Input type='tel' label='Phone' name='phone' icon='phone' required value={this.state.phone} onChange={this.handleChange.bind(this, 'phone')} />
+              <Input type='text' label={ _t.translate('Name') } name='rep_name' icon='textsms' required value={this.state.rep_name}
+                onChange={this.handleChange.bind(this, 'rep_name')} />
+              <Input type='password' label={ _t.translate('Password') } name='password' icon='lock' required value={this.state.password}
+                onChange={this.handleChange.bind(this, 'password')} />
+              <Input type='email' label={ _t.translate('Email address') } icon='email' required value={this.state.email} onChange={this.handleChange.bind(this, 'email')} />
+              <Input type='tel' label={ _t.translate('Phone') } name='phone' icon='phone' required value={this.state.phone} onChange={this.handleChange.bind(this, 'phone')} />
               <IconButton icon='navigate_next' className='pull-right' onClick={this.next} />
             </section>
           </Tab>
-          <Tab label='Company Plan'>
+          <Tab label={ _t.translate('Company Plan') }>
             <section>
-              <RadioGroup name='plan' value={this.state.plan} onChange={this.handleChange.bind(this, 'plan')} required>
-                <div className='row'>
-                  {/* http://github.com/react-toolbox/react-toolbox/issues/1361 */}
+              <Tabs index={this.state.planIndex} onChange={this.handlePlanTabChange}>
+                <Tab label={Util.companyPlans.t1}>
                   <Tier1 />
+                </Tab>
+                <Tab label={Util.companyPlans.t2}>
                   <Tier2 />
+                </Tab>
+                <Tab label={Util.companyPlans.t3}>
                   <Tier3 />
-                </div>
-              </RadioGroup>
-              <Button icon='bookmark' label='Submit' raised primary onClick={this.submitData}/>
+                </Tab>
+                <Tab label={ _t.translate('New plan') }>
+                  <div>
+                    <Input type='name' label={ _t.translate('Plan name') } icon='assignment'  hint="Change company plan name" required
+                      value={this.state.planName} onChange={this.handleChange.bind(this, 'planName')} />
+                    <Input type='text' label={ _t.translate('Plan description') } icon='description'  hint="Change company plan description"
+                      value={this.state.planDescription} multiline rows={5} onChange={this.handleChange.bind(this, 'planDescription')} />
+                    <Input type='number' min="0" label={ _t.translate('Max topics for plan') } icon='format_list_numbered' hint="Change company plan topic limit"
+                      value={this.state.planTopicLimit} onChange={this.handleChange.bind(this, 'planTopicLimit')} required />
+                  </div>
+                </Tab>
+              </Tabs>
+              <Button className="pull-right" icon='bookmark' label={ _t.translate('Submit') } raised primary onClick={this.submitData}/>
             </section>
           </Tab>
         </Tabs>
@@ -191,7 +251,7 @@ class CompanyRegForm extends Component {
 
 const CompanyReg = () => (
   <div>
-    <h1>Company Registration</h1>
+    <h1>{ _t.translate('Company Registration') }</h1>
     <CompanyRegForm />
   </div>
 );
