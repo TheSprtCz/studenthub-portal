@@ -58,6 +58,9 @@ const myLocalize = new Localize({
     "Company": {
       "cs": "Organizace"
     },
+    "Companies": {
+      "cs": "Organizace"
+    },
     "Role": {
       "cs": "Role"
     },
@@ -139,6 +142,12 @@ const myLocalize = new Localize({
     "Edit Topic": {
       "cs": "Uprav tému"
     },
+    "New Company": {
+      "cs": "Nová organizace"
+    },
+    "Edit Company": {
+      "cs": "Uprav organizaci"
+    },
     "Basic info": {
       "cs": "Základní informace"
     },
@@ -186,6 +195,9 @@ const myLocalize = new Localize({
     },
     "Add": {
       "cs": "Přidej"
+    },
+    "Edit": {
+      "cs": "Změň"
     },
     "Delete": {
       "cs": "Smaž"
@@ -324,6 +336,15 @@ const myLocalize = new Localize({
     },
     'Edit user': {
       'cs': 'Uprav uživatele'
+    },
+    'Plan name': {
+      'cs': 'Název plánu'
+    },
+    'Plan description': {
+      'cs': 'Popis plánu'
+    },
+    'Max topics for plan': {
+      'cs': 'Maximum témat pro plán'
     }
 });
 
