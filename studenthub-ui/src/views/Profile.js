@@ -150,8 +150,8 @@ class ProfileEditView extends React.Component {
 }
 
 class CompanyEditView extends React.Component {
-  state = { id: 0, name: '', city: '', country: '',  url: '', logoUrl: '',
-    size: '', snackbarActive: false, snackbarLabel: '' };
+  state = { id: 0, name: '', city: '', country: '',  url: '', logoUrl: '', size: '',
+    planName: '', planDescription: '', planTopicLimit: 10, snackbarActive: false, snackbarLabel: '' };
 
   componentDidMount() {
     this.getCompany();
@@ -182,7 +182,10 @@ class CompanyEditView extends React.Component {
         country:	json.company.country,
         url:	json.company.url,
         logoUrl:	json.company.logoUrl,
-        size:	json.company.size
+        size:	json.company.size,
+        planName: json.company.plan.name,
+        planDescription: json.company.plan.description,
+        planTopicLimit: json.company.plan.maxTopics
       });
     }.bind(this));
   }
@@ -204,7 +207,9 @@ class CompanyEditView extends React.Component {
           country:	this.state.country,
           url:	this.state.url,
           logoUrl:	this.state.logoUrl,
-          size:	this.state.size
+          size:	this.state.size,
+          plan: { name: this.state.planName, description: this.state.planDescription,
+            maxTopics: this.state.planTopicLimit }
         })
     }).then(function(response) {
         if (response.ok) {
@@ -259,6 +264,12 @@ class CompanyEditView extends React.Component {
             value={this.state.size}
             icon='business'
             label={ _t.translate('Size') } />
+            <Input type='name' label={ _t.translate('Plan name') } icon='assignment'  hint="Change company plan name" required
+              value={this.state.planName} onChange={this.handleChange.bind(this, 'planName')} />
+            <Input type='text' label={ _t.translate('Plan description') } icon='description'  hint="Change company plan description"
+              value={this.state.planDescription} multiline rows={3} onChange={this.handleChange.bind(this, 'planDescription')} />
+            <Input type='number' min="0" label={ _t.translate('Max topics for plan') } icon='format_list_numbered' hint="Change company plan topic limit"
+              value={this.state.planTopicLimit} onChange={this.handleChange.bind(this, 'planTopicLimit')} reqiured />
           <Button icon='edit' label={ _t.translate('Save changes') } raised primary className='pull-right' onClick={this.handleSubmit}/>
           <SiteSnackbar active={this.state.snackbarActive} label={this.state.snackbarLabel} toggleHandler={() => this.toggleSnackbar()} />
         </div>
