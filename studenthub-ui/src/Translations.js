@@ -384,6 +384,27 @@ const myLocalize = new Localize({
     },
     'External link': {
       'cs': 'Externí odkaz'
+    },
+    'Change password': {
+      'cs': 'Změňit heslo '
+    },
+    'Old password': {
+      'cs': 'Staré heslo'
+    },
+    'New password': {
+      'cs': 'Nové heslo'
+    },
+    'Retrieve': {
+      'cs': 'Obnov'
+    },
+    'Change': {
+      'cs': 'Změň'
+    },
+    'Password update': {
+      'cs': 'Změna hesla'
+    },
+    'Password retrieval': {
+      'cs': 'Obnovení hesla'
     }
 });
 

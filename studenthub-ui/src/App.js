@@ -8,6 +8,7 @@ import SignIn from './views/SignIn.js';
 import SignUp from './views/SignUp.js';
 import Activation from './views/Activation.js';
 import ForgotPassword from './views/ForgotPassword.js';
+import UpdatePassword from './views/UpdatePassword.js';
 import Users from './views/Users.js';
 import Universities from './views/Universities.js';
 import Companies from './views/Companies.js';
@@ -110,7 +111,7 @@ class App extends Component {
               <Route exact path="/" component={TopicSearch}/>
               <Route exact path="/signin" component={SignIn}/>
               <Route exact path="/signup" component={SignUp}/>
-              <Route exact path="/forgot" component={ForgotPassword}/>
+              <Route exact path="/forgotPwd" component={ForgotPassword}/>
               <Route exact path="/activation/:id/:secret" component={Activation}/>
               <Route exact path="/topics/:id" component={Topic}/>
               <PrivateRoute exact path="/users" component={Users}/>
@@ -120,6 +121,7 @@ class App extends Component {
               <PrivateRoute exact path="/my-apps" component={MyApplications}/>
               <PrivateRoute exact path="/my-topics" component={MyTopics}/>
               <PrivateRoute exact path="/profile" component={Profile}/>
+              <PrivateRoute exact path="/updatePwd" component={UpdatePassword}/>
               <PrivateRoute path="/applications/:id" component={Application}/>
               <Route exact path="/company-reg" component={CompanyReg}/>
               <Route component={NoMatch}/>
