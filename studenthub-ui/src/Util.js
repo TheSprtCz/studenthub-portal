@@ -101,46 +101,6 @@ Util.companySizesSource = [
   { value: 'CORPORATE', label: 'Corporate' }
 ]
 
-/**
- * Holds Company plan codes
- * @type {Enum}
- */
-Util.companyPlans = {
-  t1: "TIER_1",
-  t2: "TIER_2",
-  t3: "TIER_3"
-}
-
-/**
- * Holds Company plan descriptions
- * @type {Enum}
- */
-Util.companyPlanDescriptions = {
-  t1: "TIER_1 description",
-  t2: "TIER_2 description",
-  t3: "TIER_3 description"
-}
-
-/**
- * Holds Company plan topic limits
- * @type {Enum}
- */
-Util.companyPlanTopicLimits = {
-  t1: 10,
-  t2: 20,
-  t3: 30
-}
-
-/**
- * Holds Company plan codes for source use
- * @type {Enum}
- */
-Util.companyPlansSource = [
-  { value: 'TIER_1', label: 'First tier' },
-  { value: 'TIER_2', label: 'Second tier' },
-  { value: 'TIER_3', label: 'Third tier'}
-]
-
 Util.gradesSource = [
     { value: 'A', label: 'A' },
     { value: 'B', label: 'B'},

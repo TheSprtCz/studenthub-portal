@@ -12,73 +12,14 @@ import SiteSnackbar from '../components/SiteSnackbar.js';
 import Util from '../Util.js';
 import _t from '../Translations';
 
-const Tier1 = () => (
-  <div>
-    <div className="panel panel-default">
-      <div className="panel-heading">
-        <h3 className="panel-title">
-          {Util.companyPlans.t1}
-        </h3>
-      </div>
-      <div className="panel-body">
-        <p>
-          {Util.companyPlanDescriptions.t1}
-        </p>
-        <hr />
-        <p>
-          { _t.translate('This plan limits the number of topics to: ')+Util.companyPlanTopicLimits.t1 }
-        </p>
-      </div>
-    </div>
-  </div>
-)
-
-const Tier2 = () => (
-  <div>
-    <div className="panel panel-default">
-      <div className="panel-heading">
-        <h3 className="panel-title">
-          {Util.companyPlans.t2}
-        </h3>
-      </div>
-      <div className="panel-body">
-        <p>
-          {Util.companyPlanDescriptions.t2}
-        </p>
-        <hr />
-        <p>
-          { _t.translate('This plan limits the number of topics to: ')+Util.companyPlanTopicLimits.t2 }
-        </p>
-      </div>
-    </div>
-  </div>
-)
-
-const Tier3 = () => (
-  <div>
-    <div className="panel panel-default">
-      <div className="panel-heading">
-        <h3 className="panel-title">
-          {Util.companyPlans.t3}
-        </h3>
-      </div>
-      <div className="panel-body">
-        <p>
-          {Util.companyPlanDescriptions.t3}
-        </p>
-        <hr />
-        <p>
-          { _t.translate('This plan limits the number of topics to: ')+Util.companyPlanTopicLimits.t3 }
-        </p>
-      </div>
-    </div>
-  </div>
-)
-
 class CompanyRegForm extends Component {
 
   state = { company_name: '', rep_name: '', city:'', url: '', logo: '', country: '', size: '', phone: '', email: '', password: '',
-    planName: '', planDescription: '', planTopicLimit: 10, index: 0, planIndex: 1, snackbarActive: false, snackbarLabel: '',  redirect: false };
+    planName: '', planDescription: '', planTopicLimit: 10, plans: [], index: 0, planIndex: 0, snackbarActive: false, snackbarLabel: '',  redirect: false };
+
+  componentDidMount() {
+    this.getPlans();
+  }
 
   handleChange = (name, value) => {
     this.setState({...this.state, [name]: value});
@@ -97,27 +38,6 @@ class CompanyRegForm extends Component {
   }
 
   submitData = () => {
-    var plan = { };
-    switch (this.state.planIndex) {
-      case 0:
-        plan = { name: Util.companyPlans.t1, description: Util.companyPlanDescriptions.t1,
-          maxTopics: Util.companyPlanTopicLimits.t1 }
-        break;
-      case 1:
-        plan = { name: Util.companyPlans.t2, description: Util.companyPlanDescriptions.t2,
-          maxTopics: Util.companyPlanTopicLimits.t2 }
-        break;
-      case 2:
-        plan = { name: Util.companyPlans.t3, description: Util.companyPlanDescriptions.t3,
-          maxTopics: Util.companyPlanTopicLimits.t3 }
-        break;
-      case 3:
-        plan = { name: this.state.planName, description: this.state.planDescription,
-          maxTopics: parseInt(this.state.planTopicLimit, 10) }
-        break;
-      default:
-        throw new Error('There was a problem with tier selection.');
-    }
     fetch('/api/companies', {
         method: 'post',
         credentials: 'same-origin',
@@ -127,7 +47,7 @@ class CompanyRegForm extends Component {
           country: this.state.country,
           logoUrl: this.state.logo,
           name:	this.state.company_name,
-          plan: plan,
+          plan: this.state.plans[this.state.planIndex],
           size:	this.state.size,
           url:	this.state.url
         })
@@ -161,6 +81,23 @@ class CompanyRegForm extends Component {
             } else throw new Error('There was a problem with network connection.');
           }.bind(this));
       }.bind(this));
+  }
+
+  getPlans() {
+    fetch('/api/plans', {
+      credentials: 'same-origin',
+      method: 'get'
+    }).then(function(response) {
+      if (response.ok) {
+        return response.json();
+      } else {
+        throw new Error('There was a problem with network connection.');
+      }
+    }).then(function(json) {
+      this.setState({
+        plans: json
+      });
+    }.bind(this));
   }
 
   generateRedirect = () => {
@@ -217,16 +154,29 @@ class CompanyRegForm extends Component {
           <Tab label={ _t.translate('Company Plan') }>
             <section>
               <Tabs index={this.state.planIndex} onChange={this.handlePlanTabChange}>
-                <Tab label={Util.companyPlans.t1}>
-                  <Tier1 />
-                </Tab>
-                <Tab label={Util.companyPlans.t2}>
-                  <Tier2 />
-                </Tab>
-                <Tab label={Util.companyPlans.t3}>
-                  <Tier3 />
-                </Tab>
-                <Tab label={ _t.translate('New plan') }>
+                {this.state.plans.map((item) => (
+                  <Tab label={item.name} key={item.name}>
+                    <div>
+                      <div className="panel panel-default">
+                        <div className="panel-heading">
+                          <h3 className="panel-title">
+                            {item.name}
+                          </h3>
+                        </div>
+                        <div className="panel-body">
+                          <p>
+                            {item.description}
+                          </p>
+                          <hr />
+                          <p>
+                            { _t.translate('This plan limits the number of topics to: ')+item.maxTopics }
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </Tab>
+                ))}
+                <Tab label={ _t.translate('New plan') } disabled>
                   <div>
                     <Input type='name' label={ _t.translate('Plan name') } icon='assignment'  hint="Change company plan name" required
                       value={this.state.planName} onChange={this.handleChange.bind(this, 'planName')} />

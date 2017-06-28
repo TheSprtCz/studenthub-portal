@@ -15,6 +15,56 @@ import SiteSnackbar from '../components/SiteSnackbar.js';
 import Util from '../Util.js';
 import _t from '../Translations.js';
 
+class PlanSelect extends React.Component {
+  state = { value: '', plans: [] }
+
+  componentDidMount() {
+    this.getPlans();
+  }
+
+  handleChange = (value) => {
+    this.setState({value: value});
+    this.props.changeHandler({name: value});
+  };
+
+  getPlans() {
+    fetch('/api/plans', {
+      credentials: 'same-origin',
+      method: 'get'
+    }).then(function(response) {
+      if (response.ok) {
+        return response.json();
+      } else {
+        throw new Error('There was a problem with network connection.');
+      }
+    }).then(function(json) {
+      var newData = [];
+
+      for(let i in json) {
+        newData.push({
+          value: json[i].name,
+          label: json[i].name
+        });
+      }
+      this.setState({
+        plans: newData
+      });
+    }.bind(this));
+  }
+
+  render () {
+    return (
+      <Dropdown
+        auto required
+        label={ _t.translate("Plan") }
+        onChange={this.handleChange}
+        source={this.state.plans}
+        value={this.state.value}
+        icon='assignment' />
+    );
+  }
+}
+
 class CompaniesTable extends Component {
   state = {
     companies: [],
@@ -106,7 +156,7 @@ class CompaniesTable extends Component {
               <TableCell>{item.country}</TableCell>
               <TableCell><a href={"http://"+item.url} target="_blank">{item.url}</a></TableCell>
               <TableCell>{item.size}</TableCell>
-              <TableCell>{item.plan.name}</TableCell>
+              <TableCell>{(Util.isEmpty(item.plan)) ? "N/A" : item.plan.name}</TableCell>
               <TableCell>
                 <EditButton toggleHandler={() => this.toggleDialog(index)} />
                 <DeleteButton deleteHandler={() => this.deleteCompany(item.id)} />
@@ -123,7 +173,7 @@ class CompaniesTable extends Component {
 class CompanyDialog extends Component {
   state = {
     name: '', city: '', country: 'CZ', url: '', logoUrl: '', size: '', dialogTitle:
-      _t.translate('New Company'), planName: '', planDescription: '', planTopicLimit: 10,
+      _t.translate('New Company'), plan: [],
     actions : [
       { label: _t.translate('Add'), onClick: () => this.addCompany()},
       { label: _t.translate('Cancel'), onClick: () => this.handleToggle() }
@@ -143,9 +193,7 @@ class CompanyDialog extends Component {
       url: (nextProps.company === -1) ? "" : nextProps.company.url,
       logoUrl: (nextProps.company === -1) ? "" : nextProps.company.logoUrl,
       size: (nextProps.company === -1) ? "" : nextProps.company.size,
-      planName: (nextProps.company === -1) ? "" : nextProps.company.plan.name,
-      planDescription: (nextProps.company === -1) ? "" : nextProps.company.plan.description,
-      planTopicLimit: (nextProps.company === -1) ? "" : nextProps.company.plan.maxTopics,
+      plan: (nextProps.company === -1) ? "" : nextProps.company.plan,
       dialogTitle: (nextProps.company === -1) ? _t.translate('New Company') : _t.translate('Edit Company'),
       actions: (nextProps.company === -1) ? [
         { label: _t.translate('Add'), onClick: () => this.addCompany()},
@@ -180,8 +228,7 @@ class CompanyDialog extends Component {
         url: this.state.url,
         logoUrl: this.state.logoUrl,
         size: this.state.size,
-        plan: { name: this.state.planName, description: this.state.planDescription,
-          maxTopics: this.state.planTopicLimit }
+        plan: this.state.plan
       })
     }).then(function(response) {
       if (response.ok) {
@@ -209,8 +256,7 @@ class CompanyDialog extends Component {
         url: this.state.url,
         logoUrl: this.state.logoUrl,
         size: this.state.size,
-        plan: { name: this.state.planName, description: this.state.planDescription,
-          maxTopics: this.state.planTopicLimit }
+        plan: this.state.plan
       })
     }).then(function(response) {
       if (response.ok) {
@@ -257,19 +303,13 @@ class CompanyDialog extends Component {
                 value={this.state.size}
                 icon='business'
                 label={ _t.translate('Size') } />
-                <Input type='name' label={ _t.translate('Plan name') } icon='assignment'  hint="Change company plan name" required
-                  value={this.state.planName} onChange={this.handleChange.bind(this, 'planName')} />
-                <Input type='text' label={ _t.translate('Plan description') } icon='description'  hint="Change company plan description"
-                  value={this.state.planDescription} multiline rows={3} onChange={this.handleChange.bind(this, 'planDescription')} />
-                <Input type='number' min="0" label={ _t.translate('Max topics for plan') } icon='format_list_numbered' hint="Change company plan topic limit"
-                  value={this.state.planTopicLimit} onChange={this.handleChange.bind(this, 'planTopicLimit')} required />
+                <PlanSelect changeHandler={(value) => this.handleChange("plan", value)} />
             </div>
           </div>
         </Dialog>
       </div>
     )
   }
-
 }
 
 const Companies = () => (

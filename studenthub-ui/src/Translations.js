@@ -363,6 +363,21 @@ const myLocalize = new Localize({
     },
     'Company Plan': {
       'cs': 'Plán Organizace'
+    },
+    'Company Plans': {
+      'cs': 'Plány organizací'
+    },
+    'Topic limit': {
+      'cs': 'Limit témat'
+    },
+    'New Plan': {
+      'cs': 'Nový plán'
+    },
+    'Edit Plan': {
+      'cs': 'Uprav plán'
+    },
+    'Description': {
+      'cs': 'Popis'
     }
 });
 
