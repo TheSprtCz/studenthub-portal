@@ -94,6 +94,7 @@ public class TopicApplicationResourceTest {
     app.put("faculty", faculty);
     app.put("topic", topic);
     app.put("student", student);
+    app.put("link", "http://www.google.com");
 
     Response response = IntegrationTestSuite.authorizedRequest(CLIENT.target(String.format("http://localhost:%d/api/applications/7", DROPWIZARD.getLocalPort()))
       .request(MediaType.APPLICATION_JSON), CLIENT).put(Entity.json(app.toJSONString()));

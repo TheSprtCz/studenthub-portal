@@ -42,7 +42,7 @@ public class TopicApplicationDAOTest {
       Faculty faculty = facDAO.findById((long) 5);
 
       TopicApplication app = new TopicApplication(topic, "test", TopicGrade.A, TopicDegree.HIGH_SCHOOL, new Date(),
-          new Date(), faculty, user, user, user);
+          new Date(), faculty, user, user, user, null);
       TopicApplication created = appDAO.create(app);
 
       assertNotNull(created.getId());

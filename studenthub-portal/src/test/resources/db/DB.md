@@ -126,15 +126,15 @@ Codes were manually assigned to ease testing
 
 (Status is not actually field in DB and is decided by state of other fields)
 
-| id  | topic | officialAssignment                                  | grade | degree     | status      | thesisFinish | thesisStarted | faculty | techLeader | student | supervisor |
-| --- | ----- | --------------------------------------------------- | ----- | ---------- | ----------- | ------------ | ------------- | ------- | ---------- | ------- | ---------- |
-| 1   | 1     | Melon cutter suitable for household use             | ----- | PhD        | IN_PROGRESS | ------------ | 17.9.2016     | 2       | 8          | 12      | 6          |
-| 2   | 1     | Melon cutter for industrial use                     | F     | MASTER     | FINISHED    | 18.2.2017    | 15.9.2016     | 5       | 9          | 13      | 3          |
-| 3   | 1     | Laser melon cutter using 20 W laser                 | ----- | PhD        | WAITING     | ------------ | ------------- | 8       | 8          | 13      | 4          |
-| 4   | 2     | Static HTML page generator, powered by markdown     | A     | BACHELOR   | FINISHED    | 17.3.2017    | 2.10.2016     | 1       | 11         | 14      | 2          |
-| 5   | 2     | Infinite Pi digits generator                        | ----- | HIGH_SCHOOL| WAITING     | ------------ | ------------- | 6       | 11         | 15      | 7          |
-| 6   | 3     | .JSX editor plugin                                  | ----- | MASTER     | IN_PROGRESS | ------------ | 5.3.2017      | 2       | 10         | 14      | 5          |
-| 7   | 4     | UI for thesis management system                     | B     | HIGH_SCHOOL| FINISHED    | 10.4.2017    | 18.12.2016    | 1       | 9          | 13      | 2          |
+| id  | topic | officialAssignment                                  | grade | degree     | status      | thesisFinish | thesisStarted | faculty | techLeader | student | supervisor | link                                                             |
+| --- | ----- | --------------------------------------------------- | ----- | ---------- | ----------- | ------------ | ------------- | ------- | ---------- | ------- | ---------- | ---------------------------------------------------------------- |
+| 1   | 1     | Melon cutter suitable for household use             | ----- | PhD        | IN_PROGRESS | ------------ | 17.9.2016     | 2       | 8          | 12      | 6          | https://www.github.com                                           |
+| 2   | 1     | Melon cutter for industrial use                     | F     | MASTER     | FINISHED    | 18.2.2017    | 15.9.2016     | 5       | 9          | 13      | 3          | ---------------------------------------------------------------- |
+| 3   | 1     | Laser melon cutter using 20 W laser                 | ----- | PhD        | WAITING     | ------------ | ------------- | 8       | 8          | 13      | 4          | ---------------------------------------------------------------- |
+| 4   | 2     | Static HTML page generator, powered by markdown     | A     | BACHELOR   | FINISHED    | 17.3.2017    | 2.10.2016     | 1       | 11         | 14      | 2          | https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet |
+| 5   | 2     | Infinite Pi digits generator                        | ----- | HIGH_SCHOOL| WAITING     | ------------ | ------------- | 6       | 11         | 15      | 7          | ---------------------------------------------------------------- |
+| 6   | 3     | .JSX editor plugin                                  | ----- | MASTER     | IN_PROGRESS | ------------ | 5.3.2017      | 2       | 10         | 14      | 5          | ---------------------------------------------------------------- |
+| 7   | 4     | UI for thesis management system                     | B     | HIGH_SCHOOL| FINISHED    | 10.4.2017    | 18.12.2016    | 1       | 9          | 13      | 2          | https://github.com/StudentHubCZ/studenthub-portal                |
 
 ## Tasks
 

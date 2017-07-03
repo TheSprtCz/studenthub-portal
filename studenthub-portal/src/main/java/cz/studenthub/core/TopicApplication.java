@@ -34,6 +34,7 @@ import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
+import org.hibernate.validator.constraints.URL;
 
 import cz.studenthub.validators.annotations.Role;
 import cz.studenthub.validators.groups.CreateUpdateChecks;
@@ -88,11 +89,14 @@ public class TopicApplication {
   @Role(role = UserRole.AC_SUPERVISOR, groups = CreateUpdateChecks.class)
   private User academicSupervisor;
 
+  @URL
+  private String link;
+
   public TopicApplication() {
   }
 
   public TopicApplication(Topic topic, String officialAssignment, TopicGrade grade, TopicDegree degree,
-      Date thesisFinish, Date thesisStart, Faculty faculty, User techLeader, User student, User academicSupervisor) {
+      Date thesisFinish, Date thesisStart, Faculty faculty, User techLeader, User student, User academicSupervisor, String link) {
     this.topic = topic;
     this.officialAssignment = officialAssignment;
     this.grade = grade;
@@ -103,6 +107,7 @@ public class TopicApplication {
     this.techLeader = techLeader;
     this.student = student;
     this.academicSupervisor = academicSupervisor;
+    this.link = link;
   }
 
   public Long getId() {
@@ -145,12 +150,12 @@ public class TopicApplication {
     this.thesisFinish = thesisFinish;
   }
 
-  public Date getThesisStarted() {
+  public Date getThesisStart() {
     return thesisStart;
   }
 
-  public void setThesisStarted(Date thesisStarted) {
-    this.thesisStart = thesisStarted;
+  public void setThesisStart(Date thesisStart) {
+    this.thesisStart = thesisStart;
   }
 
   public Faculty getFaculty() {
@@ -191,6 +196,14 @@ public class TopicApplication {
 
   public void setOfficialAssignment(String officialAssignment) {
     this.officialAssignment = officialAssignment;
+  }
+
+  public String getLink() {
+    return link;
+  }
+
+  public void setLink(String link) {
+    this.link = link;
   }
 
   @Override
