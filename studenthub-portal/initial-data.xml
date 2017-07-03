@@ -16,7 +16,7 @@
             <column name="name" value="Company One"/>
             <column name="plan_name" value="TIER_1"/>
             <column name="size" value="CORPORATE"/>
-            <column name="url" value="www.c1.com"/>
+            <column name="url" value="http://www.c1.com"/>
         </insert>
         <sql>SELECT setval('companies_id_seq', 1)</sql>
     </changeSet>
@@ -27,7 +27,7 @@
             <column name="country" value="CZ"/>
             <column name="logourl" value="www.muni.cz/img.png"/>
             <column name="name" value="Masaryk University"/>
-            <column name="url" value="www.muni.cz"/>
+            <column name="url" value="http://www.muni.cz"/>
         </insert>
         <sql>SELECT setval('universities_id_seq', 1)</sql>
     </changeSet>

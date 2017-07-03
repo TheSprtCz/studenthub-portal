@@ -81,7 +81,7 @@ public class CompanyResourceTest {
     plan.put("name", "TIER_1");
 
     JSONObject company = new JSONObject();
-    company.put("url", "past.me");
+    company.put("url", "http://www.past.me");
     company.put("name", "New Company");
     company.put("plan", plan);
 
@@ -90,7 +90,7 @@ public class CompanyResourceTest {
 
     assertNotNull(response);
     assertEquals(response.getStatus(), 200);
-    assertEquals(response.readEntity(Company.class).getUrl(), "past.me");
+    assertEquals(response.readEntity(Company.class).getUrl(), "http://www.past.me");
   }
 
   @Test(dependsOnMethods = "updateCompany")

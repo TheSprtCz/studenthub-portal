@@ -24,7 +24,7 @@ public class UniversityDAOTest {
 
   @Test
   public void createUniversity() {
-    University uni = new University("BUT", "www.nothing.com", "Brno", Country.CZ, "/img.jpg");
+    University uni = new University("BUT", "http://www.nothing.com", "Brno", Country.CZ, "http://nothing.com/img.jpg");
     DAOTestSuite.inRollbackTransaction(() -> {
       University created = uniDAO.create(uni);
       List<University> universities = uniDAO.findAll();

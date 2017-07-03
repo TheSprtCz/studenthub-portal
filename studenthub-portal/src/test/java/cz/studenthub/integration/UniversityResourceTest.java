@@ -57,7 +57,7 @@ public class UniversityResourceTest {
   public void createUniversity() {
     JSONObject university = new JSONObject();
     university.put("name", "Unknown");
-    university.put("url", "past.me");
+    university.put("url", "http://www.past.me");
     university.put("city", "Brno");
 
     Response response = IntegrationTestSuite.authorizedRequest(client.target(String.format("http://localhost:%d/api/universities", dropwizard.getLocalPort()))

@@ -31,6 +31,7 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.validator.constraints.NotEmpty;
+import org.hibernate.validator.constraints.URL;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonProperty.Access;
@@ -47,11 +48,14 @@ public class Company {
   @NotEmpty
   private String name;
 
+  @URL
   private String url;
   private String city;
 
   @Enumerated(EnumType.STRING)
   private Country country;
+
+  @URL
   private String logoUrl;
 
   @Enumerated(EnumType.STRING)
