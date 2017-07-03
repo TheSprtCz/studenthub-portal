@@ -17,9 +17,11 @@
 package cz.studenthub.util;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.text.StrSubstitutor;
 import org.simplejavamail.email.Email;
 import org.simplejavamail.email.EmailBuilder;
 import org.simplejavamail.mailer.Mailer;
@@ -46,29 +48,37 @@ public class MailClient {
     mailer = new Mailer(config.getServer(), config.getPort(), config.getUsername(), config.getPassword(), TransportStrategy.SMTP_TLS);
   }
 
-  public void sendMessage(String recipient, String subject, String templateFile, Map<String, String> args) {
+  public void sendMessage(String recipient, String subject, String templateFile, Map<String, ? extends Object> args) {
     Email email = new EmailBuilder()
         .from(config.getFromName(), config.getFromEmail())
         .to(recipient)
         .subject(subject)
-        .textHTML(loadHtmlFromTemplate(templateFile, args))
+        .textHTML(loadHtmlFromTemplate(templateFile, subject, args))
         .build();
 
     // send mail asynchronously
     mailer.sendMail(email, config.isAsync());
   }
 
-  private String loadHtmlFromTemplate(String templateFile, Map<String, String> args) {
+  private String loadHtmlFromTemplate(String templateFile, String title, Map<String, ? extends Object> args) {
     String htmlContent = "";
     try {
-      // load template content
-      htmlContent = IOUtils.toString(MailClient.class.getResourceAsStream("/templates/" + templateFile), "UTF-8");
-      // replace params
-      if (args != null) {
-        for (String key : args.keySet()) {
-          htmlContent = htmlContent.replaceAll("__" + key + "__", args.get(key));
-        }
-      }
+      // load genericEmail
+      String genericTemplate = IOUtils.toString(MailClient.class.getResourceAsStream("/templates/genericEmail.html"), "UTF-8");
+
+      // inject arguments into specific template
+      String template = IOUtils.toString(MailClient.class.getResourceAsStream("/templates/" + templateFile), "UTF-8");
+      StrSubstitutor sub = new StrSubstitutor(args);
+      template = sub.replace(template);
+
+      // Inject body and title into generic template
+      Map<String, String> arguments = new HashMap<String, String>();
+      arguments.put("title", title);
+      arguments.put("body", template);
+
+      StrSubstitutor mainSub = new StrSubstitutor(arguments);
+      htmlContent = mainSub.replace(genericTemplate);
+
     } catch (IOException e) {
       LOG.error("Error occured processing email template", e);
     }
