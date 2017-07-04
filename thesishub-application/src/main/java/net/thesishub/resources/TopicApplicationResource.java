@@ -50,6 +50,7 @@ import io.dropwizard.hibernate.UnitOfWork;
 import io.dropwizard.jersey.params.IntParam;
 import io.dropwizard.jersey.params.LongParam;
 import io.dropwizard.validation.Validated;
+import net.thesishub.core.ApplicationStatus;
 import net.thesishub.core.Task;
 import net.thesishub.core.TopicApplication;
 import net.thesishub.core.User;
@@ -117,7 +118,7 @@ public class TopicApplicationResource {
 
     // allow topic creator/leader, assigned student, topic supervisor, admin
     if (Equals.id(oldApp.getTechLeader(), user)
-        || Equals.id(oldApp.getStudent(), user)
+        || (Equals.id(oldApp.getStudent(), user) && oldApp.getStatus() == app.getStatus())
         || Equals.id(oldApp.getAcademicSupervisor(), user) 
         || user.isAdmin()) {
       app.setId(id);
@@ -135,7 +136,7 @@ public class TopicApplicationResource {
   public Response create(@NotNull @Valid @Validated(CreateUpdateChecks.class) TopicApplication app, @Auth User user) {
 
     // Student can only create applications for himself.
-    if (Equals.id(app.getStudent(), user)) {
+    if ((Equals.id(app.getStudent(), user) && app.getStatus() == ApplicationStatus.WAITING_APPROVAL) || user.isAdmin()) {
       appDao.create(app);
       if (app.getId() == null)
         throw new WebApplicationException(Status.INTERNAL_SERVER_ERROR);

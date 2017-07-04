@@ -27,14 +27,18 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
+import javax.validation.GroupSequence;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import org.hibernate.validator.constraints.URL;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import net.thesishub.validators.annotations.Role;
 import net.thesishub.validators.groups.CreateUpdateChecks;
+import io.dropwizard.validation.ValidationMethod;
 
 @Entity
 @Table(name = "TopicApplications")
@@ -65,6 +69,10 @@ public class TopicApplication extends GenericEntity<Long> {
   private Date thesisFinish;
   private Date thesisStart;
 
+  @Enumerated(EnumType.STRING)
+  @NotNull
+  private ApplicationStatus status;
+
   @NotNull
   @ManyToOne
   @OnDelete(action = OnDeleteAction.CASCADE)
@@ -90,7 +98,8 @@ public class TopicApplication extends GenericEntity<Long> {
   }
 
   public TopicApplication(Topic topic, String officialAssignment, TopicGrade grade, TopicDegree degree,
-      Date thesisFinish, Date thesisStart, Faculty faculty, User techLeader, User student, User academicSupervisor, String link) {
+      Date thesisFinish, Date thesisStart, Faculty faculty, User techLeader, User student, User academicSupervisor,
+      String link, ApplicationStatus status) {
     this.topic = topic;
     this.officialAssignment = officialAssignment;
     this.grade = grade;
@@ -102,6 +111,7 @@ public class TopicApplication extends GenericEntity<Long> {
     this.student = student;
     this.academicSupervisor = academicSupervisor;
     this.link = link;
+    this.status = status;
   }
 
   public Topic getTopic() {
@@ -142,6 +152,14 @@ public class TopicApplication extends GenericEntity<Long> {
 
   public void setThesisStart(Date thesisStart) {
     this.thesisStart = thesisStart;
+  }
+
+  public ApplicationStatus getStatus() {
+    return status;
+  }
+
+  public void setStatus(ApplicationStatus status) {
+    this.status = status;
   }
 
   public Faculty getFaculty() {
@@ -202,4 +220,40 @@ public class TopicApplication extends GenericEntity<Long> {
     return String.format("TopicApplication[id=%s]", id);
   }
 
+  // Validation methods
+  @ValidationMethod(message = "If thesis is IN_PROGRESS it has to have thesisStart and can't have grade")
+  @JsonIgnore
+  public boolean isInProgress() {
+    if (status == ApplicationStatus.IN_PROGRESS)
+      return thesisStart != null && grade == null;
+
+    return true;
+  }
+
+  @ValidationMethod(message = "If thesis is FINISHED it has to have thesisStart, thesisFinish and grade")
+  @JsonIgnore
+  public boolean isFinished() {
+    if (status == ApplicationStatus.FINISHED)
+      return thesisStart != null && thesisFinish != null && grade != null;
+
+    return true;
+  }
+
+  @ValidationMethod(message = "If thesis is WAITING it can't have grade")
+  @JsonIgnore
+  public boolean isWaitingOrDeclined() {
+    if (status == ApplicationStatus.WAITING_APPROVAL || status == ApplicationStatus.DECLINED)
+      return grade == null;
+
+    return true;
+  }
+
+  @ValidationMethod(message = "If thesis is FAILED it must have thesisStart")
+  @JsonIgnore
+  public boolean isNotFinishedOrPostponed() {
+    if (status == ApplicationStatus.FAILED)
+      return thesisStart != null;
+
+    return true;
+  }
 }

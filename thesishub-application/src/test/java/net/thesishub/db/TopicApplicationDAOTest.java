@@ -11,6 +11,7 @@ import com.google.common.collect.Lists;
 
 import io.dropwizard.testing.junit.DAOTestRule;
 import net.thesishub.DAOTestSuite;
+import net.thesishub.core.ApplicationStatus;
 import net.thesishub.core.Faculty;
 import net.thesishub.core.Topic;
 import net.thesishub.core.TopicApplication;
@@ -51,7 +52,7 @@ public class TopicApplicationDAOTest {
       TopicDegree highSchool = tdDAO.findByName("HIGH_SCHOOL");
 
       TopicApplication app = new TopicApplication(topic, "test", TopicGrade.A, highSchool, new Date(),
-          new Date(), faculty, user, user, user, null);
+          new Date(), faculty, user, user, user, null, ApplicationStatus.FINISHED);
       TopicApplication created = appDAO.create(app);
 
       assertNotNull(created.getId());

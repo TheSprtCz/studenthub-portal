@@ -284,6 +284,7 @@
             <column name="techleader_id" valueNumeric="3"/>
             <column name="topic_id" valueNumeric="1"/>
             <column name="link"/>
+            <column name="status" value="FINISHED"/>
         </insert>
         <insert catalogName="studenthub" schemaName="public" tableName="topicapplications">
             <column name="id" valueNumeric="2"/>
@@ -298,6 +299,7 @@
             <column name="techleader_id" valueNumeric="3"/>
             <column name="topic_id" valueNumeric="2"/>
             <column name="link" value="https://www.github.com"/>
+            <column name="status" value="IN_PROGRESS"/>
         </insert>
         <sql>SELECT setval('topicapplications_id_seq', 2)</sql>
     </changeSet>

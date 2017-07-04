@@ -950,6 +950,7 @@
             <column name="TOPIC_ID" valueNumeric="1"/>
             <column name="THESISSTART" valueDate="2016-09-17 02:00:00.0"/>
             <column name="LINK" value="https://www.github.com"/>
+            <column name="STATUS" value="IN_PROGRESS"/>
         </insert>
         <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="TOPICAPPLICATIONS">
             <column name="ID" valueNumeric="2"/>
@@ -964,6 +965,7 @@
             <column name="TOPIC_ID" valueNumeric="1"/>
             <column name="THESISSTART" valueDate="2016-09-15 02:00:00.0"/>
             <column name="LINK"/>
+            <column name="STATUS" value="FINISHED"/>
         </insert>
         <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="TOPICAPPLICATIONS">
             <column name="ID" valueNumeric="3"/>
@@ -978,6 +980,7 @@
             <column name="TOPIC_ID" valueNumeric="1"/>
             <column name="THESISSTART"/>
             <column name="LINK"/>
+            <column name="STATUS" value="WAITING_APPROVAL"/>
         </insert>
         <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="TOPICAPPLICATIONS">
             <column name="ID" valueNumeric="4"/>
@@ -992,6 +995,7 @@
             <column name="TOPIC_ID" valueNumeric="2"/>
             <column name="THESISSTART" valueDate="2016-10-02 02:00:00.0"/>
             <column name="LINK" value="https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet"/>
+            <column name="STATUS" value="FINISHED"/>
         </insert>
         <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="TOPICAPPLICATIONS">
             <column name="ID" valueNumeric="5"/>
@@ -1006,6 +1010,7 @@
             <column name="TOPIC_ID" valueNumeric="2"/>
             <column name="THESISSTART"/>
             <column name="LINK"/>
+            <column name="STATUS" value="DECLINED"/>
         </insert>
         <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="TOPICAPPLICATIONS">
             <column name="ID" valueNumeric="6"/>
@@ -1020,6 +1025,7 @@
             <column name="TOPIC_ID" valueNumeric="3"/>
             <column name="THESISSTART" valueDate="2017-03-05 01:00:00.0"/>
             <column name="LINK"/>
+            <column name="STATUS" value="FAILED"/>
         </insert>
         <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="TOPICAPPLICATIONS">
             <column name="ID" valueNumeric="7"/>
@@ -1034,6 +1040,7 @@
             <column name="TOPIC_ID" valueNumeric="4"/>
             <column name="THESISSTART" valueDate="2017-04-10 02:00:00.0"/>
             <column name="LINK" value="https://github.com/StudentHubCZ/studenthub-portal"/>
+            <column name="STATUS" value="FINISHED"/>
         </insert>
     </changeSet>
     <changeSet author="phala (generated)" id="1492005380103-22" objectQuotingStrategy="QUOTE_ALL_OBJECTS">

@@ -62,12 +62,10 @@ All users have password "test".
 
 ## Topic Application
 
-(Status is not actually field in DB and is decided by state of other fields)
-
 | id  | topic | officialAssignment                                  | grade | degree     | status      | thesisFinish | thesisStarted | faculty | techLeader | student | supervisor | link                          |
 | --- | ----- | --------------------------------------------------- | ----- | ---------- | ----------- | ------------ | ------------- | ------- | ---------- | ------- | ---------- | ----------------------------- |
 | 1   | 1     | Static HTML page generator, powered by markdown     | A     | BACHELOR   | FINISHED    | 17.3.2017    | 2.10.2016     | 1       | 3          | 4       | 2          | ----------------------------- |
-| 2   | 2     | UI for thesis management system                     | ----- | HIGH_SCHOOL| CREATED     | ------------ | 18.12.2016    | 1       | 3          | 4       | 2          | https://www.github.com        |
+| 2   | 2     | UI for thesis management system                     | ----- | HIGH_SCHOOL| IN_PROGRESS | ------------ | 18.12.2016    | 1       | 3          | 4       | 2          | https://www.github.com        |
 
 ## Tasks
 
