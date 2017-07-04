@@ -30,7 +30,7 @@ public class CompanyDAOTest {
   public void createCompany() {
     DAOTestSuite.inRollbackTransaction(() -> {
       CompanyPlan cPlan = cpDAO.findByName("TIER_2");
-      Company company = new Company("New", "www.nothing.eu", "Liberec", Country.CZ, "www.nothing.eu/logo.png",
+      Company company = new Company("New", "http://www.nothing.eu", "Liberec", Country.CZ, "http://www.nothing.eu/logo.png",
           CompanySize.SMALL, cPlan);
       Company created = companyDAO.create(company);
       List<Company> companies = companyDAO.findAll();

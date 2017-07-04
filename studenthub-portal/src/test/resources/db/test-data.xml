@@ -31,7 +31,7 @@
             <column name="NAME" value="Company Two"/>
             <column name="PLAN_NAME" value="TIER_2"/>
             <column name="SIZE" value="MEDIUM"/>
-            <column name="URL" value="www.c2.com"/>
+            <column name="URL" value="http://www.c2.com"/>
         </insert>
         <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="COMPANIES">
             <column name="ID" valueNumeric="1"/>
@@ -41,7 +41,7 @@
             <column name="NAME" value="Company One"/>
             <column name="PLAN_NAME" value="TIER_3"/>
             <column name="SIZE" value="CORPORATE"/>
-            <column name="URL" value="www.c1.com"/>
+            <column name="URL" value="http://www.c1.com"/>
         </insert>
         <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="COMPANIES">
             <column name="ID" valueNumeric="3"/>
@@ -51,7 +51,7 @@
             <column name="NAME" value="Company Three"/>
             <column name="PLAN_NAME" value="TIER_3"/>
             <column name="SIZE" value="SMALL"/>
-            <column name="URL" value="www.c3.com"/>
+            <column name="URL" value="http://www.c3.com"/>
         </insert>
         <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="COMPANIES">
             <column name="ID" valueNumeric="4"/>
@@ -61,7 +61,7 @@
             <column name="NAME" value="Company Four"/>
             <column name="PLAN_NAME" value="TIER_1"/>
             <column name="SIZE" value="STARTUP"/>
-            <column name="URL" value="www.c4.com"/>
+            <column name="URL" value="http://www.c4.com"/>
         </insert>
         <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="COMPANIES">
             <column name="ID" valueNumeric="5"/>
@@ -71,7 +71,7 @@
             <column name="NAME" value="Company Five"/>
             <column name="PLAN_NAME" value="TIER_3"/>
             <column name="SIZE" value="MEDIUM"/>
-            <column name="URL" value="www.c5.com"/>
+            <column name="URL" value="http://www.c5.com"/>
         </insert>
         <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="COMPANIES">
             <column name="ID" valueNumeric="6"/>
@@ -81,7 +81,7 @@
             <column name="NAME" value="Company Six"/>
             <column name="PLAN_NAME" value="TIER_2"/>
             <column name="SIZE" value="CORPORATE"/>
-            <column name="URL" value="www.c6.com"/>
+            <column name="URL" value="http://www.c6.com"/>
         </insert>
         <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="COMPANIES">
             <column name="ID" valueNumeric="7"/>
@@ -91,7 +91,7 @@
             <column name="NAME" value="Company Seven"/>
             <column name="PLAN_NAME" value="TIER_3"/>
             <column name="SIZE" value="MEDIUM"/>
-            <column name="URL" value="www.c7.com"/>
+            <column name="URL" value="http://www.c7.com"/>
         </insert>
         <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="COMPANIES">
             <column name="ID" valueNumeric="8"/>
@@ -101,7 +101,7 @@
             <column name="NAME" value="Company Eight"/>
             <column name="PLAN_NAME" value="TIER_1"/>
             <column name="SIZE" value="STARTUP"/>
-            <column name="URL" value="www.c8.com"/>
+            <column name="URL" value="http://www.c8.com"/>
         </insert>
     </changeSet>
     
@@ -112,7 +112,7 @@
             <column name="COUNTRY" value="CZ"/>
             <column name="LOGOURL" value="www.muni.cz/img.png"/>
             <column name="NAME" value="Masaryk University"/>
-            <column name="URL" value="www.muni.cz"/>
+            <column name="URL" value="http://www.muni.cz"/>
         </insert>
         <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="UNIVERSITIES">
             <column name="ID" valueNumeric="3"/>
@@ -120,7 +120,7 @@
             <column name="COUNTRY" value="CZ"/>
             <column name="LOGOURL" value="www.cvut.cz/image.jpg"/>
             <column name="NAME" value="Czech Technical University"/>
-            <column name="URL" value="www.cvut.cz"/>
+            <column name="URL" value="http://www.cvut.cz"/>
         </insert>
         <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="UNIVERSITIES">
             <column name="ID" valueNumeric="4"/>
@@ -128,7 +128,7 @@
             <column name="COUNTRY" value="SK"/>
             <column name="LOGOURL" value="www.stuba.sk/logo.jpg"/>
             <column name="NAME" value="Slovak Technical University"/>
-            <column name="URL" value="www.stuba.sk"/>
+            <column name="URL" value="http://www.stuba.sk"/>
         </insert>
         <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="UNIVERSITIES">
             <column name="ID" valueNumeric="5"/>
@@ -136,7 +136,7 @@
             <column name="COUNTRY" value="SK"/>
             <column name="LOGOURL" value="www.uniba.sk/logo.gif"/>
             <column name="NAME" value="Comenius University in Bratislava"/>
-            <column name="URL" value="uniba.sk"/>
+            <column name="URL" value="http://uniba.sk"/>
         </insert>
         <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="UNIVERSITIES">
             <column name="ID" valueNumeric="2"/>
@@ -144,7 +144,7 @@
             <column name="COUNTRY" value="CZ"/>
             <column name="LOGOURL" value="www.vut.cz/logo.png"/>
             <column name="NAME" value="Brno University of Technology"/>
-            <column name="URL" value="www.vut.cz"/>
+            <column name="URL" value="http://www.vut.cz"/>
         </insert>
     </changeSet>
     <changeSet author="phala (generated)" id="1489653927422-19" objectQuotingStrategy="QUOTE_ALL_OBJECTS">

@@ -29,6 +29,7 @@ import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
 import org.hibernate.validator.constraints.NotEmpty;
+import org.hibernate.validator.constraints.URL;
 
 @Entity
 @Table(name = "Universities")
@@ -42,11 +43,14 @@ public class University {
   @NotEmpty
   private String name;
 
+  @URL
   private String url;
   private String city;
 
   @Enumerated(EnumType.STRING)
   private Country country;
+
+  @URL
   private String logoUrl;
 
   public University() {

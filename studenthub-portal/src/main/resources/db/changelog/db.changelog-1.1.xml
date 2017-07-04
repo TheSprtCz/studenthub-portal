@@ -83,4 +83,10 @@
         <dropForeignKeyConstraint baseTableName="activations" constraintName="fko7msy6sghrksg7w9up2m9pl0n"/>
         <addForeignKeyConstraint baseColumnNames="user_id" baseTableCatalogName="studenthub" baseTableName="activations" baseTableSchemaName="public" constraintName="fko7msy6sghrksg7w9up2m9pl0n" deferrable="false" initiallyDeferred="false" onDelete="CASCADE" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableCatalogName="studenthub" referencedTableName="users" referencedTableSchemaName="public"/>
     </changeSet>
+    <changeSet author="phala" id="url">
+        <modifyDataType catalogName="studenthub" columnName="url" newDataType="VARCHAR(2047)" schemaName="public" tableName="companies"/>
+        <modifyDataType catalogName="studenthub" columnName="logourl" newDataType="VARCHAR(2047)" schemaName="public" tableName="companies"/>
+        <modifyDataType catalogName="studenthub" columnName="url" newDataType="VARCHAR(2047)" schemaName="public" tableName="universities"/>
+        <modifyDataType catalogName="studenthub" columnName="logourl" newDataType="VARCHAR(2047)" schemaName="public" tableName="universities"/>
+    </changeSet>
 </databaseChangeLog>
