@@ -35,6 +35,10 @@ import javax.validation.constraints.NotNull;
 
 import org.hibernate.validator.constraints.NotEmpty;
 
+
+import cz.studenthub.validators.annotations.Role;
+import cz.studenthub.validators.groups.CreateUpdateChecks;
+
 @Entity
 @Table(name = "Topics")
 @NamedQueries({ @NamedQuery(name = "Topic.findAll", query = "SELECT topic FROM Topic topic"),
@@ -59,10 +63,12 @@ public class Topic {
 
   @NotNull
   @ManyToOne(fetch = FetchType.EAGER)
+  @Role(role = UserRole.TECH_LEADER, groups = CreateUpdateChecks.class)
   private User creator;
 
   @Nullable
   @ManyToMany
+  @Role(role = UserRole.AC_SUPERVISOR, groups = CreateUpdateChecks.class)
   private Set<User> academicSupervisors;
 
   @ElementCollection(fetch = FetchType.EAGER)
@@ -200,4 +206,5 @@ public class Topic {
   public String toString() {
     return String.format("Topic[id=%s, title=%s]", id, title);
   }
+
 }

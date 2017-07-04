@@ -20,12 +20,15 @@ import java.util.List;
 
 import org.eclipse.jetty.server.session.SessionHandler;
 import org.eclipse.jetty.servlet.ErrorPageErrorHandler;
+import org.glassfish.hk2.api.ServiceLocator;
+import org.glassfish.hk2.utilities.ServiceLocatorUtilities;
 import org.glassfish.jersey.server.filter.RolesAllowedDynamicFeature;
+import org.glassfish.jersey.servlet.ServletProperties;
 import org.hibernate.SessionFactory;
-
 import com.codahale.metrics.health.HealthCheck;
 import com.google.common.collect.Lists;
 
+import cz.studenthub.api.DAOBinder;
 import cz.studenthub.auth.BasicAuthenticator;
 import cz.studenthub.auth.JwtCookieAuthFilter;
 import cz.studenthub.auth.StudentHubAuthorizer;
@@ -40,15 +43,6 @@ import cz.studenthub.core.Topic;
 import cz.studenthub.core.TopicApplication;
 import cz.studenthub.core.University;
 import cz.studenthub.core.User;
-import cz.studenthub.db.ActivationDAO;
-import cz.studenthub.db.CompanyDAO;
-import cz.studenthub.db.CompanyPlanDAO;
-import cz.studenthub.db.FacultyDAO;
-import cz.studenthub.db.ProjectDAO;
-import cz.studenthub.db.TaskDAO;
-import cz.studenthub.db.TopicApplicationDAO;
-import cz.studenthub.db.TopicDAO;
-import cz.studenthub.db.UniversityDAO;
 import cz.studenthub.db.UserDAO;
 import cz.studenthub.health.StudentHubHealthCheck;
 import cz.studenthub.resources.CompanyPlanResource;
@@ -82,6 +76,7 @@ import io.dropwizard.hibernate.UnitOfWorkAwareProxyFactory;
 import io.dropwizard.migrations.MigrationsBundle;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
+import net.winterly.dropwizard.hk2bundle.HK2Bundle;
 
 /**
  * Dropwizard application entry point.
@@ -136,41 +131,37 @@ public class StudentHubApplication extends Application<StudentHubConfiguration> 
         return configuration.getDataSourceFactory();
       }
     });
+
+    bootstrap.addBundle(new HK2Bundle(this));
   }
 
   @Override
   public void run(final StudentHubConfiguration configuration, final Environment environment) {
-    // initialize DAOs
-    final CompanyDAO companyDao = new CompanyDAO(hibernate.getSessionFactory());
-    final UniversityDAO uniDao = new UniversityDAO(hibernate.getSessionFactory());
-    final FacultyDAO facDao = new FacultyDAO(hibernate.getSessionFactory());
-    final UserDAO userDao = new UserDAO(hibernate.getSessionFactory());
-    final TopicDAO topicDao = new TopicDAO(hibernate.getSessionFactory());
-    final TopicApplicationDAO taDao = new TopicApplicationDAO(hibernate.getSessionFactory());
-    final TaskDAO taskDao = new TaskDAO(hibernate.getSessionFactory());
-    final ActivationDAO actDao = new ActivationDAO(hibernate.getSessionFactory());
-    final CompanyPlanDAO cpDao = new CompanyPlanDAO(hibernate.getSessionFactory());
-    final ProjectDAO projectDao = new ProjectDAO(hibernate.getSessionFactory());
+
+    // Load DAOs into HK2
+    ServiceLocator locator = (ServiceLocator) environment.getApplicationContext().getAttribute(ServletProperties.SERVICE_LOCATOR);
+    ServiceLocatorUtilities.bind(locator, new UnitOfWorkAwareProxyFactory(hibernate)
+        .create(DAOBinder.class, SessionFactory.class, hibernate.getSessionFactory()));
 
     // enable session manager
     environment.servlets().setSessionHandler(new SessionHandler());
 
     // register resource classes (REST Endpoints)
-    environment.jersey().register(new CompanyResource(companyDao, userDao, topicDao, projectDao));
-    environment.jersey().register(new UniversityResource(uniDao, facDao));
-    environment.jersey().register(new FacultyResource(facDao, userDao, projectDao));
-    environment.jersey().register(new UserResource(userDao, topicDao, taDao, projectDao));
-    environment.jersey().register(new TopicResource(topicDao, taDao, userDao, projectDao));
-    environment.jersey().register(new TopicApplicationResource(taDao, taskDao));
-    environment.jersey().register(new TaskResource(taDao, taskDao));
-    environment.jersey().register(new LoginResource(userDao, configuration.getJwtSecret()));
-    environment.jersey().register(new RegistrationResource(userDao, actDao, configuration.getSmtpConfig()));
-    environment.jersey().register(new TagResource(userDao, topicDao));
-    environment.jersey().register(new CompanyPlanResource(cpDao));
-    environment.jersey().register(new ProjectResource(projectDao, taDao, topicDao));
+    environment.jersey().register(new CompanyResource());
+    environment.jersey().register(new UniversityResource());
+    environment.jersey().register(new FacultyResource());
+    environment.jersey().register(new UserResource());
+    environment.jersey().register(new TopicResource());
+    environment.jersey().register(new TopicApplicationResource());
+    environment.jersey().register(new TaskResource());
+    environment.jersey().register(new LoginResource(configuration.getJwtSecret()));
+    environment.jersey().register(new RegistrationResource(configuration.getSmtpConfig()));
+    environment.jersey().register(new TagResource());
+    environment.jersey().register(new CompanyPlanResource());
+    environment.jersey().register(new ProjectResource());
 
     // set up auth
-    configureAuth(configuration, environment, userDao);
+    configureAuth(configuration, environment, locator);
 
     // since routing is achieved on client side we need to catch 404 and
     // redirect to index.html - handle 404 on client as well (this makes SPA
@@ -181,15 +172,16 @@ public class StudentHubApplication extends Application<StudentHubConfiguration> 
 
     // healthcheck
     HealthCheck hc = new UnitOfWorkAwareProxyFactory(hibernate)
-        .create(StudentHubHealthCheck.class, UserDAO.class, userDao);
+        .create(StudentHubHealthCheck.class);
+
     environment.healthChecks().register("admin", hc);
   }
 
   @SuppressWarnings({ "rawtypes", "unchecked" })
-  private void configureAuth(StudentHubConfiguration configuration, Environment environment, UserDAO dao) {
-    BasicAuthenticator basicAuth = new UnitOfWorkAwareProxyFactory(hibernate).create(BasicAuthenticator.class,
-        UserDAO.class, dao);
-    
+  private void configureAuth(StudentHubConfiguration configuration, Environment environment, ServiceLocator locator) {
+    // Since HK2 doesn't work with UnitOfAwareProxy, we have to retrieve instance from HK2 manually 
+    UserDAO dao = locator.getService(UserDAO.class);
+
     Class<?>[] types = {UserDAO.class, String.class};
     Object[] args = {dao, configuration.getJwtSecret()};
     
@@ -213,6 +205,8 @@ public class StudentHubApplication extends Application<StudentHubConfiguration> 
     List<AuthFilter> filters = Lists.newArrayList(oauthCredentialAuthFilter, cookieCredentialAuthFilter);
 
     if (configuration.isBasicAuthEnabled()) {
+      BasicAuthenticator basicAuth = new UnitOfWorkAwareProxyFactory(hibernate).create(BasicAuthenticator.class,
+          UserDAO.class, dao);
       AuthFilter<BasicCredentials, User> basicCredentialAuthFilter = new BasicCredentialAuthFilter.Builder<User>()
           .setAuthenticator(basicAuth)
           .setAuthorizer(authorizer)

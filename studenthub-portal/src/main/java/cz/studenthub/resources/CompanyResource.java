@@ -20,6 +20,7 @@ import java.util.List;
 
 import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
+import javax.inject.Inject;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
@@ -63,17 +64,18 @@ import io.dropwizard.jersey.params.LongParam;
 @Consumes(MediaType.APPLICATION_JSON)
 public class CompanyResource {
 
-  private final CompanyDAO companyDao;
-  private final UserDAO userDao;
-  private final TopicDAO topicDao;
-  private final ProjectDAO projectDao;
 
-  public CompanyResource(CompanyDAO companyDao, UserDAO userDao, TopicDAO topicDao, ProjectDAO projectDao) {
-    this.companyDao = companyDao;
-    this.userDao = userDao;
-    this.topicDao = topicDao;
-    this.projectDao = projectDao;
-  }
+  @Inject
+  private CompanyDAO companyDao;
+
+  @Inject
+  private UserDAO userDao;
+
+  @Inject
+  private TopicDAO topicDao;
+
+  @Inject
+  private ProjectDAO projectDao;
 
   @GET
   @Timed

@@ -35,6 +35,9 @@ import javax.validation.constraints.NotNull;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
+import cz.studenthub.validators.annotations.Role;
+import cz.studenthub.validators.groups.CreateUpdateChecks;
+
 @Entity
 @Table(name = "TopicApplications")
 @NamedQueries({ @NamedQuery(name = "TopicApplication.findAll", query = "SELECT app FROM TopicApplication app"),
@@ -73,13 +76,16 @@ public class TopicApplication {
   private Faculty faculty;
 
   @ManyToOne
+  @Role(role = UserRole.TECH_LEADER, groups = CreateUpdateChecks.class)
   private User techLeader;
 
   @NotNull
   @ManyToOne
+  @Role(role = UserRole.STUDENT, groups = CreateUpdateChecks.class)
   private User student;
 
   @ManyToOne
+  @Role(role = UserRole.AC_SUPERVISOR, groups = CreateUpdateChecks.class)
   private User academicSupervisor;
 
   public TopicApplication() {
@@ -208,4 +214,5 @@ public class TopicApplication {
   public String toString() {
     return String.format("TopicApplication[id=%s]", id);
   }
+
 }

@@ -20,6 +20,7 @@ import java.util.Optional;
 
 import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
+import javax.inject.Inject;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
@@ -53,27 +54,29 @@ import cz.studenthub.db.TopicApplicationDAO;
 import cz.studenthub.db.TopicDAO;
 import cz.studenthub.db.UserDAO;
 import cz.studenthub.util.PagingUtil;
+import cz.studenthub.validators.groups.CreateUpdateChecks;
 import io.dropwizard.auth.Auth;
 import io.dropwizard.hibernate.UnitOfWork;
 import io.dropwizard.jersey.params.IntParam;
 import io.dropwizard.jersey.params.LongParam;
+import io.dropwizard.validation.Validated;
 
 @Path("/topics")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class TopicResource {
 
-  private final TopicDAO topicDao;
-  private final TopicApplicationDAO appDao;
-  private final UserDAO userDao;
-  private final ProjectDAO projectDao;
+  @Inject
+  private TopicDAO topicDao;
 
-  public TopicResource(TopicDAO topicDao, TopicApplicationDAO taDao, UserDAO userDao, ProjectDAO projectDao) {
-    this.topicDao = topicDao;
-    this.appDao = taDao;
-    this.userDao = userDao;
-    this.projectDao = projectDao;
-  }
+  @Inject
+  private TopicApplicationDAO appDao;
+
+  @Inject
+  private UserDAO userDao;
+
+  @Inject
+  private ProjectDAO projectDao;
 
   @GET
   @Timed
@@ -118,7 +121,7 @@ public class TopicResource {
   @Path("/{id}")
   @UnitOfWork
   @RolesAllowed({"ADMIN", "TECH_LEADER"})
-  public Response update(@PathParam("id") LongParam idParam, @NotNull @Valid Topic topic, @Auth User user) {
+  public Response update(@PathParam("id") LongParam idParam, @NotNull @Valid @Validated(CreateUpdateChecks.class) Topic topic, @Auth User user) {
 
     Long id = idParam.get();
     Topic oldTopic = topicDao.findById(id);
@@ -154,7 +157,7 @@ public class TopicResource {
   @ExceptionMetered
   @UnitOfWork
   @RolesAllowed({ "ADMIN", "TECH_LEADER" })
-  public Response create(@NotNull @Valid Topic topic, @Auth User user) {
+  public Response create(@NotNull @Valid @Validated(CreateUpdateChecks.class) Topic topic, @Auth User user) {
 
     // If user is topic creator or is an admin
     if (topic.getCreator().getId().equals(user.getId()) || user.getRoles().contains(UserRole.ADMIN)) {

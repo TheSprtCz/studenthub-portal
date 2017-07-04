@@ -20,6 +20,7 @@ import java.util.List;
 
 import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
+import javax.inject.Inject;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
@@ -60,20 +61,20 @@ import io.dropwizard.jersey.params.LongParam;
 @Consumes(MediaType.APPLICATION_JSON)
 public class UserResource {
 
-  private final UserDAO userDao;
-  private final TopicApplicationDAO appDao;
-  private final TopicDAO topicDao;
-  private final ProjectDAO projectDao;
+  @Inject
+  private UserDAO userDao;
+
+  @Inject
+  private TopicApplicationDAO appDao;
+
+  @Inject
+  private TopicDAO topicDao;
+
+  @Inject
+  private ProjectDAO projectDao;
 
   // private static final Logger LOG =
   // LoggerFactory.getLogger(UserResource.class);
-
-  public UserResource(UserDAO userDao, TopicDAO topicDao, TopicApplicationDAO taDao, ProjectDAO projectDao) {
-    this.userDao = userDao;
-    this.appDao = taDao;
-    this.topicDao = topicDao;
-    this.projectDao = projectDao;
-  }
 
   @GET
   @Timed

@@ -22,6 +22,7 @@ import java.util.Date;
 import java.util.Set;
 
 import javax.annotation.security.PermitAll;
+import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.POST;
@@ -83,10 +84,10 @@ public class LoginResource {
   
   private final String jwtSecret;
   
-  private final UserDAO userDao;
+  @Inject
+  private UserDAO userDao;
 
-  public LoginResource(UserDAO userDao, String jwtSecret) {
-    this.userDao = userDao;
+  public LoginResource(String jwtSecret) {
     this.jwtSecret = jwtSecret;
   }
 

@@ -19,6 +19,7 @@ package cz.studenthub.resources;
 import java.util.List;
 
 import javax.annotation.security.RolesAllowed;
+import javax.inject.Inject;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
@@ -52,11 +53,8 @@ import io.dropwizard.jersey.params.IntParam;
 @Consumes(MediaType.APPLICATION_JSON)
 public class CompanyPlanResource {
 
-  private final CompanyPlanDAO cpDao;
-
-  public CompanyPlanResource(CompanyPlanDAO cpDao) {
-    this.cpDao = cpDao;
-  }
+  @Inject
+  private CompanyPlanDAO cpDao;
 
   @GET
   @Timed

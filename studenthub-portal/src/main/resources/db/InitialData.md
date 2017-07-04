@@ -32,7 +32,7 @@ All users have password "test".
 
 | id  | username           | email                       | name               | phone        | lastLogin      | company | faculty | roles                        | tags                     |
 | --- | ------------------ | --------------------------- | ------------------ | ------------ | -------------- | ------- | ------- | ---------------------------- | ------------------------ | 
-| 1   | superadmin         | superadmin@example.com      | Admin Admin        | 463 147 891  | 5.11.2016      | ------- | ------- | [ALL]                        | ------------------------ |
+| 1   | superadmin         | superadmin@example.com      | Admin Admin        | 463 147 891  | 5.11.2016      | 1       | 1       | [ALL]                        | ------------------------ |
 | 2   | supervisor         | supervisor@example.com      | Supervisor One     | 258 457 987  | 19.3.2017      | ------- | 1       | [SUPERVISOR]                 | [Java,Ruby,MU]           |
 | 3   | leader             | leader@example.com          | Leader One         | 875 687 149  | 9.1.2017       | 1       | ------- | [LEADER]                     | [C++, Oracle, Ruby ]     |
 | 4   | student            | student@example.com         | Student One        | 654 712 354  | 26.8.2016      | ------- | 1       | [STUDENT]                    | [MU, JavaScript, React]  |

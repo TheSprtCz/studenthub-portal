@@ -16,6 +16,8 @@
  *******************************************************************************/
 package cz.studenthub.health;
 
+import javax.inject.Inject;
+
 import com.codahale.metrics.health.HealthCheck;
 
 import cz.studenthub.core.UserRole;
@@ -30,11 +32,8 @@ import io.dropwizard.hibernate.UnitOfWork;
  */
 public class StudentHubHealthCheck extends HealthCheck {
 
+  @Inject
   private UserDAO userDao;
-  
-  public StudentHubHealthCheck(UserDAO userDao) {
-    this.userDao = userDao;
-  }
   
   @UnitOfWork
   @Override

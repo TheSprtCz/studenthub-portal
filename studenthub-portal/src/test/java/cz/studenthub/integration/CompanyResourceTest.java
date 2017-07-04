@@ -57,7 +57,7 @@ public class CompanyResourceTest {
     assertEquals(company.getName(), "Company Five");
   }
 
-  @Test(dependsOnMethods = "listCompanies")
+  @Test(dependsOnMethods = "listCompanies", dependsOnGroups = "login")
   public void createCompany() {
     JSONObject plan = new JSONObject();
     plan.put("name", "TIER_1");

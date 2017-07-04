@@ -1,5 +1,6 @@
 package cz.studenthub.core;
 
+import java.util.Objects;
 import java.util.Set;
 
 import javax.persistence.Entity;
@@ -12,6 +13,9 @@ import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
 import org.hibernate.validator.constraints.NotEmpty;
+
+import cz.studenthub.validators.annotations.Role;
+import cz.studenthub.validators.groups.CreateUpdateChecks;
 
 @Entity
 @Table(name = "Projects")
@@ -32,6 +36,7 @@ public class Project {
 
   @NotEmpty
   @ManyToMany
+  @Role(role = UserRole.PROJECT_LEADER, groups = CreateUpdateChecks.class)
   private Set<User> creators;
 
   @ManyToMany
@@ -111,4 +116,27 @@ public class Project {
   public void setTopics(Set<Topic> topics) {
     this.topics = topics;
   }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(id, name, description);
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
+    }
+    if ((obj == null) || (getClass() != obj.getClass())) {
+      return false;
+    }
+
+    return Integer.compare(this.hashCode(), obj.hashCode()) == 0;
+  }
+
+  @Override
+  public String toString() {
+    return String.format("Project[id=%s, name=%s]", id, name);
+  }
+
 }

@@ -19,6 +19,7 @@ package cz.studenthub.resources;
 import java.util.List;
 
 import javax.annotation.security.PermitAll;
+import javax.inject.Inject;
 import javax.validation.constraints.Min;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
@@ -42,13 +43,11 @@ import io.dropwizard.jersey.params.IntParam;
 @Produces(MediaType.APPLICATION_JSON)
 public class TagResource {
 
-  private final UserDAO userDao;
-  private final TopicDAO topicDao;
+  @Inject
+  private UserDAO userDao;
 
-  public TagResource(UserDAO userDao, TopicDAO topicDao) {
-    this.userDao = userDao;
-    this.topicDao = topicDao;
-  }
+  @Inject
+  private TopicDAO topicDao;
 
   @GET
   @Timed

@@ -53,7 +53,7 @@ public class UniversityResourceTest {
     assertEquals(uni.getName(), "Masaryk University");
   }
 
-  @Test(dependsOnMethods = "listUniversities")
+  @Test(dependsOnMethods = "listUniversities", dependsOnGroups = "login")
   public void createUniversity() {
     JSONObject university = new JSONObject();
     university.put("name", "Unknown");

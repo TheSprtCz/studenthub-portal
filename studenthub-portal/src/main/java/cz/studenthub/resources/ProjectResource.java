@@ -19,6 +19,7 @@ package cz.studenthub.resources;
 import java.util.List;
 
 import javax.annotation.security.RolesAllowed;
+import javax.inject.Inject;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
@@ -52,25 +53,26 @@ import cz.studenthub.db.ProjectDAO;
 import cz.studenthub.db.TopicApplicationDAO;
 import cz.studenthub.db.TopicDAO;
 import cz.studenthub.util.PagingUtil;
+import cz.studenthub.validators.groups.CreateUpdateChecks;
 import io.dropwizard.auth.Auth;
 import io.dropwizard.hibernate.UnitOfWork;
 import io.dropwizard.jersey.params.IntParam;
 import io.dropwizard.jersey.params.LongParam;
+import io.dropwizard.validation.Validated;
 
 @Path("/projects")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class ProjectResource {
 
-  private final ProjectDAO projectDao;
-  private final TopicApplicationDAO appDao;
-  private final TopicDAO topicDao;
+  @Inject
+  private ProjectDAO projectDao;
 
-  public ProjectResource(ProjectDAO projectDao, TopicApplicationDAO appDao, TopicDAO topicDao) {
-    this.projectDao = projectDao;
-    this.appDao = appDao;
-    this.topicDao = topicDao;
-  }
+  @Inject
+  private TopicApplicationDAO appDao;
+
+  @Inject
+  private TopicDAO topicDao;
 
   @GET
   @Timed
@@ -91,7 +93,7 @@ public class ProjectResource {
   @ExceptionMetered
   @UnitOfWork
   @RolesAllowed({"ADMIN", "PROJECT_LEADER"})
-  public Response create(@NotNull @Valid Project project, @Auth User user) {
+  public Response create(@NotNull @Valid @Validated(CreateUpdateChecks.class) Project project, @Auth User user) {
 
     // If user is creator or admin
     if (project.getCreators().contains(user) || user.getRoles().contains(UserRole.ADMIN)) {
@@ -112,7 +114,7 @@ public class ProjectResource {
   @Path("/{id}")
   @UnitOfWork
   @RolesAllowed({"ADMIN", "PROJECT_LEADER"})
-  public Response update(@PathParam("id") LongParam idParam, @NotNull @Valid Project project, @Auth User user) {
+  public Response update(@PathParam("id") LongParam idParam, @NotNull @Valid @Validated(CreateUpdateChecks.class) Project project, @Auth User user) {
     Long id = idParam.get();
     Project oldProject = projectDao.findById(id);
     if (oldProject == null) 
