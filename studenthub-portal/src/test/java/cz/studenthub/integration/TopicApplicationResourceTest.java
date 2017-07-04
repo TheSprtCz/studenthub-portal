@@ -65,7 +65,7 @@ public class TopicApplicationResourceTest {
     JSONObject topic = new JSONObject();
     topic.put("id", 2);
     JSONObject student = new JSONObject();
-    student.put("id", 12);
+    student.put("id", 19);
 
     JSONObject app = new JSONObject();
     app.put("faculty", faculty);
