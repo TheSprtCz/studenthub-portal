@@ -11,6 +11,7 @@ import ForgotPassword from './views/ForgotPassword.js';
 import Users from './views/Users.js';
 import Universities from './views/Universities.js';
 import MyTopics from './views/MyTopics.js';
+import Topic from './views/Topic.js';
 import MyApplications from './views/MyApplications.js';
 import Application from './views/Application.js';
 import Profile from './views/Profile.js';
@@ -107,6 +108,7 @@ class App extends Component {
               <Route exact path="/signup" component={SignUp}/>
               <Route exact path="/forgot" component={ForgotPassword}/>
               <Route exact path="/activation/:id/:secret" component={Activation}/>
+              <Route exact path="/topics/:id" component={Topic}/>
               <PrivateRoute exact path="/users" component={Users}/>
               <PrivateRoute exact path="/unis" component={Universities}/>
               <PrivateRoute exact path="/my-apps" component={MyApplications}/>
