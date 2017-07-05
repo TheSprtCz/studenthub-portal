@@ -119,10 +119,15 @@ Util.degreesSource = [
 ]
 
 Util.TOPICS_PER_PAGE = 5;
+Util.TOPICS_PER_PAGE_TABLE = 15;
+Util.APPLICATIONS_PER_PAGE = 12;
+Util.USERS_PER_PAGE = 8;
+Util.UNIVERSITIES_PER_PAGE = 15;
+Util.FACULTIES_PER_PAGE = 20;
 Util.TERMS_OF_USE = config.termsOfUse;
 Util.PERSONAL_DATA_PROCESSING = config.personalDataProc;
-Util.PORTAL_NAME = config.name;
 Util.PORTAL_VERSION = config.version;
+Util.PORTAL_NAME = config.name;
 Util.TOKEN_COOKIE_NAME = "sh-token";
 Util.ADMIN_EMAIL = config.adminEmail;
 

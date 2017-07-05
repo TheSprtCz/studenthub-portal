@@ -3,6 +3,7 @@ import React, { Component } from 'react';
 import AdminUsersView from '../components/AdminUsersView.js';
 import CompanyRepUsersView from '../components/CompanyRepUsersView.js';
 import SiteSnackbar from '../components/SiteSnackbar.js';
+import Pager from '../components/Pager.js';
 
 import Auth from '../Auth.js';
 import Util from '../Util.js';
@@ -10,53 +11,55 @@ import Util from '../Util.js';
 import _t from '../Translations.js';
 
 class Users extends Component {
-  state = { users: [], companyId: -1, snackbarActive: false, snackbarLabel: "" }
+  state = { users: [], nextUsers: [], companyId: -1, snackbarActive: false,
+    snackbarLabel: "", page: -1, offsetWentDown: false }
 
   componentDidMount() {
     if (Auth.hasRole(Util.userRoles.admin))
       this.getUsers();
     else if (Auth.hasRole(Util.userRoles.companyRep))
       this.getCompanyUsers();
+    this.changePage(1);
   }
 
   /**
    * Gets the list of all users.
    */
   getUsers = () => {
-    fetch('/api/users', {
+    let page = (this.state.offsetWentDown) ? this.state.page : (this.state.page+1);
+    fetch("/api/users?size=" + Util.USERS_PER_PAGE + "&start=" + (page * Util.USERS_PER_PAGE), {
         method: 'get',
         credentials: 'same-origin'
       }).then(function(response) {
           if(response.ok) {
             return response.json();
+          } else if (response.status === 404) {
+          this.setState({
+            users: (this.state.nextUsers === null || typeof this.state.nextUsers === 'undefined') ? this.state.users : this.state.nextUsers,
+            nextUsers: null
+          });
         } else throw new Error('There was a problem with network connection.');
-      }).then(function(json) {
-        var newData = [];
-
-        for(let i in json) {
-          newData.push({
-            company: json[i].company,
-            email:	json[i].email,
-            faculty:	json[i].faculty,
-            id: json[i].id,
-            lastLogin:	json[i].lastLogin,
-            name: json[i].name,
-            phone: json[i].phone,
-            roles: json[i].roles,
-            tags: json[i].tags,
-            username: json[i].username
+      }.bind(this)).then(function(json) {
+        if (this.state.offsetWentDown) {
+          this.setState({
+            users: json,
+            nextUsers: this.state.users
           });
         }
-        this.setState({
-          users: newData
-        });
+        else {
+          this.setState({
+            users: (this.state.nextUsers === null || typeof this.state.nextUsers === 'undefined') ? this.state.users : this.state.nextUsers,
+            nextUsers: json
+          });
+        }
       }.bind(this));
   }
 
   /**
-   * Gets the list of only company users.
-   */
+  * Gets the list of only company users.
+  */
   getCompanyUsers = () => {
+    var page = (this.state.offsetWentDown) ? this.state.page : (this.state.page+1);
     fetch('/api/users/' + Auth.getUserInfo().sub, {
         method: 'get',
         credentials: 'same-origin'
@@ -68,35 +71,34 @@ class Users extends Component {
         this.setState({
           companyId: json.company.id
         });
-        fetch('/api/companies/' + json.company.id + '/leaders', {
+        fetch('/api/companies/' + json.company.id + "/leaders?size=" + Util.USERS_PER_PAGE + "&start=" +
+          (page * Util.USERS_PER_PAGE), {
             method: 'get',
             credentials: 'same-origin'
           }).then(function(response) {
               if(response.ok) {
                 return response.json();
+            } else if (response.status === 404) {
+              this.setState({
+                users: (this.state.nextUsers === null || typeof this.state.nextUsers === 'undefined') ? this.state.users : this.state.nextUsers,
+                nextUsers: null
+              });
             } else {
               throw new Error("There was a problem with network connection. The GET request couldn't be processed!");
             }
-          }).then(function(json) {
-          var newData = [];
-
-          for(let i in json) {
-            newData.push({
-              company: json[i].company,
-              email:	json[i].email,
-              faculty:	json[i].faculty,
-              id: json[i].id,
-              lastLogin:	json[i].lastLogin,
-              name: json[i].name,
-              phone: json[i].phone,
-              roles: json[i].roles,
-              tags: json[i].tags,
-              username: json[i].username
-            });
-          }
-          this.setState({
-            users: newData
-        });
+          }.bind(this)).then(function(json) {
+            if (this.state.offsetWentDown) {
+              this.setState({
+                users: json,
+                nextUsers: this.state.users
+              });
+            }
+            else {
+              this.setState({
+                users: (this.state.nextUsers === null || typeof this.state.nextUsers === 'undefined') ? this.state.users : this.state.nextUsers,
+                nextUsers: json
+              });
+            };
       }.bind(this));
     }.bind(this));
   }
@@ -176,12 +178,25 @@ class Users extends Component {
         snackbarSetter={(label) => this.setSnackbarResponse(label)} />);
   }
 
+  changePage = (offset) => {
+    this.setState({ page: this.state.page + offset, offsetWentDown: (offset < 0) ? true : false });
+
+    setTimeout(function() {
+      if (Auth.hasRole(Util.userRoles.admin))
+        this.getUsers();
+      else if (Auth.hasRole(Util.userRoles.companyRep))
+        this.getCompanyUsers();
+    }.bind(this), 2);
+  }
+
   render() {
     return(
       <div>
         <h1>{ _t.translate('Users') }</h1>
         {this.generateView()}
         <SiteSnackbar active={this.state.snackbarActive} toggleHandler={this.toggleSnackbar} label={this.state.snackbarLabel} />
+        <Pager currentPage={this.state.page} nextData={this.state.nextUsers}
+          pageChanger={(offset) => this.changePage(offset)} />
       </div>
     );
   }

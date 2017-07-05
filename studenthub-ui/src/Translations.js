@@ -378,6 +378,9 @@ const myLocalize = new Localize({
     },
     'Description': {
       'cs': 'Popis'
+    },
+    'PROJECT_LEADER': {
+      'cs': 'Vedoucí projektu'
     }
 });
 

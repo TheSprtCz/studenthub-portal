@@ -11,13 +11,12 @@ import CardActions from 'react-toolbox/lib/card/CardActions.js';
 import Snackbar from 'react-toolbox/lib/snackbar/Snackbar.js';
 
 import TopicDetailsDialog from '../components/TopicDetailsDialog.js';
+import Pager from '../components/Pager.js';
 
 import Auth from '../Auth.js';
 import Util from '../Util.js';
 
 import _t from '../Translations.js';
-
-const PER_PAGE = Util.TOPICS_PER_PAGE;
 
 class TopicCard extends React.Component {
   state = {snackbarActive: false, snackbarLabel: '', confirmActive: false, confirmText: "",
@@ -195,16 +194,29 @@ class TopicCards extends React.Component {
 }
 
 class TopicSearch extends React.Component {
-  state = { query: '', topics: [], applications: [], supervisedTopics: [],
-    page: 0, max: 0, typing: false, fetched: false};
+  state = { query: '', topics: [], nextTopics: [], applications: [], supervisedTopics: [],
+    page: -1, typing: false, fetched: false };
 
   componentDidMount() {
     this.getTopics();
     if (Auth.hasRole(Util.userRoles.student)) this.getApplications();
+    this.changePage(1);
     setInterval(function() {
       if(!this.state.typing && !this.state.fetched)
-        this.getTopics();
+        this.resetPages();
     }.bind(this), 300);
+  }
+
+  resetPages() {
+    this.setState({
+      page: -1,
+      topics: [],
+      nextTopics: []
+    });
+    setTimeout(function(){
+      this.getTopics();
+      this.changePage(1);
+    }.bind(this), 2);
   }
 
   handleChange = (name, value) => {
@@ -215,19 +227,24 @@ class TopicSearch extends React.Component {
   };
 
   getTopics = () => {
-    var url = "/api/topics/search?size=" + PER_PAGE + "&start=" + (this.state.page * PER_PAGE) + "&text=" + this.state.query;
-
-    fetch(url, {
+    fetch("/api/topics/search?size=" + Util.TOPICS_PER_PAGE + "&start=" + ((this.state.page+1) * Util.TOPICS_PER_PAGE) +
+      "&text="+this.state.query, {
       credentials: 'same-origin',
       method: 'get' }).then(function(response) {
       if(response.ok) {
         return response.json();
+      } else if (response.status === 404) {
+        this.setState({
+          topics: (this.state.nextTopics === null || typeof this.state.nextTopics === 'undefined') ? this.state.topics : this.state.nextTopics,
+          nextTopics: null
+        });
       } else {
         throw new Error('There was a problem with network connection.');
       }
-    }).then(function(json) {
+    }.bind(this)).then(function(json) {
       this.setState({
-        topics: json
+        topics: (this.state.nextTopics === null || typeof this.state.nextTopics === 'undefined') ? this.state.topics : this.state.nextTopics,
+        nextTopics: json
       });
     }.bind(this));
     this.setState({fetched: true});
@@ -256,8 +273,6 @@ class TopicSearch extends React.Component {
   }
 
   changePage = (offset) => {
-    if (this.state.page === 0 && offset === -1) return;
-
     this.setState({ page: this.state.page + offset });
 
     setTimeout(function() {
@@ -273,14 +288,8 @@ class TopicSearch extends React.Component {
           required value={this.state.query} onChange={this.handleChange.bind(this, 'query')} />
         <br />
         <TopicCards topics={this.state.topics} applications={this.state.applications} />
-        <div className="col-md-12">
-          <nav>
-            <ul className="pager">
-              <li><a href="#" onClick={() => this.changePage(-1)}>{ _t.translate("Previous") }</a></li>
-              <li><a href="#" onClick={() => this.changePage(1)}>{ _t.translate("Next") }</a></li>
-            </ul>
-          </nav>
-        </div>
+        <Pager currentPage={this.state.page} nextData={this.state.nextTopics}
+          pageChanger={(offset) => this.changePage(offset)} />
       </section>
     );
   }

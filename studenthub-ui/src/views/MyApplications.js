@@ -6,6 +6,8 @@ import TableRow from 'react-toolbox/lib/table/TableRow.js';
 import TableCell from 'react-toolbox/lib/table/TableCell.js';
 
 import EditButton from '../components/EditButton.js';
+import Pager from '../components/Pager.js';
+
 
 import Auth from '../Auth.js';
 import Util from '../Util.js';
@@ -19,10 +21,11 @@ const ApplicationTableHint = () => (
 )
 
 class ApplicationTable extends Component {
-  state = { applications: [], redirect: -1};
+  state = { applications: [], nextAppllications: [], redirect: -1, page: -1, offsetWentDown: false };
 
   componentDidMount() {
     this.getApplications();
+    this.changePage(1);
   }
 
   /**
@@ -30,15 +33,20 @@ class ApplicationTable extends Component {
    */
   getApplications = () => {
     var url = "";
+    let page = (this.state.offsetWentDown) ? this.state.page : (this.state.page+1);
 
     if (Auth.hasRole(Util.userRoles.admin))
-      url = '/api/applications';
+      url = "/api/applications?size=" + Util.APPLICATIONS_PER_PAGE + "&start=" +
+      (page * Util.APPLICATIONS_PER_PAGE);
     else if (Auth.hasRole(Util.userRoles.techLeader))
-      url = '/api/users/'+ Auth.getUserInfo().sub + '/ledApplications';
+      url = '/api/users/'+ Auth.getUserInfo().sub + "/ledApplications?size=" + Util.APPLICATIONS_PER_PAGE + "&start=" +
+      (page * Util.APPLICATIONS_PER_PAGE);
     else if (Auth.hasRole(Util.userRoles.superviser))
-      url = '/api/users/'+ Auth.getUserInfo().sub + '/supervisedApplications';
+      url = '/api/users/'+ Auth.getUserInfo().sub + "/supervisedApplications?size=" +
+      Util.APPLICATIONS_PER_PAGE + "&start=" + (page * Util.APPLICATIONS_PER_PAGE);
     else if (Auth.hasRole(Util.userRoles.student))
-      url = '/api/users/'+ Auth.getUserInfo().sub + '/applications';
+      url = '/api/users/'+ Auth.getUserInfo().sub + "/applications?size=" + Util.APPLICATIONS_PER_PAGE +
+      "&start=" + (page * Util.APPLICATIONS_PER_PAGE);
 
     fetch(url, {
       credentials: 'same-origin',
@@ -46,30 +54,29 @@ class ApplicationTable extends Component {
     }).then(function(response) {
       if (response.ok) {
         return response.json();
+      } else if (response.status === 400) {
+        this.setState({
+          applications: (this.state.nextAppllications === null || typeof this.state.nextAppllications === 'undefined') ?
+            this.state.appllications : this.state.nextAppllications,
+          nextAppllications: null
+        });
       } else {
         throw new Error('There was a problem with network connection.');
       }
-    }).then(function(json) {
-      var newData = [];
-
-      for(let i in json) {
-        newData.push({
-          academicSupervisor: json[i].academicSupervisor,
-          degree: json[i].degree,
-          faculty: json[i].faculty,
-          grade: json[i].grade,
-          id: json[i].id,
-          officialAssignment: json[i].officialAssignment,
-          student: json[i].student,
-          techLeader: json[i].techLeader,
-          thesisFinish: new Date(json[i].thesisFinish),
-          thesisStarted: new Date(json[i].thesisStarted),
-          topic: json[i].topic
+    }.bind(this)).then(function(json) {
+      if (this.state.offsetWentDown) {
+        this.setState({
+          applications: json,
+          nextAppllications: this.state.applications
         });
       }
-      this.setState({
-        applications: newData
-      });
+      else {
+        this.setState({
+          applications: (this.state.nextAppllications === null || typeof this.state.nextAppllications === 'undefined') ?
+            this.state.appllications : this.state.nextAppllications,
+          nextAppllications: json
+        });
+      };
     }.bind(this));
   }
 
@@ -85,6 +92,14 @@ class ApplicationTable extends Component {
     setTimeout(function() {
       this.setState({ redirect: id });
     }.bind(this), 100);
+  }
+
+  changePage = (offset) => {
+    this.setState({ page: this.state.page + offset, offsetWentDown: (offset < 0) ? true : false });
+
+    setTimeout(function() {
+      this.getApplications();
+    }.bind(this), 2);
   }
 
   render () {
@@ -109,8 +124,10 @@ class ApplicationTable extends Component {
               <TableCell>{item.faculty.name}</TableCell>
               <TableCell>{Util.isEmpty(item.techLeader) ? "" : item.techLeader.email}</TableCell>
               <TableCell>{Util.isEmpty(item.academicSupervisor) ? "" : item.academicSupervisor.email}</TableCell>
-              <TableCell>{Util.isEmpty(item.thesisStarted) ? "No date defined" : item.thesisStarted.toString()}</TableCell>
-              <TableCell>{Util.isEmpty(item.thesisFinish) ? "No date defined" : item.thesisFinish.toString()}</TableCell>
+              <TableCell>{Util.isEmpty(item.thesisStarted) ? "No date defined" :
+                new Date(item.thesisStarted).toString()}</TableCell>
+              <TableCell>{Util.isEmpty(item.thesisFinish) ? "No date defined" :
+                new Date(item.thesisFinish).toString()}</TableCell>
               <TableCell>{item.grade}</TableCell>
               <TableCell>
                 <EditButton toggleHandler={() => this.handleRedirect(item.id)} />
@@ -118,6 +135,8 @@ class ApplicationTable extends Component {
             </TableRow>
           ))}
         </Table>
+        <Pager currentPage={this.state.page} nextData={this.state.nextAppllications}
+          pageChanger={(offset) => this.changePage(offset)} />
         {this.generateRedirect()}
       </div>
     );
