@@ -12,7 +12,7 @@
             <column name="id" valueNumeric="1"/>
             <column name="city" value="Brno"/>
             <column name="country" value="CZ"/>
-            <column name="logourl" value="c1.com/logo.png"/>
+            <column name="logourl" value="https://dummyimage.com/300/000/fff.png&text=Logo"/>
             <column name="name" value="Company One"/>
             <column name="plan_name" value="TIER_1"/>
             <column name="size" value="CORPORATE"/>
@@ -25,7 +25,7 @@
             <column name="id" valueNumeric="1"/>
             <column name="city" value="Brno"/>
             <column name="country" value="CZ"/>
-            <column name="logourl" value="www.muni.cz/img.png"/>
+            <column name="logourl" value="https://dummyimage.com/300/000/fff.png&text=Logo"/>
             <column name="name" value="Masaryk University"/>
             <column name="url" value="http://www.muni.cz"/>
         </insert>
