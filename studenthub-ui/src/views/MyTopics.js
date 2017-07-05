@@ -12,6 +12,7 @@ import Input from 'react-toolbox/lib/input/Input.js';
 import Button from 'react-toolbox/lib/button/Button.js';
 import Chip from 'react-toolbox/lib/chip/Chip.js';
 
+import Pager from '../components/Pager.js';
 import DeleteButton from '../components/DeleteButton.js';
 import EditButton from '../components/EditButton.js';
 import SiteSnackbar from '../components/SiteSnackbar.js';
@@ -28,29 +29,22 @@ const TopicTableHint = () => (
 )
 
 class TopicTable extends Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      topics: [],
-      dialogActive: false,
-      editId: -1,
-      snackbarLabel: "",
-      snackbarActive: false
-    };
-  }
+  state = { topics: [], nextTopics: [], dialogActive: false, editId: -1,
+    snackbarLabel: "", snackbarActive: false, page: -1, offsetWentDown: false }
 
   componentDidMount() {
     if (Auth.hasRole(Util.userRoles.companyRep) && !Auth.hasRole(Util.userRoles.admin))
       this.getCompanyTopics();
     else
       this.getTopics();
+    this.changePage(1);
   }
 
   /**
    * Gets the list of all company topics.
    */
   getCompanyTopics = () => {
+    var page = (this.state.offsetWentDown) ? this.state.page : (this.state.page+1);
     fetch('/api/users/' + Auth.getUserInfo().sub, {
         credentials: 'same-origin',
         method: 'get'
@@ -68,32 +62,34 @@ class TopicTable extends Component {
           });
           return;
         }
-        fetch('/api/companies/' + json.company.id + '/topics', {
+        fetch('/api/companies/' + json.company.id + "/topics?size=" + Util.TOPICS_PER_PAGE_TABLE + "&start=" +
+          (page * Util.TOPICS_PER_PAGE_TABLE), {
             credentials: 'same-origin',
             method: 'get'
           }).then(function(response) {
             if (response.ok) {
                 return response.json();
-            } else {
+            } else if (response.status === 404) {
+              this.setState({
+                topics: (this.state.nextTopics === null || typeof this.state.nextTopics === 'undefined') ? this.state.topics : this.state.nextTopics,
+                nextTopics: null
+              });
+            }  else {
               throw new Error('There was a problem with network connection.');
             }
-          }).then(function(json) {
-            var newData = [];
-
-            for(let i in json) {
-              newData.push({
-                degrees: json[i].degrees,
-                description: json[i].description,
-                id: json[i].id,
-                shortAbstract: json[i].shortAbstract,
-                tags: json[i].tags,
-                title: json[i].title,
-                enabled: json[i].enabled
+          }.bind(this)).then(function(json) {
+            if (this.state.offsetWentDown) {
+              this.setState({
+                topics: json,
+                nextTopics: this.state.topics
               });
             }
-            this.setState({
-              topics: newData
-            });
+            else {
+              this.setState({
+                topics: (this.state.nextTopics === null || typeof this.state.nextTopics === 'undefined') ? this.state.topics : this.state.nextTopics,
+                nextTopics: json
+              });
+            }
           }.bind(this));
       }.bind(this));
   }
@@ -102,32 +98,37 @@ class TopicTable extends Component {
    * Gets the list of all user topics.
    */
   getTopics = () => {
-    fetch((Auth.hasRole(Util.userRoles.admin)) ? '/api/topics' : '/api/users/' + Auth.getUserInfo().sub + '/ownedTopics', {
+    let page = (this.state.offsetWentDown) ? this.state.page : (this.state.page+1);
+    fetch((Auth.hasRole(Util.userRoles.admin)) ? "/api/topics?size=" + Util.TOPICS_PER_PAGE_TABLE + "&start=" +
+    (page * Util.TOPICS_PER_PAGE_TABLE) : "/api/users/" + Auth.getUserInfo().sub +
+    "/ownedTopics?size=" + Util.TOPICS_PER_PAGE_TABLE + "&start=" +
+    (page * Util.TOPICS_PER_PAGE_TABLE), {
         credentials: 'same-origin',
         method: 'get'
       }).then(function(response) {
         if (response.ok) {
             return response.json();
+        } else if (response.status === 404) {
+          this.setState({
+            topics: (this.state.nextTopics === null || typeof this.state.nextTopics === 'undefined') ? this.state.topics : this.state.nextTopics,
+            nextTopics: null
+          });
         } else {
           throw new Error('There was a problem with network connection.');
         }
-      }).then(function(json) {
-        var newData = [];
-
-        for(let i in json) {
-          newData.push({
-            degrees: json[i].degrees,
-            description: json[i].description,
-            id: json[i].id,
-            shortAbstract: json[i].shortAbstract,
-            tags: json[i].tags,
-            title: json[i].title,
-            enabled: json[i].enabled
+      }.bind(this)).then(function(json) {
+        if (this.state.offsetWentDown) {
+          this.setState({
+            topics: json,
+            nextTopics: this.state.topics
           });
         }
-        this.setState({
-          topics: newData
-        });
+        else {
+          this.setState({
+            topics: (this.state.nextTopics === null || typeof this.state.nextTopics === 'undefined') ? this.state.topics : this.state.nextTopics,
+            nextTopics: json
+          });
+        }
       }.bind(this));
   }
 
@@ -176,15 +177,6 @@ class TopicTable extends Component {
     }.bind(this));
   }
 
-  /**
-   * Gets the topic that is being edited.
-   * @return the desired faculty, "" if none is selected
-   */
-  getAssociatedTopic = () => {
-    if(this.state.editId === -1) return -1;
-    else return this.state.topics[this.state.editId];
-  }
-
   toggleDialog = (id) => {
     this.setState({dialogActive: !this.state.dialogActive, editId: id});
   }
@@ -193,12 +185,26 @@ class TopicTable extends Component {
     this.setState({snackbarActive: !this.state.snackbarActive});
   }
 
+  changePage = (offset) => {
+    this.setState({ page: this.state.page + offset, offsetWentDown: (offset < 0) ? true : false });
+
+    setTimeout(function() {
+      if (Auth.hasRole(Util.userRoles.companyRep) && !Auth.hasRole(Util.userRoles.admin))
+        this.getCompanyTopics();
+      else
+        this.getTopics();
+    }.bind(this), 2);
+  }
+
   render () {
     return (
       <div>
         <TopicTableHint />
         <h1>
-          { _t.translate('My Topics') } { Auth.hasRole(Util.userRoles.techLeader) ? <NewTopicDialog active={this.state.dialogActive} dataHandler={(method, id, data) => this.manageData(method, id, data)} topic={this.getAssociatedTopic()} toggleHandler={() => this.toggleDialog(-1)}/> : '' }
+          { _t.translate('My Topics') } { Auth.hasRole(Util.userRoles.techLeader) ?
+            <NewTopicDialog active={this.state.dialogActive} dataHandler={(method, id, data) =>
+              this.manageData(method, id, data)} topic={(this.state.editId === -1) ? -1 :
+              this.state.topics[this.state.editId]} toggleHandler={() => this.toggleDialog(-1)}/> : '' }
         </h1>
         <Table selectable={false}>
           <TableHead>
@@ -222,7 +228,10 @@ class TopicTable extends Component {
             </TableRow>
           ))}
         </Table>
-        <SiteSnackbar active={this.state.snackbarActive} label={this.state.snackbarLabel} toggleHandler={() => this.toggleSnackbar()} />
+        <SiteSnackbar active={this.state.snackbarActive} label={this.state.snackbarLabel}
+          toggleHandler={() => this.toggleSnackbar()} />
+        <Pager currentPage={this.state.page} nextData={this.state.nextTopics}
+          pageChanger={(offset) => this.changePage(offset)} />
       </div>
     );
   }

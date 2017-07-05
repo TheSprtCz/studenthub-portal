@@ -324,7 +324,10 @@ const myLocalize = new Localize({
     },
     'Edit user': {
       'cs': 'Uprav uživatele'
-    }
+    },
+    'PROJECT_LEADER': {
+      'cs': 'Vedoucí projektu'
+    },
 });
 
 if (localStorage.getItem("sh-locale") === 'en') {
