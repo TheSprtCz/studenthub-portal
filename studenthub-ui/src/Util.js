@@ -101,26 +101,6 @@ Util.companySizesSource = [
   { value: 'CORPORATE', label: 'Corporate' }
 ]
 
-/**
- * Holds Company plan codes
- * @type {Enum}
- */
-Util.companyPlans = {
-  t1: "TIER_1",
-  t2: "TIER_2",
-  t3: "TIER_3"
-}
-
-/**
- * Holds Company plan codes for source use
- * @type {Enum}
- */
-Util.companyPlansSource = [
-  { value: 'TIER_1', label: 'First tier' },
-  { value: 'TIER_2', label: 'Second tier' },
-  { value: 'TIER_3', label: 'Third tier'}
-]
-
 Util.gradesSource = [
     { value: 'A', label: 'A' },
     { value: 'B', label: 'B'},

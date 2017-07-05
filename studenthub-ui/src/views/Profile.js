@@ -150,8 +150,8 @@ class ProfileEditView extends React.Component {
 }
 
 class CompanyEditView extends React.Component {
-  state = { id: 0, name: '', city: '', country: '',  url: '', logoUrl: '',
-    size: '', snackbarActive: false, snackbarLabel: '' };
+  state = { id: 0, name: '', city: '', country: '',  url: '', logoUrl: '', size: '',
+    plan: { }, snackbarActive: false, snackbarLabel: '' };
 
   componentDidMount() {
     this.getCompany();
@@ -182,7 +182,8 @@ class CompanyEditView extends React.Component {
         country:	json.company.country,
         url:	json.company.url,
         logoUrl:	json.company.logoUrl,
-        size:	json.company.size
+        size:	json.company.size,
+        plan: json.company.plan
       });
     }.bind(this));
   }
@@ -204,7 +205,8 @@ class CompanyEditView extends React.Component {
           country:	this.state.country,
           url:	this.state.url,
           logoUrl:	this.state.logoUrl,
-          size:	this.state.size
+          size:	this.state.size,
+          plan: this.state.plan
         })
     }).then(function(response) {
         if (response.ok) {
@@ -259,6 +261,7 @@ class CompanyEditView extends React.Component {
             value={this.state.size}
             icon='business'
             label={ _t.translate('Size') } />
+            <Input type='name' label={ _t.translate('Plan') } icon='assignment' disabled value={(Util.isEmpty(this.state.plan)) ? "N/A" : this.state.plan.name} />
           <Button icon='edit' label={ _t.translate('Save changes') } raised primary className='pull-right' onClick={this.handleSubmit}/>
           <SiteSnackbar active={this.state.snackbarActive} label={this.state.snackbarLabel} toggleHandler={() => this.toggleSnackbar()} />
         </div>

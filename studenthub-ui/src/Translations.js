@@ -58,6 +58,9 @@ const myLocalize = new Localize({
     "Company": {
       "cs": "Organizace"
     },
+    "Companies": {
+      "cs": "Organizace"
+    },
     "Role": {
       "cs": "Role"
     },
@@ -139,6 +142,12 @@ const myLocalize = new Localize({
     "Edit Topic": {
       "cs": "Uprav tému"
     },
+    "New Company": {
+      "cs": "Nová organizace"
+    },
+    "Edit Company": {
+      "cs": "Uprav organizaci"
+    },
     "Basic info": {
       "cs": "Základní informace"
     },
@@ -186,6 +195,9 @@ const myLocalize = new Localize({
     },
     "Add": {
       "cs": "Přidej"
+    },
+    "Edit": {
+      "cs": "Změň"
     },
     "Delete": {
       "cs": "Smaž"
@@ -325,9 +337,51 @@ const myLocalize = new Localize({
     'Edit user': {
       'cs': 'Uprav uživatele'
     },
+    'Plan name': {
+      'cs': 'Název plánu'
+    },
+    'Plan description': {
+      'cs': 'Popis plánu'
+    },
+    'Max topics for plan': {
+      'cs': 'Maximum témat pro plán'
+    },
+    'New plan': {
+      'cs': 'Nový plán'
+    },
+    'This plan limits the number of topics to: ': {
+      'cs': 'Tento plán liminuje počet témat na: '
+    },
+    'Basic Company Information': {
+      'cs': 'Obecné Informace o Organizaci '
+    },
+    'Company Representative': {
+      'cs': 'Zástupce Organizace'
+    },
+    'Company Registration': {
+      'cs': 'Registrace organizace'
+    },
+    'Company Plan': {
+      'cs': 'Plán Organizace'
+    },
+    'Company Plans': {
+      'cs': 'Plány organizací'
+    },
+    'Topic limit': {
+      'cs': 'Limit témat'
+    },
+    'New Plan': {
+      'cs': 'Nový plán'
+    },
+    'Edit Plan': {
+      'cs': 'Uprav plán'
+    },
+    'Description': {
+      'cs': 'Popis'
+    },
     'PROJECT_LEADER': {
       'cs': 'Vedoucí projektu'
-    },
+    }
 });
 
 if (localStorage.getItem("sh-locale") === 'en') {
