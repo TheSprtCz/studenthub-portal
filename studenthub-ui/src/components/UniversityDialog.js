@@ -9,7 +9,7 @@ import Util from '../Util.js';
  * Renders the input Dialog for universities.
  * @param active                                whether the dialog is active
  * @param university                            editing university
- * @param toggleHandler(label)                function to call when closing the Dialog with a given label for SiteSnackbar
+ * @param toggleHandler(label)                  function to call when closing the Dialog with a given label for notification
  */
 class UniversityDialog extends Component {
   constructor(props) {

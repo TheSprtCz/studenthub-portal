@@ -3,12 +3,11 @@ import { Redirect } from 'react-router-dom';
 import Input from 'react-toolbox/lib/input/Input.js';
 import Button from 'react-toolbox/lib/button/Button.js';
 
-import SiteSnackbar from '../components/SiteSnackbar.js';
-
 import _t from '../Translations.js';
+import Util from '../Util.js';
 
 class ActivationForm extends React.Component {
-  state = { password: '', redirect: false, snackbarActive: false, snackbarLabel: '' };
+  state = { password: '', redirect: false };
 
   handleChange = (name, value) => {
     this.setState({...this.state, [name]: value});
@@ -24,25 +23,15 @@ class ActivationForm extends React.Component {
       body: data
     }).then(function(response) {
       if (response.ok) {
-        this.setState({
-          snackbarLabel: "Your account has been succesfully activated! You will now be redirected to the sign in page.",
-          snackbarActive: true
-        });
+        Util.notify("success", "You will now be redirected to the sign in page.", "Your account has been succesfully activated!");
         setTimeout(function(){
           this.setState({ redirect: true });
         }.bind(this), 2000);
       } else {
-        this.setState({
-          snackbarLabel: "An error occured! Your request couldn't be processed. It's possible that you have a problem with your internet connection or that the server is not responding.",
-          snackbarActive: true
-        });
+        Util.notify("error", "It's possible that you have a problem with your internet connection or that the server is not responding.", "Your request couldn't be processed.");
         throw new Error('There was a problem with network connection. POST request could not be processed!');
       }
     }.bind(this));
-  }
-
-  handleToggle = () => {
-    this.setState({ snackbarActive: !this.state.snackbarActive });
   }
 
   render() {
@@ -51,7 +40,6 @@ class ActivationForm extends React.Component {
         <Input type='password' label={ _t.translate('Password') } hint="Here you can choose your password" icon='lock' value={this.state.password}
           onChange={this.handleChange.bind(this, 'password')} required />
         <Button raised primary label={ _t.translate('Save changes') } onClick={() => this.handleSubmit()} />
-        <SiteSnackbar active={this.state.snackbarActive} label={this.state.snackbarLabel} toggleHandler={() => this.handleToggle()} />
         {(this.state.redirect) ? <Redirect to="/signin" /> : ''}
       </div>
     )

@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 
 import AddButton from './AddButton';
 import ReturnButton from './ReturnButton.js';
-import SiteSnackbar from './SiteSnackbar.js';
 import Pager from './Pager.js';
 import FacultyDialog from './FacultyDialog.js';
 import UniversityDialog from './UniversityDialog.js';
@@ -25,8 +24,6 @@ class ContentTable extends Component {
       nextFaculties: [],
       page: -1,
       editId: -1,
-      snackbarActive: false,
-      snackbarLabel: "",
       universityDialogActive: false,
       facultyDialogActive: false,
       offsetWentDown: false
@@ -232,11 +229,8 @@ class ContentTable extends Component {
         headers: { "Content-Type" : "application/json" }
       }).then(function(response) {
           if(response.ok) {
-          this.setState({
-            snackbarLabel: "The university has been succesfully removed!",
-            snackbarActive: true
-          });
-          this.getUniversities();
+            Util.notify("success", "", "The university has been succesfully removed!");
+            this.getUniversities();
         } else throw new Error('There was a problem with network connection.');
       }.bind(this));
   }
@@ -248,26 +242,16 @@ class ContentTable extends Component {
         headers: { "Content-Type" : "application/json" }
       }).then(function(response) {
           if(response.ok) {
-            this.setState({
-              snackbarLabel: "The faculty has been succesfully removed!",
-              snackbarActive: true
-            });
-          this.getFaculties(this.state.selectedUniversity);
+            Util.notify("success", "", "The faculty has been succesfully removed!");
+            this.getFaculties(this.state.selectedUniversity);
         } else throw new Error('There was a problem with network connection.');
       }.bind(this));
   }
 
   /**
-   * Toggles the visiblity of the Snackbar.
-   */
-  toggleSnackbar = () => {
-    this.setState({snackbarActive: !this.state.snackbarActive});
-  }
-
-  /**
    * Toggles the visiblity of the university Dialog.
    * @param id     the id of the university to edit
-   * @param label  new snackbarLabel
+   * @param label  notification title
    */
   toggleUniversityDialog = (id, label) => {
     this.setState({
@@ -276,10 +260,7 @@ class ContentTable extends Component {
     })
     if(label === "") return;
     else {
-      this.setState({
-        snackbarLabel: label,
-        snackbarActive: true
-      })
+      Util.notify("info", "", label);
       this.getUniversities();
     }
   }
@@ -287,7 +268,7 @@ class ContentTable extends Component {
   /**
    * Toggles the visiblity of the faculty Dialog.
    * @param id  the id of the faculty to edit
-   * @param label  new snackbarLabel
+   * @param label  notification title
    */
   toggleFacultyDialog = (id, label) => {
     this.setState({
@@ -296,10 +277,7 @@ class ContentTable extends Component {
     })
     if(label === "") return;
     else {
-      this.setState({
-        snackbarLabel: label,
-        snackbarActive: true
-      })
+      Util.notify("info", "", label);
       this.getFaculties(this.state.selectedUniversity);
     }
   }
@@ -325,10 +303,6 @@ class ContentTable extends Component {
         {this.generateTable()}
         {this.generateReturnButton()}
         {this.generateDialogs()}
-        <SiteSnackbar
-          active={this.state.snackbarActive}
-          toggleHandler={this.toggleSnackbar}
-          label={this.state.snackbarLabel} />
         <Pager currentPage={this.state.page} nextData={(this.state.selectedUniversity === -1) ? this.state.nextUniversities : this.state.nextFaculties}
           pageChanger={(offset) => this.changePage(offset)} />
       </div>

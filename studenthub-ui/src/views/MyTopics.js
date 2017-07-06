@@ -17,7 +17,6 @@ import Chip from 'react-toolbox/lib/chip/Chip.js';
 import Pager from '../components/Pager.js';
 import DeleteButton from '../components/DeleteButton.js';
 import EditButton from '../components/EditButton.js';
-import SiteSnackbar from '../components/SiteSnackbar.js';
 
 import Auth from '../Auth.js';
 import Util from '../Util.js';
@@ -32,7 +31,7 @@ const TopicTableHint = () => (
 
 class TopicTable extends Component {
   state = { topics: [], nextTopics: [], dialogActive: false, editId: -1,
-    snackbarLabel: "", snackbarActive: false, page: -1, offsetWentDown: false }
+    page: -1, offsetWentDown: false }
 
   componentDidMount() {
     if (Auth.hasRole(Util.userRoles.companyRep) && !Auth.hasRole(Util.userRoles.admin))
@@ -58,10 +57,7 @@ class TopicTable extends Component {
         }
       }).then(function(json) {
         if (Util.isEmpty(json.company)) {
-          this.setState({
-            snackbarLabel: "There is no company connected to your account!",
-            snackbarActive: true
-          });
+          Util.notify("error", "", "There is no company connected to your account!");
           return;
         }
         fetch('/api/companies/' + json.company.id + "/topics?size=" + Util.TOPICS_PER_PAGE_TABLE + "&start=" +
@@ -164,16 +160,10 @@ class TopicTable extends Component {
               label = "Wrong method input!";
               return;
           }
-          this.setState({
-            snackbarLabel: label,
-            snackbarActive: true
-          });
+          Util.notify("success", "", label);
           this.getTopics();
       } else {
-        this.setState({
-          snackbarLabel: "An error occured! Your request couldn't be processed. It's possible that you have a problem with your internet connection or that the server is not responding.",
-          snackbarActive: true
-        });
+        Util.notify("error", "There was a problem with network connection.", "Your request hasn't been processed.");
         throw new Error('There was a problem with network connection. '+method.toUpperCase()+' could not be processed!');
       }
     }.bind(this));
@@ -181,10 +171,6 @@ class TopicTable extends Component {
 
   toggleDialog = (id) => {
     this.setState({dialogActive: !this.state.dialogActive, editId: id});
-  }
-
-  toggleSnackbar = () => {
-    this.setState({snackbarActive: !this.state.snackbarActive});
   }
 
   changePage = (offset) => {
@@ -230,8 +216,6 @@ class TopicTable extends Component {
             </TableRow>
           ))}
         </Table>
-        <SiteSnackbar active={this.state.snackbarActive} label={this.state.snackbarLabel}
-          toggleHandler={() => this.toggleSnackbar()} />
         <Pager currentPage={this.state.page} nextData={this.state.nextTopics}
           pageChanger={(offset) => this.changePage(offset)} />
       </div>
@@ -418,7 +402,8 @@ class NewTopicDialog extends Component {
               ))}
             </Tab>
             <Tab label={ _t.translate('Preview') }>
-              <p>Below you can see a preview of the description. Uses <a href="https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet" target="_blank">Markdown</a>.</p>
+              <p>Below you can see a preview of the description. Uses <a href="https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet"
+                target="_blank" rel="noopener noreferrer">Markdown</a>.</p>
               <ReactMarkdown source={ this.state.description } />
             </Tab>
           </Tabs>

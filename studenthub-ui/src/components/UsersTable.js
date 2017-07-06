@@ -78,9 +78,9 @@ class UsersTable extends Component {
           user={(this.state.editId === -1) ? -1 : this.props.users[this.state.editId]}
           editHandler={(user) => this.props.dataHandler("put",
             (this.state.editId === -1) ? -1 : this.props.users[this.state.editId].id, user)}
-          toggleHandler={() => this.toggleDialog(-1)} />
-        <InviteDialog company={this.props.company} faculty={this.props.faculty}
-          snackbarSetter={(label) => this.props.snackbarSetter(label)} />
+          toggleHandler={() => this.toggleDialog(-1)}
+        />
+        <UserInviteDialog company={{ id: this.props.companyId }} />
       </div>
     );
   }

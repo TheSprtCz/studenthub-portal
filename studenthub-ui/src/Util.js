@@ -1,6 +1,7 @@
 import _t from './Translations';
+import { NotificationManager } from 'react-notifications';
 
-var config = require('../config/config.json');
+var config = require('./config.json');
 
 var Util = function() { };
 
@@ -44,7 +45,32 @@ Util.checkData = function(data, errorMessage) {
 }
 
 /**
+ * Creates a new notification.
+ * @param type            notification type
+ * @param message         notification message
+ * @param title           notification title
+ */
+Util.notify = (type, message, title) => {
+  switch (type) {
+    case 'info':
+      NotificationManager.info(message, title, 2000);
+      break;
+    case 'success':
+      NotificationManager.success(message, title, 2000, null, true);
+      break;
+    case 'warning':
+      NotificationManager.warning(message, title, 2000);
+      break;
+    case 'error':
+      NotificationManager.error(message, title, 2000, null, true);
+      break;
+    default:
+      NotificationManager.info(message, title, 2000);
+      break;
+  };
+};
 
+/**
  * Holds state codes
  * @type {Enum}
  */

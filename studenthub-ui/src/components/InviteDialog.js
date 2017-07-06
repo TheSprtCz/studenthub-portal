@@ -7,6 +7,7 @@ import InviteButton from './InviteButton.js';
 
 import Util from '../Util.js';
 import _t from '../Translations.js';
+import Util from '../Util.js';
 
 class UserInviteDialog extends Component {
   state = { active: false, email: '', name: '', phone: '', role: '' }
@@ -35,12 +36,13 @@ class UserInviteDialog extends Component {
       })
     }).then(function(response) {
       if (response.ok) {
-        this.props.snackbarSetter("The user has been succesfully invited.");
+        Util.notify("success", "", "The user has been succesfully invited.");
       } else {
-        this.props.snackbarSetter("An error occured! Your request couldn't be processed. It's possible that you have a problem with your internet connection or that the server is not responding.");
+        Util.notify("error", "It's possible that you have a problem with your internet connection or that the server is not responding.",
+          "An error occured! Your request couldn't be processed.");
         throw new Error('There was a problem with network connection. POST request could not be processed!');
       }
-    }.bind(this));
+    });
   }
 
   /**
