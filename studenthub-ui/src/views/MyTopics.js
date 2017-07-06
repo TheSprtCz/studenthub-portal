@@ -99,10 +99,20 @@ class TopicTable extends Component {
    */
   getTopics = () => {
     let page = (this.state.offsetWentDown) ? this.state.page : (this.state.page+1);
-    fetch((Auth.hasRole(Util.userRoles.admin)) ? "/api/topics?size=" + Util.TOPICS_PER_PAGE_TABLE + "&start=" +
-    (page * Util.TOPICS_PER_PAGE_TABLE) : "/api/users/" + Auth.getUserInfo().sub +
-    "/ownedTopics?size=" + Util.TOPICS_PER_PAGE_TABLE + "&start=" +
-    (page * Util.TOPICS_PER_PAGE_TABLE), {
+    let url = "";
+    if (Auth.hasRole(Util.userRoles.admin))
+      url = "/api/topics?size=" + Util.TOPICS_PER_PAGE_TABLE + "&start=" +
+      (page * Util.TOPICS_PER_PAGE_TABLE);
+    else if (Auth.hasRole(Util.userRoles.techLeader))
+      url = "/api/users/" + Auth.getUserInfo().sub +
+      "/ownedTopics?size=" + Util.TOPICS_PER_PAGE_TABLE + "&start=" +
+      (page * Util.TOPICS_PER_PAGE_TABLE);
+    else if (Auth.hasRole(Util.userRoles.superviser))
+      url = "/api/users/" + Auth.getUserInfo().sub +
+      "/supervisedTopics?size=" + Util.TOPICS_PER_PAGE_TABLE + "&start=" +
+      (page * Util.TOPICS_PER_PAGE_TABLE);
+
+    fetch(url, {
         credentials: 'same-origin',
         method: 'get'
       }).then(function(response) {
