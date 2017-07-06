@@ -33,13 +33,17 @@ const TopicTableHint = () => (
 
 class TopicTable extends Component {
   state = { topics: [], nextTopics: [], dialogActive: false, editId: -1,
-    page: -1, offsetWentDown: false }
+    page: -1, offsetWentDown: false, plan: { maxTopics: 0 }, topicCount: -1 }
 
   componentDidMount() {
     if (Auth.hasRole(Util.userRoles.companyRep) && !Auth.hasRole(Util.userRoles.admin))
       this.getCompanyTopics();
     else
       this.getTopics();
+    if (Auth.hasRole(Util.userRoles.techLeader) && !Auth.hasRole(Util.userRoles.admin))
+      setTimeout(function() {
+          this.getLimitInfo();
+      }.bind(this), 3);
     this.changePage(1);
   }
 
@@ -142,6 +146,38 @@ class TopicTable extends Component {
       }.bind(this));
   }
 
+  getLimitInfo = () => {
+    fetch('/api/users/' + Auth.getUserInfo().sub, {
+      method: 'get',
+      credentials: 'same-origin'
+    }).then(function(response) {
+      if (response.ok) {
+        return response.json();
+      } else {
+        throw new Error('There was a problem with network connection.');
+      }
+    }).then(function(json) {
+      if (Util.isEmpty(json.company.plan)) {
+        Util.notify("error", "", "Couldn't find a plan for your company!");
+        this.setState({ topicCount: -1, plan: { maxTopics: -1 } })
+        return;
+      }
+      this.setState({ plan: json.company.plan })
+    }.bind(this));
+    fetch("/api/users/" + Auth.getUserInfo().sub + "/ownedTopics", {
+      method: 'get',
+      credentials: 'same-origin'
+    }).then(function(response) {
+      if (response.ok) {
+        return response.json();
+      } else {
+        throw new Error('There was a problem with network connection.');
+      }
+    }).then(function(json) {
+      this.setState({ topicCount: json.length })
+    }.bind(this));
+  }
+
   /**
    * Handles all nonGET server requests. Updates using getting methods afterwards.
    * @param  method     method to call
@@ -174,6 +210,8 @@ class TopicTable extends Component {
           }
           Util.notify("success", "", label);
           this.getTopics();
+          if (Auth.hasRole(Util.userRoles.techLeader) && !Auth.hasRole(Util.userRoles.admin))
+            this.getLimitInfo();
       } else {
         Util.notify("error", "There was a problem with network connection.", "Your request hasn't been processed.");
         throw new Error('There was a problem with network connection. '+method.toUpperCase()+' could not be processed!');
@@ -197,12 +235,19 @@ class TopicTable extends Component {
   }
 
   render () {
+    if (this.state.topicCount >= this.state.plan.maxTopics && this.state.topicCount !== -1)
+      Util.notify("error", "This is because the plan of your company is limiting the maximum number of topics.",
+        "You cannot create new topics anymore.");
+    else if (this.state.topicCount+1 === this.state.plan.maxTopics && this.state.topicCount !== -1)
+      Util.notify("warning", "This is because the plan of your company is limiting the maximum number of topics.",
+        "You can create only one more topic.");
     return (
       <div>
         <TopicTableHint />
         <h1>
           { _t.translate('My Topics') } { Auth.hasRole(Util.userRoles.techLeader) ?
-            <NewTopicDialog active={this.state.dialogActive} dataHandler={(method, id, data) =>
+            <NewTopicDialog disabled={(this.state.topicCount >= this.state.plan.maxTopics) ? true : false}
+              active={this.state.dialogActive} dataHandler={(method, id, data) =>
               this.manageData(method, id, data)} topic={(this.state.editId === -1) ? -1 :
               this.state.topics[this.state.editId]} toggleHandler={() => this.toggleDialog(-1)}/> : '' }
         </h1>
@@ -381,7 +426,7 @@ class NewTopicDialog extends Component {
   render() {
     return(
       <div className='pull-right'>
-        <Button icon='add' floating onClick={this.handleToggle} />
+        <Button icon='add' floating onClick={this.handleToggle} disabled={this.props.disabled} />
         <Dialog
           actions={this.state.actions}
           active={this.props.active}
