@@ -4,6 +4,7 @@ import ReactMarkdown from 'react-markdown';
 import Button from 'react-toolbox/lib/button/Button.js';
 import Chip from 'react-toolbox/lib/chip/Chip.js';
 import Dialog from 'react-toolbox/lib/dialog/Dialog.js';
+import { TwitterButton, FacebookLikeButton, GoogleButton } from 'react-social-buttons';
 
 import Util from '../Util.js';
 import _t from '../Translations.js';
@@ -88,7 +89,9 @@ class TopicDetailsDialog extends Component {
             <p>{ (Util.isEmpty(this.props.topic.creator.company)) ? "N/A" : this.props.topic.creator.company.name }</p>
             <h3>{ _t.translate('Tags')}</h3>
             <p>{ this.props.topic.tags.map( (tag) => <Chip key={tag}> {tag} </Chip> ) }</p>
-            <hr />
+            <FacebookLikeButton url={window.location + "topics/" + this.props.topic.id} />
+            <TwitterButton url={window.location + "topics/" + this.props.topic.id} text={this.props.topic.title + ": " + this.props.topic.shortAbstract + " #Study"}/>
+            <GoogleButton url={window.location + "topics/" + this.props.topic.id} />
           </div>
         </Dialog>
         { (this.state.redirect) ? <Redirect to={"/topics/"+this.props.topic.id} /> : "" }
