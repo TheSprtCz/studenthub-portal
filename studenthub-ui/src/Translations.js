@@ -382,56 +382,8 @@ const myLocalize = new Localize({
     'PROJECT_LEADER': {
       'cs': 'Vedoucí projektu'
     },
-    'External link': {
-      'cs': 'Externí odkaz'
-    },
-    'Topic Degrees': {
-      'cs': 'Stupně témat'
-    },
-    'New Degree': {
-      'cs': 'Nový stupeň'
-    },
-    'Edit Degree': {
-      'cs': 'Uprav stupeň'
-    },
-    'Change password': {
-      'cs': 'Změňit heslo '
-    },
-    'Old password': {
-      'cs': 'Staré heslo'
-    },
-    'New password': {
-      'cs': 'Nové heslo'
-    },
-    'Retrieve': {
-      'cs': 'Obnov'
-    },
-    'Change': {
-      'cs': 'Změň'
-    },
-    'Password update': {
-      'cs': 'Změna hesla'
-    },
-    'Password retrieval': {
-      'cs': 'Obnovení hesla'
-    },
-    'Close this': {
-      'cs': 'Zavři'
-    },
-    'Password reset confirmation': {
-      'cs': 'Potvrzení zresetování hesla'
-    },
-    'UNIVERSITY_AMB': {
-      'cs': 'Ambasador univerzity'
-    },
-    'University profile': {
-      'cs': 'Profil univerzity'
-    },
-    'University': {
-      'cs': 'Univerzita'
-    },
-    'University ambassador': {
-      'cs': 'Ambasador univerzity'
+    'Save as PDF': {
+      'cs': 'Ulož jako PDF'
     }
 });
 

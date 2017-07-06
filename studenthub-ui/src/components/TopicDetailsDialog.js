@@ -8,6 +8,12 @@ import Dialog from 'react-toolbox/lib/dialog/Dialog.js';
 import Util from '../Util.js';
 import _t from '../Translations.js';
 
+var pdfConverter = require('jspdf');
+
+const LEFT_MARGIN = 50;
+const TOP_MARGIN = 80;
+const LINE_MARGIN = 20;
+
 /**
  * Renders the add Button.
  * @param toggleHandler()             defines the function to call onClick
@@ -17,6 +23,7 @@ class TopicDetailsDialog extends Component {
 
   actions = [
     { label: _t.translate('Go to topic page'), onClick: () => this.handleRedirect() },
+    { label: _t.translate('Save as PDF'), onClick: () => this.exportToPDF() },
     { label: _t.translate('Close'), onClick: () => this.handleToggle() }
   ];
 
@@ -26,6 +33,37 @@ class TopicDetailsDialog extends Component {
 
   handleRedirect = () => {
     this.setState({redirect: true});
+  }
+
+  exportToPDF = () => {
+    var pdf = new pdfConverter('p','pt','a4');
+    var description = this.props.topic.description;
+    var descriptionArray = [];
+
+    while(description.indexOf(".") !== -1) {
+      descriptionArray.push(description.substring(0, description.indexOf(".")));
+      description = description.substring(description.indexOf("."));
+    }
+    descriptionArray.push(description);
+
+    pdf.setDrawColor(175, 175, 175);
+    pdf.setFont("arial");
+    pdf.setFontSize(26);
+    pdf.text(LEFT_MARGIN, TOP_MARGIN, this.props.topic.title);
+    pdf.lines([[520, 0]], LEFT_MARGIN-10, TOP_MARGIN+5, false);
+    pdf.setFontSize(18);
+    pdf.text(LEFT_MARGIN, TOP_MARGIN+LINE_MARGIN*2, _t.translate('Technical leader'));
+    pdf.text(LEFT_MARGIN, TOP_MARGIN+LINE_MARGIN*6, _t.translate('Short abstract'));
+    pdf.text(LEFT_MARGIN, TOP_MARGIN+LINE_MARGIN*9, _t.translate('Tags'));
+    pdf.text(LEFT_MARGIN, TOP_MARGIN+LINE_MARGIN*12, _t.translate('Topic description'));
+    pdf.setFontSize(12);
+    pdf.text(LEFT_MARGIN, TOP_MARGIN+LINE_MARGIN*3, this.props.topic.creator.name);
+    pdf.text(LEFT_MARGIN, TOP_MARGIN+LINE_MARGIN*4, (Util.isEmpty(this.props.topic.creator.company)) ? "N/A" : this.props.topic.creator.company.name);
+    pdf.text(LEFT_MARGIN, TOP_MARGIN+LINE_MARGIN*7, this.props.topic.shortAbstract);
+    pdf.text(LEFT_MARGIN, TOP_MARGIN+LINE_MARGIN*10, this.props.topic.tags.toString());
+    pdf.text(LEFT_MARGIN, TOP_MARGIN+LINE_MARGIN*13, descriptionArray);
+
+    pdf.save("test.pdf");
   }
 
   render() {
