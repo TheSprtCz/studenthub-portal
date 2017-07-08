@@ -405,6 +405,12 @@ const myLocalize = new Localize({
     },
     'Password retrieval': {
       'cs': 'Obnovení hesla'
+    },
+    'Close this': {
+      'cs': 'Zavři'
+    },
+    'Password reset confirmation': {
+      'cs': 'Potvrzení zresetování hesla'
     }
 });
 
