@@ -42,8 +42,8 @@ class ResetConfirmation extends React.Component {
   render() {
     return (
       <div>
-        <SiteSnackbar active={this.state.snackbarActive} label=
-          {this.state.snackbarLabel} toggleHandler={() => this.handleToggle()} />
+        <SiteSnackbar active={this.state.snackbarActive} label={this.state.snackbarLabel}
+          toggleHandler={() => this.handleToggle()} />
       </div>
     )
   }
