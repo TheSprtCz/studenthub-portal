@@ -38,6 +38,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import net.thesishub.validators.annotations.Role;
 import net.thesishub.validators.groups.CreateUpdateChecks;
+import net.thesishub.validators.groups.NotNullChecks;
+import net.thesishub.validators.groups.ValidationMethodChecks;
 import io.dropwizard.validation.ValidationMethod;
 
 @Entity
@@ -49,6 +51,7 @@ import io.dropwizard.validation.ValidationMethod;
   @NamedQuery(name = "TopicApplication.findByStudent", query = "SELECT app FROM TopicApplication app WHERE app.student = :student"),
   @NamedQuery(name = "TopicApplication.findByLeader", query = "SELECT app FROM TopicApplication app WHERE app.techLeader = :leader"),
   @NamedQuery(name = "TopicApplication.findBySupervisor", query = "SELECT app FROM TopicApplication app WHERE app.academicSupervisor = :supervisor") })
+@GroupSequence({ NotNullChecks.class, ValidationMethodChecks.class, TopicApplication.class })
 public class TopicApplication extends GenericEntity<Long> {
 
   @NotNull
@@ -70,7 +73,7 @@ public class TopicApplication extends GenericEntity<Long> {
   private Date thesisStart;
 
   @Enumerated(EnumType.STRING)
-  @NotNull
+  @NotNull(groups = NotNullChecks.class)
   private ApplicationStatus status;
 
   @NotNull
@@ -221,7 +224,7 @@ public class TopicApplication extends GenericEntity<Long> {
   }
 
   // Validation methods
-  @ValidationMethod(message = "If thesis is IN_PROGRESS it has to have thesisStart and can't have grade")
+  @ValidationMethod(message = "If thesis is IN_PROGRESS it has to have thesisStart and can't have grade", groups = ValidationMethodChecks.class)
   @JsonIgnore
   public boolean isInProgress() {
     if (status == ApplicationStatus.IN_PROGRESS)
@@ -230,7 +233,7 @@ public class TopicApplication extends GenericEntity<Long> {
     return true;
   }
 
-  @ValidationMethod(message = "If thesis is FINISHED it has to have thesisStart, thesisFinish and grade")
+  @ValidationMethod(message = "If thesis is FINISHED it has to have thesisStart, thesisFinish and grade", groups = ValidationMethodChecks.class)
   @JsonIgnore
   public boolean isFinished() {
     if (status == ApplicationStatus.FINISHED)
@@ -239,7 +242,7 @@ public class TopicApplication extends GenericEntity<Long> {
     return true;
   }
 
-  @ValidationMethod(message = "If thesis is WAITING it can't have grade")
+  @ValidationMethod(message = "If thesis is WAITING it can't have grade", groups = ValidationMethodChecks.class)
   @JsonIgnore
   public boolean isWaitingOrDeclined() {
     if (status == ApplicationStatus.WAITING_APPROVAL || status == ApplicationStatus.DECLINED)
@@ -248,9 +251,9 @@ public class TopicApplication extends GenericEntity<Long> {
     return true;
   }
 
-  @ValidationMethod(message = "If thesis is FAILED it must have thesisStart")
+  @ValidationMethod(message = "If thesis is FAILED it must have thesisStart", groups = ValidationMethodChecks.class)
   @JsonIgnore
-  public boolean isNotFinishedOrPostponed() {
+  public boolean isFailed() {
     if (status == ApplicationStatus.FAILED)
       return thesisStart != null;
 

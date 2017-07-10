@@ -22,7 +22,6 @@ import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
 
-import io.dropwizard.hibernate.AbstractDAO;
 import net.thesishub.core.University;
 
 /**
@@ -31,31 +30,14 @@ import net.thesishub.core.University;
  * @author sbunciak
  * @since 1.0
  */
-public class UniversityDAO extends AbstractDAO<University> {
+public class UniversityDAO extends GenericDAO<University, Long> {
 
   public UniversityDAO(SessionFactory sessionFactory) {
     super(sessionFactory);
   }
-  
-  public University update(University university) {
-    currentSession().clear();
-    return persist(university);
-  }
-
-  public University create(University university) {
-    return persist(university);
-  }
-
-  public University findById(Long id) {
-    return get(id);
-  }
 
   public List<University> findAll() {
     return list(namedQuery("University.findAll"));
-  }
-
-  public void delete(University university) {
-    currentSession().delete(university);
   }
 
   public List<University> search(String text) {

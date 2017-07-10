@@ -17,6 +17,7 @@
 package net.thesishub.resources;
 
 import java.util.List;
+import java.util.Set;
 
 import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
@@ -148,6 +149,44 @@ public class TopicApplicationResource {
     }
   }
 
+  @POST
+  @Path("/massDecline")
+  @ExceptionMetered
+  @RolesAllowed({ "ADMIN", "AC_SUPERVISOR", "TECH_LEADER" })
+  public Response massDecline(@NotNull Set<TopicApplication> applications, @Auth User user) {
+    for (TopicApplication app : applications) {
+      Long id = app.getId();
+      if (id == null)
+        throw new WebApplicationException(Status.NOT_FOUND);
+
+      // UnitOfWork supports only one transaction so it can't update multiple
+      // entities so I had to create workaround, perform works the same as
+      // UnitOfWotk but can handle multiple transactions
+      appDao.perform(() -> {
+        // Fetch TopicApplication from DB
+        TopicApplication fetched = appDao.findById(id);
+        if (fetched == null)
+          throw new WebApplicationException(Status.NOT_FOUND);
+
+        // Only application that are waiting for approval can be mass declined
+        if (fetched.getStatus() != ApplicationStatus.WAITING_APPROVAL) 
+          throw new WebApplicationException(Status.NOT_ACCEPTABLE);
+
+        // Only Admin, TechLeader and Supervisor can mass decline
+        if (user.isAdmin() || (fetched.getTechLeader() != null && fetched.getTechLeader().equals(user))
+            || (fetched.getAcademicSupervisor() != null && fetched.getAcademicSupervisor().equals(user))) {
+          fetched.setStatus(ApplicationStatus.DECLINED);
+
+          appDao.update(fetched);
+
+          //System.out.println(appDao.findById(id).getStatus());
+        } else {
+          throw new WebApplicationException(Status.FORBIDDEN);
+        }
+      });
+    }
+    return Response.ok().build();
+  }
   /*
    * Task endpoints
    */

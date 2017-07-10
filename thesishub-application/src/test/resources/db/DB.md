@@ -152,7 +152,7 @@ Codes were manually assigned to ease testing
 | 5   | 2     | Infinite Pi digits generator                        | ----- | HIGH_SCHOOL| DECLINED     | ------------ | ------------- | 6       | 11         | 15      | 7          | ---------------------------------------------------------------- |
 | 6   | 3     | .JSX editor plugin                                  | ----- | MASTER     | FAILED       | ------------ | 5.3.2017      | 2       | 10         | 14      | 5          | ---------------------------------------------------------------- |
 | 7   | 4     | UI for thesis management system                     | B     | HIGH_SCHOOL| FINISHED     | 10.4.2017    | 18.12.2016    | 1       | 9          | 13      | 2          | https://github.com/StudentHubCZ/studenthub-portal                |
-
+| 8   | 4     | Notification library for React                      | ----- | BACHELOR   | WAITING      | ------------ | ------------- | 2       | 10         | 15      | 6          | ---------------------------------------------------------------- |
 ## Tasks
 
 | id  | application | title                              | deadline   | completed |

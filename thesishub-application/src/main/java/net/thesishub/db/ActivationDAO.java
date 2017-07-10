@@ -20,7 +20,6 @@ import java.util.List;
 
 import org.hibernate.SessionFactory;
 
-import io.dropwizard.hibernate.AbstractDAO;
 import net.thesishub.core.Activation;
 import net.thesishub.core.ActivationType;
 import net.thesishub.core.User;
@@ -31,23 +30,10 @@ import net.thesishub.core.User;
  * @author phala
  * @since 1.0
  */
-public class ActivationDAO extends AbstractDAO<Activation> {
+public class ActivationDAO extends GenericDAO<Activation, Long> {
 
   public ActivationDAO(SessionFactory sessionFactory) {
     super(sessionFactory);
-  }
-
-  public Activation update(Activation activation) {
-    currentSession().clear();
-    return persist(activation);
-  }
-  
-  public Activation create(Activation activation) {
-    return persist(activation);
-  }
-
-  public Activation findById(long id) {
-    return get(id);
   }
 
   public Activation findByUser(User user) {
@@ -60,10 +46,6 @@ public class ActivationDAO extends AbstractDAO<Activation> {
 
   public List<Activation> findAll() {
     return list(namedQuery("Activation.findAll"));
-  }
-
-  public void delete(Activation activation) {
-    currentSession().delete(activation);
   }
 
 }

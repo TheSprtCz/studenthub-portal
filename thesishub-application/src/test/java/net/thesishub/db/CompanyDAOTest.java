@@ -35,7 +35,7 @@ public class CompanyDAOTest {
   @Test
   public void createCompany() {
     DAOTestSuite.inRollbackTransaction(() -> {
-      CompanyPlan cPlan = cpDAO.findByName("TIER_2");
+      CompanyPlan cPlan = cpDAO.findById("TIER_2");
       Country country = countryDAO.findByTag("CZ");
       Company company = new Company("New", "http://www.nothing.eu", "Liberec", country, "http://www.nothing.eu/logo.png",
           CompanySize.SMALL, cPlan);

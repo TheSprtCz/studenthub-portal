@@ -20,7 +20,6 @@ import java.util.List;
 
 import org.hibernate.SessionFactory;
 
-import io.dropwizard.hibernate.AbstractDAO;
 import net.thesishub.core.CompanyPlan;
 
 /**
@@ -29,30 +28,13 @@ import net.thesishub.core.CompanyPlan;
  * @author phala
  * @since 1.1
  */
-public class CompanyPlanDAO extends AbstractDAO<CompanyPlan> {
+public class CompanyPlanDAO extends GenericDAO<CompanyPlan, String> {
 
   public CompanyPlanDAO(SessionFactory sessionFactory) {
     super(sessionFactory);
   }
 
-  public CompanyPlan update(CompanyPlan companyPlan) {
-    currentSession().clear();
-    return persist(companyPlan);
-  }
-
-  public CompanyPlan create(CompanyPlan companyPlan) {
-    return persist(companyPlan);
-  }
-
-  public CompanyPlan findByName(String name) {
-    return get(name);
-  }
-
   public List<CompanyPlan> findAll() {
     return list(namedQuery("CompanyPlan.findAll"));
-  }
-
-  public void delete(CompanyPlan companyPlan) {
-    currentSession().delete(companyPlan);
   }
 }

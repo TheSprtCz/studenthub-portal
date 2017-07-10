@@ -18,9 +18,12 @@ import io.dropwizard.testing.DropwizardTestSupport;
 import net.minidev.json.JSONObject;
 import net.thesishub.IntegrationTestSuite;
 import net.thesishub.ThesisHubConfiguration;
+import net.thesishub.core.ApplicationStatus;
 import net.thesishub.core.Task;
 import net.thesishub.core.TopicApplication;
 import net.thesishub.db.TopicApplicationDAOTest;
+
+import net.minidev.json.JSONArray;
 
 public class TopicApplicationResourceTest {
   private static DropwizardTestSupport<ThesisHubConfiguration> DROPWIZARD;
@@ -30,6 +33,11 @@ public class TopicApplicationResourceTest {
   public void setup() {
       DROPWIZARD = IntegrationTestSuite.DROPWIZARD;
       CLIENT = IntegrationTestSuite.BUILDER.build("TopicApplicationTest");
+  }
+
+  private TopicApplication fetchApplication(int id) {
+    return IntegrationTestSuite.authorizedRequest(CLIENT.target(String.format("http://localhost:%d/api/applications/%d", DROPWIZARD.getLocalPort(), id))
+    .request(MediaType.APPLICATION_JSON), CLIENT).get(TopicApplication.class);
   }
   
   private List<TopicApplication> fetchApplications() {
@@ -52,8 +60,7 @@ public class TopicApplicationResourceTest {
 
   @Test(dependsOnGroups = "login")
   public void fetchApplication() {
-    TopicApplication app = IntegrationTestSuite.authorizedRequest(CLIENT.target(String.format("http://localhost:%d/api/applications/6", DROPWIZARD.getLocalPort()))
-        .request(MediaType.APPLICATION_JSON), CLIENT).get(TopicApplication.class);
+    TopicApplication app = fetchApplication(6);
 
     assertNotNull(app);
     assertEquals(app.getOfficialAssignment(), ".JSX editor plugin");
@@ -115,7 +122,7 @@ public class TopicApplicationResourceTest {
 
   @Test(dependsOnMethods = "updateApplication")
   public void deleteApplication() {
-    Response response = IntegrationTestSuite.authorizedRequest(CLIENT.target(String.format("http://localhost:%d/api/applications/8", DROPWIZARD.getLocalPort())).request(), CLIENT)
+    Response response = IntegrationTestSuite.authorizedRequest(CLIENT.target(String.format("http://localhost:%d/api/applications/7", DROPWIZARD.getLocalPort())).request(), CLIENT)
       .delete();
 
     assertNotNull(response);
@@ -123,6 +130,27 @@ public class TopicApplicationResourceTest {
     assertEquals(fetchApplications().size(), TopicApplicationDAOTest.COUNT);
   }
 
+  @Test(dependsOnMethods = { "deleteApplication", "fetchApplication" })
+  public void declineApplications() {
+    int[] ids = {3,8};
+    JSONArray apps = new JSONArray();
+
+    for (int id : ids) {
+      JSONObject app = new JSONObject();
+      app.put("id", id);
+      apps.add(app);
+    }
+
+    Response response = IntegrationTestSuite.authorizedRequest(CLIENT.target(String.format("http://localhost:%d/api/applications/massDecline", DROPWIZARD.getLocalPort()))
+        .request(MediaType.APPLICATION_JSON), CLIENT).post(Entity.json(apps.toJSONString()));
+
+    assertNotNull(response);
+    assertEquals(response.getStatus(), 200);
+    for (int id : ids) {
+      TopicApplication app = fetchApplication(id);
+      assertEquals(app.getStatus(), ApplicationStatus.DECLINED);
+    }
+  }
   /*
    * Task tests
    */

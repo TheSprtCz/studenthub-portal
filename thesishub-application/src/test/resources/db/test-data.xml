@@ -1031,7 +1031,7 @@
             <column name="ID" valueNumeric="7"/>
             <column name="DEGREE_NAME" value="HIGH_SCHOOL"/>
             <column name="GRADE"/>
-            <column name="OFFICIALASSIGNMENT" value="UI for thesis management system "/>
+            <column name="OFFICIALASSIGNMENT" value="UI for thesis management system"/>
             <column name="THESISFINISH"/>
             <column name="ACADEMICSUPERVISOR_ID" valueNumeric="2"/>
             <column name="FACULTY_ID" valueNumeric="1"/>
@@ -1042,6 +1042,21 @@
             <column name="LINK" value="https://github.com/StudentHubCZ/studenthub-portal"/>
             <column name="STATUS" value="FINISHED"/>
         </insert>
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="TOPICAPPLICATIONS">
+            <column name="ID" valueNumeric="8"/>
+            <column name="DEGREE_NAME" value="BACHELOR"/>
+            <column name="GRADE"/>
+            <column name="OFFICIALASSIGNMENT" value="Notification library for React"/>
+            <column name="THESISFINISH"/>
+            <column name="ACADEMICSUPERVISOR_ID" valueNumeric="6"/>
+            <column name="FACULTY_ID" valueNumeric="2"/>
+            <column name="STUDENT_ID" valueNumeric="15"/>
+            <column name="TECHLEADER_ID" valueNumeric="10"/>
+            <column name="TOPIC_ID" valueNumeric="4"/>
+            <column name="THESISSTART" />
+            <column name="LINK" />
+            <column name="STATUS" value="WAITING_APPROVAL"/>
+        </insert>        
     </changeSet>
     <changeSet author="phala (generated)" id="1492005380103-22" objectQuotingStrategy="QUOTE_ALL_OBJECTS">
         <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="TASKS">

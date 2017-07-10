@@ -131,7 +131,7 @@ public class ProjectResourceTest {
         .request().get(new GenericType<List<TopicApplication>>(){});
 
     assertNotNull(apps);
-    assertEquals(apps.size(), 3);
+    assertEquals(apps.size(), 4);
   }
 
   @Test(dependsOnGroups = "migrate")

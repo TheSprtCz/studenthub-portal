@@ -20,7 +20,6 @@ import java.util.List;
 
 import org.hibernate.SessionFactory;
 
-import io.dropwizard.hibernate.AbstractDAO;
 import net.thesishub.core.Company;
 import net.thesishub.core.Faculty;
 import net.thesishub.core.Project;
@@ -33,23 +32,10 @@ import net.thesishub.core.User;
  * @author phala
  * @since 1.1
  */
-public class ProjectDAO extends AbstractDAO<Project> {
+public class ProjectDAO extends GenericDAO<Project, Long> {
 
   public ProjectDAO(SessionFactory sessionFactory) {
     super(sessionFactory);
-  }
-
-  public Project update(Project project) {
-    currentSession().clear();
-    return persist(project);
-  }
-  
-  public Project create(Project project) {
-    return persist(project);
-  }
-
-  public Project findById(long id) {
-    return get(id);
   }
 
   public List<Project> findAll() {
@@ -70,9 +56,5 @@ public class ProjectDAO extends AbstractDAO<Project> {
 
   public List<Project> findByCreator(User creator) {
     return list(namedQuery("Project.findByCreator").setParameter("creator", creator));
-  }
-
-  public void delete(Project activation) {
-    currentSession().delete(activation);
   }
 }

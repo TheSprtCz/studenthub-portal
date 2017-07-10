@@ -22,7 +22,6 @@ import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
 
-import io.dropwizard.hibernate.AbstractDAO;
 import net.thesishub.core.Faculty;
 import net.thesishub.core.University;
 
@@ -32,23 +31,10 @@ import net.thesishub.core.University;
  * @author sbunciak
  * @since 1.0
  */
-public class FacultyDAO extends AbstractDAO<Faculty> {
+public class FacultyDAO extends GenericDAO<Faculty, Long> {
 
   public FacultyDAO(SessionFactory sessionFactory) {
     super(sessionFactory);
-  }
-
-  public Faculty update(Faculty faculty) {
-    currentSession().clear();
-    return persist(faculty);
-  }
-  
-  public Faculty create(Faculty faculty) {
-    return persist(faculty);
-  }
-
-  public Faculty findById(Long id) {
-    return get(id);
   }
 
   public List<Faculty> findAll() {
@@ -57,10 +43,6 @@ public class FacultyDAO extends AbstractDAO<Faculty> {
 
   public List<Faculty> findAllByUniversity(University university) {
     return list(namedQuery("Faculty.findByUniversity").setParameter("university", university));
-  }
-
-  public void delete(Faculty faculty) {
-    currentSession().delete(faculty);
   }
 
   public List<Faculty> search(University university, String text) {

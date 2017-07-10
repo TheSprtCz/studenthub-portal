@@ -26,7 +26,7 @@ import net.thesishub.db.UserDAO;
 
 public class TopicApplicationDAOTest {
 
-  public static final int COUNT = 7;
+  public static final int COUNT = 8;
   private static final DAOTestRule DATABASE = DAOTestSuite.database;
   private static FacultyDAO facDAO;
   private static UserDAO userDAO;

@@ -38,7 +38,7 @@ public class CompanyPlanDAOTest {
   @Test
   public void fetchCompanyPlan() {
     CompanyPlan cPlan = DATABASE.inTransaction(() -> {
-      return cpDAO.findByName("TIER_2");
+      return cpDAO.findById("TIER_2");
     });
 
     assertNotNull(cPlan);
@@ -57,7 +57,7 @@ public class CompanyPlanDAOTest {
   @Test
   public void removeCompanyPlan() {
     DAOTestSuite.inRollbackTransaction(() -> {
-      CompanyPlan cPlan = cpDAO.findByName("TIER_4");
+      CompanyPlan cPlan = cpDAO.findById("TIER_4");
       cpDAO.delete(cPlan);
       List<CompanyPlan> cPlans = cpDAO.findAll();
       assertNotNull(cPlan);

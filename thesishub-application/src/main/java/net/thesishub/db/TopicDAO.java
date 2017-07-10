@@ -27,7 +27,6 @@ import org.hibernate.criterion.Restrictions;
 import org.hibernate.persister.collection.CollectionPropertyNames;
 import org.hibernate.sql.JoinType;
 
-import io.dropwizard.hibernate.AbstractDAO;
 import net.thesishub.core.Company;
 import net.thesishub.core.Topic;
 import net.thesishub.core.User;
@@ -38,23 +37,10 @@ import net.thesishub.core.User;
  * @author sbunciak
  * @since 1.0
  */
-public class TopicDAO extends AbstractDAO<Topic> {
+public class TopicDAO extends GenericDAO<Topic, Long> {
 
   public TopicDAO(SessionFactory sessionFactory) {
     super(sessionFactory);
-  }
-
-  public Topic update(Topic topic) {
-    currentSession().clear();
-    return persist(topic);
-  }
-  
-  public Topic create(Topic topic) {
-    return persist(topic);
-  }
-
-  public Topic findById(Long id) {
-    return get(id);
   }
 
   public List<Topic> findBySupervisor(User supervisor) {
@@ -119,9 +105,5 @@ public class TopicDAO extends AbstractDAO<Topic> {
     criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
 
     return list(criteria);
-  }
-
-  public void delete(Topic topic) {
-    currentSession().delete(topic);
   }
 }

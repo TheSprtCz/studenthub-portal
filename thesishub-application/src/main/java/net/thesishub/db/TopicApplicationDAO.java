@@ -33,23 +33,10 @@ import net.thesishub.core.User;
  * @author sbunciak
  * @since 1.0
  */
-public class TopicApplicationDAO extends AbstractDAO<TopicApplication> {
+public class TopicApplicationDAO extends GenericDAO<TopicApplication, Long> {
 
   public TopicApplicationDAO(SessionFactory sessionFactory) {
     super(sessionFactory);
-  }
-
-  public TopicApplication update(TopicApplication ta) {
-    currentSession().clear();
-    return persist(ta);
-  }
-  
-  public TopicApplication create(TopicApplication ta) {
-    return persist(ta);
-  }
-
-  public TopicApplication findById(Long id) {
-    return get(id);
   }
 
   public List<TopicApplication> findAll() {
@@ -80,7 +67,4 @@ public class TopicApplicationDAO extends AbstractDAO<TopicApplication> {
     return list(namedQuery("TopicApplication.findBySupervisor").setParameter("supervisor", supervisor));
   }
 
-  public void delete(TopicApplication ta) {
-    currentSession().delete(ta);
-  }
 }

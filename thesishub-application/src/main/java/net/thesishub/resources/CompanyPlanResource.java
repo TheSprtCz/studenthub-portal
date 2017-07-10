@@ -71,7 +71,7 @@ public class CompanyPlanResource {
   @Path("/{name}")
   @UnitOfWork
   public CompanyPlan findByName(@PathParam("name") String name) {
-    return cpDao.findByName(name);
+    return cpDao.findById(name);
   }
 
   @POST
@@ -91,7 +91,7 @@ public class CompanyPlanResource {
   @UnitOfWork
   @RolesAllowed("ADMIN")
   public Response update(@PathParam("name") String name, @NotNull @Valid CompanyPlan companyPlan) {
-    if (cpDao.findByName(name) == null) 
+    if (cpDao.findById(name) == null) 
       throw new WebApplicationException(Status.NOT_FOUND);
 
     companyPlan.setName(name);
@@ -105,7 +105,7 @@ public class CompanyPlanResource {
   @UnitOfWork
   @RolesAllowed("ADMIN")
   public Response delete(@PathParam("name") String name) {
-    CompanyPlan companyPlan = cpDao.findByName(name);
+    CompanyPlan companyPlan = cpDao.findById(name);
     if (companyPlan == null) 
       throw new WebApplicationException(Status.NOT_FOUND);
 
