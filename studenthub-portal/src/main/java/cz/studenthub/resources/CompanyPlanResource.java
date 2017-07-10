@@ -20,6 +20,7 @@ import java.util.List;
 
 import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
@@ -34,6 +35,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
@@ -60,8 +62,9 @@ public class CompanyPlanResource {
   @Timed
   @UnitOfWork
   public List<CompanyPlan> fetch(@Min(0) @DefaultValue("0") @QueryParam("start") IntParam startParam,
-          @Min(0) @DefaultValue("0") @QueryParam("size") IntParam sizeParam) {
-    return PagingUtil.paging(cpDao.findAll(), startParam.get(), sizeParam.get());
+          @Min(0) @DefaultValue("0") @QueryParam("size") IntParam sizeParam,
+          @Context HttpServletResponse response) {
+    return PagingUtil.paging(cpDao.findAll(), startParam.get(), sizeParam.get(), response);
   }
 
   @GET

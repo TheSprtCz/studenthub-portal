@@ -20,6 +20,7 @@ import java.util.List;
 
 import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
@@ -34,6 +35,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
@@ -78,8 +80,9 @@ public class ProjectResource {
   @Timed
   @UnitOfWork
   public List<Project> fetch(@Min(0) @DefaultValue("0") @QueryParam("start") IntParam startParam,
-          @Min(0) @DefaultValue("0") @QueryParam("size") IntParam sizeParam) {
-    return PagingUtil.paging(projectDao.findAll(), startParam.get(), sizeParam.get());
+          @Min(0) @DefaultValue("0") @QueryParam("size") IntParam sizeParam,
+          @Context HttpServletResponse response) {
+    return PagingUtil.paging(projectDao.findAll(), startParam.get(), sizeParam.get(), response);
   }
 
   @GET
@@ -157,7 +160,8 @@ public class ProjectResource {
   @UnitOfWork
   public List<Topic> fetchTopics(@PathParam("id") LongParam id,
 		  @Min(0) @DefaultValue("0") @QueryParam("start") IntParam startParam,
-		  @Min(0) @DefaultValue("0") @QueryParam("size") IntParam sizeParam) {
+		  @Min(0) @DefaultValue("0") @QueryParam("size") IntParam sizeParam,
+      @Context HttpServletResponse response) {
 
     Project project = projectDao.findById(id.get());
     if (project == null)
@@ -166,7 +170,7 @@ public class ProjectResource {
     // Remove all topics that are not enabled
     project.getTopics().removeIf(topic -> !topic.isEnabled());
 
-    return PagingUtil.paging(project.getTopics(), startParam.get(), sizeParam.get());
+    return PagingUtil.paging(project.getTopics(), startParam.get(), sizeParam.get(), response);
   }
 
   @GET
@@ -175,13 +179,14 @@ public class ProjectResource {
   @UnitOfWork
   public List<TopicApplication> fetchApplications(@PathParam("id") LongParam id,
       @Min(0) @DefaultValue("0") @QueryParam("start") IntParam startParam,
-      @Min(0) @DefaultValue("0") @QueryParam("size") IntParam sizeParam) {
+      @Min(0) @DefaultValue("0") @QueryParam("size") IntParam sizeParam,
+      @Context HttpServletResponse response) {
 
     Project project = projectDao.findById(id.get());
     if (project == null)
       throw new WebApplicationException(Status.NOT_FOUND);
 
-    return PagingUtil.paging(appDao.findByTopics(project.getTopics()), startParam.get(), sizeParam.get());
+    return PagingUtil.paging(appDao.findByTopics(project.getTopics()), startParam.get(), sizeParam.get(), response);
   }
 
   @GET
@@ -190,13 +195,14 @@ public class ProjectResource {
   @UnitOfWork
   public List<Company> fetchCompanies(@PathParam("id") LongParam id,
           @Min(0) @DefaultValue("0") @QueryParam("start") IntParam startParam,
-          @Min(0) @DefaultValue("0") @QueryParam("size") IntParam sizeParam) {
+          @Min(0) @DefaultValue("0") @QueryParam("size") IntParam sizeParam,
+          @Context HttpServletResponse response) {
 
     Project project = projectDao.findById(id.get());
     if (project == null)
       throw new WebApplicationException(Status.NOT_FOUND);
 
-    return PagingUtil.paging(project.getCompanies(), startParam.get(), sizeParam.get());
+    return PagingUtil.paging(project.getCompanies(), startParam.get(), sizeParam.get(), response);
   }
 
   @GET
@@ -205,13 +211,14 @@ public class ProjectResource {
   @UnitOfWork
   public List<Faculty> fetchFaculties(@PathParam("id") LongParam id,
           @Min(0) @DefaultValue("0") @QueryParam("start") IntParam startParam,
-          @Min(0) @DefaultValue("0") @QueryParam("size") IntParam sizeParam) {
+          @Min(0) @DefaultValue("0") @QueryParam("size") IntParam sizeParam,
+          @Context HttpServletResponse response) {
 
     Project project = projectDao.findById(id.get());
     if (project == null)
       throw new WebApplicationException(Status.NOT_FOUND);
 
-    return PagingUtil.paging(project.getFaculties(), startParam.get(), sizeParam.get());
+    return PagingUtil.paging(project.getFaculties(), startParam.get(), sizeParam.get(), response);
   }
 
   @GET
@@ -220,13 +227,14 @@ public class ProjectResource {
   @UnitOfWork
   public List<User> fetchCreators(@PathParam("id") LongParam id,
           @Min(0) @DefaultValue("0") @QueryParam("start") IntParam startParam,
-          @Min(0) @DefaultValue("0") @QueryParam("size") IntParam sizeParam) {
+          @Min(0) @DefaultValue("0") @QueryParam("size") IntParam sizeParam,
+          @Context HttpServletResponse response) {
 
     Project project = projectDao.findById(id.get());
     if (project == null)
       throw new WebApplicationException(Status.NOT_FOUND);
 
-    return PagingUtil.paging(project.getCreators(), startParam.get(), sizeParam.get());
+    return PagingUtil.paging(project.getCreators(), startParam.get(), sizeParam.get(), response);
   }
 
   @PUT
