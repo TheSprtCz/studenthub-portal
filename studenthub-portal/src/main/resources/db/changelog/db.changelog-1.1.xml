@@ -122,4 +122,25 @@
         <addForeignKeyConstraint baseColumnNames="degree_name" baseTableCatalogName="studenthub" baseTableName="topicapplications" baseTableSchemaName="public" constraintName="fkadt3h8k0h0shd20a87y4i8n9e" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="name" referencedTableCatalogName="studenthub" referencedTableName="degrees" referencedTableSchemaName="public"/>
         <addPrimaryKey catalogName="studenthub" columnNames="topic_id, degrees_name" constraintName="topics_degrees_pkey" schemaName="public" tableName="topics_degrees"/>
     </changeSet>
+    <changeSet author="phala" id="countries">
+        <createTable catalogName="studenthub" schemaName="public" tableName="countries">
+            <column name="tag" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="name" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <addPrimaryKey catalogName="studenthub" columnNames="tag" constraintName="countries_pkey" schemaName="public" tableName="countries"/>
+        <dropColumn columnName="country" catalogName="studenthub" schemaName="public" tableName="companies"/>
+        <dropColumn columnName="country" catalogName="studenthub" schemaName="public" tableName="universities"/>
+        <addColumn catalogName="studenthub" schemaName="public" tableName="companies">
+            <column name="country_tag" type="VARCHAR(255)"/>
+        </addColumn>
+        <addColumn catalogName="studenthub" schemaName="public" tableName="universities">
+            <column name="country_tag" type="VARCHAR(255)"/>
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="country_tag" baseTableCatalogName="studenthub" baseTableName="companies" baseTableSchemaName="public" constraintName="fk89odenvpwnaixqs7f2nis584t" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="tag" referencedTableCatalogName="studenthub" referencedTableName="countries" referencedTableSchemaName="public"/>
+        <addForeignKeyConstraint baseColumnNames="country_tag" baseTableCatalogName="studenthub" baseTableName="universities" baseTableSchemaName="public" constraintName="fkqhdduw4j0hyqsggcpb6fikh8v" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="tag" referencedTableCatalogName="studenthub" referencedTableName="countries" referencedTableSchemaName="public"/>
+    </changeSet>
 </databaseChangeLog>

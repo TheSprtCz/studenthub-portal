@@ -18,6 +18,7 @@ import org.slf4j.LoggerFactory;
 import cz.studenthub.core.Activation;
 import cz.studenthub.core.Company;
 import cz.studenthub.core.CompanyPlan;
+import cz.studenthub.core.Country;
 import cz.studenthub.core.Faculty;
 import cz.studenthub.core.Project;
 import cz.studenthub.core.Task;
@@ -29,6 +30,7 @@ import cz.studenthub.core.User;
 import cz.studenthub.db.ActivationDAOTest;
 import cz.studenthub.db.CompanyDAOTest;
 import cz.studenthub.db.CompanyPlanDAOTest;
+import cz.studenthub.db.CountryDAOTest;
 import cz.studenthub.db.FacultyDAOTest;
 import cz.studenthub.db.ProjectDAOTest;
 import cz.studenthub.db.TaskDAOTest;
@@ -50,7 +52,7 @@ import liquibase.resource.ClassLoaderResourceAccessor;
 @RunWith(Suite.class)
 @SuiteClasses({ CompanyDAOTest.class, FacultyDAOTest.class, TaskDAOTest.class, TopicApplicationDAOTest.class,
    TopicDAOTest.class, UniversityDAOTest.class, UserDAOTest.class, ActivationDAOTest.class, CompanyPlanDAOTest.class,
-   ProjectDAOTest.class, TopicDegreeDAOTest.class})
+   ProjectDAOTest.class, TopicDegreeDAOTest.class, CountryDAOTest.class})
 public class DAOTestSuite {
 
   public static DAOTestRule database;
@@ -77,6 +79,7 @@ public class DAOTestSuite {
         .addEntityClass(Activation.class)
         .addEntityClass(Project.class)
         .addEntityClass(TopicDegree.class)
+        .addEntityClass(Country.class)
         .addEntityClass(CompanyPlan.class).build();
   }
 

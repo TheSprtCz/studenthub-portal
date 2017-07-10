@@ -2,6 +2,13 @@
 
 Initial Database migration file contains these entries:
 
+## Countries
+
+| tag    | name           |
+| ------ | -------------- |
+| CZ     | Czech Republic |
+| SK     | Slovakia       |
+
 ## Universities
 
 | id  | name                               | logoUrl                | city       | country | url          |

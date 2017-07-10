@@ -19,11 +19,10 @@ package cz.studenthub.core;
 import java.util.Objects;
 
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
@@ -47,7 +46,7 @@ public class University {
   private String url;
   private String city;
 
-  @Enumerated(EnumType.STRING)
+  @ManyToOne
   private Country country;
 
   @URL

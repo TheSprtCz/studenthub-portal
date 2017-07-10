@@ -2,6 +2,14 @@
 
 Test Database contains these entries:
 
+## Countries
+
+| tag    | name           |
+| ------ | -------------- |
+| CZ     | Czech Republic |
+| SK     | Slovakia       |
+| HU     | Hungary        |
+
 ## Universities
 
 | id  | name                               | logoUrl                | city       | country | url          |

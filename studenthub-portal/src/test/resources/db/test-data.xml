@@ -44,11 +44,25 @@
             <column name="DESCRIPTION" value="Godlike"/>
         </insert>        
     </changeSet>
+    <changeSet author="phala (generated)" id="1489653927422-38" objectQuotingStrategy="QUOTE_ALL_OBJECTS">
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="COUNTRIES">
+            <column name="NAME" value="Czech Republic"/>
+            <column name="TAG" value="CZ"/>
+        </insert>
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="COUNTRIES">
+            <column name="NAME" value="Slovakia"/>
+            <column name="TAG" value="SK"/>
+        </insert>
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="COUNTRIES">
+            <column name="NAME" value="Hungary"/>
+            <column name="TAG" value="HU"/>
+        </insert>        
+    </changeSet>
     <changeSet author="phala (generated)" id="1489653927422-18" objectQuotingStrategy="QUOTE_ALL_OBJECTS">
         <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="COMPANIES">
             <column name="ID" valueNumeric="2"/>
             <column name="CITY" value="Bratislava"/>
-            <column name="COUNTRY" value="SK"/>
+            <column name="COUNTRY_TAG" value="SK"/>
             <column name="LOGOURL" value="c2.com/logo.jpg"/>
             <column name="NAME" value="Company Two"/>
             <column name="PLAN_NAME" value="TIER_2"/>
@@ -58,7 +72,7 @@
         <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="COMPANIES">
             <column name="ID" valueNumeric="1"/>
             <column name="CITY" value="Brno"/>
-            <column name="COUNTRY" value="CZ"/>
+            <column name="COUNTRY_TAG" value="CZ"/>
             <column name="LOGOURL" value="c1.com/logo.png"/>
             <column name="NAME" value="Company One"/>
             <column name="PLAN_NAME" value="TIER_3"/>
@@ -68,7 +82,7 @@
         <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="COMPANIES">
             <column name="ID" valueNumeric="3"/>
             <column name="CITY" value="Prague"/>
-            <column name="COUNTRY" value="CZ"/>
+            <column name="COUNTRY_TAG" value="CZ"/>
             <column name="LOGOURL" value="c3.com/img.jpg"/>
             <column name="NAME" value="Company Three"/>
             <column name="PLAN_NAME" value="TIER_3"/>
@@ -78,7 +92,7 @@
         <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="COMPANIES">
             <column name="ID" valueNumeric="4"/>
             <column name="CITY" value="Brno"/>
-            <column name="COUNTRY" value="CZ"/>
+            <column name="COUNTRY_TAG" value="CZ"/>
             <column name="LOGOURL" value="c4.com/picture.jpg"/>
             <column name="NAME" value="Company Four"/>
             <column name="PLAN_NAME" value="TIER_1"/>
@@ -88,7 +102,7 @@
         <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="COMPANIES">
             <column name="ID" valueNumeric="5"/>
             <column name="CITY" value="Prague"/>
-            <column name="COUNTRY" value="CZ"/>
+            <column name="COUNTRY_TAG" value="CZ"/>
             <column name="LOGOURL" value="c5.com/us.jpg"/>
             <column name="NAME" value="Company Five"/>
             <column name="PLAN_NAME" value="TIER_3"/>
@@ -98,7 +112,7 @@
         <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="COMPANIES">
             <column name="ID" valueNumeric="6"/>
             <column name="CITY" value="Olomouc"/>
-            <column name="COUNTRY" value="CZ"/>
+            <column name="COUNTRY_TAG" value="CZ"/>
             <column name="LOGOURL" value="c6.com/us.gif"/>
             <column name="NAME" value="Company Six"/>
             <column name="PLAN_NAME" value="TIER_2"/>
@@ -108,7 +122,7 @@
         <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="COMPANIES">
             <column name="ID" valueNumeric="7"/>
             <column name="CITY" value="Trencin"/>
-            <column name="COUNTRY" value="SK"/>
+            <column name="COUNTRY_TAG" value="SK"/>
             <column name="LOGOURL" value="c7.com/img.png"/>
             <column name="NAME" value="Company Seven"/>
             <column name="PLAN_NAME" value="TIER_3"/>
@@ -118,7 +132,7 @@
         <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="COMPANIES">
             <column name="ID" valueNumeric="8"/>
             <column name="CITY" value="Myjava"/>
-            <column name="COUNTRY" value="SK"/>
+            <column name="COUNTRY_TAG" value="SK"/>
             <column name="LOGOURL" value="c8.com/logo.jpg"/>
             <column name="NAME" value="Company Eight"/>
             <column name="PLAN_NAME" value="TIER_1"/>
@@ -131,7 +145,7 @@
         <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="UNIVERSITIES">
             <column name="ID" valueNumeric="1"/>
             <column name="CITY" value="Brno"/>
-            <column name="COUNTRY" value="CZ"/>
+            <column name="COUNTRY_TAG" value="CZ"/>
             <column name="LOGOURL" value="www.muni.cz/img.png"/>
             <column name="NAME" value="Masaryk University"/>
             <column name="URL" value="http://www.muni.cz"/>
@@ -139,7 +153,7 @@
         <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="UNIVERSITIES">
             <column name="ID" valueNumeric="3"/>
             <column name="CITY" value="Praha"/>
-            <column name="COUNTRY" value="CZ"/>
+            <column name="COUNTRY_TAG" value="CZ"/>
             <column name="LOGOURL" value="www.cvut.cz/image.jpg"/>
             <column name="NAME" value="Czech Technical University"/>
             <column name="URL" value="http://www.cvut.cz"/>
@@ -147,7 +161,7 @@
         <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="UNIVERSITIES">
             <column name="ID" valueNumeric="4"/>
             <column name="CITY" value="Bratislava"/>
-            <column name="COUNTRY" value="SK"/>
+            <column name="COUNTRY_TAG" value="SK"/>
             <column name="LOGOURL" value="www.stuba.sk/logo.jpg"/>
             <column name="NAME" value="Slovak Technical University"/>
             <column name="URL" value="http://www.stuba.sk"/>
@@ -155,7 +169,7 @@
         <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="UNIVERSITIES">
             <column name="ID" valueNumeric="5"/>
             <column name="CITY" value="Bratislava"/>
-            <column name="COUNTRY" value="SK"/>
+            <column name="COUNTRY_TAG" value="SK"/>
             <column name="LOGOURL" value="www.uniba.sk/logo.gif"/>
             <column name="NAME" value="Comenius University in Bratislava"/>
             <column name="URL" value="http://uniba.sk"/>
@@ -163,7 +177,7 @@
         <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="UNIVERSITIES">
             <column name="ID" valueNumeric="2"/>
             <column name="CITY" value="Brno"/>
-            <column name="COUNTRY" value="CZ"/>
+            <column name="COUNTRY_TAG" value="CZ"/>
             <column name="LOGOURL" value="www.vut.cz/logo.png"/>
             <column name="NAME" value="Brno University of Technology"/>
             <column name="URL" value="http://www.vut.cz"/>

@@ -19,18 +19,21 @@ public class CompanyDAOTest {
   private static final DAOTestRule DATABASE = DAOTestSuite.database;
   private static CompanyDAO companyDAO;
   private static CompanyPlanDAO cpDAO;
+  private static CountryDAO countryDAO;
 
   @BeforeClass
   public static void setUp() {
     companyDAO = new CompanyDAO(DATABASE.getSessionFactory());
     cpDAO = new CompanyPlanDAO(DATABASE.getSessionFactory());
+    countryDAO = new CountryDAO(DATABASE.getSessionFactory());
   }
 
   @Test
   public void createCompany() {
     DAOTestSuite.inRollbackTransaction(() -> {
       CompanyPlan cPlan = cpDAO.findByName("TIER_2");
-      Company company = new Company("New", "http://www.nothing.eu", "Liberec", Country.CZ, "http://www.nothing.eu/logo.png",
+      Country country = countryDAO.findByTag("CZ");
+      Company company = new Company("New", "http://www.nothing.eu", "Liberec", country, "http://www.nothing.eu/logo.png",
           CompanySize.SMALL, cPlan);
       Company created = companyDAO.create(company);
       List<Company> companies = companyDAO.findAll();

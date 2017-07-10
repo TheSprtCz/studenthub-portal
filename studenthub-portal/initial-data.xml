@@ -25,12 +25,26 @@
             <column name="description" value="High school"/>
         </insert>
     </changeSet>
+    <changeSet author="phala (generated)" id="1489653927422-38" objectQuotingStrategy="QUOTE_ALL_OBJECTS">
+        <insert catalogName="studenthub" schemaName="public" tableName="countries">
+            <column name="name" value="Czech Republic"/>
+            <column name="tag" value="CZ"/>
+        </insert>
+        <insert catalogName="studenthub" schemaName="public" tableName="countries">
+            <column name="name" value="Slovakia"/>
+            <column name="tag" value="SK"/>
+        </insert>
+        <insert catalogName="studenthub" schemaName="public" tableName="countries">
+            <column name="name" value="Hungary"/>
+            <column name="tag" value="HU"/>
+        </insert>        
+    </changeSet>
     <changeSet author="phala (generated)" id="1496646751908-13">
         <insert catalogName="studenthub" schemaName="public" tableName="companies">
             <column name="id" valueNumeric="1"/>
             <column name="city" value="Brno"/>
-            <column name="country" value="CZ"/>
-            <column name="logourl" value="https://dummyimage.com/300/000/fff.png&text=Logo"/>
+            <column name="country_tag" value="CZ"/>
+            <column name="logourl" value="https://dummyimage.com/300/000/fff.png&amp;text=Logo"/>
             <column name="name" value="Company One"/>
             <column name="plan_name" value="TIER_1"/>
             <column name="size" value="CORPORATE"/>
@@ -42,8 +56,8 @@
         <insert catalogName="studenthub" schemaName="public" tableName="universities">
             <column name="id" valueNumeric="1"/>
             <column name="city" value="Brno"/>
-            <column name="country" value="CZ"/>
-            <column name="logourl" value="https://dummyimage.com/300/000/fff.png&text=Logo"/>
+            <column name="country_tag" value="CZ"/>
+            <column name="logourl" value="https://dummyimage.com/300/000/fff.png&amp;text=Logo"/>
             <column name="name" value="Masaryk University"/>
             <column name="url" value="http://www.muni.cz"/>
         </insert>
