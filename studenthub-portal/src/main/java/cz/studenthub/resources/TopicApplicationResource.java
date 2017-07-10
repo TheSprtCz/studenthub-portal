@@ -128,13 +128,19 @@ public class TopicApplicationResource {
   @ExceptionMetered
   @UnitOfWork
   @RolesAllowed("STUDENT")
-  public Response create(@NotNull @Valid @Validated(CreateUpdateChecks.class) TopicApplication app) {
-    appDao.create(app);
-    if (app.getId() == null)
-      throw new WebApplicationException(Status.INTERNAL_SERVER_ERROR);
+  public Response create(@NotNull @Valid @Validated(CreateUpdateChecks.class) TopicApplication app, @Auth User user) {
 
-    return Response.created(UriBuilder.fromResource(TopicApplicationResource.class).path("/{id}").build(app.getId()))
-        .entity(app).build();
+    // Student can only create applications for himself.
+    if (app.getStudent().getId().equals(user.getId())) {
+      appDao.create(app);
+      if (app.getId() == null)
+        throw new WebApplicationException(Status.INTERNAL_SERVER_ERROR);
+  
+      return Response.created(UriBuilder.fromResource(TopicApplicationResource.class).path("/{id}").build(app.getId()))
+          .entity(app).build();
+    } else {
+      throw new WebApplicationException(Status.FORBIDDEN);
+    }
   }
 
   /*
