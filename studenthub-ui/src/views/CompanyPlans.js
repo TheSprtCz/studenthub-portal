@@ -6,11 +6,13 @@ import TableCell from 'react-toolbox/lib/table/TableCell.js';
 import Dialog from 'react-toolbox/lib/dialog/Dialog.js';
 import Input from 'react-toolbox/lib/input/Input.js';
 import Button from 'react-toolbox/lib/button/Button.js';
+import Pager from '../components/Pager.js';
 
 import DeleteButton from '../components/DeleteButton.js';
 import EditButton from '../components/EditButton.js';
 import SiteSnackbar from '../components/SiteSnackbar.js';
 
+import Util from '../Util.js';
 import _t from '../Translations.js';
 
 class PlansTable extends Component {
@@ -18,6 +20,8 @@ class PlansTable extends Component {
     plans: [],
     dialogActive: false,
     editId: -1,
+    page: 0,
+    pages: 1,
     snackbarLabel: "",
     snackbarActive: false
   }
@@ -27,19 +31,19 @@ class PlansTable extends Component {
   }
 
   getPlans() {
-    fetch('/api/plans', {
+    fetch("/api/plans?size=" + Util.PLANS_PER_PAGE + "&start=" +
+          (this.state.page * Util.PLANS_PER_PAGE), {
       credentials: 'same-origin',
       method: 'get'
     }).then(function(response) {
       if (response.ok) {
+        this.setState({pages: parseInt(response.headers.get("Pages"), 10)});
         return response.json();
       } else {
         throw new Error('There was a problem with network connection.');
       }
-    }).then(function(json) {
-      this.setState({
-        plans: json
-      });
+    }.bind(this)).then(function(json) {
+      this.setState({plans: json});
     }.bind(this));
   }
 
@@ -76,6 +80,14 @@ class PlansTable extends Component {
     }
   }
 
+  changePage = (page) => {
+    this.setState({page: page.selected});
+
+    setTimeout(function() {
+      this.getPlans();
+    }.bind(this), 2);
+  }
+
   render () {
     return (
       <div>
@@ -103,6 +115,7 @@ class PlansTable extends Component {
             </TableRow>
           ))}
         </Table>
+        <Pager pages={this.state.pages} pageChanger={(page) => this.changePage(page)} />
         <SiteSnackbar active={this.state.snackbarActive} label={this.state.snackbarLabel} toggleHandler={() => this.toggleSnackbar(this.state.snackbarLabel, false)} />
       </div>
     );

@@ -7,6 +7,7 @@ import Dialog from 'react-toolbox/lib/dialog/Dialog.js';
 import Dropdown from 'react-toolbox/lib/dropdown/Dropdown.js';
 import Input from 'react-toolbox/lib/input/Input.js';
 import Button from 'react-toolbox/lib/button/Button.js';
+import Pager from '../components/Pager.js';
 
 import DeleteButton from '../components/DeleteButton.js';
 import EditButton from '../components/EditButton.js';
@@ -70,6 +71,8 @@ class CompaniesTable extends Component {
     companies: [],
     dialogActive: false,
     editId: -1,
+    page: 0,
+    pages: 1,
     snackbarLabel: "",
     snackbarActive: false
   }
@@ -79,19 +82,19 @@ class CompaniesTable extends Component {
   }
 
   getCompanies = () => {
-    fetch('/api/companies/', {
+    fetch("/api/companies/?size=" + Util.COMPANIES_PER_PAGE + "&start=" +
+          (this.state.page * Util.COMPANIES_PER_PAGE), {
       method: 'get',
       credentials: 'same-origin'
     }).then(function(response) {
       if (response.ok) {
+        this.setState({pages: parseInt(response.headers.get("Pages"), 10)});
         return response.json();
       } else {
         throw new Error('There was a problem with network connection.');
       }
-    }).then(function(json) {
-      this.setState({
-        companies: json
-      });
+    }.bind(this)).then(function(json) {
+      this.setState({companies: json});
     }.bind(this));
   }
 
@@ -126,6 +129,14 @@ class CompaniesTable extends Component {
       if (!isError)
         this.getCompanies();
     }
+  }
+
+  changePage = (page) => {
+    this.setState({page: page.selected});
+
+    setTimeout(function() {
+      this.getCompanies();
+    }.bind(this), 2);
   }
 
   render () {
@@ -164,6 +175,7 @@ class CompaniesTable extends Component {
             </TableRow>
           ))}
         </Table>
+        <Pager pages={this.state.pages} pageChanger={(page) => this.changePage(page)} />
         <SiteSnackbar active={this.state.snackbarActive} label={this.state.snackbarLabel} toggleHandler={() => this.toggleSnackbar(this.state.snackbarLabel, false)} />
       </div>
     );

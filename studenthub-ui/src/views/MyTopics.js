@@ -29,22 +29,20 @@ const TopicTableHint = () => (
 )
 
 class TopicTable extends Component {
-  state = { topics: [], nextTopics: [], dialogActive: false, editId: -1,
-    snackbarLabel: "", snackbarActive: false, page: -1, offsetWentDown: false }
+  state = {topics: [], dialogActive: false, editId: -1, snackbarLabel: "",
+    snackbarActive: false, page: 0, pages: 1}
 
   componentDidMount() {
     if (Auth.hasRole(Util.userRoles.companyRep) && !Auth.hasRole(Util.userRoles.admin))
       this.getCompanyTopics();
     else
       this.getTopics();
-    this.changePage(1);
   }
 
   /**
    * Gets the list of all company topics.
    */
   getCompanyTopics = () => {
-    var page = (this.state.offsetWentDown) ? this.state.page : (this.state.page+1);
     fetch('/api/users/' + Auth.getUserInfo().sub, {
         credentials: 'same-origin',
         method: 'get'
@@ -63,34 +61,19 @@ class TopicTable extends Component {
           return;
         }
         fetch('/api/companies/' + json.company.id + "/topics?size=" + Util.TOPICS_PER_PAGE_TABLE + "&start=" +
-          (page * Util.TOPICS_PER_PAGE_TABLE), {
+          (this.state.page * Util.TOPICS_PER_PAGE_TABLE), {
             credentials: 'same-origin',
             method: 'get'
-          }).then(function(response) {
-            if (response.ok) {
-                return response.json();
-            } else if (response.status === 404) {
-              this.setState({
-                topics: (this.state.nextTopics === null || typeof this.state.nextTopics === 'undefined') ? this.state.topics : this.state.nextTopics,
-                nextTopics: null
-              });
-            }  else {
-              throw new Error('There was a problem with network connection.');
-            }
-          }.bind(this)).then(function(json) {
-            if (this.state.offsetWentDown) {
-              this.setState({
-                topics: json,
-                nextTopics: this.state.topics
-              });
-            }
-            else {
-              this.setState({
-                topics: (this.state.nextTopics === null || typeof this.state.nextTopics === 'undefined') ? this.state.topics : this.state.nextTopics,
-                nextTopics: json
-              });
-            }
-          }.bind(this));
+        }).then(function(response) {
+          if (response.ok) {
+            this.setState({pages: parseInt(response.headers.get("Pages"), 10)});
+            return response.json();
+          } else {
+            throw new Error('There was a problem with network connection.');
+          }
+        }.bind(this)).then(function(json) {
+          this.setState({topics: json});
+        }.bind(this));
       }.bind(this));
   }
 
@@ -98,38 +81,22 @@ class TopicTable extends Component {
    * Gets the list of all user topics.
    */
   getTopics = () => {
-    let page = (this.state.offsetWentDown) ? this.state.page : (this.state.page+1);
-    fetch((Auth.hasRole(Util.userRoles.admin)) ? "/api/topics?size=" + Util.TOPICS_PER_PAGE_TABLE + "&start=" +
-    (page * Util.TOPICS_PER_PAGE_TABLE) : "/api/users/" + Auth.getUserInfo().sub +
-    "/ownedTopics?size=" + Util.TOPICS_PER_PAGE_TABLE + "&start=" +
-    (page * Util.TOPICS_PER_PAGE_TABLE), {
+    fetch((Auth.hasRole(Util.userRoles.admin)) ? "/api/topics?size=" + Util.TOPICS_PER_PAGE_TABLE +
+      "&start=" + (this.state.page * Util.TOPICS_PER_PAGE_TABLE) : "/api/users/" +
+      Auth.getUserInfo().sub + "/ownedTopics?size=" + Util.TOPICS_PER_PAGE_TABLE +
+      "&start=" + (this.state.page * Util.TOPICS_PER_PAGE_TABLE), {
         credentials: 'same-origin',
         method: 'get'
-      }).then(function(response) {
-        if (response.ok) {
-            return response.json();
-        } else if (response.status === 404) {
-          this.setState({
-            topics: (this.state.nextTopics === null || typeof this.state.nextTopics === 'undefined') ? this.state.topics : this.state.nextTopics,
-            nextTopics: null
-          });
-        } else {
-          throw new Error('There was a problem with network connection.');
-        }
-      }.bind(this)).then(function(json) {
-        if (this.state.offsetWentDown) {
-          this.setState({
-            topics: json,
-            nextTopics: this.state.topics
-          });
-        }
-        else {
-          this.setState({
-            topics: (this.state.nextTopics === null || typeof this.state.nextTopics === 'undefined') ? this.state.topics : this.state.nextTopics,
-            nextTopics: json
-          });
-        }
-      }.bind(this));
+    }).then(function(response) {
+      if (response.ok) {
+        this.setState({pages: parseInt(response.headers.get("Pages"), 10)});
+        return response.json();
+      } else {
+        throw new Error('There was a problem with network connection.');
+      }
+    }.bind(this)).then(function(json) {
+      this.setState({topics: json});
+    }.bind(this));
   }
 
   /**
@@ -166,7 +133,10 @@ class TopicTable extends Component {
             snackbarLabel: label,
             snackbarActive: true
           });
-          this.getTopics();
+          if (Auth.hasRole(Util.userRoles.companyRep) && !Auth.hasRole(Util.userRoles.admin))
+            this.getCompanyTopics();
+          else
+            this.getTopics();
       } else {
         this.setState({
           snackbarLabel: "An error occured! Your request couldn't be processed. It's possible that you have a problem with your internet connection or that the server is not responding.",
@@ -185,8 +155,8 @@ class TopicTable extends Component {
     this.setState({snackbarActive: !this.state.snackbarActive});
   }
 
-  changePage = (offset) => {
-    this.setState({ page: this.state.page + offset, offsetWentDown: (offset < 0) ? true : false });
+  changePage = (page) => {
+    this.setState({page: page.selected});
 
     setTimeout(function() {
       if (Auth.hasRole(Util.userRoles.companyRep) && !Auth.hasRole(Util.userRoles.admin))
@@ -230,8 +200,7 @@ class TopicTable extends Component {
         </Table>
         <SiteSnackbar active={this.state.snackbarActive} label={this.state.snackbarLabel}
           toggleHandler={() => this.toggleSnackbar()} />
-        <Pager currentPage={this.state.page} nextData={this.state.nextTopics}
-          pageChanger={(offset) => this.changePage(offset)} />
+        <Pager pages={this.state.pages} pageChanger={(page) => this.changePage(page)} />
       </div>
     );
   }
