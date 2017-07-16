@@ -237,11 +237,11 @@ class ApplicationForm extends Component {
     degree: "",
     thesisFinish: "",
     thesisStarted: "",
+    link: "",
     topic: { },
     faculty: "",
     snackbarLabel: "",
     snackbarActive: false,
-    editId: -1,
     index: 0
   };
 
@@ -274,7 +274,8 @@ class ApplicationForm extends Component {
         thesisFinish: new Date(json.thesisFinish),
         thesisStarted: new Date(json.thesisStarted),
         topic: json.topic,
-        faculty: json.faculty
+        faculty: json.faculty,
+        link: json.link
       });
     }.bind(this));
   }
@@ -294,7 +295,8 @@ class ApplicationForm extends Component {
         thesisFinish: this.state.thesisFinish,
         thesisStarted: this.state.thesisStarted,
         topic: this.state.topic,
-        faculty: this.state.faculty
+        faculty: this.state.faculty,
+        link: this.state.link
       })
     }).then(function(response) {
       if (response.ok) {
@@ -353,6 +355,12 @@ class ApplicationForm extends Component {
             onChange={this.handleChange.bind(this, 'degree')}
             source={Util.degreesSource}
             value={this.state.degree} />
+          <Input
+            type='url'
+            label={ _t.translate('External link') }
+            icon='link'
+            onChange={this.handleChange.bind(this, 'link')}
+            value={this.state.link} />
         </div>
         <div className="col-md-6">
           <h3>{ _t.translate('Administration') }</h3>
