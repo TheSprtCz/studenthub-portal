@@ -14,6 +14,7 @@ import Companies from './views/Companies.js';
 import CompanyPlans from './views/CompanyPlans.js';
 import MyTopics from './views/MyTopics.js';
 import Topic from './views/Topic.js';
+import TopicDegrees from './views/TopicDegrees.js';
 import MyApplications from './views/MyApplications.js';
 import Application from './views/Application.js';
 import Profile from './views/Profile.js';
@@ -57,6 +58,7 @@ const NavBarLinks = withRouter(() => (
     { Auth.hasRole(Util.userRoles.admin) ? <Link to="/company-plans"><Button label={ _t.translate("Company Plans") } flat /></Link> : '' }
     { Auth.isAuthenticated() ? <Link to="/my-apps"><Button label={ _t.translate("My Applications") } flat /></Link> : '' }
     { Auth.hasRole(Util.userRoles.techLeader) || Auth.hasRole(Util.userRoles.superviser) ? <Link to="/my-topics"><Button label={ _t.translate("My Topics") } flat /></Link> : '' }
+    { Auth.hasRole(Util.userRoles.admin) ? <Link to="/degrees"><Button label={ _t.translate("Degrees") } flat /></Link> : '' }
     {
       Auth.isAuthenticated() ?
         <Link to="/profile">
@@ -113,6 +115,7 @@ class App extends Component {
               <Route exact path="/forgot" component={ForgotPassword}/>
               <Route exact path="/activation/:id/:secret" component={Activation}/>
               <Route exact path="/topics/:id" component={Topic}/>
+              <Route exact path="/degrees" component={TopicDegrees}/>
               <PrivateRoute exact path="/users" component={Users}/>
               <PrivateRoute exact path="/unis" component={Universities}/>
               <PrivateRoute exact path="/companies" component={Companies}/>
