@@ -7,7 +7,9 @@ import { tableFactory } from 'react-toolbox/lib/table/Table.js';
 
 import EditButton from './EditButton.js';
 import DeleteButton from './DeleteButton.js';
+
 import _t from '../Translations.js';
+import Util from '../Util.js';
 
 class UniversityRow extends Component {
   render () {
@@ -28,7 +30,7 @@ class UniversityRow extends Component {
           {this.props.uni.city}
         </TableCell>
         <TableCell>
-          {this.props.uni.country}
+          {Util.isEmpty(this.props.uni.country) ? 'N/A' : this.props.uni.country.name}
         </TableCell>
         <TableCell>
           <Link href={this.props.uni.url} label={this.props.uni.url} icon='explore' />

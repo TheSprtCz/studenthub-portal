@@ -7,6 +7,7 @@ import Button from 'react-toolbox/lib/button/Button.js';
 import IconButton from 'react-toolbox/lib/button/IconButton.js';
 import Dropdown from 'react-toolbox/lib/dropdown/Dropdown.js';
 
+import CountrySelect from '../components/CountrySelect.js';
 import SiteSnackbar from '../components/SiteSnackbar.js';
 
 import Util from '../Util.js';
@@ -14,7 +15,7 @@ import _t from '../Translations';
 
 class CompanyRegForm extends Component {
 
-  state = { company_name: '', rep_name: '', city:'', url: '', logo: '', country: '', size: '', phone: '', email: '', password: '',
+  state = { company_name: '', rep_name: '', city:'', url: '', logo: '', country: {}, size: '', phone: '', email: '', password: '',
     planName: '', planDescription: '', planTopicLimit: 10, plans: [], index: 0, planIndex: 0, snackbarActive: false, snackbarLabel: '',  redirect: false };
 
   componentDidMount() {
@@ -119,14 +120,7 @@ class CompanyRegForm extends Component {
                 onChange={this.handleChange.bind(this, 'company_name')} />
               <Input type='text' label={ _t.translate('City') } name='name' icon='location_city' required value={this.state.city}
                 onChange={this.handleChange.bind(this, 'city')} />
-              <Dropdown
-                auto required
-                label={ _t.translate('Country') }
-                onChange={this.handleChange.bind(this, 'country')}
-                source={Util.countriesSource}
-                name='country'
-                value={this.state.country}
-                icon='public' />
+              <CountrySelect currentCountry={this.state.country} changeHandler={this.handleChange.bind(this, 'country')} />
               <Input type='url' label={ _t.translate('Web page') } name='name' icon='web' required value={this.state.url} onChange={this.handleChange.bind(this, 'url')} />
               <Input type='url' label='Logo' name='logo' icon='photo' required value={this.state.logo} onChange={this.handleChange.bind(this, 'logo')} />
               <Dropdown

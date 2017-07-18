@@ -420,6 +420,18 @@ const myLocalize = new Localize({
     },
     'Password reset confirmation': {
       'cs': 'Potvrzení zresetování hesla'
+    },
+    'Countries': {
+      'cs': 'Země'
+    },
+    'New Country': {
+      'cs': 'Nová země'
+    },
+    'Edit Country': {
+      'cs': 'Uprav zemi'
+    },
+    'Tag': {
+      'cs': 'Tag'
     }
 });
 
