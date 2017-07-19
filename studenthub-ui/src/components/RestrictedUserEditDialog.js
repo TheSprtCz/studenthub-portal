@@ -10,7 +10,7 @@ import _t from '../Translations.js';
  * @param editHandler(user)               editing callback function
  * @param toggleHandler()                 function to call when closing the Dialog
  */
-class LeaderEditDialog extends Component {
+class RestrictedUserEditDialog extends Component {
   state = { name: "", mail: "", phone: "", tags: "" }
 
   /**
@@ -104,4 +104,4 @@ class LeaderEditDialog extends Component {
   }
 }
 
-export default LeaderEditDialog;
+export default RestrictedUserEditDialog;

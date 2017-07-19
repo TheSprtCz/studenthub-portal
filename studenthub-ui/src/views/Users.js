@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 
 import AdminUsersView from '../components/AdminUsersView.js';
 import CompanyRepUsersView from '../components/CompanyRepUsersView.js';
+import AmbassadorUsersView from '../components/CompanyRepUsersView.js';
 import SiteSnackbar from '../components/SiteSnackbar.js';
 import Pager from '../components/Pager.js';
 
@@ -11,14 +12,16 @@ import Util from '../Util.js';
 import _t from '../Translations.js';
 
 class Users extends Component {
-  state = { users: [], nextUsers: [], companyId: -1, snackbarActive: false,
-    snackbarLabel: "", page: -1, offsetWentDown: false }
+  state = {users: [], nextUsers: [], companyId: -1, universityId: -1,
+           snackbarActive: false, snackbarLabel: "", page: -1, offsetWentDown: false}
 
   componentDidMount() {
     if (Auth.hasRole(Util.userRoles.admin))
       this.getUsers();
     else if (Auth.hasRole(Util.userRoles.companyRep))
       this.getCompanyUsers();
+    else if (Auth.hasRole(Util.userRoles.ambassador))
+      this.getUniversityUsers();
     this.changePage(1);
   }
 
@@ -72,6 +75,54 @@ class Users extends Component {
           companyId: json.company.id
         });
         fetch('/api/companies/' + json.company.id + "/leaders?size=" + Util.USERS_PER_PAGE + "&start=" +
+          (page * Util.USERS_PER_PAGE), {
+            method: 'get',
+            credentials: 'same-origin'
+          }).then(function(response) {
+              if(response.ok) {
+                return response.json();
+            } else if (response.status === 404) {
+              this.setState({
+                users: (this.state.nextUsers === null || typeof this.state.nextUsers === 'undefined') ? this.state.users : this.state.nextUsers,
+                nextUsers: null
+              });
+            } else {
+              throw new Error("There was a problem with network connection. The GET request couldn't be processed!");
+            }
+          }.bind(this)).then(function(json) {
+            if (this.state.offsetWentDown) {
+              this.setState({
+                users: json,
+                nextUsers: this.state.users
+              });
+            }
+            else {
+              this.setState({
+                users: (this.state.nextUsers === null || typeof this.state.nextUsers === 'undefined') ? this.state.users : this.state.nextUsers,
+                nextUsers: json
+              });
+            };
+      }.bind(this));
+    }.bind(this));
+  }
+
+  /**
+  * Gets the list of only university users.
+  */
+  getUniversityUsers = () => {
+    var page = (this.state.offsetWentDown) ? this.state.page : (this.state.page+1);
+    fetch('/api/users/' + Auth.getUserInfo().sub, {
+        method: 'get',
+        credentials: 'same-origin'
+      }).then(function(response) {
+        if(response.ok) {
+          return response.json();
+        } else throw new Error('There was a problem with network connection.');
+      }).then(function(json) {
+        this.setState({
+          universityId: json.faculty.university.id
+        });
+        fetch('/api/universities/' + json.faculty.university.id + "/supervisors?size=" + Util.USERS_PER_PAGE + "&start=" +
           (page * Util.USERS_PER_PAGE), {
             method: 'get',
             credentials: 'same-origin'
@@ -174,6 +225,10 @@ class Users extends Component {
         dataHandler={(method, id, data) => this.manageData(method, id, data)} />);
     else if (Auth.hasRole(Util.userRoles.companyRep))
       return (<CompanyRepUsersView users={this.state.users} companyId={this.state.companyId}
+        dataHandler={(method, id, data) => this.manageData(method, id, data)}
+        snackbarSetter={(label) => this.setSnackbarResponse(label)} />);
+    else if (Auth.hasRole(Util.userRoles.ambassador))
+      return (<AmbassadorUsersView users={this.state.users} universityId={this.state.universityId}
         dataHandler={(method, id, data) => this.manageData(method, id, data)}
         snackbarSetter={(label) => this.setSnackbarResponse(label)} />);
   }

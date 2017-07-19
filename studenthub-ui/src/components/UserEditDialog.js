@@ -155,7 +155,8 @@ class UserEditDialog extends Component {
       admin: false,
       rep: false,
       student: false,
-      tech: false
+      tech: false,
+      amb: false
     }
   }
 
@@ -171,6 +172,7 @@ class UserEditDialog extends Component {
     var repState = false;
     var studentState = false;
     var techState = false;
+    var ambState = false;
 
 
     for (let i = 0; i < nextProps.user.tags.length; i++) {
@@ -179,11 +181,12 @@ class UserEditDialog extends Component {
     }
 
     for (let i = 0; i < nextProps.user.roles.length; i++) {
-      if(nextProps.user.roles[i] === "AC_SUPERVISOR") supervisorState = true;
-      else if(nextProps.user.roles[i] === "ADMIN") adminState = true;
-      else if(nextProps.user.roles[i] === "COMPANY_REP") repState = true;
-      else if(nextProps.user.roles[i] === "STUDENT") studentState = true;
-      else if(nextProps.user.roles[i] === "TECH_LEADER") techState = true;
+      if (nextProps.user.roles[i] === "AC_SUPERVISOR") supervisorState = true;
+      else if (nextProps.user.roles[i] === "ADMIN") adminState = true;
+      else if (nextProps.user.roles[i] === "COMPANY_REP") repState = true;
+      else if (nextProps.user.roles[i] === "STUDENT") studentState = true;
+      else if (nextProps.user.roles[i] === "TECH_LEADER") techState = true;
+      else if (nextProps.user.roles[i] === Util.userRoles.ambassador) ambState = true;
     }
 
     this.setState({
@@ -197,20 +200,10 @@ class UserEditDialog extends Component {
       admin: adminState,
       rep: repState,
       student: studentState,
-      tech: techState
+      tech: techState,
+      amb: ambState
     });
   }
-
-  /**
-   * Dialog source of user roles.
-   */
-  roles = [
-    { value: "AC_SUPERVISOR", label: _t.translate("AC_SUPERVISOR")},
-    { value: "ADMIN", label: _t.translate("ADMIN")},
-    { value: "COMPANY_REP", label: _t.translate("COMPANY_REP")},
-    { value: "STUDENT", label: _t.translate("STUDENT")},
-    { value: "TECH_LEADER", label: _t.translate("TECH_LEADER")}
-  ];
 
   actions = [
     { label: _t.translate('Save changes'), onClick: () => this.handleSave() },
@@ -260,11 +253,12 @@ class UserEditDialog extends Component {
   getRoles = () => {
     var roles = [];
 
-    if(this.state.supervisor === true) roles.push("AC_SUPERVISOR");
-    if(this.state.admin === true) roles.push("ADMIN");
-    if(this.state.rep === true) roles.push("COMPANY_REP");
-    if(this.state.student === true) roles.push("STUDENT");
-    if(this.state.tech === true) roles.push("TECH_LEADER");
+    if (this.state.supervisor === true) roles.push("AC_SUPERVISOR");
+    if (this.state.admin === true) roles.push("ADMIN");
+    if (this.state.rep === true) roles.push("COMPANY_REP");
+    if (this.state.student === true) roles.push("STUDENT");
+    if (this.state.tech === true) roles.push("TECH_LEADER");
+    if (this.state.amb === true) roles.push("UNIVERSITY_AMB");
 
     return roles;
   }
@@ -324,6 +318,11 @@ class UserEditDialog extends Component {
             label={ _t.translate("COMPANY_REP") }
             name='roles'
             onChange={this.handleChange.bind(this, 'rep')} />
+          <Checkbox
+            checked={this.state.amb}
+            label={ _t.translate("UNIVERSITY_AMB") }
+            name='roles'
+            onChange={this.handleChange.bind(this, 'amb')} />
           <Checkbox
             checked={this.state.student}
             label={ _t.translate("STUDENT") }

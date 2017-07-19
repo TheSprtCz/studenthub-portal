@@ -70,6 +70,7 @@ Util.userRoles = {
   superviser: "AC_SUPERVISOR",
   admin: "ADMIN",
   companyRep: "COMPANY_REP",
+  ambassador: "UNIVERSITY_AMB",
   student: "STUDENT",
   techLeader: "TECH_LEADER"
 }
