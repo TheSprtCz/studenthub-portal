@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Redirect } from 'react-router-dom';
+import Link from 'react-toolbox/lib/link/Link.js';
 import Table from 'react-toolbox/lib/table/Table.js';
 import TableHead from 'react-toolbox/lib/table/TableHead.js';
 import TableRow from 'react-toolbox/lib/table/TableRow.js';
@@ -110,6 +111,7 @@ class ApplicationTable extends Component {
         <Table selectable={false}>
           <TableHead>
             <TableCell>{ _t.translate('Topic title') }</TableCell>
+            <TableCell>{ _t.translate('External link') }</TableCell>
             <TableCell>{ _t.translate('Faculty') }</TableCell>
             <TableCell>{ _t.translate('Technical leader') }</TableCell>
             <TableCell>{ _t.translate('Academic supervisor') }</TableCell>
@@ -121,6 +123,7 @@ class ApplicationTable extends Component {
           {this.state.applications.map((item) => (
             <TableRow key={item.id}>
               <TableCell><strong>{item.topic.title}</strong></TableCell>
+              <TableCell><Link href={item.link} label={item.link} icon='explore' /></TableCell>
               <TableCell>{item.faculty.name}</TableCell>
               <TableCell>{Util.isEmpty(item.techLeader) ? "" : item.techLeader.email}</TableCell>
               <TableCell>{Util.isEmpty(item.academicSupervisor) ? "" : item.academicSupervisor.email}</TableCell>

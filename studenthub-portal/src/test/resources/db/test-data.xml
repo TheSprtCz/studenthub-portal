@@ -884,6 +884,7 @@
             <column name="TECHLEADER_ID" valueNumeric="8"/>
             <column name="TOPIC_ID" valueNumeric="1"/>
             <column name="THESISSTART" valueDate="2016-09-17 02:00:00.0"/>
+            <column name="LINK" value="https://www.github.com"/>
         </insert>
         <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="TOPICAPPLICATIONS">
             <column name="ID" valueNumeric="2"/>
@@ -897,6 +898,7 @@
             <column name="TECHLEADER_ID" valueNumeric="9"/>
             <column name="TOPIC_ID" valueNumeric="1"/>
             <column name="THESISSTART" valueDate="2016-09-15 02:00:00.0"/>
+            <column name="LINK"/>
         </insert>
         <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="TOPICAPPLICATIONS">
             <column name="ID" valueNumeric="3"/>
@@ -910,6 +912,7 @@
             <column name="TECHLEADER_ID" valueNumeric="8"/>
             <column name="TOPIC_ID" valueNumeric="1"/>
             <column name="THESISSTART"/>
+            <column name="LINK"/>
         </insert>
         <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="TOPICAPPLICATIONS">
             <column name="ID" valueNumeric="4"/>
@@ -923,6 +926,7 @@
             <column name="TECHLEADER_ID" valueNumeric="11"/>
             <column name="TOPIC_ID" valueNumeric="2"/>
             <column name="THESISSTART" valueDate="2016-10-02 02:00:00.0"/>
+            <column name="LINK" value="https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet"/>
         </insert>
         <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="TOPICAPPLICATIONS">
             <column name="ID" valueNumeric="5"/>
@@ -936,6 +940,7 @@
             <column name="TECHLEADER_ID" valueNumeric="11"/>
             <column name="TOPIC_ID" valueNumeric="2"/>
             <column name="THESISSTART"/>
+            <column name="LINK"/>
         </insert>
         <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="TOPICAPPLICATIONS">
             <column name="ID" valueNumeric="6"/>
@@ -949,6 +954,7 @@
             <column name="TECHLEADER_ID" valueNumeric="10"/>
             <column name="TOPIC_ID" valueNumeric="3"/>
             <column name="THESISSTART" valueDate="2017-03-05 01:00:00.0"/>
+            <column name="LINK"/>
         </insert>
         <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="TOPICAPPLICATIONS">
             <column name="ID" valueNumeric="7"/>
@@ -962,6 +968,7 @@
             <column name="TECHLEADER_ID" valueNumeric="9"/>
             <column name="TOPIC_ID" valueNumeric="4"/>
             <column name="THESISSTART" valueDate="2017-04-10 02:00:00.0"/>
+            <column name="LINK" value="https://github.com/StudentHubCZ/studenthub-portal"/>
         </insert>
     </changeSet>
     <changeSet author="phala (generated)" id="1492005380103-22" objectQuotingStrategy="QUOTE_ALL_OBJECTS">

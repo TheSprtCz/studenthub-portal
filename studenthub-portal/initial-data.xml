@@ -228,6 +228,7 @@
             <column name="student_id" valueNumeric="4"/>
             <column name="techleader_id" valueNumeric="3"/>
             <column name="topic_id" valueNumeric="1"/>
+            <column name="link"/>
         </insert>
         <insert catalogName="studenthub" schemaName="public" tableName="topicapplications">
             <column name="id" valueNumeric="2"/>
@@ -241,6 +242,7 @@
             <column name="student_id" valueNumeric="4"/>
             <column name="techleader_id" valueNumeric="3"/>
             <column name="topic_id" valueNumeric="2"/>
+            <column name="link" value="https://www.github.com"/>
         </insert>
         <sql>SELECT setval('topicapplications_id_seq', 2)</sql>
     </changeSet>

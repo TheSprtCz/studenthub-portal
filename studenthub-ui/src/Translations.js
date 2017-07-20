@@ -381,6 +381,9 @@ const myLocalize = new Localize({
     },
     'PROJECT_LEADER': {
       'cs': 'Vedoucí projektu'
+    },
+    'External link': {
+      'cs': 'Externí odkaz'
     }
 });
 

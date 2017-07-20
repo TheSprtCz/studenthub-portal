@@ -89,4 +89,9 @@
         <modifyDataType catalogName="studenthub" columnName="url" newDataType="VARCHAR(2047)" schemaName="public" tableName="universities"/>
         <modifyDataType catalogName="studenthub" columnName="logourl" newDataType="VARCHAR(2047)" schemaName="public" tableName="universities"/>
     </changeSet>
+    <changeSet author="phala" id="externalLink">
+        <addColumn catalogName="studenthub" schemaName="public" tableName="topicapplications">
+            <column name="link" type="VARCHAR(2047)"/>
+        </addColumn>
+    </changeSet>    
 </databaseChangeLog>
