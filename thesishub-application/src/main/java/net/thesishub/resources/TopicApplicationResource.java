@@ -56,6 +56,7 @@ import net.thesishub.core.User;
 import net.thesishub.db.TaskDAO;
 import net.thesishub.db.TopicApplicationDAO;
 import net.thesishub.util.PagingUtil;
+import net.thesishub.util.Equals;
 import net.thesishub.validators.groups.CreateUpdateChecks;
 
 @Path("/applications")
@@ -115,9 +116,9 @@ public class TopicApplicationResource {
       throw new WebApplicationException(Status.NOT_FOUND);
 
     // allow topic creator/leader, assigned student, topic supervisor, admin
-    if ((oldApp.getTechLeader() != null && oldApp.getTechLeader().equals(user)) 
-        || oldApp.getStudent().equals(user)
-        || (oldApp.getAcademicSupervisor() != null && oldApp.getAcademicSupervisor().equals(user)) 
+    if (Equals.id(oldApp.getTechLeader(), user)
+        || Equals.id(oldApp.getStudent(), user)
+        || Equals.id(oldApp.getAcademicSupervisor(), user) 
         || user.isAdmin()) {
       app.setId(id);
       appDao.update(app);
@@ -134,7 +135,7 @@ public class TopicApplicationResource {
   public Response create(@NotNull @Valid @Validated(CreateUpdateChecks.class) TopicApplication app, @Auth User user) {
 
     // Student can only create applications for himself.
-    if (app.getStudent().getId().equals(user.getId())) {
+    if (Equals.id(app.getStudent(), user)) {
       appDao.create(app);
       if (app.getId() == null)
         throw new WebApplicationException(Status.INTERNAL_SERVER_ERROR);

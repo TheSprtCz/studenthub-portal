@@ -56,6 +56,7 @@ import net.thesishub.core.UserRole;
 import net.thesishub.db.FacultyDAO;
 import net.thesishub.db.ProjectDAO;
 import net.thesishub.db.UserDAO;
+import net.thesishub.util.Equals;
 import net.thesishub.util.PagingUtil;
 
 @Path("/faculties")
@@ -100,7 +101,7 @@ public class FacultyResource {
       throw new WebApplicationException(Status.NOT_FOUND);
 
     // User can delete only faculties belonging to his university
-    if (faculty.getUniversity().getId().equals(user.getFaculty().getUniversity().getId()) || user.isAdmin()) {
+    if (Equals.id(faculty.getUniversity(), user.getFaculty().getUniversity()) || user.isAdmin()) {
       facDao.delete(faculty);
       return Response.noContent().build();
     } else {
@@ -119,10 +120,8 @@ public class FacultyResource {
     if (oldFaculty == null)
       throw new WebApplicationException(Status.NOT_FOUND);
 
-    Long uniId = user.getFaculty().getUniversity().getId();
     // User must not change university and have the same university as the old one or be Admin
-    if ((faculty.getUniversity().getId().equals(uniId) && oldFaculty.getUniversity().getId().equals(uniId))
-        || user.isAdmin()) {
+    if (Equals.id(faculty.getUniversity(), user.getFaculty().getUniversity()) || user.isAdmin()) {
 
       faculty.setId(id);
       facDao.update(faculty);
@@ -138,7 +137,7 @@ public class FacultyResource {
   @RolesAllowed({ "ADMIN", "UNIVERSITY_AMB" })
   public Response create(@NotNull @Valid Faculty faculty, @Auth User user) {
     // User can create only faculties for his university
-    if (faculty.getUniversity().getId().equals(user.getFaculty().getUniversity().getId()) || user.isAdmin()) {
+    if (Equals.id(faculty.getUniversity(), user.getFaculty().getUniversity()) || user.isAdmin()) {
       facDao.create(faculty);
       if (faculty.getId() == null)
         throw new WebApplicationException(Status.INTERNAL_SERVER_ERROR);

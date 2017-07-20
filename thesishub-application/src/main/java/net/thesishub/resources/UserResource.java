@@ -55,6 +55,7 @@ import net.thesishub.db.ProjectDAO;
 import net.thesishub.db.TopicApplicationDAO;
 import net.thesishub.db.TopicDAO;
 import net.thesishub.db.UserDAO;
+import net.thesishub.util.Equals;
 import net.thesishub.util.PagingUtil;
 
 @Path("/users")
@@ -74,9 +75,6 @@ public class UserResource {
   @Inject
   private ProjectDAO projectDao;
 
-  // private static final Logger LOG =
-  // LoggerFactory.getLogger(UserResource.class);
-
   @GET
   @Timed
   @UnitOfWork
@@ -91,10 +89,12 @@ public class UserResource {
   @Path("/{id}")
   @UnitOfWork
   @PermitAll
-  public User findById(@Auth User user, @PathParam("id") LongParam id) {
+  public User findById(@Auth User user, @PathParam("id") LongParam idParam) {
+    Long id = idParam.get();
+
     // only admin or profile owner is allowed
-    if (id.get().equals(user.getId()) || user.isAdmin()) {
-      return userDao.findById(id.get());
+    if (Equals.id(user, id) || user.isAdmin()) {
+      return userDao.findById(id);
     } else {
       throw new WebApplicationException(Status.FORBIDDEN);
     }
@@ -109,7 +109,7 @@ public class UserResource {
     User user = userDao.findById(id);
 
     // only admin or profile owner is allowed
-    if (id.equals(authUser.getId()) || authUser.isAdmin()) {
+    if (Equals.id(authUser, id) || authUser.isAdmin()) {
       userDao.delete(user);
       return Response.noContent().build();
     } else {
@@ -128,7 +128,9 @@ public class UserResource {
     User oldUser = userDao.findById(id);
 
     // If user is updating himself and doesn't change his roles or is admin
-    if ((id.equals(authUser.getId()) && oldUser.getRoles().equals(user.getRoles())) || authUser.isAdmin()) {
+    if ((Equals.id(authUser, id) && oldUser.getRoles().equals(user.getRoles())
+        && Equals.id(oldUser.getFaculty(), user.getFaculty())
+        && Equals.id(oldUser.getCompany(), user.getCompany())) || authUser.isAdmin()) {
       user.setId(id);
       user.setPassword(oldUser.getPassword());
       userDao.update(user);
@@ -143,13 +145,14 @@ public class UserResource {
   @Path("/{id}/applications")
   @UnitOfWork
   @RolesAllowed({"ADMIN", "STUDENT"})
-  public List<TopicApplication> fetchApplications(@Auth User user, @PathParam("id") LongParam id,
+  public List<TopicApplication> fetchApplications(@Auth User user, @PathParam("id") LongParam idParam,
       @Min(0) @DefaultValue("0") @QueryParam("start") IntParam startParam,
       @Min(0) @DefaultValue("0") @QueryParam("size") IntParam sizeParam,
       @Context HttpServletResponse response) {
 
-    if (id.get().equals(user.getId()) || user.isAdmin()) {
-      User student = userDao.findById(id.get());
+    Long id = idParam.get();
+    if (Equals.id(user, id) || user.isAdmin()) {
+      User student = userDao.findById(id);
       return PagingUtil.paging(appDao.findByStudent(student), startParam.get(), sizeParam.get(), response);
     } else {
       throw new WebApplicationException(Status.FORBIDDEN);
@@ -161,13 +164,14 @@ public class UserResource {
   @Path("/{id}/ledApplications")
   @UnitOfWork
   @RolesAllowed({"ADMIN", "TECH_LEADER"})
-  public List<TopicApplication> fetchLedApps(@Auth User user, @PathParam("id") LongParam id,
+  public List<TopicApplication> fetchLedApps(@Auth User user, @PathParam("id") LongParam idParam,
       @Min(0) @DefaultValue("0") @QueryParam("start") IntParam startParam,
       @Min(0) @DefaultValue("0") @QueryParam("size") IntParam sizeParam,
       @Context HttpServletResponse response) {
 
-    if (id.get().equals(user.getId()) || user.isAdmin()) {
-      User leader = userDao.findById(id.get());
+    Long id = idParam.get();
+    if (Equals.id(user, id) || user.isAdmin()) {
+      User leader = userDao.findById(id);
       return PagingUtil.paging(appDao.findByLeader(leader), startParam.get(), sizeParam.get(), response);
     } else {
       throw new WebApplicationException(Status.FORBIDDEN);
@@ -179,13 +183,14 @@ public class UserResource {
   @Path("/{id}/ownedTopics")
   @UnitOfWork
   @RolesAllowed({"ADMIN", "TECH_LEADER"})
-  public List<Topic> fetchOwnedTopics(@Auth User user, @PathParam("id") LongParam id,
+  public List<Topic> fetchOwnedTopics(@Auth User user, @PathParam("id") LongParam idParam,
       @Min(0) @DefaultValue("0") @QueryParam("start") IntParam startParam,
       @Min(0) @DefaultValue("0") @QueryParam("size") IntParam sizeParam,
       @Context HttpServletResponse response) {
 
-    if (id.get().equals(user.getId()) || user.isAdmin()) {
-      User creator = userDao.findById(id.get());
+    Long id = idParam.get();
+    if (Equals.id(user, id) || user.isAdmin()) {
+      User creator = userDao.findById(id);
       return PagingUtil.paging(topicDao.findByCreator(creator), startParam.get(), sizeParam.get(), response);
     } else {
       throw new WebApplicationException(Status.FORBIDDEN);
@@ -197,13 +202,14 @@ public class UserResource {
   @Path("/{id}/supervisedTopics")
   @UnitOfWork
   @RolesAllowed({"ADMIN", "AC_SUPERVISOR"})
-  public List<Topic> fetchSupervisedTopics(@Auth User user, @PathParam("id") LongParam id,
+  public List<Topic> fetchSupervisedTopics(@Auth User user, @PathParam("id") LongParam idParam,
       @Min(0) @DefaultValue("0") @QueryParam("start") IntParam startParam,
       @Min(0) @DefaultValue("0") @QueryParam("size") IntParam sizeParam,
       @Context HttpServletResponse response) {
 
-    if (id.get().equals(user.getId()) || user.isAdmin()) {
-      User supervisor = userDao.findById(id.get());
+    Long id = idParam.get();
+    if (Equals.id(user, id) || user.isAdmin()) {
+      User supervisor = userDao.findById(id);
       return PagingUtil.paging(topicDao.findBySupervisor(supervisor), startParam.get(), sizeParam.get(), response);
     } else {
       throw new WebApplicationException(Status.FORBIDDEN);
@@ -215,13 +221,14 @@ public class UserResource {
   @Path("/{id}/supervisedApplications")
   @UnitOfWork
   @RolesAllowed({"ADMIN", "AC_SUPERVISOR"})
-  public List<TopicApplication> fetchSupervisedApplications(@Auth User user, @PathParam("id") LongParam id,
+  public List<TopicApplication> fetchSupervisedApplications(@Auth User user, @PathParam("id") LongParam idParam,
       @Min(0) @DefaultValue("0") @QueryParam("start") IntParam startParam,
       @Min(0) @DefaultValue("0") @QueryParam("size") IntParam sizeParam,
       @Context HttpServletResponse response) {
 
-    if (id.get().equals(user.getId()) || user.isAdmin()) {
-      User supervisor = userDao.findById(id.get());
+    Long id = idParam.get();
+    if (Equals.id(user, id) || user.isAdmin()) {
+      User supervisor = userDao.findById(id);
       return PagingUtil.paging(appDao.findBySupervisor(supervisor), startParam.get(), sizeParam.get(), response);
     } else {
       throw new WebApplicationException(Status.FORBIDDEN);
@@ -233,13 +240,14 @@ public class UserResource {
   @Path("/{id}/projects")
   @UnitOfWork
   @RolesAllowed({"ADMIN", "PROJECT_LEADER"})
-  public List<Project> fetchProjects(@Auth User user, @PathParam("id") LongParam id,
+  public List<Project> fetchProjects(@Auth User user, @PathParam("id") LongParam idParam,
       @Min(0) @DefaultValue("0") @QueryParam("start") IntParam startParam,
       @Min(0) @DefaultValue("0") @QueryParam("size") IntParam sizeParam,
       @Context HttpServletResponse response) {
 
-    if (id.get().equals(user.getId()) || user.isAdmin()) {
-      User creator = userDao.findById(id.get());
+    Long id = idParam.get();
+    if (Equals.id(user, id) || user.isAdmin()) {
+      User creator = userDao.findById(id);
       return PagingUtil.paging(projectDao.findByCreator(creator), startParam.get(), sizeParam.get(), response);
     } else {
       throw new WebApplicationException(Status.FORBIDDEN);
