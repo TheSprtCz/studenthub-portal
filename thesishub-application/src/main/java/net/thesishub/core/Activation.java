@@ -5,9 +5,6 @@ import java.util.Objects;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToOne;
@@ -25,11 +22,7 @@ import net.thesishub.auth.ThesisHubPasswordEncoder;
 @NamedQueries({ @NamedQuery(name = "Activation.findByUser", query = "SELECT activation FROM Activation activation WHERE user = :user"),
   @NamedQuery(name = "Activation.findByUserAndType", query = "SELECT activation FROM Activation activation WHERE user = :user AND type = :type"),
   @NamedQuery(name = "Activation.findAll", query = "SELECT activation FROM Activation activation")})
-public class Activation {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class Activation extends GenericEntity<Long>{
 
     @NotNull
     @OneToOne
@@ -54,14 +47,6 @@ public class Activation {
 
     public Activation(User user, ActivationType type) {
       this(user, ThesisHubPasswordEncoder.genSecret(), type);
-    }
-
-    public Long getId() {
-      return id;
-    }
-
-    public void setId(Long id) {
-      this.id = id;
     }
 
     public User getUser() {
@@ -91,18 +76,6 @@ public class Activation {
     @Override
     public int hashCode() {
       return Objects.hash(user, activationCode);
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-      if (this == obj) {
-        return true;
-      }
-      if ((obj == null) || (getClass() != obj.getClass())) {
-        return false;
-      }
-
-      return Integer.compare(this.hashCode(), obj.hashCode()) == 0;
     }
 
     @Override

@@ -53,6 +53,7 @@ import net.thesishub.core.UserRole;
 import net.thesishub.db.ActivationDAO;
 import net.thesishub.db.FacultyDAO;
 import net.thesishub.db.UserDAO;
+import net.thesishub.util.Equals;
 import net.thesishub.util.MailClient;
 import net.thesishub.util.SmtpConfig;
 
@@ -138,7 +139,7 @@ public class RegistrationResource {
       // Company rep checks, he can only invite COMPANY_REP and TECH_LEADER with same company as he has
       if (auth.hasRole(UserRole.COMPANY_REP)) {
         if (user.hasOnlyOneOfRoles(UserRole.COMPANY_REP, UserRole.TECH_LEADER)) {
-          if (!user.getCompany().getId().equals(auth.getCompany().getId()))
+          if (!Equals.id(user.getCompany(), auth.getCompany()))
             throw new WebApplicationException("You can only invite users with the same company as you", Status.BAD_REQUEST);
         }
         else {
@@ -153,7 +154,7 @@ public class RegistrationResource {
           throw new WebApplicationException("Specified faculty does not exist", Status.NOT_FOUND);
 
         if (user.hasOnlyOneOfRoles(UserRole.UNIVERSITY_AMB, UserRole.AC_SUPERVISOR)) {
-          if (!faculty.getUniversity().getId().equals(auth.getFaculty().getUniversity().getId()))
+          if (!Equals.id(faculty.getUniversity(), auth.getFaculty().getUniversity()))
             throw new WebApplicationException("You can only invite users with the same university as you", Status.BAD_REQUEST);
         }
         else {
@@ -293,7 +294,7 @@ public class RegistrationResource {
     if (user == null)
       throw new WebApplicationException(Status.NOT_FOUND);
 
-    if (id.equals(auth.getId()) || auth.isAdmin()) {
+    if (Equals.id(auth, id) || auth.isAdmin()) {
       // check if old password matches
       if (ThesisHubPasswordEncoder.matches(updateBean.getOldPwd(), user.getPassword())) {
         // set new password

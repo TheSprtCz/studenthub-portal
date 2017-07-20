@@ -19,9 +19,6 @@ package net.thesishub.core;
 import java.util.Objects;
 
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -33,11 +30,7 @@ import org.hibernate.validator.constraints.URL;
 @Entity
 @Table(name = "Universities")
 @NamedQueries({ @NamedQuery(name = "University.findAll", query = "SELECT university FROM University university") })
-public class University {
-
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long id;
+public class University extends GenericEntity<Long> {
 
   @NotEmpty
   private String name;
@@ -61,14 +54,6 @@ public class University {
     this.city = city;
     this.country = country;
     this.logoUrl = logoUrl;
-  }
-
-  public Long getId() {
-    return id;
-  }
-
-  public void setId(Long id) {
-    this.id = id;
   }
 
   public String getName() {
@@ -114,18 +99,6 @@ public class University {
   @Override
   public int hashCode() {
     return Objects.hash(id, name, url, city, country);
-  }
-
-  @Override
-  public boolean equals(Object obj) {
-    if (this == obj) {
-      return true;
-    }
-    if ((obj == null) || (getClass() != obj.getClass())) {
-      return false;
-    }
-
-    return Integer.compare(this.hashCode(), obj.hashCode()) == 0;
   }
 
   @Override

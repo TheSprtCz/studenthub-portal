@@ -59,6 +59,7 @@ import net.thesishub.db.CompanyDAO;
 import net.thesishub.db.ProjectDAO;
 import net.thesishub.db.TopicDAO;
 import net.thesishub.db.UserDAO;
+import net.thesishub.util.Equals;
 import net.thesishub.util.PagingUtil;
 
 @Path("/companies")
@@ -120,7 +121,7 @@ public class CompanyResource {
       throw new WebApplicationException(Status.NOT_FOUND);
 
     // Only admin can change companyPlan
-    if ((id.equals(user.getCompany().getId()) && oldCompany.getPlan().getName().equals(company.getPlan().getName())) || user.isAdmin()) {
+    if ((Equals.id(user.getCompany(), id) && oldCompany.getPlan().getName().equals(company.getPlan().getName())) || user.isAdmin()) {
       company.setId(id);
       companyDao.update(company);
       return Response.ok(company).build();
@@ -189,7 +190,7 @@ public class CompanyResource {
 
     Company userCompany = user.getCompany();
     // If user's company is the same as the company he want to view or he is admin
-    if ((userCompany != null && userCompany.getId().equals(company.getId())) || user.isAdmin()) {
+    if ((userCompany != null && Equals.id(userCompany, company)) || user.isAdmin()) {
       return company.getPlan();
     }
     else {

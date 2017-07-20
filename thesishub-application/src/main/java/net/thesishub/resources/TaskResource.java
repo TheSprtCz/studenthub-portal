@@ -45,6 +45,7 @@ import net.thesishub.core.TopicApplication;
 import net.thesishub.core.User;
 import net.thesishub.db.TaskDAO;
 import net.thesishub.db.TopicApplicationDAO;
+import net.thesishub.util.Equals;
 
 @Path("/tasks")
 @Produces(MediaType.APPLICATION_JSON)
@@ -122,9 +123,9 @@ public class TaskResource {
   }
 
   public static boolean isAllowedToAccessTask(TopicApplication app, User user) {
-    return (app.getAcademicSupervisor() != null && app.getAcademicSupervisor().equals(user)) 
-        || app.getStudent().equals(user) 
-        || (app.getTechLeader() != null && app.getTechLeader().equals(user))
+    return (Equals.id(app.getAcademicSupervisor(), user)) 
+        || Equals.id(app.getStudent(), user)
+        || Equals.id(app.getTechLeader(), user)
         || user.isAdmin();
   }
 

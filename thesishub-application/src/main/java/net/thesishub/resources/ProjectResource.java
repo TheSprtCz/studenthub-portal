@@ -59,6 +59,7 @@ import net.thesishub.core.UserRole;
 import net.thesishub.db.ProjectDAO;
 import net.thesishub.db.TopicApplicationDAO;
 import net.thesishub.db.TopicDAO;
+import net.thesishub.util.Equals;
 import net.thesishub.util.PagingUtil;
 import net.thesishub.validators.groups.CreateUpdateChecks;
 
@@ -252,7 +253,7 @@ public class ProjectResource {
 
     // If user is creator or he is company rep of associated company and topic or admin
     if (project.getCreators().contains(user) || (user.hasRole(UserRole.COMPANY_REP) && project.getCompanies().contains(user.getCompany())
-        && topic.getCreator().getCompany().equals(user.getCompany())) || user.isAdmin()) {
+        && Equals.id(topic.getCreator().getCompany(), user.getCompany())) || user.isAdmin()) {
 
       if (project.getTopics().contains(topic))
         throw new WebApplicationException("Topic is already assigned to this project", Status.CONFLICT);

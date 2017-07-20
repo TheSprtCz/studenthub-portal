@@ -4,9 +4,6 @@ import java.util.Objects;
 import java.util.Set;
 
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -24,11 +21,7 @@ import net.thesishub.validators.groups.CreateUpdateChecks;
   @NamedQuery(name = "Project.findByCompany", query = "SELECT project FROM Project project join project.companies company WHERE company = :company"),
   @NamedQuery(name = "Project.findByCreator", query = "SELECT project FROM Project project join project.creators creator WHERE creator = :creator"),
   @NamedQuery(name = "Project.findByFaculty", query = "SELECT project FROM Project project join project.faculties faculty WHERE faculty = :faculty") })
-public class Project {
-
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long id;
+public class Project extends GenericEntity<Long> {
 
   @NotEmpty
   private String name;
@@ -59,14 +52,6 @@ public class Project {
     this.companies = companies;
     this.faculties = faculties;
     this.topics = topics;
-  }
-
-  public Long getId() {
-    return id;
-  }
-
-  public void setId(Long id) {
-    this.id = id;
   }
 
   public String getName() {

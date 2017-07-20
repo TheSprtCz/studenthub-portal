@@ -23,9 +23,6 @@ import javax.annotation.Nullable;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -48,11 +45,7 @@ import net.thesishub.validators.groups.CreateUpdateChecks;
   @NamedQuery(name = "TopicApplication.findByStudent", query = "SELECT app FROM TopicApplication app WHERE app.student = :student"),
   @NamedQuery(name = "TopicApplication.findByLeader", query = "SELECT app FROM TopicApplication app WHERE app.techLeader = :leader"),
   @NamedQuery(name = "TopicApplication.findBySupervisor", query = "SELECT app FROM TopicApplication app WHERE app.academicSupervisor = :supervisor") })
-public class TopicApplication {
-
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long id;
+public class TopicApplication extends GenericEntity<Long> {
 
   @NotNull
   @ManyToOne
@@ -109,14 +102,6 @@ public class TopicApplication {
     this.student = student;
     this.academicSupervisor = academicSupervisor;
     this.link = link;
-  }
-
-  public Long getId() {
-    return id;
-  }
-
-  public void setId(Long id) {
-    this.id = id;
   }
 
   public Topic getTopic() {
@@ -210,18 +195,6 @@ public class TopicApplication {
   @Override
   public int hashCode() {
     return Objects.hash(id, thesisFinish, grade, degree);
-  }
-
-  @Override
-  public boolean equals(Object obj) {
-    if (this == obj) {
-      return true;
-    }
-    if ((obj == null) || (getClass() != obj.getClass())) {
-      return false;
-    }
-
-    return Integer.compare(this.hashCode(), obj.hashCode()) == 0;
   }
 
   @Override

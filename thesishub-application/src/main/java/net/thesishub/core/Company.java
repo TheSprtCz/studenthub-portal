@@ -21,9 +21,6 @@ import java.util.Objects;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -39,11 +36,7 @@ import com.fasterxml.jackson.annotation.JsonProperty.Access;
 @Entity
 @Table(name = "Companies")
 @NamedQueries({ @NamedQuery(name = "Company.findAll", query = "SELECT company FROM Company company") })
-public class Company {
-
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long id;
+public class Company extends GenericEntity<Long> {
 
   @NotEmpty
   private String name;
@@ -78,14 +71,6 @@ public class Company {
     this.logoUrl = logoUrl;
     this.size = size;
     this.plan = plan;
-  }
-
-  public Long getId() {
-    return id;
-  }
-
-  public void setId(Long id) {
-    this.id = id;
   }
 
   public String getName() {
@@ -147,18 +132,6 @@ public class Company {
   @Override
   public int hashCode() {
     return Objects.hash(id, name, url, city, size, plan);
-  }
-
-  @Override
-  public boolean equals(Object obj) {
-    if (this == obj) {
-      return true;
-    }
-    if ((obj == null) || (getClass() != obj.getClass())) {
-      return false;
-    }
-
-    return Integer.compare(this.hashCode(), obj.hashCode()) == 0;
   }
 
   @Override

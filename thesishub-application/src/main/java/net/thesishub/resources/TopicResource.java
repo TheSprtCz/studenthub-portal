@@ -15,6 +15,7 @@
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *******************************************************************************/
 package net.thesishub.resources;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -59,6 +60,7 @@ import net.thesishub.db.ProjectDAO;
 import net.thesishub.db.TopicApplicationDAO;
 import net.thesishub.db.TopicDAO;
 import net.thesishub.db.UserDAO;
+import net.thesishub.util.Equals;
 import net.thesishub.util.PagingUtil;
 import net.thesishub.validators.groups.CreateUpdateChecks;
 
@@ -96,7 +98,7 @@ public class TopicResource {
     Topic topic = topicDao.findById(id.get());
 
     // If topic is enabled, or user is creator or admin, return topic 
-    if (topic != null && (topic.isEnabled() || (user.isPresent() && (topic.getCreator().getId().equals(user.get().getId())
+    if (topic != null && (topic.isEnabled() || (user.isPresent() && (Equals.id(topic.getCreator(), user.get())
        || user.get().isAdmin())))) {
       return topic;
     }
@@ -130,10 +132,10 @@ public class TopicResource {
     if (oldTopic == null)
       throw new WebApplicationException(Status.NOT_FOUND);
 
-    Long oldCreatorId = oldTopic.getCreator().getId();
-    Long newCreatorId = topic.getCreator().getId();
+    User oldCreator = oldTopic.getCreator();
+    User newCreator = topic.getCreator();
     // if user is topic creator and creator stays the same, or is an admin
-    if ((oldCreatorId.equals(user.getId()) && oldCreatorId.equals(newCreatorId))
+    if ((Equals.id(oldCreator, user) && Equals.id(oldCreator, newCreator))
         || user.isAdmin()) {
 
       // If topic went from disabled to enabled state
@@ -162,7 +164,7 @@ public class TopicResource {
   public Response create(@NotNull @Valid @Validated(CreateUpdateChecks.class) Topic topic, @Auth User user) {
 
     // If user is topic creator or is an admin
-    if (topic.getCreator().getId().equals(user.getId()) || user.isAdmin()) {
+  	if (Equals.id(topic.getCreator(), user) || user.isAdmin()) {
 
       // Because creator info is available only after persisting it to DB, I
       // have to fetch him manually

@@ -55,6 +55,7 @@ import net.thesishub.core.UserRole;
 import net.thesishub.db.FacultyDAO;
 import net.thesishub.db.UniversityDAO;
 import net.thesishub.db.UserDAO;
+import net.thesishub.util.Equals;
 import net.thesishub.util.PagingUtil;
 
 @Path("/universities")
@@ -124,7 +125,7 @@ public class UniversityResource {
     if (oldUni == null)
       throw new WebApplicationException(Status.NOT_FOUND);
 
-    if (id.equals(user.getFaculty().getUniversity().getId()) || user.isAdmin()) {
+    if (Equals.id(user.getFaculty().getUniversity(), id) || user.isAdmin()) {
       university.setId(id);
       uniDao.update(university);
       return Response.ok(university).build();
@@ -177,7 +178,7 @@ public class UniversityResource {
     if (university == null)
       throw new WebApplicationException(Status.NOT_FOUND);
 
-    if (user.getFaculty().getUniversity().getId().equals(id) || user.isAdmin()) {
+    if (Equals.id(user.getFaculty().getUniversity(), id) || user.isAdmin()) {
       return PagingUtil.paging(userDao.findByRoleAndUniversity(UserRole.AC_SUPERVISOR, university), startParam.get(), sizeParam.get(), response);
     } else {
       throw new WebApplicationException(Status.FORBIDDEN);

@@ -23,9 +23,6 @@ import javax.annotation.Nullable;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
@@ -46,11 +43,7 @@ import net.thesishub.validators.groups.CreateUpdateChecks;
   @NamedQuery(name = "Topic.findByTag", query = "SELECT topic FROM Topic topic join topic.tags tag WHERE tag = :tag AND enabled = TRUE"),
   @NamedQuery(name = "Topic.findByCompany", query = "SELECT topic FROM Topic topic WHERE topic.creator.company = :company AND enabled = TRUE"),
   @NamedQuery(name = "Topic.countByCompany", query = "SELECT COUNT(topic) FROM Topic topic WHERE topic.creator.company = :company AND enabled = TRUE") })
-public class Topic {
-
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long id;
+public class Topic extends GenericEntity<Long> {
 
   @NotEmpty
   private String title;
@@ -91,14 +84,6 @@ public class Topic {
     this.academicSupervisors = academicSupervisors;
     this.tags = tags;
     this.degrees = degrees;
-  }
-
-  public Long getId() {
-    return id;
-  }
-
-  public void setId(Long id) {
-    this.id = id;
   }
 
   public String getTitle() {
@@ -188,18 +173,6 @@ public class Topic {
   @Override
   public int hashCode() {
     return Objects.hash(id, title, shortAbstract, description);
-  }
-
-  @Override
-  public boolean equals(Object obj) {
-    if (this == obj) {
-      return true;
-    }
-    if ((obj == null) || (getClass() != obj.getClass())) {
-      return false;
-    }
-
-    return Integer.compare(this.hashCode(), obj.hashCode()) == 0;
   }
 
   @Override
