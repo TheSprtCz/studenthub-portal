@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
 
 import AdminUsersView from '../components/AdminUsersView.js';
-import CompanyRepUsersView from '../components/CompanyRepUsersView.js';
-import AmbassadorUsersView from '../components/CompanyRepUsersView.js';
+import UsersTable from '../components/UsersTable.js';
 import SiteSnackbar from '../components/SiteSnackbar.js';
 import Pager from '../components/Pager.js';
 
@@ -12,7 +11,7 @@ import Util from '../Util.js';
 import _t from '../Translations.js';
 
 class Users extends Component {
-  state = {users: [], nextUsers: [], companyId: -1, universityId: -1,
+  state = {users: [], nextUsers: [], companyId: -1, facultyId: -1,
            snackbarActive: false, snackbarLabel: "", page: -1, offsetWentDown: false}
 
   componentDidMount() {
@@ -120,7 +119,7 @@ class Users extends Component {
         } else throw new Error('There was a problem with network connection.');
       }).then(function(json) {
         this.setState({
-          universityId: json.faculty.university.id
+          facultyId: json.faculty.id
         });
         fetch('/api/universities/' + json.faculty.university.id + "/supervisors?size=" + Util.USERS_PER_PAGE + "&start=" +
           (page * Util.USERS_PER_PAGE), {
@@ -191,6 +190,8 @@ class Users extends Component {
             this.getUsers();
           else if(Auth.hasRole(Util.userRoles.companyRep))
             this.getCompanyUsers();
+          else if (Auth.hasRole(Util.userRoles.ambassador))
+            this.getUniversityUsers();
       } else {
         this.setState({
           snackbarLabel: "An error occured! Your request couldn't be processed. It's possible that you have a problem with your internet connection or that the server is not responding.",
@@ -220,15 +221,11 @@ class Users extends Component {
    * @return the desired component
    */
   generateView = () => {
-    if (Auth.hasRole(Util.userRoles.admin))
+    if (Auth.hasRole(Util.userRoles.ambassador))
       return (<AdminUsersView users={this.state.users}
         dataHandler={(method, id, data) => this.manageData(method, id, data)} />);
-    else if (Auth.hasRole(Util.userRoles.companyRep))
-      return (<CompanyRepUsersView users={this.state.users} companyId={this.state.companyId}
-        dataHandler={(method, id, data) => this.manageData(method, id, data)}
-        snackbarSetter={(label) => this.setSnackbarResponse(label)} />);
-    else if (Auth.hasRole(Util.userRoles.ambassador))
-      return (<AmbassadorUsersView users={this.state.users} universityId={this.state.universityId}
+    else if (Auth.hasRole(Util.userRoles.companyRep) || Auth.hasRole(Util.userRoles.ambassador))
+      return (<UsersTable users={this.state.users} company={{ id: this.state.companyId }} faculty={{ id: this.state.facultyId }}
         dataHandler={(method, id, data) => this.manageData(method, id, data)}
         snackbarSetter={(label) => this.setSnackbarResponse(label)} />);
   }
@@ -241,6 +238,8 @@ class Users extends Component {
         this.getUsers();
       else if (Auth.hasRole(Util.userRoles.companyRep))
         this.getCompanyUsers();
+      else if (Auth.hasRole(Util.userRoles.ambassador))
+        this.getUniversityUsers();
     }.bind(this), 2);
   }
 

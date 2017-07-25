@@ -87,9 +87,6 @@ class RestrictedUserEditDialog extends Component {
           onOverlayClick={() => this.props.toggleHandler()}
           title={ _t.translate("Edit user") }
           type="large">
-          <p>
-            Here you can edit the profile of TECH_LEADERs from your company.
-          </p>
           <Input type='text' label="Email" hint='Email of the user'  required  value={this.state.mail}
             onChange={(value) => this.handleChange("mail", value)} />
           <Input type='text' label={ _t.translate("Name") } hint='Name of the user' required  value={this.state.name}

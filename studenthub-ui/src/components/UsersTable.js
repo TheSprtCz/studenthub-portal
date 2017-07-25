@@ -9,13 +9,14 @@ import Chip from 'react-toolbox/lib/chip/Chip.js';
 import EditButton from './EditButton.js';
 import DeleteButton from './DeleteButton.js';
 import RestrictedUserEditDialog from './RestrictedUserEditDialog.js';
+import InviteDialog from './InviteDialog.js';
 
 import Util from '../Util.js';
 import _t from '../Translations.js';
 
 const gravatar = require("gravatar")
 
-class AmbassadorUsersView extends Component {
+class UsersTable extends Component {
   state = { dialogActive: false, editId: -1 }
 
   /**
@@ -77,11 +78,12 @@ class AmbassadorUsersView extends Component {
           user={(this.state.editId === -1) ? -1 : this.props.users[this.state.editId]}
           editHandler={(user) => this.props.dataHandler("put",
             (this.state.editId === -1) ? -1 : this.props.users[this.state.editId].id, user)}
-          toggleHandler={() => this.toggleDialog(-1)}
-        />
+          toggleHandler={() => this.toggleDialog(-1)} />
+        <InviteDialog company={this.props.company} faculty={this.props.faculty}
+          snackbarSetter={(label) => this.props.snackbarSetter(label)} />
       </div>
     );
   }
 }
 
-export default AmbassadorUsersView;
+export default UsersTable;

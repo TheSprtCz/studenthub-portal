@@ -429,6 +429,9 @@ const myLocalize = new Localize({
     },
     'University': {
       'cs': 'Univerzita'
+    },
+    'University ambassador': {
+      'cs': 'Ambasador univerzity'
     }
 });
 

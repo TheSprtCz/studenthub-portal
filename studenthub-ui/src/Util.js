@@ -75,8 +75,13 @@ Util.userRoles = {
   techLeader: "TECH_LEADER"
 }
 
-Util.rolesSource = [
-  { value: 'STUDENT', label: _t.translate('Student') },
+Util.rolesSourceCompany = [
+  { value: 'TECH_LEADER', label: _t.translate('Technical leader')},
+  { value: 'COMPANY_REP', label: _t.translate('Company Representative') }
+]
+
+Util.rolesSourceUniversity = [
+  { value: 'UNIVERSITY_AMB', label: _t.translate('University ambassador')},
   { value: 'AC_SUPERVISOR', label: _t.translate('Academic supervisor')}
 ]
 
