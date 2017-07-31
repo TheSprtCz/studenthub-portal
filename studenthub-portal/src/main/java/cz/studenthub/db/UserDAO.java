@@ -38,13 +38,13 @@ public class UserDAO extends AbstractDAO<User> {
     super(sessionFactory);
   }
   
-  public User update(User u) {
+  public User update(User user) {
     currentSession().clear();
-    return persist(u);
+    return persist(user);
   }
 
-  public User create(User u) {
-    return persist(u);
+  public User create(User user) {
+    return persist(user);
   }
 
   public User findById(Long id) {
@@ -83,7 +83,7 @@ public class UserDAO extends AbstractDAO<User> {
     return list(namedQuery("User.findAll"));
   }
 
-  public void delete(User u) {
-    currentSession().delete(u);
+  public void delete(User user) {
+    currentSession().delete(user);
   }
 }

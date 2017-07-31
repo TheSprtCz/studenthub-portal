@@ -41,6 +41,7 @@ import cz.studenthub.core.Project;
 import cz.studenthub.core.Task;
 import cz.studenthub.core.Topic;
 import cz.studenthub.core.TopicApplication;
+import cz.studenthub.core.TopicDegree;
 import cz.studenthub.core.University;
 import cz.studenthub.core.User;
 import cz.studenthub.db.UserDAO;
@@ -54,6 +55,7 @@ import cz.studenthub.resources.RegistrationResource;
 import cz.studenthub.resources.TagResource;
 import cz.studenthub.resources.TaskResource;
 import cz.studenthub.resources.TopicApplicationResource;
+import cz.studenthub.resources.TopicDegreeResource;
 import cz.studenthub.resources.TopicResource;
 import cz.studenthub.resources.UniversityResource;
 import cz.studenthub.resources.UserResource;
@@ -94,7 +96,7 @@ public class StudentHubApplication extends Application<StudentHubConfiguration> 
   private final HibernateBundle<StudentHubConfiguration> hibernate = new HibernateBundle<StudentHubConfiguration>(
       // list of entities
       User.class, Topic.class, TopicApplication.class, Company.class, University.class, Faculty.class, Task.class,
-      Activation.class, CompanyPlan.class, Project.class) {
+      Activation.class, CompanyPlan.class, Project.class, TopicDegree.class) {
 
     @Override
     public DataSourceFactory getDataSourceFactory(StudentHubConfiguration configuration) {
@@ -159,6 +161,7 @@ public class StudentHubApplication extends Application<StudentHubConfiguration> 
     environment.jersey().register(new TagResource());
     environment.jersey().register(new CompanyPlanResource());
     environment.jersey().register(new ProjectResource());
+    environment.jersey().register(new TopicDegreeResource());
 
     // set up auth
     configureAuth(configuration, environment, locator);

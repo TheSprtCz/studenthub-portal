@@ -22,6 +22,7 @@ import cz.studenthub.core.Topic;
 import cz.studenthub.core.TopicApplication;
 import cz.studenthub.core.User;
 import io.dropwizard.testing.DropwizardTestSupport;
+import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
 
 public class TopicResourceTest {
@@ -64,12 +65,19 @@ public class TopicResourceTest {
 
   @Test(dependsOnMethods = "listTopics")
   public void createTopic() {
+    JSONObject degree = new JSONObject();
+    degree.put("name", "HIGH_SCHOOL");
+
+    JSONArray degrees = new JSONArray();
+    degrees.add(degree);
+    
     JSONObject creator = new JSONObject();
     creator.put("id", 11);
 
     JSONObject topic = new JSONObject();
     topic.put("title", "New Topic");
     topic.put("creator", creator);
+    topic.put("degrees", degrees);
 
     Response response = IntegrationTestSuite.authorizedRequest(client.target(String.format("http://localhost:%d/api/topics", dropwizard.getLocalPort()))
       .request(MediaType.APPLICATION_JSON), client).post(Entity.json(topic.toJSONString()));
@@ -82,12 +90,19 @@ public class TopicResourceTest {
 
   @Test(dependsOnMethods = "createTopic")
   public void updateTopic() {
+    JSONObject degree = new JSONObject();
+    degree.put("name", "HIGH_SCHOOL");
+
+    JSONArray degrees = new JSONArray();
+    degrees.add(degree);
+
     JSONObject creator = new JSONObject();
     creator.put("id", 11);
 
     JSONObject topic = new JSONObject();
     topic.put("title", "Another Topic");
     topic.put("creator", creator);
+    topic.put("degrees", degrees);
 
     Response response = IntegrationTestSuite.authorizedRequest(client.target(String.format("http://localhost:%d/api/topics/6", dropwizard.getLocalPort()))
       .request(MediaType.APPLICATION_JSON), client).put(Entity.json(topic.toJSONString()));

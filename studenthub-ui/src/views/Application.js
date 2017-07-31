@@ -227,21 +227,88 @@ class SupervisorSelect extends React.Component {
   }
 }
 
+class DegreeSelect extends React.Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      value: (Util.isEmpty(this.props.currentDegree)) ? 0: this.props.currentDegree.name,
+      labels: []
+    };
+
+    this.getDegreeLabels();
+  }
+
+  /**
+   * Sets default input values on props change.
+   */
+  componentWillReceiveProps(nextProps) {
+    if (this.props === nextProps) return;
+
+    this.setState({
+      value: (Util.isEmpty(nextProps.currentDegree)) ? 0 : nextProps.currentDegree.name
+    });
+  }
+
+  handleChange = (value) => {
+    this.setState({value: value});
+    this.props.changeHandler({name: value});
+  };
+
+  getDegreeLabels() {
+    fetch('/api/degrees', {
+      credentials: 'same-origin',
+      method: 'get'
+    }).then(function(response) {
+      if (response.ok) {
+        return response.json();
+      } else {
+        throw new Error('There was a problem with network connection.');
+      }
+    }).then(function(json) {
+      var newData = [];
+
+      for(let i in json) {
+        newData.push({
+          value: json[i].name,
+          label: json[i].description
+        });
+      }
+      this.setState({
+        labels: newData
+      });
+    }.bind(this));
+  }
+
+  render () {
+    return (
+      <Dropdown
+        auto
+        label={ _t.translate('Degree') }
+        onChange={this.handleChange}
+        source={this.state.labels}
+        value={this.state.value}
+        icon='account_balance' />
+    );
+  }
+}
+
 class ApplicationForm extends Component {
   state = {
-    techLeader: { },
-    academicSupervisor: { },
-    student: { },
+    techLeader: {},
+    academicSupervisor: {},
+    student: {},
     officialAssignment: "",
     grade: "",
-    degree: "",
+    degree: {},
     thesisFinish: "",
     thesisStarted: "",
     link: "",
-    topic: { },
+    topic: {},
     faculty: "",
     snackbarLabel: "",
     snackbarActive: false,
+    editId: -1,
     index: 0
   };
 
@@ -319,6 +386,10 @@ class ApplicationForm extends Component {
     this.setState({ academicSupervisor: supervisor });
   };
 
+  changeDegree = (degree) => {
+    this.setState({ degree: degree });
+  };
+
   handleChange = (name, value) => {
     this.setState({...this.state, [name]: value});
   };
@@ -348,13 +419,7 @@ class ApplicationForm extends Component {
             icon='date_range'
             onChange={this.handleChange.bind(this, 'thesisFinish')}
             value={(Util.isEmpty(this.state.thesisFinish)) ? new Date() : this.state.thesisFinish} />
-          <Dropdown
-            name='degree'
-            label={ _t.translate('Degree') }
-            icon='account_balance'
-            onChange={this.handleChange.bind(this, 'degree')}
-            source={Util.degreesSource}
-            value={this.state.degree} />
+          <DegreeSelect currentDegree={this.state.degree} changeHandler={(degree) => this.changeDegree(degree)} />
           <Input
             type='url'
             label={ _t.translate('External link') }

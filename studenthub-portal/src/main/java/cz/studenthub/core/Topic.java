@@ -74,7 +74,8 @@ public class Topic {
   @ElementCollection(fetch = FetchType.EAGER)
   private Set<String> tags;
 
-  @ElementCollection(fetch = FetchType.EAGER)
+  @ManyToMany
+  @NotEmpty
   private Set<TopicDegree> degrees;
 
   public Topic() {

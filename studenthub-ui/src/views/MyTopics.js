@@ -6,6 +6,8 @@ import TableRow from 'react-toolbox/lib/table/TableRow.js';
 import TableCell from 'react-toolbox/lib/table/TableCell.js';
 import Tab from 'react-toolbox/lib/tabs/Tab.js';
 import Tabs from 'react-toolbox/lib/tabs/Tabs.js';
+import List from 'react-toolbox/lib/list/List.js';
+import ListCheckbox from 'react-toolbox/lib/list/ListCheckbox.js';
 import Checkbox from 'react-toolbox/lib/checkbox/Checkbox.js';
 import Dialog from 'react-toolbox/lib/dialog/Dialog.js';
 import Input from 'react-toolbox/lib/input/Input.js';
@@ -218,7 +220,7 @@ class TopicTable extends Component {
             <TableRow key={item.id}>
               <TableCell><strong>{item.title}</strong></TableCell>
               <TableCell>{item.shortAbstract}</TableCell>
-              <TableCell>{item.degrees.map( (degree) => <Chip key={degree}> {degree} </Chip> )}</TableCell>
+              <TableCell>{item.degrees.map( (degree) => <Chip key={degree.name}> {degree.description} </Chip> )}</TableCell>
               <TableCell>{item.tags.map( (tag) => <Chip key={tag}> {tag} </Chip> )}</TableCell>
               {(Auth.hasRole(Util.userRoles.companyRep) && !Auth.hasRole(Util.userRoles.admin)) ? '' :
               <TableCell>
@@ -239,13 +241,17 @@ class TopicTable extends Component {
 
 class NewTopicDialog extends Component {
   state = {
-    bachelor: false, master: false, phd: false, highSchool: false, title: '', enabled: true,
-    shortAbstract: '', description: '', tags: '', tagIndex: 0, dialogTitle: _t.translate('New Topic'),
+    degrees: [], allDegrees: [], title: '', enabled: true, shortAbstract: '',
+    description: '', tags: '', tagIndex: 0, dialogTitle: _t.translate('New Topic'),
     actions : [
       { label: _t.translate('Add'), onClick: () => this.handleAdd()},
       { label: _t.translate('Cancel'), onClick: () => this.handleToggle() }
     ]
   };
+
+  componentDidMount() {
+    this.getAllDegrees();
+  }
 
   /**
    * Sets default input values on props change.
@@ -253,63 +259,46 @@ class NewTopicDialog extends Component {
   componentWillReceiveProps(nextProps) {
     if(this.props === nextProps) return;
 
-    var bachelorState = false;
-    var masterState = false;
-    var phdState = false;
-    var highSchoolState = false;
-    var enabledState = true;
-    var titleState;
-    var shortAbstractState;
-    var descriptionState;
     var tagsState = "";
-    var dialogTitleState;
-    var actionsState;
 
-    if(nextProps.topic === -1) {
-      titleState = "";
-      shortAbstractState = "";
-      descriptionState = "";
-      dialogTitleState = _t.translate('New Topic');
-      actionsState = [
-        { label: _t.translate('Add'), onClick: () => this.handleAdd()},
-        { label: _t.translate('Cancel'), onClick: () => this.handleToggle() }
-      ];
-    }
-    else {
-      for (let i = 0; i < nextProps.topic.degrees.length; i++) {
-        if(nextProps.topic.degrees[i] === "BACHELOR") bachelorState = true;
-        else if(nextProps.topic.degrees[i] === "MASTER") masterState = true;
-        else if(nextProps.topic.degrees[i] === "PhD") phdState = true;
-        else if(nextProps.topic.degrees[i] === "HIGH_SCHOOL") highSchoolState = true;
-      }
-      enabledState = nextProps.topic.enabled;
-      titleState = nextProps.topic.title;
-      shortAbstractState = nextProps.topic.shortAbstract;
-      descriptionState = nextProps.topic.description;
+    if (!nextProps.topic === -1) {
       for (let i = 0; i < nextProps.topic.tags.length; i++) {
         tagsState += nextProps.topic.tags[i];
         if ((i + 1) < nextProps.topic.tags.length) tagsState += ";"
       }
-      dialogTitleState = _t.translate('Edit Topic');
-      actionsState = [
-        { label: _t.translate('Save changes'), onClick: () => this.handleEdit()},
-        { label: _t.translate('Cancel'), onClick: () => this.handleToggle() }
-      ];
     }
 
     this.setState({
-      bachelor: bachelorState,
-      master: masterState,
-      phd: phdState,
-      highSchool: highSchoolState,
-      title: titleState,
-      shortAbstract: shortAbstractState,
-      description: descriptionState,
+      degrees: (nextProps.topic === -1) ? [] : nextProps.topic.degrees,
+      title: (nextProps.topic === -1) ? "" : nextProps.topic.title,
+      shortAbstract: (nextProps.topic === -1) ? "" : nextProps.topic.shortAbstract,
+      description: (nextProps.topic === -1) ? "" : nextProps.topic.description,
       tags: tagsState,
-      dialogTitle: dialogTitleState,
-      actions: actionsState,
-      enabled: enabledState
+      dialogTitle: (nextProps.topic === -1) ? _t.translate('New Topic') : _t.translate('Edit Topic'),
+      actions: (nextProps.topic === -1) ? [
+        { label: _t.translate('Add'), onClick: () => this.handleAdd()},
+        { label: _t.translate('Cancel'), onClick: () => this.handleToggle() }
+      ] : [
+        { label: _t.translate('Save changes'), onClick: () => this.handleEdit()},
+        { label: _t.translate('Cancel'), onClick: () => this.handleToggle() }
+      ],
+      enabled: (nextProps.topic === -1) ? true : nextProps.topic.enabled
     });
+  }
+
+  getAllDegrees() {
+    fetch('/api/degrees', {
+      credentials: 'same-origin',
+      method: 'get'
+    }).then(function(response) {
+      if (response.ok) {
+        return response.json();
+      } else {
+        throw new Error('There was a problem with network connection.');
+      }
+    }).then(function(json) {
+      this.setState({allDegrees: json});
+    }.bind(this));
   }
 
   handleToggle = () => {
@@ -331,7 +320,7 @@ class NewTopicDialog extends Component {
     this.props.dataHandler("post", "",
       JSON.stringify({
         creator: { id: Auth.getUserInfo().sub },
-        degrees: this.getDegrees(),
+        degrees: this.state.degrees,
         description: this.state.description,
         shortAbstract: this.state.shortAbstract,
         tags: this.getTags(),
@@ -349,7 +338,7 @@ class NewTopicDialog extends Component {
     this.props.dataHandler("put", this.props.topic.id,
       JSON.stringify({
         creator: { id: Auth.getUserInfo().sub },
-        degrees: this.getDegrees(),
+        degrees: this.state.degrees,
         description: this.state.description,
         shortAbstract: this.state.shortAbstract,
         tags: this.getTags(),
@@ -360,15 +349,21 @@ class NewTopicDialog extends Component {
     this.handleToggle();
   }
 
-  getDegrees = () => {
-    var degrees = [];
+  handleDegreeChange = (degree) => {
+    var degrees = this.state.degrees;
+    if (degrees.indexOf(degree) === -1) {
+      degrees.push(degree);
+    } else {
+      degrees.splice(degrees.indexOf(degree), 1);
+    }
+    this.setState({degrees: degrees});
+  }
 
-    if(this.state.bachelor === true) degrees.push("BACHELOR");
-    if(this.state.master === true) degrees.push("MASTER");
-    if(this.state.phd === true) degrees.push("PhD");
-    if(this.state.highSchool === true) degrees.push("HIGH_SCHOOL");
-
-    return degrees;
+  getChecked = (name) => {
+    for (var i = 0; i < this.state.degrees.length; i++) {
+      if (this.state.degrees[i].name === name) return true;
+    }
+    return false;
   }
 
   getTags = () => {
@@ -402,45 +397,6 @@ class NewTopicDialog extends Component {
               <Input type='text' label={ _t.translate('Topic title') } hint="Topic title" name='title' required value={this.state.title} onChange={this.handleChange.bind(this, 'title')} />
               <Input type='text' label={ _t.translate('Short abstract') } hint="Short info about the topic"  multiline rows={2} name='shortAbstract' value={this.state.shortAbstract} onChange={this.handleChange.bind(this, 'shortAbstract')} />
               <Input type='text' label={ _t.translate('Tags') } hint="Divide tags using ;" value={this.state.tags} onChange={this.handleChange.bind(this, 'tags')} />
-              <table>
-                <thead>
-                  <tr>
-                    <th colSpan="4"><h4>{ _t.translate('Degrees') }</h4></th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td style={{ paddingRight: '10px'}}>
-                      <Checkbox
-                        checked={this.state.bachelor}
-                        label={ _t.translate('Bachelor') }
-                        name='grades'
-                        onChange={this.handleChange.bind(this, 'bachelor')} />
-                    </td>
-                    <td style={{ paddingRight: '10px'}}>
-                      <Checkbox
-                        checked={this.state.master}
-                        label={ _t.translate('Master') }
-                        name='grades'
-                        onChange={this.handleChange.bind(this, 'master')} />
-                    </td>
-                    <td style={{ paddingRight: '10px'}}>
-                      <Checkbox
-                        checked={this.state.phd}
-                        label={ _t.translate('PhD') }
-                        name='grades'
-                        onChange={this.handleChange.bind(this, 'phd')} />
-                    </td>
-                    <td>
-                      <Checkbox
-                        checked={this.state.highSchool}
-                        label={ _t.translate('High school') }
-                        name='grades'
-                        onChange={this.handleChange.bind(this, 'highSchool')} />
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
               <Checkbox
                 checked={this.state.enabled}
                 label={ _t.translate('Enabled for use') }
@@ -449,6 +405,17 @@ class NewTopicDialog extends Component {
             </Tab>
             <Tab label={ _t.translate('Topic description') }>
               <Input type='text' label={ _t.translate('Topic description') } hint="Full topic description in markdown" multiline rows={20} value={this.state.description} onChange={this.handleChange.bind(this, 'description')} />
+            </Tab>
+            <Tab label={ _t.translate('Degrees') }>
+              {this.state.allDegrees.map((item) => (
+                <List key={item.name}>
+                  <ListCheckbox
+                    key={item.name}
+                    caption={item.description}
+                    checked={this.getChecked(item.name)}
+                    onChange={() => this.handleDegreeChange(item)} ripple selectable />
+                </List>
+              ))}
             </Tab>
             <Tab label={ _t.translate('Preview') }>
               <p>Below you can see a preview of the description. Uses <a href="https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet" target="_blank">Markdown</a>.</p>

@@ -11,6 +11,7 @@ import cz.studenthub.db.ProjectDAO;
 import cz.studenthub.db.TaskDAO;
 import cz.studenthub.db.TopicApplicationDAO;
 import cz.studenthub.db.TopicDAO;
+import cz.studenthub.db.TopicDegreeDAO;
 import cz.studenthub.db.UniversityDAO;
 import cz.studenthub.db.UserDAO;
 
@@ -34,6 +35,7 @@ public class DAOBinder extends AbstractBinder {
     bind(new TopicApplicationDAO(factory)).to(TopicApplicationDAO.class);
     bind(new ActivationDAO(factory)).to(ActivationDAO.class);
     bind(new ProjectDAO(factory)).to(ProjectDAO.class);
+    bind(new TopicDegreeDAO(factory)).to(TopicDegreeDAO.class);
   }
   
 }

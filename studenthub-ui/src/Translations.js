@@ -385,6 +385,15 @@ const myLocalize = new Localize({
     'External link': {
       'cs': 'Externí odkaz'
     },
+    'Topic Degrees': {
+      'cs': 'Stupně témat'
+    },
+    'New Degree': {
+      'cs': 'Nový stupeň'
+    },
+    'Edit Degree': {
+      'cs': 'Uprav stupeň'
+    },
     'Change password': {
       'cs': 'Změňit heslo '
     },
