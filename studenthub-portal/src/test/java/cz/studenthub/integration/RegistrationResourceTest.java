@@ -32,6 +32,7 @@ import com.icegreen.greenmail.util.ServerSetupTest;
 import cz.studenthub.IntegrationTestSuite;
 import cz.studenthub.StudentHubConfiguration;
 import cz.studenthub.core.Activation;
+import cz.studenthub.core.ActivationType;
 import cz.studenthub.core.User;
 import cz.studenthub.db.ActivationDAO;
 import cz.studenthub.db.UserDAO;
@@ -62,13 +63,6 @@ public class RegistrationResourceTest {
       userDAO = new UserDAO(IntegrationTestSuite.getSessionFactory());
   }
 
-  @Test(groups = "testMail")
-  public void testMail() {
-    GreenMailUtil.sendTextEmailTest("to@localhost.com", "from@localhost.com", "subject", "body");
-    MimeMessage[] emails = greenMail.getReceivedMessages();
-    assertEquals(1, emails.length);
-  }
-
   @AfterClass
   public void tearDown() {
     greenMail.stop();
@@ -79,6 +73,13 @@ public class RegistrationResourceTest {
   @AfterMethod
   public void reset() {
     greenMail.reset();
+  }
+
+  @Test(groups = "testMail")
+  public void testMail() {
+    GreenMailUtil.sendTextEmailTest("to@localhost.com", "from@localhost.com", "subject", "body");
+    MimeMessage[] emails = greenMail.getReceivedMessages();
+    assertEquals(1, emails.length);
   }
 
   // This test both signUp and activate endpoints
@@ -176,8 +177,31 @@ public class RegistrationResourceTest {
     assertEquals(response.getStatus(), 200);
 
     // Test if activation was created
-    Activation act = actDAO.findByUser(user);
+    Activation act = actDAO.findByUserAndType(user, ActivationType.PASSWORD_RESET);
     assertNotNull(act);
+
+    // Test if correct mail was sent
+    assertTrue(greenMail.waitForIncomingEmail(MAIL_TIMEOUT, 1));
+    MimeMessage[] messages = greenMail.getReceivedMessages();
+    assertEquals(messages.length, 1);
+    assertEquals(messages[0].getSubject(), "Password Reset");
+
+    user = userDAO.findByEmail("rep2@example.com");
+    assertNotNull(user);
+    assertNotNull(user.getPassword());
+  }
+
+  @Test(dependsOnGroups = "login")
+  public void confirmResetTest() throws MessagingException {
+
+    // Test response status
+    Response response = client.target(String.format("http://localhost:%d/api/account/confirmReset?secret=leader2&id=9", dropwizard.getLocalPort())).request(MediaType.APPLICATION_JSON)
+        .post(Entity.json(""));
+    assertEquals(response.getStatus(), 200);
+
+    User user = userDAO.findById((long) 9);
+    assertNotNull(user);
+    assertNull(user.getPassword());
 
     // Test if correct mail was sent
     assertTrue(greenMail.waitForIncomingEmail(MAIL_TIMEOUT, 1));
@@ -211,6 +235,6 @@ public class RegistrationResourceTest {
     Response loginResponse = IntegrationTestSuite.authorizationRequest(client, "rep1@example.com", password);
     assertNotNull(loginResponse);
     assertNotNull(loginResponse.getCookies().get("sh-token"));
-  }  
+  }
   
 }

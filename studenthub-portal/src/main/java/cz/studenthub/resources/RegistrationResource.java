@@ -40,6 +40,7 @@ import javax.ws.rs.core.UriBuilder;
 import cz.studenthub.api.UpdatePasswordBean;
 import cz.studenthub.auth.StudentHubPasswordEncoder;
 import cz.studenthub.core.Activation;
+import cz.studenthub.core.ActivationType;
 import cz.studenthub.core.User;
 import cz.studenthub.core.UserRole;
 import cz.studenthub.db.ActivationDAO;
@@ -99,7 +100,7 @@ public class RegistrationResource {
       throw new WebApplicationException(Status.INTERNAL_SERVER_ERROR);
 
     // put user into cache of "inactive" users
-    Activation act = new Activation(user);
+    Activation act = new Activation(user, ActivationType.REGISTER);
     actDao.create(act);
 
     sendActivationEmail(user, act.getActivationCode());
@@ -115,7 +116,10 @@ public class RegistrationResource {
   public Response activate(@QueryParam("secret") String secretKey, @QueryParam("id") LongParam idParam,
       @FormParam("password") String password) {
     User user = userDao.findById(idParam.get());
-    Activation act = actDao.findByUser(user);
+    if (user == null)
+      throw new WebApplicationException(Status.NOT_FOUND);
+
+    Activation act = actDao.findByUserAndType(user, ActivationType.REGISTER);
     if (act != null && act.getActivationCode().equals(secretKey)) {
       // hash and update user password
       user.setPassword(StudentHubPasswordEncoder.encode(password));
@@ -138,10 +142,11 @@ public class RegistrationResource {
     User user = userDao.findByEmail(email);
     if (user == null)
       throw new WebApplicationException(Status.NOT_FOUND);
+
     if (user.getPassword() != null)
       throw new WebApplicationException("User is already active.", Status.BAD_REQUEST);
 
-    Activation act = actDao.findByUser(user);
+    Activation act = actDao.findByUserAndType(user, ActivationType.REGISTER);
     if (act == null)
       throw new WebApplicationException("No activation to resend.", Status.NOT_FOUND);
 
@@ -160,21 +165,52 @@ public class RegistrationResource {
       throw new WebApplicationException(Status.NOT_FOUND);
 
     Activation existing = actDao.findByUser(user);
-    if (existing != null) {
+    // If he has pending password activation
+    if (existing != null && existing.getType().equals(ActivationType.REGISTER))
       throw new WebApplicationException("Already pending activation.", Status.BAD_REQUEST);
+
+    Activation activation;
+    // If he has pending resetPassword activation, then regenerate code
+    if (existing != null && existing.getType().equals(ActivationType.PASSWORD_RESET)) {
+      activation = existing;
+      activation.setActivationCode(StudentHubPasswordEncoder.genSecret());
+      actDao.update(activation);
+    }
+    else {
+      activation = new Activation(user, ActivationType.PASSWORD_RESET);
+      actDao.create(activation);
     }
 
-    // "de-activate" user by un-setting his password
-    user.setPassword(null);
-    userDao.update(user);
-
-    // put user into cache of "inactive" users
-    Activation act = new Activation(user);
-    actDao.create(act);
-
-    sendActivationEmail(user, act.getActivationCode());
+    sendResetEmail(user, activation.getActivationCode());
 
     return Response.ok().build();
+  }
+
+  @POST
+  @UnitOfWork
+  @Path("/confirmReset")
+  public Response confirmReset(@QueryParam("secret") String secretKey, @QueryParam("id") LongParam idParam) {
+    User user = userDao.findById(idParam.get());
+    if (user == null)
+      throw new WebApplicationException(Status.NOT_FOUND);
+
+    Activation act = actDao.findByUserAndType(user, ActivationType.PASSWORD_RESET);
+    if (act != null && act.getActivationCode().equals(secretKey)) {
+
+      // "de-activate" user by un-setting his password
+      user.setPassword(null);
+      userDao.update(user);
+
+      // put user into cache of "inactive" users
+      Activation activation = new Activation(user, ActivationType.REGISTER);
+      actDao.create(activation);
+
+      sendActivationEmail(user, activation.getActivationCode());
+
+      return Response.ok().build();
+    } else {
+      throw new WebApplicationException(Status.FORBIDDEN);
+    }
   }
 
   @PUT
@@ -212,5 +248,14 @@ public class RegistrationResource {
     args.put("name", user.getName());
     args.put("id", user.getId().toString());
     mailer.sendMessage(user.getEmail(), "Password Setup", "setPassword.html", args);
+  }
+
+  private void sendResetEmail(User user, String secretKey) {
+    // send conf. email with activation link
+    Map<String, String> args = new HashMap<String, String>();
+    args.put("secret", secretKey);
+    args.put("name", user.getName());
+    args.put("id", user.getId().toString());
+    mailer.sendMessage(user.getEmail(), "Password Reset", "resetPassword.html", args);
   }
 }

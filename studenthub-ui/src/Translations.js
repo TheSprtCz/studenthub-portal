@@ -393,6 +393,33 @@ const myLocalize = new Localize({
     },
     'Edit Degree': {
       'cs': 'Uprav stupeň'
+    },
+    'Change password': {
+      'cs': 'Změňit heslo '
+    },
+    'Old password': {
+      'cs': 'Staré heslo'
+    },
+    'New password': {
+      'cs': 'Nové heslo'
+    },
+    'Retrieve': {
+      'cs': 'Obnov'
+    },
+    'Change': {
+      'cs': 'Změň'
+    },
+    'Password update': {
+      'cs': 'Změna hesla'
+    },
+    'Password retrieval': {
+      'cs': 'Obnovení hesla'
+    },
+    'Close this': {
+      'cs': 'Zavři'
+    },
+    'Password reset confirmation': {
+      'cs': 'Potvrzení zresetování hesla'
     }
 });
 

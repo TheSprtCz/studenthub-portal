@@ -1,5 +1,6 @@
 import React from 'react';
 import { withRouter } from 'react-router-dom';
+import { Redirect } from 'react-router-dom';
 import Avatar from 'react-toolbox/lib/avatar/Avatar.js';
 import Input from 'react-toolbox/lib/input/Input.js';
 import Button from 'react-toolbox/lib/button/Button.js';
@@ -24,7 +25,7 @@ const LogoutButton = withRouter(({ history }) => (
 
 class ProfileEditView extends React.Component {
   state = { email: '', avatarUrl: '', name: '', phone: '', roles: [],  tags: '',
-  lastLogin: [], snackbarActive: false, snackbarLabel: '' };
+  lastLogin: [], snackbarActive: false, snackbarLabel: '', redirect: false };
 
   componentDidMount() {
     this.getUser();
@@ -69,9 +70,7 @@ class ProfileEditView extends React.Component {
     fetch('/api/users/' + Auth.getUserInfo().sub, {
       method: 'put',
       credentials: 'same-origin',
-      headers: {
-        "Content-Type" : "application/json"
-      },
+      headers: { "Content-Type" : "application/json" },
       body: JSON.stringify({
         name: this.state.name,
         roles: this.state.roles,
@@ -98,7 +97,11 @@ class ProfileEditView extends React.Component {
         throw new Error('There was a problem with network connection. PUT request could not be processed!');
       }
     }.bind(this));
-  };
+  }
+
+  handleRedirect = () => {
+   this.setState({ redirect: true })
+  }
 
   getTags = () => {
     var tags = [];
@@ -120,14 +123,13 @@ class ProfileEditView extends React.Component {
    * Toggles the visiblity of the Snackbar.
    */
   toggleSnackbar = () => {
-    this.setState({
-      snackbarActive: !this.state.snackbarActive
-    })
+    this.setState({ snackbarActive: !this.state.snackbarActive })
   }
 
   render () {
     return (
       <div className="row">
+        { (this.state.redirect) ? <Redirect to="/updatePwd"/> : "" }
         <div className="col-md-2 text-center">
           <Avatar style={{width: '6em', height: '6em', marginBottom: '1em'}} image={this.state.avatarUrl} title={ _t.translate('Your Gravatar') } />
           {this.state.roles.map( (role) => <Chip key={role}> { _t.translate(role) } </Chip> )}
@@ -141,6 +143,7 @@ class ProfileEditView extends React.Component {
           <Input type='text' name='company' label={ _t.translate('Company') } icon='business' disabled value={Util.isEmpty(this.state.company) ? "None" : this.state.company.name} />
           <Input type='hidden' name='roles' label={ _t.translate('Role') } icon='person' disabled value={this.state.roles.toString()} />
           <Input type='text' name='tags' label={ _t.translate('Tags') } icon='flag' hint="Divide tags using ;" value={this.state.tags} onChange={this.handleChange.bind(this, 'tags')} />
+          <Button icon='edit' label={ _t.translate('Change password') } raised primary className='pull-left' onClick={this.handleRedirect}/>
           <Button icon='edit' label={ _t.translate('Save changes') } raised primary className='pull-right' onClick={this.handleSubmit}/>
           <SiteSnackbar active={this.state.snackbarActive} label={this.state.snackbarLabel} toggleHandler={() => this.toggleSnackbar()} />
         </div>
@@ -190,7 +193,7 @@ class CompanyEditView extends React.Component {
 
   handleChange = (name, value) => {
     this.setState({...this.state, [name]: value});
-  };
+  }
 
   handleSubmit = () => {
     fetch('/api/companies/' + this.state.id, {
@@ -223,7 +226,7 @@ class CompanyEditView extends React.Component {
         throw new Error('There was a problem with network connection. PUT request could not be processed!');
       }
     }.bind(this));
-  };
+  }
 
   /**
    * Toggles the visiblity of the Snackbar.
