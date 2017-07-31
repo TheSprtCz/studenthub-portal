@@ -15,7 +15,7 @@ const Auth = {
   /**
    * Obtains JWT token from backend which subsequently stores it in Browser cookies
    */
-  authenticate(username, password, cb) {
+  authenticate(username, password, cb, failCb) {
 
     var settings = {
       "url": "/api/auth/login",
@@ -32,13 +32,13 @@ const Auth = {
       }
     }
 
-    // console.log(settings);
-    $.ajax(settings).done(function (data, textStatus, jqXHR) {
-      console.log(textStatus);
-      // TODO: if cookie was not set but Authorization header was returned
-    });
-
-    setTimeout(cb, 500)
+    $.ajax(settings)
+      .done(function() {
+        setTimeout(cb, 500);
+      })
+      .fail(function() {
+        failCb();
+      });
   },
 
   /**

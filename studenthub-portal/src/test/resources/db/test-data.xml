@@ -1019,12 +1019,20 @@
         <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="ACTIVATIONS">
             <column name="ID" valueNumeric="1"/>
             <column name="ACTIVATIONCODE" value="rep3"/>
+            <column name="TYPE" value="REGISTER"/>
             <column name="USER_ID" valueNumeric="18"/>
         </insert>
         <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="ACTIVATIONS">
             <column name="ID" valueNumeric="2"/>
             <column name="ACTIVATIONCODE" value="student4"/>
+            <column name="TYPE" value="REGISTER"/>
             <column name="USER_ID" valueNumeric="15"/>
+        </insert>
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="ACTIVATIONS">
+            <column name="ID" valueNumeric="3"/>
+            <column name="ACTIVATIONCODE" value="leader2"/>
+            <column name="TYPE" value="PASSWORD_RESET"/>
+            <column name="USER_ID" valueNumeric="9"/>
         </insert>
     </changeSet>
     <changeSet author="phala (generated)" id="1496737117875-30">
