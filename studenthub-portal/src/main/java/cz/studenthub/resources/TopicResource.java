@@ -48,7 +48,6 @@ import cz.studenthub.core.Project;
 import cz.studenthub.core.Topic;
 import cz.studenthub.core.TopicApplication;
 import cz.studenthub.core.User;
-import cz.studenthub.core.UserRole;
 import cz.studenthub.db.ProjectDAO;
 import cz.studenthub.db.TopicApplicationDAO;
 import cz.studenthub.db.TopicDAO;
@@ -95,7 +94,7 @@ public class TopicResource {
 
     // If topic is enabled, or user is creator or admin, return topic 
     if (topic != null && (topic.isEnabled() || (user.isPresent() && (topic.getCreator().getId().equals(user.get().getId())
-       || user.get().getRoles().contains(UserRole.ADMIN))))) {
+       || user.get().isAdmin())))) {
       return topic;
     }
     throw new WebApplicationException(Status.NOT_FOUND);   
@@ -132,7 +131,7 @@ public class TopicResource {
     Long newCreatorId = topic.getCreator().getId();
     // if user is topic creator and creator stays the same, or is an admin
     if ((oldCreatorId.equals(user.getId()) && oldCreatorId.equals(newCreatorId))
-        || user.getRoles().contains(UserRole.ADMIN)) {
+        || user.isAdmin()) {
 
       // If topic went from disabled to enabled state
       if (topic.isEnabled() && !oldTopic.isEnabled()) {
@@ -160,7 +159,7 @@ public class TopicResource {
   public Response create(@NotNull @Valid @Validated(CreateUpdateChecks.class) Topic topic, @Auth User user) {
 
     // If user is topic creator or is an admin
-    if (topic.getCreator().getId().equals(user.getId()) || user.getRoles().contains(UserRole.ADMIN)) {
+    if (topic.getCreator().getId().equals(user.getId()) || user.isAdmin()) {
 
       // Because creator info is available only after persisting it to DB, I
       // have to fetch him manually

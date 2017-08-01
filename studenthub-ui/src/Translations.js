@@ -420,6 +420,18 @@ const myLocalize = new Localize({
     },
     'Password reset confirmation': {
       'cs': 'Potvrzení zresetování hesla'
+    },
+    'UNIVERSITY_AMB': {
+      'cs': 'Ambasador univerzity'
+    },
+    'University profile': {
+      'cs': 'Profil univerzity'
+    },
+    'University': {
+      'cs': 'Univerzita'
+    },
+    'University ambassador': {
+      'cs': 'Ambasador univerzity'
     }
 });
 

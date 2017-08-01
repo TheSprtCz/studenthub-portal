@@ -10,22 +10,26 @@ import org.junit.Test;
 import cz.studenthub.DAOTestSuite;
 import cz.studenthub.core.Company;
 import cz.studenthub.core.Faculty;
+import cz.studenthub.core.University;
 import cz.studenthub.core.User;
 import cz.studenthub.core.UserRole;
 import io.dropwizard.testing.junit.DAOTestRule;
 
 public class UserDAOTest {
 
+  private static final int COUNT = 21;
   private static final DAOTestRule DATABASE = DAOTestSuite.database;
   private static FacultyDAO facDAO;
   private static CompanyDAO companyDAO;
   private static UserDAO userDAO;
+  private static UniversityDAO uniDAO;
 
   @BeforeClass
   public static void setUp() {
     facDAO = new FacultyDAO(DATABASE.getSessionFactory());
     companyDAO = new CompanyDAO(DATABASE.getSessionFactory());
     userDAO = new UserDAO(DATABASE.getSessionFactory());
+    uniDAO = new UniversityDAO(DATABASE.getSessionFactory());
   }
 
   /*
@@ -35,17 +39,16 @@ public class UserDAOTest {
   @Test
   public void createAndDeleteUser() {
     DATABASE.inTransaction(() -> {
-      Faculty faculty = facDAO.findById((long) 12);
       HashSet<UserRole> roles = new HashSet<UserRole>();
       roles.add(UserRole.ADMIN);
 
-      User user = new User("test", "test", "email@mail.me", "Test Tester", "000 222 555", faculty, null, roles, null);
+      User user = new User("test", "test", "email@mail.me", "Test Tester", "000 222 555", null, null, roles, null);
       User created = userDAO.create(user);
       assertNotNull(created.getId());
       assertEquals(user, created);
-      assertEquals(21, userDAO.findAll().size());
+      assertEquals(COUNT + 1, userDAO.findAll().size());
       userDAO.delete(created);
-      assertEquals(20, userDAO.findAll().size());
+      assertEquals(COUNT, userDAO.findAll().size());
     });
   }
 
@@ -66,7 +69,7 @@ public class UserDAOTest {
       return userDAO.findAll();
     });
     assertNotNull(users);
-    assertEquals(20, users.size());
+    assertEquals(COUNT, users.size());
   }
 
   @Test
@@ -115,6 +118,28 @@ public class UserDAOTest {
       assertEquals(3, students.size());
       assertNotNull(supervisors);
       assertEquals(2, supervisors.size());
+    });
+  }
+
+  @Test
+  public void listAllUsersByRoleAndUniversity() {
+    DATABASE.inTransaction(() -> {
+      University university = uniDAO.findById((long) 1);
+
+      List<User> students = userDAO.findByRoleAndUniversity(UserRole.STUDENT, university);
+      List<User> supervisors = userDAO.findByRoleAndUniversity(UserRole.AC_SUPERVISOR, university);
+
+      assertNotNull(students);
+      assertEquals(4, students.size());
+      for (User student : students) {
+        assertTrue(student.hasRole(UserRole.STUDENT));
+      }
+
+      assertNotNull(supervisors);
+      assertEquals(4, supervisors.size());
+      for (User supervisor : supervisors) {
+        assertTrue(supervisor.hasRole(UserRole.AC_SUPERVISOR));
+      }
     });
   }
 

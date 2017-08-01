@@ -37,7 +37,8 @@ All users have password "test".
 | 3   | leader             | leader@example.com          | Leader One         | 875 687 149  | 9.1.2017       | 1       | ------- | [LEADER]                     | [C++, Oracle, Ruby ]     |
 | 4   | student            | student@example.com         | Student One        | 654 712 354  | 26.8.2016      | ------- | 1       | [STUDENT]                    | [MU, JavaScript, React]  |
 | 5   | rep                | rep@example.com             | Rep One            | 154 798 416  | 6.5.2016       | 1       | ------- | [COMPANY_REP]                | ------------------------ |
-| 5   | project            | project@example.com         | Project Leader     | 205 789 460  | 12.6.2017      | ------- | ------- | [PROJECT_LEADER]             | ------------------------ |
+| 6   | project            | project@example.com         | Project Leader     | 205 789 460  | 12.6.2017      | ------- | ------- | [PROJECT_LEADER]             | ------------------------ |
+| 7   | ambassador         | ambassador@example.com      | Ambassador One     | 890 473 058  | 20.6.2017      | ------- | 1       | [UNIVERSITY_AMB]             | ------------------------ | 
 
 ## Topics
 

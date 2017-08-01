@@ -21,6 +21,7 @@ import cz.studenthub.core.Project;
 import cz.studenthub.core.Topic;
 import cz.studenthub.core.TopicApplication;
 import cz.studenthub.core.User;
+import cz.studenthub.db.TopicDAOTest;
 import io.dropwizard.testing.DropwizardTestSupport;
 import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
@@ -50,7 +51,7 @@ public class TopicResourceTest {
     List<Topic> list = fetchTopics();
 
     assertNotNull(list);
-    assertEquals(list.size(), 5);
+    assertEquals(list.size(), TopicDAOTest.COUNT);
   }
 
   @Test(dependsOnGroups = "migrate", groups = "fetchTopic")
@@ -85,7 +86,7 @@ public class TopicResourceTest {
     assertNotNull(response);
     assertEquals(response.getStatus(), 201);
     assertEquals(fetchTopics().size(), 6);
-    assertEquals((long) response.readEntity(Topic.class).getId(), 6);
+    assertEquals((long) response.readEntity(Topic.class).getId(), TopicDAOTest.COUNT + 1);
   }
 
   @Test(dependsOnMethods = "createTopic")
@@ -119,7 +120,7 @@ public class TopicResourceTest {
 
     assertNotNull(response);
     assertEquals(response.getStatus(), 204);
-    assertEquals(fetchTopics().size(), 5);
+    assertEquals(fetchTopics().size(), TopicDAOTest.COUNT);
   }
 
   @Test(dependsOnGroups = "login")

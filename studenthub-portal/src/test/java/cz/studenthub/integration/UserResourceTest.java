@@ -25,6 +25,8 @@ import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
 
 public class UserResourceTest {
+  
+  private static final int COUNT = 23;
   private DropwizardTestSupport<StudentHubConfiguration> dropwizard;
   private Client client;
 
@@ -39,12 +41,12 @@ public class UserResourceTest {
       .request(), client).get(new GenericType<List<User>>(){});
   }
 
-  @Test(dependsOnGroups = {"login", "signUp"})
+  @Test(dependsOnGroups = {"login", "invite"})
   public void listUsers() {
     List<User> list = fetchUsers();
 
     assertNotNull(list);
-    assertEquals(list.size(), 21);
+    assertEquals(list.size(), COUNT);
   }
 
   @Test(dependsOnGroups = "login")
@@ -82,7 +84,7 @@ public class UserResourceTest {
 
     assertNotNull(response);
     assertEquals(response.getStatus(), 204);
-    assertEquals(fetchUsers().size(), 20);
+    assertEquals(fetchUsers().size(), COUNT - 1);
   }
 
   @Test(dependsOnGroups = "login")

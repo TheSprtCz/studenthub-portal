@@ -15,6 +15,7 @@ import io.dropwizard.testing.junit.DAOTestRule;
 
 public class ActivationDAOTest {
 
+  public static final int COUNT = 3;
   private static final DAOTestRule DATABASE = DAOTestSuite.database;
   private static ActivationDAO actDAO;
   private static UserDAO userDAO;
@@ -36,7 +37,7 @@ public class ActivationDAOTest {
       List<Activation> activations = actDAO.findAll();
       assertNotNull(created.getId());
       assertEquals(act, created);
-      assertEquals(4, activations.size());
+      assertEquals(COUNT + 1, activations.size());
     });
   }
 
@@ -81,7 +82,7 @@ public class ActivationDAOTest {
       return actDAO.findAll();
     });
     assertNotNull(activations);
-    assertEquals(3, activations.size());
+    assertEquals(COUNT, activations.size());
   }
 
   @Test
@@ -92,7 +93,7 @@ public class ActivationDAOTest {
       actDAO.delete(activation);
       List<Activation> activations = actDAO.findAll();
       assertNotNull(activation);
-      assertEquals(2, activations.size());
+      assertEquals(COUNT - 1, activations.size());
       assertFalse(activations.contains(activation));
     });
   }

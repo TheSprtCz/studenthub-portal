@@ -12,27 +12,6 @@ import TermsOfUseDialog from '../components/TermsOfUseDialog.js';
 import Util from '../Util.js';
 import _t from '../Translations.js';
 
-class RoleSelect extends React.Component {
-  state = { value: 'STUDENT' };
-
-  handleChange = (value) => {
-    this.setState({value: value});
-    this.props.changeHandler(value);
-  };
-
-  render () {
-    return (
-      <Dropdown
-        auto
-        label={ _t.translate("Role") }
-        onChange={this.handleChange}
-        source={Util.rolesSource}
-        value={this.state.value}
-        icon='account_box' />
-    );
-  }
-}
-
 class FacultySelect extends React.Component {
   constructor(props) {
     super(props);
@@ -91,13 +70,13 @@ class FacultySelect extends React.Component {
 
 class SignUpForm extends React.Component {
   state = {
-    email: '', name: '', phone: '', role: 'STUDENT', faculty: { }, terms: false,
-    snackbarActive: false, snackbarLabel: '', redirect: false, error: false
-  };
+    email: '', name: '', phone: '', faculty: { }, terms: false, snackbarActive: false,
+    snackbarLabel: '', redirect: false, error: false
+  }
 
   handleChange = (name, value) => {
     this.setState({...this.state, [name]: value});
-  };
+  }
 
   handleSubmit = () => {
     fetch('/api/account/signUp', {
@@ -109,7 +88,7 @@ class SignUpForm extends React.Component {
         faculty: this.state.faculty,
         name: this.state.name,
         phone: this.state.phone,
-        roles: [this.state.role],
+        roles: [Util.userRoles.student],
         username: this.state.email
       })
     }).then(function(response) {
@@ -128,12 +107,12 @@ class SignUpForm extends React.Component {
         throw new Error('There was a problem with network connection. POST request could not be processed!');
       }
     }.bind(this));
-  };
+  }
 
   handleToggle = () => {
     this.setState({ snackbarActive: false });
     if (this.state.error === false) this.setState({ redirect: true });
-  };
+  }
 
   generateRedirect = () => {
     if (this.state.redirect === false) {
@@ -147,10 +126,12 @@ class SignUpForm extends React.Component {
     return (
       <section className="container">
         <h1>{ _t.translate('Sign Up') }</h1>
-        <Input type='email' label={ _t.translate("Email address") } hint={ _t.translate('Your email adress') } icon='email' required value={this.state.email} onChange={this.handleChange.bind(this, 'email')} />
-        <Input type='text' label={ _t.translate("Name") } hint={ _t.translate('Your name') } name='name' icon='textsms' required value={this.state.name} onChange={this.handleChange.bind(this, 'name')} maxLength={16} />
-        <Input type='tel' label={ _t.translate("Phone") } hint={ _t.translate('Your phone number') } name='phone' icon='phone' value={this.state.phone} onChange={this.handleChange.bind(this, 'phone')} maxLength={9} />
-        <RoleSelect changeHandler={(value) => this.handleChange("role", value)} />
+        <Input type='email' label={ _t.translate("Email address") } hint={ _t.translate('Your email adress') }
+          icon='email' required value={this.state.email} onChange={this.handleChange.bind(this, 'email')} />
+        <Input type='text' label={ _t.translate("Name") } hint={ _t.translate('Your name') } name='name'
+          icon='textsms' required value={this.state.name} onChange={this.handleChange.bind(this, 'name')} maxLength={16} />
+        <Input type='tel' label={ _t.translate("Phone") } hint={ _t.translate('Your phone number') } name='phone'
+          icon='phone' value={this.state.phone} onChange={this.handleChange.bind(this, 'phone')} maxLength={9} />
         <FacultySelect changeHandler={(value) => this.handleChange("faculty", value)} />
         <table>
           <tbody>
@@ -165,9 +146,11 @@ class SignUpForm extends React.Component {
           </tbody>
         </table>
         <br />
-        <Button icon='person_add' label={ _t.translate('Sign Up') } raised primary className='pull-right' onClick={this.handleSubmit}/>
-        <SiteSnackbar active={this.state.snackbarActive} label={this.state.snackbarLabel} toggleHandler={() => this.handleToggle()} />
-          {this.generateRedirect()}
+        <Button icon='person_add' label={ _t.translate('Sign Up') } raised primary
+          className='pull-right' onClick={this.handleSubmit}/>
+        <SiteSnackbar active={this.state.snackbarActive} label={this.state.snackbarLabel}
+          toggleHandler={() => this.handleToggle()} />
+        {this.generateRedirect()}
       </section>
     );
   }

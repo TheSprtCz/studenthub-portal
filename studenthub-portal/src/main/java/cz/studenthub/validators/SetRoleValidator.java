@@ -35,7 +35,7 @@ public class SetRoleValidator implements ConstraintValidator<Role, Set<User>> {
         if (user == null)
           return false;
 
-        if (!user.getRoles().contains(check.role()))
+        if (!user.hasRole(check.role()))
           return false;
       }
     }

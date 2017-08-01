@@ -22,6 +22,7 @@ import cz.studenthub.core.Project;
 import cz.studenthub.core.Topic;
 import cz.studenthub.core.TopicApplication;
 import cz.studenthub.core.User;
+import cz.studenthub.db.ProjectDAOTest;
 import io.dropwizard.testing.DropwizardTestSupport;
 import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
@@ -46,7 +47,7 @@ public class ProjectResourceTest {
     List<Project> list = fetchProjects();
 
     assertNotNull(list);
-    assertEquals(list.size(), 2);
+    assertEquals(list.size(), ProjectDAOTest.COUNT);
   }
 
   @Test(dependsOnGroups = "migrate", groups = "fetchProject")
@@ -76,7 +77,7 @@ public class ProjectResourceTest {
 
     assertNotNull(response);
     assertEquals(response.getStatus(), 201);
-    assertEquals(fetchProjects().size(), 3);
+    assertEquals(fetchProjects().size(), ProjectDAOTest.COUNT + 1);
     assertEquals((long) response.readEntity(Project.class).getId(), 3);
   }
 
@@ -107,7 +108,7 @@ public class ProjectResourceTest {
 
     assertNotNull(response);
     assertEquals(response.getStatus(), 204);
-    assertEquals(fetchProjects().size(), 2);
+    assertEquals(fetchProjects().size(), ProjectDAOTest.COUNT);
   }
 
   @Test(dependsOnGroups = {"login", "fetchTopic", "fetchProject"})

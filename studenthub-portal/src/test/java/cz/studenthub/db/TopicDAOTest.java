@@ -16,6 +16,7 @@ import io.dropwizard.testing.junit.DAOTestRule;
 
 public class TopicDAOTest {
 
+  public static final int COUNT = 5;
   private static final DAOTestRule DATABASE = DAOTestSuite.database;
   private static CompanyDAO companyDAO;
   private static UserDAO userDAO;
@@ -45,9 +46,9 @@ public class TopicDAOTest {
       Topic created = topicDAO.create(topic);
       assertNotNull(created.getId());
       assertEquals(topic, created);
-      assertEquals(6, topicDAO.findAll().size());
+      assertEquals(COUNT + 1, topicDAO.findAll().size());
       topicDAO.delete(created);
-      assertEquals(5, topicDAO.findAll().size());
+      assertEquals(COUNT, topicDAO.findAll().size());
     });
   }
 
@@ -68,7 +69,7 @@ public class TopicDAOTest {
       return topicDAO.findAll();
     });
     assertNotNull(topics);
-    assertEquals(5, topics.size());
+    assertEquals(COUNT, topics.size());
   }
 
   @Test

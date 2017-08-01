@@ -8,15 +8,15 @@ import Chip from 'react-toolbox/lib/chip/Chip.js';
 
 import EditButton from './EditButton.js';
 import DeleteButton from './DeleteButton.js';
-import LeaderEditDialog from './LeaderEditDialog.js';
-import UserInviteDialog from './UserInviteDialog.js';
+import RestrictedUserEditDialog from './RestrictedUserEditDialog.js';
+import InviteDialog from './InviteDialog.js';
 
 import Util from '../Util.js';
 import _t from '../Translations.js';
 
 const gravatar = require("gravatar")
 
-class CompanyRepUsersView extends Component {
+class UsersTable extends Component {
   state = { dialogActive: false, editId: -1 }
 
   /**
@@ -73,17 +73,17 @@ class CompanyRepUsersView extends Component {
             </TableRow>
           ))}
         </Table>
-        <LeaderEditDialog
+        <RestrictedUserEditDialog
           active={this.state.dialogActive}
           user={(this.state.editId === -1) ? -1 : this.props.users[this.state.editId]}
           editHandler={(user) => this.props.dataHandler("put",
             (this.state.editId === -1) ? -1 : this.props.users[this.state.editId].id, user)}
-          toggleHandler={() => this.toggleDialog(-1)}
-        />
-        <UserInviteDialog company={{ id: this.props.companyId }} snackbarSetter={(label) => this.props.snackbarSetter(label)} />
+          toggleHandler={() => this.toggleDialog(-1)} />
+        <InviteDialog company={this.props.company} faculty={this.props.faculty}
+          snackbarSetter={(label) => this.props.snackbarSetter(label)} />
       </div>
     );
   }
 }
 
-export default CompanyRepUsersView;
+export default UsersTable;
