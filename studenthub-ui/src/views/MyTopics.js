@@ -13,11 +13,12 @@ import Dialog from 'react-toolbox/lib/dialog/Dialog.js';
 import Input from 'react-toolbox/lib/input/Input.js';
 import Button from 'react-toolbox/lib/button/Button.js';
 import Chip from 'react-toolbox/lib/chip/Chip.js';
+import Tags from 'react-tagging-input';
+import "react-tagging-input/dist/styles.css";
 
 import Pager from '../components/Pager.js';
 import DeleteButton from '../components/DeleteButton.js';
 import EditButton from '../components/EditButton.js';
-import SiteSnackbar from '../components/SiteSnackbar.js';
 
 import Auth from '../Auth.js';
 import Util from '../Util.js';
@@ -32,13 +33,17 @@ const TopicTableHint = () => (
 
 class TopicTable extends Component {
   state = { topics: [], nextTopics: [], dialogActive: false, editId: -1,
-    snackbarLabel: "", snackbarActive: false, page: -1, offsetWentDown: false }
+    page: -1, offsetWentDown: false, plan: { maxTopics: 0 }, topicCount: -1 }
 
   componentDidMount() {
     if (Auth.hasRole(Util.userRoles.companyRep) && !Auth.hasRole(Util.userRoles.admin))
       this.getCompanyTopics();
     else
       this.getTopics();
+    if (Auth.hasRole(Util.userRoles.techLeader) && !Auth.hasRole(Util.userRoles.admin))
+      setTimeout(function() {
+          this.getLimitInfo();
+      }.bind(this), 3);
     this.changePage(1);
   }
 
@@ -58,10 +63,7 @@ class TopicTable extends Component {
         }
       }).then(function(json) {
         if (Util.isEmpty(json.company)) {
-          this.setState({
-            snackbarLabel: "There is no company connected to your account!",
-            snackbarActive: true
-          });
+          Util.notify("error", "", "There is no company connected to your account!");
           return;
         }
         fetch('/api/companies/' + json.company.id + "/topics?size=" + Util.TOPICS_PER_PAGE_TABLE + "&start=" +
@@ -101,10 +103,20 @@ class TopicTable extends Component {
    */
   getTopics = () => {
     let page = (this.state.offsetWentDown) ? this.state.page : (this.state.page+1);
-    fetch((Auth.hasRole(Util.userRoles.admin)) ? "/api/topics?size=" + Util.TOPICS_PER_PAGE_TABLE + "&start=" +
-    (page * Util.TOPICS_PER_PAGE_TABLE) : "/api/users/" + Auth.getUserInfo().sub +
-    "/ownedTopics?size=" + Util.TOPICS_PER_PAGE_TABLE + "&start=" +
-    (page * Util.TOPICS_PER_PAGE_TABLE), {
+    let url = "";
+    if (Auth.hasRole(Util.userRoles.admin))
+      url = "/api/topics?size=" + Util.TOPICS_PER_PAGE_TABLE + "&start=" +
+      (page * Util.TOPICS_PER_PAGE_TABLE);
+    else if (Auth.hasRole(Util.userRoles.techLeader))
+      url = "/api/users/" + Auth.getUserInfo().sub +
+      "/ownedTopics?size=" + Util.TOPICS_PER_PAGE_TABLE + "&start=" +
+      (page * Util.TOPICS_PER_PAGE_TABLE);
+    else if (Auth.hasRole(Util.userRoles.superviser))
+      url = "/api/users/" + Auth.getUserInfo().sub +
+      "/supervisedTopics?size=" + Util.TOPICS_PER_PAGE_TABLE + "&start=" +
+      (page * Util.TOPICS_PER_PAGE_TABLE);
+
+    fetch(url, {
         credentials: 'same-origin',
         method: 'get'
       }).then(function(response) {
@@ -132,6 +144,38 @@ class TopicTable extends Component {
           });
         }
       }.bind(this));
+  }
+
+  getLimitInfo = () => {
+    fetch('/api/users/' + Auth.getUserInfo().sub, {
+      method: 'get',
+      credentials: 'same-origin'
+    }).then(function(response) {
+      if (response.ok) {
+        return response.json();
+      } else {
+        throw new Error('There was a problem with network connection.');
+      }
+    }).then(function(json) {
+      if (Util.isEmpty(json.company.plan)) {
+        Util.notify("error", "", "Couldn't find a plan for your company!");
+        this.setState({ topicCount: -1, plan: { maxTopics: -1 } })
+        return;
+      }
+      this.setState({ plan: json.company.plan })
+    }.bind(this));
+    fetch("/api/users/" + Auth.getUserInfo().sub + "/ownedTopics", {
+      method: 'get',
+      credentials: 'same-origin'
+    }).then(function(response) {
+      if (response.ok) {
+        return response.json();
+      } else {
+        throw new Error('There was a problem with network connection.');
+      }
+    }).then(function(json) {
+      this.setState({ topicCount: json.length })
+    }.bind(this));
   }
 
   /**
@@ -164,16 +208,12 @@ class TopicTable extends Component {
               label = "Wrong method input!";
               return;
           }
-          this.setState({
-            snackbarLabel: label,
-            snackbarActive: true
-          });
+          Util.notify("success", "", label);
           this.getTopics();
+          if (Auth.hasRole(Util.userRoles.techLeader) && !Auth.hasRole(Util.userRoles.admin))
+            this.getLimitInfo();
       } else {
-        this.setState({
-          snackbarLabel: "An error occured! Your request couldn't be processed. It's possible that you have a problem with your internet connection or that the server is not responding.",
-          snackbarActive: true
-        });
+        Util.notify("error", "There was a problem with network connection.", "Your request hasn't been processed.");
         throw new Error('There was a problem with network connection. '+method.toUpperCase()+' could not be processed!');
       }
     }.bind(this));
@@ -181,10 +221,6 @@ class TopicTable extends Component {
 
   toggleDialog = (id) => {
     this.setState({dialogActive: !this.state.dialogActive, editId: id});
-  }
-
-  toggleSnackbar = () => {
-    this.setState({snackbarActive: !this.state.snackbarActive});
   }
 
   changePage = (offset) => {
@@ -199,12 +235,19 @@ class TopicTable extends Component {
   }
 
   render () {
+    if (this.state.topicCount >= this.state.plan.maxTopics && this.state.topicCount !== -1)
+      Util.notify("error", "This is because the plan of your company is limiting the maximum number of topics.",
+        "You cannot create new topics anymore.");
+    else if (this.state.topicCount+1 === this.state.plan.maxTopics && this.state.topicCount !== -1)
+      Util.notify("warning", "This is because the plan of your company is limiting the maximum number of topics.",
+        "You can create only one more topic.");
     return (
       <div>
         <TopicTableHint />
         <h1>
           { _t.translate('My Topics') } { Auth.hasRole(Util.userRoles.techLeader) ?
-            <NewTopicDialog active={this.state.dialogActive} dataHandler={(method, id, data) =>
+            <NewTopicDialog disabled={(this.state.topicCount >= this.state.plan.maxTopics) ? true : false}
+              active={this.state.dialogActive} dataHandler={(method, id, data) =>
               this.manageData(method, id, data)} topic={(this.state.editId === -1) ? -1 :
               this.state.topics[this.state.editId]} toggleHandler={() => this.toggleDialog(-1)}/> : '' }
         </h1>
@@ -230,8 +273,6 @@ class TopicTable extends Component {
             </TableRow>
           ))}
         </Table>
-        <SiteSnackbar active={this.state.snackbarActive} label={this.state.snackbarLabel}
-          toggleHandler={() => this.toggleSnackbar()} />
         <Pager currentPage={this.state.page} nextData={this.state.nextTopics}
           pageChanger={(offset) => this.changePage(offset)} />
       </div>
@@ -241,8 +282,8 @@ class TopicTable extends Component {
 
 class NewTopicDialog extends Component {
   state = {
-    degrees: [], allDegrees: [], title: '', enabled: true, shortAbstract: '',
-    description: '', tags: '', tagIndex: 0, dialogTitle: _t.translate('New Topic'),
+    bachelor: false, master: false, phd: false, highSchool: false, title: '', enabled: true,
+    shortAbstract: '', description: '', tags: [], dialogTitle: _t.translate('New Topic'),
     actions : [
       { label: _t.translate('Add'), onClick: () => this.handleAdd()},
       { label: _t.translate('Cancel'), onClick: () => this.handleToggle() }
@@ -259,21 +300,29 @@ class NewTopicDialog extends Component {
   componentWillReceiveProps(nextProps) {
     if(this.props === nextProps) return;
 
-    var tagsState = "";
+    var bachelorState = false;
+    var masterState = false;
+    var phdState = false;
+    var highSchoolState = false;
 
-    if (!nextProps.topic === -1) {
-      for (let i = 0; i < nextProps.topic.tags.length; i++) {
-        tagsState += nextProps.topic.tags[i];
-        if ((i + 1) < nextProps.topic.tags.length) tagsState += ";"
+    if(nextProps.topic !== -1) {
+      for (let i = 0; i < nextProps.topic.degrees.length; i++) {
+        if(nextProps.topic.degrees[i] === "BACHELOR") bachelorState = true;
+        else if(nextProps.topic.degrees[i] === "MASTER") masterState = true;
+        else if(nextProps.topic.degrees[i] === "PhD") phdState = true;
+        else if(nextProps.topic.degrees[i] === "HIGH_SCHOOL") highSchoolState = true;
       }
     }
 
     this.setState({
-      degrees: (nextProps.topic === -1) ? [] : nextProps.topic.degrees,
+      bachelor: bachelorState,
+      master: masterState,
+      phd: phdState,
+      highSchool: highSchoolState,
       title: (nextProps.topic === -1) ? "" : nextProps.topic.title,
       shortAbstract: (nextProps.topic === -1) ? "" : nextProps.topic.shortAbstract,
       description: (nextProps.topic === -1) ? "" : nextProps.topic.description,
-      tags: tagsState,
+      tags: (nextProps.topic === -1) ? [] : nextProps.topic.tags,
       dialogTitle: (nextProps.topic === -1) ? _t.translate('New Topic') : _t.translate('Edit Topic'),
       actions: (nextProps.topic === -1) ? [
         { label: _t.translate('Add'), onClick: () => this.handleAdd()},
@@ -282,7 +331,7 @@ class NewTopicDialog extends Component {
         { label: _t.translate('Save changes'), onClick: () => this.handleEdit()},
         { label: _t.translate('Cancel'), onClick: () => this.handleToggle() }
       ],
-      enabled: (nextProps.topic === -1) ? true : nextProps.topic.enabled
+      enabled: (nextProps.topic === -1) ? false : nextProps.topic.enabled
     });
   }
 
@@ -323,7 +372,7 @@ class NewTopicDialog extends Component {
         degrees: this.state.degrees,
         description: this.state.description,
         shortAbstract: this.state.shortAbstract,
-        tags: this.getTags(),
+        tags: this.state.tags,
         title: this.state.title,
         enabled: this.state.enabled
       })
@@ -341,7 +390,7 @@ class NewTopicDialog extends Component {
         degrees: this.state.degrees,
         description: this.state.description,
         shortAbstract: this.state.shortAbstract,
-        tags: this.getTags(),
+        tags: this.state.tags,
         title: this.state.title,
         enabled: this.state.enabled
       })
@@ -366,26 +415,18 @@ class NewTopicDialog extends Component {
     return false;
   }
 
-  getTags = () => {
-    var tags = [];
-    var stringTags = this.state.tags;
+  onTagAdded(tag) {
+		this.setState({ tags: [...this.state.tags, tag] });
+	}
 
-    if(stringTags.indexOf(";") === stringTags.length-1)
-      stringTags = stringTags.substring(0, stringTags.indexOf(";"));
-
-    while(stringTags.indexOf(";") !== -1) {
-      tags.push(stringTags.substring(0, stringTags.indexOf(";")));
-      stringTags = stringTags.substring(stringTags.indexOf(";")+1);
-    }
-    tags.push(stringTags);
-
-    return tags;
-  }
+	onTagRemoved(tag, index) {
+		this.setState({ tags: this.state.tags.filter((tag, i) => i !== index) });
+	}
 
   render() {
     return(
       <div className='pull-right'>
-        <Button icon='add' floating onClick={this.handleToggle} />
+        <Button icon='add' floating onClick={this.handleToggle} disabled={this.props.disabled} />
         <Dialog
           actions={this.state.actions}
           active={this.props.active}
@@ -395,8 +436,48 @@ class NewTopicDialog extends Component {
           <Tabs index={this.state.tabIndex} onChange={this.handleTabChange} >
             <Tab label={ _t.translate('Basic info') }>
               <Input type='text' label={ _t.translate('Topic title') } hint="Topic title" name='title' required value={this.state.title} onChange={this.handleChange.bind(this, 'title')} />
-              <Input type='text' label={ _t.translate('Short abstract') } hint="Short info about the topic"  multiline rows={2} name='shortAbstract' value={this.state.shortAbstract} onChange={this.handleChange.bind(this, 'shortAbstract')} />
-              <Input type='text' label={ _t.translate('Tags') } hint="Divide tags using ;" value={this.state.tags} onChange={this.handleChange.bind(this, 'tags')} />
+              <Input type='text' label={ _t.translate('Short abstract') } hint="Short info about the topic"  multiline rows={2} name='shortAbstract'
+                value={this.state.shortAbstract} onChange={this.handleChange.bind(this, 'shortAbstract')} />
+              <Tags
+      					tags={this.state.tags}
+      					placeholder={ _t.translate('Tags') }
+      					onAdded={this.onTagAdded.bind(this)}
+      					onRemoved={this.onTagRemoved.bind(this)} />
+              <h4>{ _t.translate('Degrees') }</h4>
+              <table>
+                <tbody>
+                  <tr>
+                    <td style={{ paddingRight: '10px'}}>
+                      <Checkbox
+                        checked={this.state.bachelor}
+                        label={ _t.translate('Bachelor') }
+                        name='grades'
+                        onChange={this.handleChange.bind(this, 'bachelor')} />
+                    </td>
+                    <td style={{ paddingRight: '10px'}}>
+                      <Checkbox
+                        checked={this.state.master}
+                        label={ _t.translate('Master') }
+                        name='grades'
+                        onChange={this.handleChange.bind(this, 'master')} />
+                    </td>
+                    <td style={{ paddingRight: '10px'}}>
+                      <Checkbox
+                        checked={this.state.phd}
+                        label={ _t.translate('PhD') }
+                        name='grades'
+                        onChange={this.handleChange.bind(this, 'phd')} />
+                    </td>
+                    <td>
+                      <Checkbox
+                        checked={this.state.highSchool}
+                        label={ _t.translate('High school') }
+                        name='grades'
+                        onChange={this.handleChange.bind(this, 'highSchool')} />
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
               <Checkbox
                 checked={this.state.enabled}
                 label={ _t.translate('Enabled for use') }
@@ -418,7 +499,8 @@ class NewTopicDialog extends Component {
               ))}
             </Tab>
             <Tab label={ _t.translate('Preview') }>
-              <p>Below you can see a preview of the description. Uses <a href="https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet" target="_blank">Markdown</a>.</p>
+              <p>Below you can see a preview of the description. Uses <a href="https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet"
+                target="_blank" rel="noopener noreferrer">Markdown</a>.</p>
               <ReactMarkdown source={ this.state.description } />
             </Tab>
           </Tabs>

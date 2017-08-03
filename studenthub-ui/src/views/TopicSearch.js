@@ -8,7 +8,6 @@ import Card from 'react-toolbox/lib/card/Card.js';
 import CardTitle from 'react-toolbox/lib/card/CardTitle.js';
 import CardText from 'react-toolbox/lib/card/CardText.js';
 import CardActions from 'react-toolbox/lib/card/CardActions.js';
-import Snackbar from 'react-toolbox/lib/snackbar/Snackbar.js';
 
 import TopicDetailsDialog from '../components/TopicDetailsDialog.js';
 import Pager from '../components/Pager.js';
@@ -19,8 +18,8 @@ import Util from '../Util.js';
 import _t from '../Translations.js';
 
 class TopicCard extends React.Component {
-  state = {snackbarActive: false, snackbarLabel: '', confirmActive: false, confirmText: "",
-    confirmActions: [], redirect: -1};
+  state = { confirmActive: false, confirmText: "",
+    confirmActions: [], redirect: -1 };
 
   handleConfirmToggle = (apply) => {
     if (apply === -1) {
@@ -37,10 +36,6 @@ class TopicCard extends React.Component {
     }
   }
 
-  handleToggle = () => {
-    this.setState({snackbarActive: !this.state.snackbarActive});
-  }
-
   handleSupervise = () => {
     fetch('/api/topics/' + this.props.id + '/supervise', {
       method: 'put',
@@ -51,9 +46,8 @@ class TopicCard extends React.Component {
       body: JSON.stringify({ id: this.props.id })
     }).then(function(response) {
       if(response.ok) {
+        Util.notify("info", "", "Your are now supervising topic ID " + this.props.id);
         this.setState({
-          snackbarLabel: "Your are now supervising topic ID " + this.props.id,
-          snackbarActive: true,
           confirmActive: false
         });
       } else {
@@ -76,9 +70,8 @@ class TopicCard extends React.Component {
     })
     .then(function(json) {
       if (Util.isEmpty(json.faculty)) {
+        Util.notify("error", "There was a problem with network connection.", "Your request hasn't been processed.");
         this.setState({
-          snackbarLabel: "Your request couldn't be processed as don't have a faculty! Please choose a faculty in profile view!",
-          snackbarActive: true,
           confirmActive: false
         });
         return;
@@ -104,9 +97,8 @@ class TopicCard extends React.Component {
           throw new Error('There was a problem with network connection.');
         }
       }).then(function(json2) {
+        Util.notify("success", "", "Your are now applied to topic ID "+this.props.id);
         this.setState({
-          snackbarLabel: "Your are now applied to topic ID "+this.props.id,
-          snackbarActive: true,
           confirmActive: false
         });
 
@@ -146,14 +138,6 @@ class TopicCard extends React.Component {
           title={ _t.translate("Please confirm your action") } >
           <p>{this.state.confirmText}</p>
         </Dialog>
-        <Snackbar
-          action='Dismiss'
-          active={this.state.snackbarActive}
-          label={this.state.snackbarLabel}
-          timeout={2000}
-          onClick={this.handleToggle}
-          onTimeout={this.handleToggle}
-          type='warning' />
       </Card>
     )
   }

@@ -5,7 +5,6 @@ import Button from 'react-toolbox/lib/button/Button.js';
 import Dropdown from 'react-toolbox/lib/dropdown/Dropdown.js';
 import Checkbox from 'react-toolbox/lib/checkbox/Checkbox.js';
 
-import SiteSnackbar from '../components/SiteSnackbar.js';
 import PersonalDataProcDialog from '../components/PersonalDataProcDialog.js';
 import TermsOfUseDialog from '../components/TermsOfUseDialog.js';
 
@@ -70,9 +69,9 @@ class FacultySelect extends React.Component {
 
 class SignUpForm extends React.Component {
   state = {
-    email: '', name: '', phone: '', faculty: { }, terms: false, snackbarActive: false,
-    snackbarLabel: '', redirect: false, error: false
-  }
+    email: '', name: '', phone: '', role: 'STUDENT', faculty: { }, terms: false,
+      redirect: false
+  };
 
   handleChange = (name, value) => {
     this.setState({...this.state, [name]: value});
@@ -93,25 +92,18 @@ class SignUpForm extends React.Component {
       })
     }).then(function(response) {
       if (response.ok) {
+        Util.notify("success", "", "Your account has been succesfully created!");
         this.setState({
-          snackbarLabel: "Your account has been succesfully created!",
-          snackbarActive: true,
-          error: false
+          redirect: true
         });
       } else {
+        Util.notify("error", "There was a problem with network connection.", "Your request hasn't been processed.");
         this.setState({
-          snackbarLabel: "An error occured! Your request couldn't be processed. It's possible that you have a problem with your internet connection or that the server is not responding.",
-          snackbarActive: true,
-          error: true
+          redirect: false
         });
         throw new Error('There was a problem with network connection. POST request could not be processed!');
       }
     }.bind(this));
-  }
-
-  handleToggle = () => {
-    this.setState({ snackbarActive: false });
-    if (this.state.error === false) this.setState({ redirect: true });
   }
 
   generateRedirect = () => {
@@ -146,11 +138,8 @@ class SignUpForm extends React.Component {
           </tbody>
         </table>
         <br />
-        <Button icon='person_add' label={ _t.translate('Sign Up') } raised primary
-          className='pull-right' onClick={this.handleSubmit}/>
-        <SiteSnackbar active={this.state.snackbarActive} label={this.state.snackbarLabel}
-          toggleHandler={() => this.handleToggle()} />
-        {this.generateRedirect()}
+        <Button icon='person_add' label={ _t.translate('Sign Up') } raised primary className='pull-right' onClick={this.handleSubmit}/>
+          {this.generateRedirect()}
       </section>
     );
   }

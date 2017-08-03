@@ -9,11 +9,6 @@ import Tab from 'react-toolbox/lib/tabs/Tab.js';
 import Tabs from 'react-toolbox/lib/tabs/Tabs.js';
 import Chip from 'react-toolbox/lib/chip/Chip.js';
 
-import AddButton from '../components/AddButton';
-import FacultyDialog from '../components/FacultyDialog.js';
-import { FacultyTable, FacultyRow, FacultyHead} from '../components/FacultyTable.js';
-import SiteSnackbar from '../components/SiteSnackbar.js';
-
 import Auth from '../Auth.js';
 import Util from '../Util.js';
 import _t from '../Translations.js'
@@ -28,7 +23,7 @@ const LogoutButton = withRouter(({ history }) => (
 
 class ProfileEditView extends React.Component {
   state = { email: '', avatarUrl: '', name: '', phone: '', roles: [],  tags: '',
-  lastLogin: [], snackbarActive: false, snackbarLabel: '', redirect: false };
+  lastLogin: [] };
 
   componentDidMount() {
     this.getUser();
@@ -87,16 +82,10 @@ class ProfileEditView extends React.Component {
       })
     }).then(function(response) {
         if(response.ok) {
-          this.setState({
-            snackbarLabel: "Your account has been succesfully changed!",
-            snackbarActive: true
-          });
+          Util.notify("success", "", "Your account has been succesfully changed!");
           this.getUser();
       } else {
-        this.setState({
-          snackbarLabel: "An error occured! Your request couldn't be processed. It's possible that you have a problem with your internet connection or that the server is not responding.",
-          snackbarActive: true
-        });
+        Util.notify("error", "There was a problem with network connection.", "Your request hasn't been processed.");
         throw new Error('There was a problem with network connection. PUT request could not be processed!');
       }
     }.bind(this));
@@ -122,13 +111,6 @@ class ProfileEditView extends React.Component {
     return tags;
   }
 
-  /**
-   * Toggles the visiblity of the Snackbar.
-   */
-  toggleSnackbar = () => {
-    this.setState({ snackbarActive: !this.state.snackbarActive })
-  }
-
   render () {
     return (
       <div className="row">
@@ -149,7 +131,6 @@ class ProfileEditView extends React.Component {
           <Input type='text' name='tags' label={ _t.translate('Tags') } icon='flag' hint="Divide tags using ;" value={this.state.tags} onChange={this.handleChange.bind(this, 'tags')} />
           <Button icon='edit' label={ _t.translate('Change password') } raised primary className='pull-left' onClick={this.handleRedirect}/>
           <Button icon='edit' label={ _t.translate('Save changes') } raised primary className='pull-right' onClick={this.handleSubmit}/>
-          <SiteSnackbar active={this.state.snackbarActive} label={this.state.snackbarLabel} toggleHandler={() => this.toggleSnackbar()} />
         </div>
       </div>
     );
@@ -158,7 +139,7 @@ class ProfileEditView extends React.Component {
 
 class CompanyEditView extends React.Component {
   state = { id: 0, name: '', city: '', country: '',  url: '', logoUrl: '', size: '',
-    plan: { }, snackbarActive: false, snackbarLabel: '' };
+    plan: { } };
 
   componentDidMount() {
     this.getCompany();
@@ -176,10 +157,7 @@ class CompanyEditView extends React.Component {
       }
     }).then(function(json) {
       if (Util.isEmpty(json.company)) {
-        this.setState({
-          snackbarActive: true,
-          snackbarLabel: "Couldn't find any companies associated with your account!"
-        });
+        Util.notify("error", "", "Couldn't find any companies associated with your account!");
         return;
       }
       this.setState({
@@ -217,28 +195,13 @@ class CompanyEditView extends React.Component {
         })
     }).then(function(response) {
         if (response.ok) {
-          this.setState({
-            snackbarLabel: "Your company has been succesfully changed!",
-            snackbarActive: true
-          });
+          Util.notify("success", "", "Your company has been succesfully changed!");
           this.getCompany();
       } else {
-        this.setState({
-          snackbarLabel: "An error occured! Your request couldn't be processed. It's possible that you have a problem with your internet connection or that the server is not responding.",
-          snackbarActive: true
-        });
+        Util.notify("error", "There was a problem with network connection.", "Your request hasn't been processed.");
         throw new Error('There was a problem with network connection. PUT request could not be processed!');
       }
     }.bind(this));
-  }
-
-  /**
-   * Toggles the visiblity of the Snackbar.
-   */
-  toggleSnackbar = () => {
-    this.setState({
-      snackbarActive: !this.state.snackbarActive
-    })
   }
 
   render () {
@@ -271,7 +234,6 @@ class CompanyEditView extends React.Component {
             label={ _t.translate('Size') } />
             <Input type='name' label={ _t.translate('Plan') } icon='assignment' disabled value={(Util.isEmpty(this.state.plan)) ? "N/A" : this.state.plan.name} />
           <Button icon='edit' label={ _t.translate('Save changes') } raised primary className='pull-right' onClick={this.handleSubmit}/>
-          <SiteSnackbar active={this.state.snackbarActive} label={this.state.snackbarLabel} toggleHandler={() => this.toggleSnackbar()} />
         </div>
       </div>
     );

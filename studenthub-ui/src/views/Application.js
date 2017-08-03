@@ -8,7 +8,6 @@ import Tabs from 'react-toolbox/lib/tabs/Tabs.js';
 import ListCheckbox from 'react-toolbox/lib/list/ListCheckbox.js';
 import ReactMarkdown from 'react-markdown';
 
-import SiteSnackbar from '../components/SiteSnackbar.js';
 import AddButton from '../components/AddButton.js';
 import EditButton from '../components/EditButton.js';
 import DeleteButton from '../components/DeleteButton.js';
@@ -306,8 +305,6 @@ class ApplicationForm extends Component {
     link: "",
     topic: {},
     faculty: "",
-    snackbarLabel: "",
-    snackbarActive: false,
     editId: -1,
     index: 0
   };
@@ -367,10 +364,7 @@ class ApplicationForm extends Component {
       })
     }).then(function(response) {
       if (response.ok) {
-        this.setState({
-          snackbarActive: true,
-          snackbarLabel: "Your application has been successfully updated!"
-        });
+        Util.notify("success", "", "Your application has been successfully updated!");
         this.getData();
       } else {
         throw new Error('There was a problem with network connection.');
@@ -392,10 +386,6 @@ class ApplicationForm extends Component {
 
   handleChange = (name, value) => {
     this.setState({...this.state, [name]: value});
-  };
-
-  toggleSnackbar = () => {
-    this.setState({ snackbarActive: !this.state.snackbarActive });
   };
 
   render() {
@@ -471,14 +461,13 @@ class ApplicationForm extends Component {
           </Tabs>
         </div>
         <Button icon='save' label={ _t.translate('Save changes') } raised primary className='pull-right' onClick={this.handleSubmit} />
-        <SiteSnackbar active={this.state.snackbarActive} label={this.state.snackbarLabel} toggleHandler={() => this.toggleSnackbar()} />
       </div>
     )
   }
 }
 
 class TaskList extends React.Component {
-  state = { tasks: [], app: { }, snackbarLabel: "", snackbarActive: false, dialogActive: false };
+  state = { tasks: [], app: { }, dialogActive: false };
 
   componentDidMount() {
     this.getApp();
@@ -544,10 +533,7 @@ class TaskList extends React.Component {
       })
     }).then(function(response) {
       if (response.ok) {
-        this.setState({
-          snackbarLabel: "Task status changed successfully!",
-          snackbarActive: true
-        });
+        Util.notify("success", "", "Task status changed successfully!");
         this.getTasks();
       } else {
         throw new Error('There was a problem with network connection.');
@@ -561,10 +547,7 @@ class TaskList extends React.Component {
       credentials: 'same-origin'
       }).then(function(response) {
       if (response.ok) {
-        this.setState({
-          snackbarLabel: "The task has been deleted  successfully!",
-          snackbarActive: true
-        });
+        Util.notify("success", "", "The task has been deleted successfully!");
         this.getTasks();
       } else {
         throw new Error('There was a problem with network connection.');
@@ -575,7 +558,7 @@ class TaskList extends React.Component {
   /**
    * Toggles the visiblity of the Dialog.
    * @param id     the id of the task to edit
-   * @param label  new snackbarLabel
+   * @param label  new notification label
    */
   toggleDialog = (id, label) => {
     this.setState({
@@ -584,16 +567,9 @@ class TaskList extends React.Component {
     })
     if(label === "") return;
     else {
-      this.setState({
-        snackbarLabel: label,
-        snackbarActive: true
-      })
+      Util.notify("info", "", label);
       this.getTasks();
     }
-  }
-
-  toggleSnackbar = () => {
-    this.setState({ snackbarActive: !this.state.snackbarActive });
   }
 
   render () {
@@ -626,7 +602,6 @@ class TaskList extends React.Component {
             ))}
           </tbody>
         </table>
-        <SiteSnackbar active={this.state.snackbarActive} label={this.state.snackbarLabel} toggleHandler={() => this.toggleSnackbar()} />
         <TaskDialog active={this.state.dialogActive} task={(this.state.editId === -1) ? null : this.state.tasks[this.state.editId]}
           toggleHandler={(label) => this.toggleDialog(this.state.editId, label)} app={this.state.app} />
       </div>

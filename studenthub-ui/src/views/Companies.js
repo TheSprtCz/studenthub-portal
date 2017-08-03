@@ -10,7 +10,6 @@ import Button from 'react-toolbox/lib/button/Button.js';
 
 import DeleteButton from '../components/DeleteButton.js';
 import EditButton from '../components/EditButton.js';
-import SiteSnackbar from '../components/SiteSnackbar.js';
 
 import Util from '../Util.js';
 import _t from '../Translations.js';
@@ -69,9 +68,7 @@ class CompaniesTable extends Component {
   state = {
     companies: [],
     dialogActive: false,
-    editId: -1,
-    snackbarLabel: "",
-    snackbarActive: false
+    editId: -1
   }
 
   componentDidMount() {
@@ -106,26 +103,13 @@ class CompaniesTable extends Component {
         throw new Error('There was a problem with network connection.');
       }
     }).then(function(json) {
-      this.setState({
-        snackbarLabel: "The company has been succesfully removed.",
-        snackbarActive: true
-      });
+      Util.notify("success", "", "The company has been succesfully removed.");
       this.getCompanies();
     }.bind(this));
   }
 
   toggleDialog = (id) => {
     this.setState({dialogActive: !this.state.dialogActive, editId: id});
-  }
-
-  toggleSnackbar = (message, isError) => {
-    if (message === this.state.snackbarLabel)
-      this.setState({snackbarActive: !this.state.snackbarActive});
-    else {
-      this.setState({snackbarActive: !this.state.snackbarActive, snackbarLabel: message});
-      if (!isError)
-        this.getCompanies();
-    }
   }
 
   render () {
@@ -135,7 +119,7 @@ class CompaniesTable extends Component {
           { _t.translate('Companies') }
         </h1>
         <CompanyDialog active={this.state.dialogActive} company={(this.state.editId === -1) ? -1 : this.state.companies[this.state.editId]}
-          toggleHandler={() => this.toggleDialog(-1)} snackbarHandler={(message, isError) => this.toggleSnackbar(message, isError)} />
+          toggleHandler={() => this.toggleDialog(-1)} />
         <Table selectable={false}>
           <TableHead>
             <TableCell>ID</TableCell>
@@ -164,7 +148,6 @@ class CompaniesTable extends Component {
             </TableRow>
           ))}
         </Table>
-        <SiteSnackbar active={this.state.snackbarActive} label={this.state.snackbarLabel} toggleHandler={() => this.toggleSnackbar(this.state.snackbarLabel, false)} />
       </div>
     );
   }
@@ -232,10 +215,10 @@ class CompanyDialog extends Component {
       })
     }).then(function(response) {
       if (response.ok) {
-        this.props.snackbarHandler("The company has been succesfully created!");
+        Util.notify("success", "", "The company has been succesfully created!");
         this.handleToggle();
       } else {
-        this.props.snackbarHandler("There was a problem with network connection. Your request hasn't been processed.");
+        Util.notify("error", "There was a problem with network connection.", "Your request hasn't been processed.");
         throw new Error('There was a problem with network connection.');
       }
     }.bind(this));
@@ -260,10 +243,10 @@ class CompanyDialog extends Component {
       })
     }).then(function(response) {
       if (response.ok) {
-        this.props.snackbarHandler("The company has been succesfully edited!");
+        Util.notify("success", "", "The company has been succesfully edited!");
         this.handleToggle();
       } else {
-        this.props.snackbarHandler("There was a problem with network connection. Your request hasn't been processed.");
+        Util.notify("error", "There was a problem with network connection.", "Your request hasn't been processed.");
         throw new Error('There was a problem with network connection.');
       }
     }.bind(this));
