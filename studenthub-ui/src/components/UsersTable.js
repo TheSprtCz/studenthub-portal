@@ -80,7 +80,7 @@ class UsersTable extends Component {
             (this.state.editId === -1) ? -1 : this.props.users[this.state.editId].id, user)}
           toggleHandler={() => this.toggleDialog(-1)}
         />
-        <UserInviteDialog company={{ id: this.props.companyId }} />
+        <InviteDialog company={{ id: this.props.companyId }} />
       </div>
     );
   }

@@ -5,13 +5,11 @@ import Auth from '../Auth.js';
 import Input from 'react-toolbox/lib/input/Input.js';
 import Button from 'react-toolbox/lib/button/Button.js';
 
-import SiteSnackbar from './SiteSnackbar.js';
-
+import Util from '../Util.js';
 import _t from '../Translations.js';
 
 class LoginForm extends React.Component {
-  state = { email: '', password: '', redirectToReferrer: false,
-    snackbarActive: false, snackbarLabel: ''}
+  state = { email: '', password: '', redirectToReferrer: false }
 
   handleChange = (name, value) => {
     this.setState({...this.state, [name]: value});
@@ -25,13 +23,8 @@ class LoginForm extends React.Component {
     Auth.authenticate(this.state.email, this.state.password, () => {
       this.setState({ redirectToReferrer: true })
     }, () => {
-      this.setState({ snackbarLabel: "No such user has been found!",
-        snackbarActive: true })
+      Util.notify("error", "", "Your credentials doesn't match");
     });
-  }
-
-  handleToggle = () => {
-    this.setState({ snackbarActive: !this.state.snackbarActive });
   }
 
   render() {
@@ -52,7 +45,6 @@ class LoginForm extends React.Component {
         <Button raised primary label={ _t.translate('Sign In') } onClick={() => this.handleSubmit()} />
         <p style={{ paddingTop: '30px'}}>{ _t.translate('Sign Up')} <Link to="/signup">{ _t.translate('here') }</Link>.</p>
         <p><Link to="/forgotPwd">{ _t.translate('Forgot your password') }?</Link></p>
-        <SiteSnackbar active={this.state.snackbarActive} label={this.state.snackbarLabel} toggleHandler={() => this.handleToggle()} />
       </div>
     )
   }

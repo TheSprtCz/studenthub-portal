@@ -8,7 +8,9 @@ import Dropdown from 'react-toolbox/lib/dropdown/Dropdown.js';
 import Tab from 'react-toolbox/lib/tabs/Tab.js';
 import Tabs from 'react-toolbox/lib/tabs/Tabs.js';
 import Chip from 'react-toolbox/lib/chip/Chip.js';
-
+import AddButton from '../components/AddButton';
+import FacultyDialog from '../components/FacultyDialog.js';
+import { FacultyTable, FacultyRow, FacultyHead} from '../components/FacultyTable.js';
 import Auth from '../Auth.js';
 import Util from '../Util.js';
 import _t from '../Translations.js'
@@ -22,8 +24,7 @@ const LogoutButton = withRouter(({ history }) => (
 ))
 
 class ProfileEditView extends React.Component {
-  state = { email: '', avatarUrl: '', name: '', phone: '', roles: [],  tags: '',
-  lastLogin: [] };
+  state = { email: '', avatarUrl: '', name: '', phone: '', roles: [],  tags: '', lastLogin: [], redirect: false };
 
   componentDidMount() {
     this.getUser();
@@ -242,8 +243,7 @@ class CompanyEditView extends React.Component {
 
 class UniversityEditView extends React.Component {
   state = {id: -1, name: '', city: '', country: '',  url: '', logoUrl: '',
-           faculties: [], snackbarActive: false, snackbarLabel: '',
-           dialogActive: false, editId: -1, index: 0};
+           faculties: [], dialogActive: false, editId: -1, index: 0};
 
   componentDidMount() {
     this.getData();
@@ -261,10 +261,7 @@ class UniversityEditView extends React.Component {
       }
     }).then(function(json) {
       if (Util.isEmpty(json.faculty)) {
-        this.setState({
-          snackbarActive: true,
-          snackbarLabel: "Couldn't find any universities associated with your account!"
-        });
+        Util.notify("error", "", "Couldn't find any universities associated with your account!");
         return;
       }
       this.setState({
@@ -310,46 +307,25 @@ class UniversityEditView extends React.Component {
         })
     }).then(function(response) {
         if (response.ok) {
-          this.setState({
-            snackbarLabel: "Your university has been succesfully changed!",
-            snackbarActive: true
-          });
+          Util.notify("info", '', 'Your university has been succesfully changed!')
           this.getData();
       } else {
-        this.setState({
-          snackbarLabel: "An error occured! Your request couldn't be processed. It's possible that you have a problem with your internet connection or that the server is not responding.",
-          snackbarActive: true
-        });
+        Util.notify('error', '', "An error occured! Your request couldn't be processed. It's possible that you have a problem with your internet connection or that the server is not responding.");
         throw new Error('There was a problem with network connection. PUT request could not be processed!');
       }
     }.bind(this));
   };
 
   /**
-   * Toggles the visiblity of the Snackbar.
-   */
-  toggleSnackbar = () => {
-    this.setState({snackbarActive: !this.state.snackbarActive})
-  }
-
-  /**
    * Toggles the visiblity of the faculty Dialog.
    * @param id  the id of the faculty to edit
-   * @param label  new snackbarLabel
    */
-  toggleDialog = (id, label) => {
+  toggleDialog = (id) => {
     this.setState({
       dialogActive: !this.state.dialogActive,
       editId: id
     })
-    if(label === "") return;
-    else {
-      this.setState({
-        snackbarLabel: label,
-        snackbarActive: true
-      })
-      this.getData();
-    }
+    // this.getData();
   }
 
   deleteFaculty = (id) => {
@@ -358,11 +334,8 @@ class UniversityEditView extends React.Component {
         credentials: 'same-origin',
         headers: {"Content-Type" : "application/json"}
       }).then(function(response) {
-          if(response.ok) {
-            this.setState({
-              snackbarLabel: "The faculty has been succesfully removed!",
-              snackbarActive: true
-            });
+        if (response.ok) {
+          Util.notify('info', '', 'The faculty has been succesfully removed.')
           this.getData();
         } else throw new Error('There was a problem with network connection.');
       }.bind(this));
@@ -405,8 +378,6 @@ class UniversityEditView extends React.Component {
                   onChange={this.handleChange.bind(this, 'logoUrl')} />
                 <Button icon='edit' label={ _t.translate('Save changes') } raised primary
                   className='pull-right' onClick={this.handleSubmit}/>
-                <SiteSnackbar active={this.state.snackbarActive} label={this.state.snackbarLabel}
-                  toggleHandler={() => this.toggleSnackbar()} />
               </div>
             </div>
           </Tab>

@@ -305,7 +305,6 @@ class ApplicationForm extends Component {
     link: "",
     topic: {},
     faculty: "",
-    editId: -1,
     index: 0
   };
 

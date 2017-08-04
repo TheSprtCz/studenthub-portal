@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 
 import AdminUsersView from '../components/AdminUsersView.js';
-import CompanyRepUsersView from '../components/CompanyRepUsersView.js';
+import UsersTable from '../components/UsersTable.js';
 import Pager from '../components/Pager.js';
 
 import Auth from '../Auth.js';
@@ -10,8 +10,7 @@ import Util from '../Util.js';
 import _t from '../Translations.js';
 
 class Users extends Component {
-  state = { users: [], nextUsers: [], companyId: -1, page: -1,
-    offsetWentDown: false }
+  state = { users: [], nextUsers: [], companyId: -1, page: -1, facultyId: -1, offsetWentDown: false }
 
   componentDidMount() {
     if (Auth.hasRole(Util.userRoles.admin))
@@ -203,8 +202,8 @@ class Users extends Component {
     if (Auth.hasRole(Util.userRoles.ambassador))
       return (<AdminUsersView users={this.state.users}
         dataHandler={(method, id, data) => this.manageData(method, id, data)} />);
-    else if (Auth.hasRole(Util.userRoles.companyRep))
-      return (<CompanyRepUsersView users={this.state.users} companyId={this.state.companyId}
+    else if (Auth.hasRole(Util.userRoles.companyRep) || Auth.hasRole(Util.userRoles.ambassador))
+      return (<UsersTable users={this.state.users} company={{ id: this.state.companyId }} faculty={{ id: this.state.facultyId }}
         dataHandler={(method, id, data) => this.manageData(method, id, data)} />);
   }
 

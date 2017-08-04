@@ -7,9 +7,8 @@ import InviteButton from './InviteButton.js';
 
 import Util from '../Util.js';
 import _t from '../Translations.js';
-import Util from '../Util.js';
 
-class UserInviteDialog extends Component {
+class InviteDialog extends Component {
   state = { active: false, email: '', name: '', phone: '', role: '' }
 
   actions = [
@@ -94,4 +93,4 @@ class UserInviteDialog extends Component {
   }
 }
 
-export default UserInviteDialog;
+export default InviteDialog;
