@@ -22,6 +22,7 @@ import org.hibernate.SessionFactory;
 
 import cz.studenthub.core.Company;
 import cz.studenthub.core.Faculty;
+import cz.studenthub.core.University;
 import cz.studenthub.core.User;
 import cz.studenthub.core.UserRole;
 import io.dropwizard.hibernate.AbstractDAO;
@@ -38,13 +39,13 @@ public class UserDAO extends AbstractDAO<User> {
     super(sessionFactory);
   }
   
-  public User update(User u) {
+  public User update(User user) {
     currentSession().clear();
-    return persist(u);
+    return persist(user);
   }
 
-  public User create(User u) {
-    return persist(u);
+  public User create(User user) {
+    return persist(user);
   }
 
   public User findById(Long id) {
@@ -75,6 +76,10 @@ public class UserDAO extends AbstractDAO<User> {
     return list(namedQuery("User.findByRoleAndFaculty").setParameter("faculty", faculty).setParameter("role", role));
   }
 
+  public List<User> findByRoleAndUniversity(UserRole role, University university) {
+    return list(namedQuery("User.findByRoleAndUniversity").setParameter("university", university).setParameter("role", role));
+  }
+
   public List<User> findByRoleAndCompany(UserRole role, Company company) {
     return list(namedQuery("User.findByRoleAndCompany").setParameter("company", company).setParameter("role", role));
   }
@@ -83,7 +88,7 @@ public class UserDAO extends AbstractDAO<User> {
     return list(namedQuery("User.findAll"));
   }
 
-  public void delete(User u) {
-    currentSession().delete(u);
+  public void delete(User user) {
+    currentSession().delete(user);
   }
 }

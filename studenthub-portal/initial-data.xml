@@ -7,12 +7,30 @@
             <column name="description" value="For basic use"/>
         </insert>
     </changeSet>
+    <changeSet author="phala (generated)" id="1496646751908-30">
+        <insert catalogName="studenthub" schemaName="public" tableName="degrees">
+            <column name="name" value="BACHELOR"/>
+            <column name="description" value="Undergraduate"/>
+        </insert>
+        <insert catalogName="studenthub" schemaName="public" tableName="degrees">
+            <column name="name" value="MASTER"/>
+            <column name="description" value="Graduate"/>
+        </insert>
+        <insert catalogName="studenthub" schemaName="public" tableName="degrees">
+            <column name="name" value="PhD"/>
+            <column name="description" value="Simply PHD"/>
+        </insert>
+        <insert catalogName="studenthub" schemaName="public" tableName="degrees">
+            <column name="name" value="HIGH_SCHOOL"/>
+            <column name="description" value="High school"/>
+        </insert>
+    </changeSet>
     <changeSet author="phala (generated)" id="1496646751908-13">
         <insert catalogName="studenthub" schemaName="public" tableName="companies">
             <column name="id" valueNumeric="1"/>
             <column name="city" value="Brno"/>
             <column name="country" value="CZ"/>
-            <column name="logourl" value="c1.com/logo.png"/>
+            <column name="logourl" value="https://dummyimage.com/300/000/fff.png&amp;text=Logo"/>
             <column name="name" value="Company One"/>
             <column name="plan_name" value="TIER_1"/>
             <column name="size" value="CORPORATE"/>
@@ -25,7 +43,7 @@
             <column name="id" valueNumeric="1"/>
             <column name="city" value="Brno"/>
             <column name="country" value="CZ"/>
-            <column name="logourl" value="www.muni.cz/img.png"/>
+            <column name="logourl" value="https://dummyimage.com/300/000/fff.png&amp;text=Logo"/>
             <column name="name" value="Masaryk University"/>
             <column name="url" value="http://www.muni.cz"/>
         </insert>
@@ -106,7 +124,18 @@
             <column name="company_id"/>
             <column name="faculty_id"/>
         </insert>
-        <sql>SELECT setval('users_id_seq', 6)</sql>
+        <insert catalogName="studenthub" schemaName="public" tableName="users">
+            <column name="id" valueNumeric="7"/>
+            <column name="email" value="ambassador@example.com"/>
+            <column name="lastlogin" valueDate="2017-06-20 00:00:00.0"/>
+            <column name="name" value="Ambassador One"/>
+            <column name="password" value="$6$utr8Ibd0$83l4Rv.4m4QCdNy4jt5aDO9fC8mYpG6.Z3zPD.6azhSto6lfyNAIcJkE8cg2jjDhKDsiSdLrSkCTLo/xglEzi."/>
+            <column name="phone" value="890 473 058"/>
+            <column name="username" value="ambassador"/>
+            <column name="company_id"/>
+            <column name="faculty_id" valueNumeric="1"/>
+        </insert>
+        <sql>SELECT setval('users_id_seq', 7)</sql>
     </changeSet>
     <changeSet author="phala (generated)" id="1496646751908-21">
         <insert catalogName="studenthub" schemaName="public" tableName="user_roles">
@@ -134,6 +163,10 @@
             <column name="roles" value="PROJECT_LEADER"/>
         </insert>
         <insert catalogName="studenthub" schemaName="public" tableName="user_roles">
+            <column name="user_id" valueNumeric="1"/>
+            <column name="roles" value="UNIVERSITY_AMB"/>
+        </insert>
+        <insert catalogName="studenthub" schemaName="public" tableName="user_roles">
             <column name="user_id" valueNumeric="5"/>
             <column name="roles" value="COMPANY_REP"/>
         </insert>
@@ -152,6 +185,10 @@
         <insert catalogName="studenthub" schemaName="public" tableName="user_roles">
             <column name="user_id" valueNumeric="6"/>
             <column name="roles" value="PROJECT_LEADER"/>
+        </insert>
+        <insert catalogName="studenthub" schemaName="public" tableName="user_roles">
+            <column name="user_id" valueNumeric="7"/>
+            <column name="roles" value="UNIVERSITY_AMB"/>
         </insert>
     </changeSet>
     <changeSet author="phala (generated)" id="1496646751908-19">
@@ -176,21 +213,21 @@
         <sql>SELECT setval('topics_id_seq', 2)</sql>
     </changeSet>
     <changeSet author="phala (generated)" id="1496646751908-16">
-        <insert catalogName="studenthub" schemaName="public" tableName="topic_degrees">
+        <insert catalogName="studenthub" schemaName="public" tableName="topics_degrees">
             <column name="topic_id" valueNumeric="1"/>
-            <column name="degrees" valueNumeric="1"/>
+            <column name="degrees_name" value="BACHELOR"/>
         </insert>
-        <insert catalogName="studenthub" schemaName="public" tableName="topic_degrees">
+        <insert catalogName="studenthub" schemaName="public" tableName="topics_degrees">
             <column name="topic_id" valueNumeric="1"/>
-            <column name="degrees" valueNumeric="2"/>
+            <column name="degrees_name" value="MASTER"/>
         </insert>
-        <insert catalogName="studenthub" schemaName="public" tableName="topic_degrees">
+        <insert catalogName="studenthub" schemaName="public" tableName="topics_degrees">
             <column name="topic_id" valueNumeric="2"/>
-            <column name="degrees" valueNumeric="0"/>
+            <column name="degrees_name" value="HIGH_SCHOOL"/>
         </insert>
-        <insert catalogName="studenthub" schemaName="public" tableName="topic_degrees">
+        <insert catalogName="studenthub" schemaName="public" tableName="topics_degrees">
             <column name="topic_id" valueNumeric="2"/>
-            <column name="degrees" valueNumeric="3"/>
+            <column name="degrees_name" value="PhD"/>
         </insert>
     </changeSet>
     <changeSet author="phala (generated)" id="1496646751908-17">
@@ -218,7 +255,7 @@
     <changeSet author="phala (generated)" id="1496646751908-18">
         <insert catalogName="studenthub" schemaName="public" tableName="topicapplications">
             <column name="id" valueNumeric="1"/>
-            <column name="degree" value="BACHELOR"/>
+            <column name="degree_name" value="BACHELOR"/>
             <column name="grade" value="A"/>
             <column name="officialassignment" value="Static HTML page generator, powered by markdown"/>
             <column name="thesisfinish" valueDate="2017-03-17 01:00:00.0"/>
@@ -228,10 +265,11 @@
             <column name="student_id" valueNumeric="4"/>
             <column name="techleader_id" valueNumeric="3"/>
             <column name="topic_id" valueNumeric="1"/>
+            <column name="link"/>
         </insert>
         <insert catalogName="studenthub" schemaName="public" tableName="topicapplications">
             <column name="id" valueNumeric="2"/>
-            <column name="degree" value="HIGH_SCHOOL"/>
+            <column name="degree_name" value="HIGH_SCHOOL"/>
             <column name="grade"/>
             <column name="officialassignment" value="UI for thesis management system"/>
             <column name="thesisfinish"/>
@@ -241,6 +279,7 @@
             <column name="student_id" valueNumeric="4"/>
             <column name="techleader_id" valueNumeric="3"/>
             <column name="topic_id" valueNumeric="2"/>
+            <column name="link" value="https://www.github.com"/>
         </insert>
         <sql>SELECT setval('topicapplications_id_seq', 2)</sql>
     </changeSet>

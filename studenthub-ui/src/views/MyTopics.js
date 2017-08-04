@@ -6,16 +6,19 @@ import TableRow from 'react-toolbox/lib/table/TableRow.js';
 import TableCell from 'react-toolbox/lib/table/TableCell.js';
 import Tab from 'react-toolbox/lib/tabs/Tab.js';
 import Tabs from 'react-toolbox/lib/tabs/Tabs.js';
+import List from 'react-toolbox/lib/list/List.js';
+import ListCheckbox from 'react-toolbox/lib/list/ListCheckbox.js';
 import Checkbox from 'react-toolbox/lib/checkbox/Checkbox.js';
 import Dialog from 'react-toolbox/lib/dialog/Dialog.js';
 import Input from 'react-toolbox/lib/input/Input.js';
 import Button from 'react-toolbox/lib/button/Button.js';
 import Chip from 'react-toolbox/lib/chip/Chip.js';
+import Tags from 'react-tagging-input';
+import "react-tagging-input/dist/styles.css";
 
 import Pager from '../components/Pager.js';
 import DeleteButton from '../components/DeleteButton.js';
 import EditButton from '../components/EditButton.js';
-import SiteSnackbar from '../components/SiteSnackbar.js';
 
 import Auth from '../Auth.js';
 import Util from '../Util.js';
@@ -29,14 +32,20 @@ const TopicTableHint = () => (
 )
 
 class TopicTable extends Component {
-  state = {topics: [], dialogActive: false, editId: -1, snackbarLabel: "",
-    snackbarActive: false, page: 0, pages: 1}
+
+  state = { topics: [], dialogActive: false, editId: -1, page: 0, pages: 1, plan: { maxTopics: 0 }, topicCount: -1 }
 
   componentDidMount() {
     if (Auth.hasRole(Util.userRoles.companyRep) && !Auth.hasRole(Util.userRoles.admin))
       this.getCompanyTopics();
     else
       this.getTopics();
+
+    if (Auth.hasRole(Util.userRoles.techLeader) && !Auth.hasRole(Util.userRoles.admin))
+      setTimeout(function() {
+          this.getLimitInfo();
+      }.bind(this), 3);
+    this.changePage(1);
   }
 
   /**
@@ -54,10 +63,7 @@ class TopicTable extends Component {
         }
       }).then(function(json) {
         if (Util.isEmpty(json.company)) {
-          this.setState({
-            snackbarLabel: "There is no company connected to your account!",
-            snackbarActive: true
-          });
+          Util.notify("error", "", "There is no company connected to your account!");
           return;
         }
         fetch('/api/companies/' + json.company.id + "/topics?size=" + Util.TOPICS_PER_PAGE_TABLE + "&start=" +
@@ -81,10 +87,22 @@ class TopicTable extends Component {
    * Gets the list of all user topics.
    */
   getTopics = () => {
-    fetch((Auth.hasRole(Util.userRoles.admin)) ? "/api/topics?size=" + Util.TOPICS_PER_PAGE_TABLE +
-      "&start=" + (this.state.page * Util.TOPICS_PER_PAGE_TABLE) : "/api/users/" +
-      Auth.getUserInfo().sub + "/ownedTopics?size=" + Util.TOPICS_PER_PAGE_TABLE +
-      "&start=" + (this.state.page * Util.TOPICS_PER_PAGE_TABLE), {
+    let page = this.state.page;
+    let url = "";
+    
+    if (Auth.hasRole(Util.userRoles.admin))
+      url = "/api/topics?size=" + Util.TOPICS_PER_PAGE_TABLE + "&start=" +
+      (page * Util.TOPICS_PER_PAGE_TABLE);
+    else if (Auth.hasRole(Util.userRoles.techLeader))
+      url = "/api/users/" + Auth.getUserInfo().sub +
+      "/ownedTopics?size=" + Util.TOPICS_PER_PAGE_TABLE + "&start=" +
+      (page * Util.TOPICS_PER_PAGE_TABLE);
+    else if (Auth.hasRole(Util.userRoles.superviser))
+      url = "/api/users/" + Auth.getUserInfo().sub +
+      "/supervisedTopics?size=" + Util.TOPICS_PER_PAGE_TABLE + "&start=" +
+      (page * Util.TOPICS_PER_PAGE_TABLE);
+
+    fetch(url, {
         credentials: 'same-origin',
         method: 'get'
     }).then(function(response) {
@@ -96,6 +114,38 @@ class TopicTable extends Component {
       }
     }.bind(this)).then(function(json) {
       this.setState({topics: json});
+    }.bind(this));
+  }
+
+  getLimitInfo = () => {
+    fetch('/api/users/' + Auth.getUserInfo().sub, {
+      method: 'get',
+      credentials: 'same-origin'
+    }).then(function(response) {
+      if (response.ok) {
+        return response.json();
+      } else {
+        throw new Error('There was a problem with network connection.');
+      }
+    }).then(function(json) {
+      if (Util.isEmpty(json.company.plan)) {
+        Util.notify("error", "", "Couldn't find a plan for your company!");
+        this.setState({ topicCount: -1, plan: { maxTopics: -1 } })
+        return;
+      }
+      this.setState({ plan: json.company.plan })
+    }.bind(this));
+    fetch("/api/users/" + Auth.getUserInfo().sub + "/ownedTopics", {
+      method: 'get',
+      credentials: 'same-origin'
+    }).then(function(response) {
+      if (response.ok) {
+        return response.json();
+      } else {
+        throw new Error('There was a problem with network connection.');
+      }
+    }).then(function(json) {
+      this.setState({ topicCount: json.length })
     }.bind(this));
   }
 
@@ -129,19 +179,18 @@ class TopicTable extends Component {
               label = "Wrong method input!";
               return;
           }
-          this.setState({
-            snackbarLabel: label,
-            snackbarActive: true
-          });
+          
+          Util.notify("success", "", label);
+          
           if (Auth.hasRole(Util.userRoles.companyRep) && !Auth.hasRole(Util.userRoles.admin))
             this.getCompanyTopics();
           else
             this.getTopics();
+
+          if (Auth.hasRole(Util.userRoles.techLeader) && !Auth.hasRole(Util.userRoles.admin))
+            this.getLimitInfo();
       } else {
-        this.setState({
-          snackbarLabel: "An error occured! Your request couldn't be processed. It's possible that you have a problem with your internet connection or that the server is not responding.",
-          snackbarActive: true
-        });
+        Util.notify("error", "There was a problem with network connection.", "Your request hasn't been processed.");
         throw new Error('There was a problem with network connection. '+method.toUpperCase()+' could not be processed!');
       }
     }.bind(this));
@@ -149,10 +198,6 @@ class TopicTable extends Component {
 
   toggleDialog = (id) => {
     this.setState({dialogActive: !this.state.dialogActive, editId: id});
-  }
-
-  toggleSnackbar = () => {
-    this.setState({snackbarActive: !this.state.snackbarActive});
   }
 
   changePage = (page) => {
@@ -167,12 +212,19 @@ class TopicTable extends Component {
   }
 
   render () {
+    if (this.state.topicCount >= this.state.plan.maxTopics && this.state.topicCount !== -1)
+      Util.notify("error", "This is because the plan of your company is limiting the maximum number of topics.",
+        "You cannot create new topics anymore.");
+    else if (this.state.topicCount+1 === this.state.plan.maxTopics && this.state.topicCount !== -1)
+      Util.notify("warning", "This is because the plan of your company is limiting the maximum number of topics.",
+        "You can create only one more topic.");
     return (
       <div>
         <TopicTableHint />
         <h1>
           { _t.translate('My Topics') } { Auth.hasRole(Util.userRoles.techLeader) ?
-            <NewTopicDialog active={this.state.dialogActive} dataHandler={(method, id, data) =>
+            <NewTopicDialog disabled={(this.state.topicCount >= this.state.plan.maxTopics) ? true : false}
+              active={this.state.dialogActive} dataHandler={(method, id, data) =>
               this.manageData(method, id, data)} topic={(this.state.editId === -1) ? -1 :
               this.state.topics[this.state.editId]} toggleHandler={() => this.toggleDialog(-1)}/> : '' }
         </h1>
@@ -188,7 +240,7 @@ class TopicTable extends Component {
             <TableRow key={item.id}>
               <TableCell><strong>{item.title}</strong></TableCell>
               <TableCell>{item.shortAbstract}</TableCell>
-              <TableCell>{item.degrees.map( (degree) => <Chip key={degree}> {degree} </Chip> )}</TableCell>
+              <TableCell>{item.degrees.map( (degree) => <Chip key={degree.name}> {degree.description} </Chip> )}</TableCell>
               <TableCell>{item.tags.map( (tag) => <Chip key={tag}> {tag} </Chip> )}</TableCell>
               {(Auth.hasRole(Util.userRoles.companyRep) && !Auth.hasRole(Util.userRoles.admin)) ? '' :
               <TableCell>
@@ -198,8 +250,6 @@ class TopicTable extends Component {
             </TableRow>
           ))}
         </Table>
-        <SiteSnackbar active={this.state.snackbarActive} label={this.state.snackbarLabel}
-          toggleHandler={() => this.toggleSnackbar()} />
         <Pager pages={this.state.pages} pageChanger={(page) => this.changePage(page)} />
       </div>
     );
@@ -209,12 +259,16 @@ class TopicTable extends Component {
 class NewTopicDialog extends Component {
   state = {
     bachelor: false, master: false, phd: false, highSchool: false, title: '', enabled: true,
-    shortAbstract: '', description: '', tags: '', tagIndex: 0, dialogTitle: _t.translate('New Topic'),
+    shortAbstract: '', description: '', tags: [], dialogTitle: _t.translate('New Topic'),
     actions : [
       { label: _t.translate('Add'), onClick: () => this.handleAdd()},
       { label: _t.translate('Cancel'), onClick: () => this.handleToggle() }
     ]
   };
+
+  componentDidMount() {
+    this.getAllDegrees();
+  }
 
   /**
    * Sets default input values on props change.
@@ -226,44 +280,14 @@ class NewTopicDialog extends Component {
     var masterState = false;
     var phdState = false;
     var highSchoolState = false;
-    var enabledState = true;
-    var titleState;
-    var shortAbstractState;
-    var descriptionState;
-    var tagsState = "";
-    var dialogTitleState;
-    var actionsState;
 
-    if(nextProps.topic === -1) {
-      titleState = "";
-      shortAbstractState = "";
-      descriptionState = "";
-      dialogTitleState = _t.translate('New Topic');
-      actionsState = [
-        { label: _t.translate('Add'), onClick: () => this.handleAdd()},
-        { label: _t.translate('Cancel'), onClick: () => this.handleToggle() }
-      ];
-    }
-    else {
+    if(nextProps.topic !== -1) {
       for (let i = 0; i < nextProps.topic.degrees.length; i++) {
         if(nextProps.topic.degrees[i] === "BACHELOR") bachelorState = true;
         else if(nextProps.topic.degrees[i] === "MASTER") masterState = true;
         else if(nextProps.topic.degrees[i] === "PhD") phdState = true;
         else if(nextProps.topic.degrees[i] === "HIGH_SCHOOL") highSchoolState = true;
       }
-      enabledState = nextProps.topic.enabled;
-      titleState = nextProps.topic.title;
-      shortAbstractState = nextProps.topic.shortAbstract;
-      descriptionState = nextProps.topic.description;
-      for (let i = 0; i < nextProps.topic.tags.length; i++) {
-        tagsState += nextProps.topic.tags[i];
-        if ((i + 1) < nextProps.topic.tags.length) tagsState += ";"
-      }
-      dialogTitleState = _t.translate('Edit Topic');
-      actionsState = [
-        { label: _t.translate('Save changes'), onClick: () => this.handleEdit()},
-        { label: _t.translate('Cancel'), onClick: () => this.handleToggle() }
-      ];
     }
 
     this.setState({
@@ -271,14 +295,35 @@ class NewTopicDialog extends Component {
       master: masterState,
       phd: phdState,
       highSchool: highSchoolState,
-      title: titleState,
-      shortAbstract: shortAbstractState,
-      description: descriptionState,
-      tags: tagsState,
-      dialogTitle: dialogTitleState,
-      actions: actionsState,
-      enabled: enabledState
+      title: (nextProps.topic === -1) ? "" : nextProps.topic.title,
+      shortAbstract: (nextProps.topic === -1) ? "" : nextProps.topic.shortAbstract,
+      description: (nextProps.topic === -1) ? "" : nextProps.topic.description,
+      tags: (nextProps.topic === -1) ? [] : nextProps.topic.tags,
+      dialogTitle: (nextProps.topic === -1) ? _t.translate('New Topic') : _t.translate('Edit Topic'),
+      actions: (nextProps.topic === -1) ? [
+        { label: _t.translate('Add'), onClick: () => this.handleAdd()},
+        { label: _t.translate('Cancel'), onClick: () => this.handleToggle() }
+      ] : [
+        { label: _t.translate('Save changes'), onClick: () => this.handleEdit()},
+        { label: _t.translate('Cancel'), onClick: () => this.handleToggle() }
+      ],
+      enabled: (nextProps.topic === -1) ? false : nextProps.topic.enabled
     });
+  }
+
+  getAllDegrees() {
+    fetch('/api/degrees', {
+      credentials: 'same-origin',
+      method: 'get'
+    }).then(function(response) {
+      if (response.ok) {
+        return response.json();
+      } else {
+        throw new Error('There was a problem with network connection.');
+      }
+    }).then(function(json) {
+      this.setState({allDegrees: json});
+    }.bind(this));
   }
 
   handleToggle = () => {
@@ -300,10 +345,10 @@ class NewTopicDialog extends Component {
     this.props.dataHandler("post", "",
       JSON.stringify({
         creator: { id: Auth.getUserInfo().sub },
-        degrees: this.getDegrees(),
+        degrees: this.state.degrees,
         description: this.state.description,
         shortAbstract: this.state.shortAbstract,
-        tags: this.getTags(),
+        tags: this.state.tags,
         title: this.state.title,
         enabled: this.state.enabled
       })
@@ -318,10 +363,10 @@ class NewTopicDialog extends Component {
     this.props.dataHandler("put", this.props.topic.id,
       JSON.stringify({
         creator: { id: Auth.getUserInfo().sub },
-        degrees: this.getDegrees(),
+        degrees: this.state.degrees,
         description: this.state.description,
         shortAbstract: this.state.shortAbstract,
-        tags: this.getTags(),
+        tags: this.state.tags,
         title: this.state.title,
         enabled: this.state.enabled
       })
@@ -329,37 +374,35 @@ class NewTopicDialog extends Component {
     this.handleToggle();
   }
 
-  getDegrees = () => {
-    var degrees = [];
-
-    if(this.state.bachelor === true) degrees.push("BACHELOR");
-    if(this.state.master === true) degrees.push("MASTER");
-    if(this.state.phd === true) degrees.push("PhD");
-    if(this.state.highSchool === true) degrees.push("HIGH_SCHOOL");
-
-    return degrees;
-  }
-
-  getTags = () => {
-    var tags = [];
-    var stringTags = this.state.tags;
-
-    if(stringTags.indexOf(";") === stringTags.length-1)
-      stringTags = stringTags.substring(0, stringTags.indexOf(";"));
-
-    while(stringTags.indexOf(";") !== -1) {
-      tags.push(stringTags.substring(0, stringTags.indexOf(";")));
-      stringTags = stringTags.substring(stringTags.indexOf(";")+1);
+  handleDegreeChange = (degree) => {
+    var degrees = this.state.degrees;
+    if (degrees.indexOf(degree) === -1) {
+      degrees.push(degree);
+    } else {
+      degrees.splice(degrees.indexOf(degree), 1);
     }
-    tags.push(stringTags);
-
-    return tags;
+    this.setState({degrees: degrees});
   }
+
+  getChecked = (name) => {
+    for (var i = 0; i < this.state.degrees.length; i++) {
+      if (this.state.degrees[i].name === name) return true;
+    }
+    return false;
+  }
+
+  onTagAdded(tag) {
+		this.setState({ tags: [...this.state.tags, tag] });
+	}
+
+	onTagRemoved(tag, index) {
+		this.setState({ tags: this.state.tags.filter((tag, i) => i !== index) });
+	}
 
   render() {
     return(
       <div className='pull-right'>
-        <Button icon='add' floating onClick={this.handleToggle} />
+        <Button icon='add' floating onClick={this.handleToggle} disabled={this.props.disabled} />
         <Dialog
           actions={this.state.actions}
           active={this.props.active}
@@ -369,14 +412,15 @@ class NewTopicDialog extends Component {
           <Tabs index={this.state.tabIndex} onChange={this.handleTabChange} >
             <Tab label={ _t.translate('Basic info') }>
               <Input type='text' label={ _t.translate('Topic title') } hint="Topic title" name='title' required value={this.state.title} onChange={this.handleChange.bind(this, 'title')} />
-              <Input type='text' label={ _t.translate('Short abstract') } hint="Short info about the topic"  multiline rows={2} name='shortAbstract' value={this.state.shortAbstract} onChange={this.handleChange.bind(this, 'shortAbstract')} />
-              <Input type='text' label={ _t.translate('Tags') } hint="Divide tags using ;" value={this.state.tags} onChange={this.handleChange.bind(this, 'tags')} />
+              <Input type='text' label={ _t.translate('Short abstract') } hint="Short info about the topic"  multiline rows={2} name='shortAbstract'
+                value={this.state.shortAbstract} onChange={this.handleChange.bind(this, 'shortAbstract')} />
+              <Tags
+      					tags={this.state.tags}
+      					placeholder={ _t.translate('Tags') }
+      					onAdded={this.onTagAdded.bind(this)}
+      					onRemoved={this.onTagRemoved.bind(this)} />
+              <h4>{ _t.translate('Degrees') }</h4>
               <table>
-                <thead>
-                  <tr>
-                    <th colSpan="4"><h4>{ _t.translate('Degrees') }</h4></th>
-                  </tr>
-                </thead>
                 <tbody>
                   <tr>
                     <td style={{ paddingRight: '10px'}}>
@@ -419,8 +463,20 @@ class NewTopicDialog extends Component {
             <Tab label={ _t.translate('Topic description') }>
               <Input type='text' label={ _t.translate('Topic description') } hint="Full topic description in markdown" multiline rows={20} value={this.state.description} onChange={this.handleChange.bind(this, 'description')} />
             </Tab>
+            <Tab label={ _t.translate('Degrees') }>
+              {this.state.allDegrees.map((item) => (
+                <List key={item.name}>
+                  <ListCheckbox
+                    key={item.name}
+                    caption={item.description}
+                    checked={this.getChecked(item.name)}
+                    onChange={() => this.handleDegreeChange(item)} ripple selectable />
+                </List>
+              ))}
+            </Tab>
             <Tab label={ _t.translate('Preview') }>
-              <p>Below you can see a preview of the description. Uses <a href="https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet" target="_blank">Markdown</a>.</p>
+              <p>Below you can see a preview of the description. Uses <a href="https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet"
+                target="_blank" rel="noopener noreferrer">Markdown</a>.</p>
               <ReactMarkdown source={ this.state.description } />
             </Tab>
           </Tabs>

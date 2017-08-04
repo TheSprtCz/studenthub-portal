@@ -16,16 +16,19 @@ import io.dropwizard.testing.junit.DAOTestRule;
 
 public class TopicDAOTest {
 
+  public static final int COUNT = 5;
   private static final DAOTestRule DATABASE = DAOTestSuite.database;
   private static CompanyDAO companyDAO;
   private static UserDAO userDAO;
   private static TopicDAO topicDAO;
+  private static TopicDegreeDAO tdDAO;
 
   @BeforeClass
   public static void setUp() {
     topicDAO = new TopicDAO(DATABASE.getSessionFactory());
     companyDAO = new CompanyDAO(DATABASE.getSessionFactory());
     userDAO = new UserDAO(DATABASE.getSessionFactory());
+    tdDAO = new TopicDegreeDAO(DATABASE.getSessionFactory());
   }
 
   /*
@@ -37,15 +40,15 @@ public class TopicDAOTest {
     DAOTestSuite.inRollbackTransaction(() -> {
       User user = userDAO.findById((long) 10);
       HashSet<TopicDegree> degrees = new HashSet<TopicDegree>();
-      degrees.add(TopicDegree.MASTER);
+      degrees.add(tdDAO.findByName("MASTER"));
 
       Topic topic = new Topic("Topic", null, "short", "description", null, user, null, null, degrees);
       Topic created = topicDAO.create(topic);
       assertNotNull(created.getId());
       assertEquals(topic, created);
-      assertEquals(6, topicDAO.findAll().size());
+      assertEquals(COUNT + 1, topicDAO.findAll().size());
       topicDAO.delete(created);
-      assertEquals(5, topicDAO.findAll().size());
+      assertEquals(COUNT, topicDAO.findAll().size());
     });
   }
 
@@ -66,7 +69,7 @@ public class TopicDAOTest {
       return topicDAO.findAll();
     });
     assertNotNull(topics);
-    assertEquals(5, topics.size());
+    assertEquals(COUNT, topics.size());
   }
 
   @Test

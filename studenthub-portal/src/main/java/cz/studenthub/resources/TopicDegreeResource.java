@@ -44,45 +44,45 @@ import javax.ws.rs.core.UriBuilder;
 import com.codahale.metrics.annotation.ExceptionMetered;
 import com.codahale.metrics.annotation.Timed;
 
-import cz.studenthub.core.CompanyPlan;
-import cz.studenthub.db.CompanyPlanDAO;
+import cz.studenthub.core.TopicDegree;
+import cz.studenthub.db.TopicDegreeDAO;
 import cz.studenthub.util.PagingUtil;
 import io.dropwizard.hibernate.UnitOfWork;
 import io.dropwizard.jersey.params.IntParam;
 
-@Path("/plans")
+@Path("/degrees")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
-public class CompanyPlanResource {
+public class TopicDegreeResource {
 
   @Inject
-  private CompanyPlanDAO cpDao;
+  private TopicDegreeDAO tdDao;
 
   @GET
   @Timed
   @UnitOfWork
-  public List<CompanyPlan> fetch(@Min(0) @DefaultValue("0") @QueryParam("start") IntParam startParam,
+  public List<TopicDegree> fetch(@Min(0) @DefaultValue("0") @QueryParam("start") IntParam startParam,
           @Min(0) @DefaultValue("0") @QueryParam("size") IntParam sizeParam,
           @Context HttpServletResponse response) {
-    return PagingUtil.paging(cpDao.findAll(), startParam.get(), sizeParam.get(), response);
+    return PagingUtil.paging(tdDao.findAll(), startParam.get(), sizeParam.get(), response);
   }
 
   @GET
   @Path("/{name}")
   @UnitOfWork
-  public CompanyPlan findByName(@PathParam("name") String name) {
-    return cpDao.findByName(name);
+  public TopicDegree findByName(@PathParam("name") String name) {
+    return tdDao.findByName(name);
   }
 
   @POST
   @ExceptionMetered
   @UnitOfWork
   @RolesAllowed("ADMIN")
-  public Response create(@NotNull @Valid CompanyPlan companyPlan) {
-    cpDao.create(companyPlan);
+  public Response create(@NotNull @Valid TopicDegree topicDegree) {
+    tdDao.create(topicDegree);
 
-    return Response.created(UriBuilder.fromResource(CompanyPlanResource.class).path("/{name}").build(companyPlan.getName()))
-        .entity(companyPlan).build();
+    return Response.created(UriBuilder.fromResource(TopicDegreeResource.class).path("/{name}").build(topicDegree.getName()))
+        .entity(topicDegree).build();
   }
 
   @PUT
@@ -90,13 +90,13 @@ public class CompanyPlanResource {
   @Path("/{name}")
   @UnitOfWork
   @RolesAllowed("ADMIN")
-  public Response update(@PathParam("name") String name, @NotNull @Valid CompanyPlan companyPlan) {
-    if (cpDao.findByName(name) == null) 
+  public Response update(@PathParam("name") String name, @NotNull @Valid TopicDegree topicDegree) {
+    if (tdDao.findByName(name) == null)
       throw new WebApplicationException(Status.NOT_FOUND);
 
-    companyPlan.setName(name);
-    cpDao.update(companyPlan);
-    return Response.ok(companyPlan).build();
+    topicDegree.setName(name);
+    tdDao.update(topicDegree);
+    return Response.ok(topicDegree).build();
   }
 
   @DELETE
@@ -105,11 +105,11 @@ public class CompanyPlanResource {
   @UnitOfWork
   @RolesAllowed("ADMIN")
   public Response delete(@PathParam("name") String name) {
-    CompanyPlan companyPlan = cpDao.findByName(name);
-    if (companyPlan == null) 
+    TopicDegree topicDegree = tdDao.findByName(name);
+    if (topicDegree == null)
       throw new WebApplicationException(Status.NOT_FOUND);
 
-    cpDao.delete(companyPlan);
+    tdDao.delete(topicDegree);
     return Response.noContent().build();
   }
 

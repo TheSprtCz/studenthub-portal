@@ -46,9 +46,13 @@ import com.codahale.metrics.annotation.Timed;
 
 import cz.studenthub.core.Faculty;
 import cz.studenthub.core.University;
+import cz.studenthub.core.User;
+import cz.studenthub.core.UserRole;
 import cz.studenthub.db.FacultyDAO;
 import cz.studenthub.db.UniversityDAO;
+import cz.studenthub.db.UserDAO;
 import cz.studenthub.util.PagingUtil;
+import io.dropwizard.auth.Auth;
 import io.dropwizard.hibernate.UnitOfWork;
 import io.dropwizard.jersey.params.IntParam;
 import io.dropwizard.jersey.params.LongParam;
@@ -63,6 +67,9 @@ public class UniversityResource {
 
   @Inject
   private FacultyDAO facDao;
+
+  @Inject
+  private UserDAO userDao;
 
   @GET
   @UnitOfWork
@@ -110,15 +117,20 @@ public class UniversityResource {
   @ExceptionMetered
   @Path("/{id}")
   @UnitOfWork
-  @RolesAllowed("ADMIN")
-  public Response update(@PathParam("id") LongParam idParam, @NotNull @Valid University university) {
+  @RolesAllowed({ "ADMIN", "UNIVERSITY_AMB" })
+  public Response update(@PathParam("id") LongParam idParam, @NotNull @Valid University university, @Auth User user) {
     Long id = idParam.get();
-    if (uniDao.findById(id) == null)
+    University oldUni = uniDao.findById(id);
+    if (oldUni == null)
       throw new WebApplicationException(Status.NOT_FOUND);
 
-    university.setId(id);
-    uniDao.update(university);
-    return Response.ok(university).build();
+    if (id.equals(user.getFaculty().getUniversity().getId()) || user.isAdmin()) {
+      university.setId(id);
+      uniDao.update(university);
+      return Response.ok(university).build();
+    } else {
+      throw new WebApplicationException(Status.FORBIDDEN);
+    }
   }
 
   @POST
@@ -148,6 +160,28 @@ public class UniversityResource {
       throw new WebApplicationException(Status.NOT_FOUND);
 
     return PagingUtil.paging(facDao.findAllByUniversity(university), startParam.get(), sizeParam.get(), response);
+  }
+
+  @GET
+  @Timed
+  @Path("/{id}/supervisors")
+  @UnitOfWork
+  @RolesAllowed({ "ADMIN", "UNIVERSITY_AMB" })
+  public List<User> fetchSupervisors(@Auth User user, @PathParam("id") LongParam idParam,
+          @Min(0) @DefaultValue("0") @QueryParam("start") IntParam startParam,
+          @Min(0) @DefaultValue("0") @QueryParam("size") IntParam sizeParam,
+          @Context HttpServletResponse response) {
+
+    Long id = idParam.get();
+    University university = uniDao.findById(id);
+    if (university == null)
+      throw new WebApplicationException(Status.NOT_FOUND);
+
+    if (user.getFaculty().getUniversity().getId().equals(id) || user.isAdmin()) {
+      return PagingUtil.paging(userDao.findByRoleAndUniversity(UserRole.AC_SUPERVISOR, university), startParam.get(), sizeParam.get(), response);
+    } else {
+      throw new WebApplicationException(Status.FORBIDDEN);
+    }
   }
 
   @GET

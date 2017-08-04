@@ -10,7 +10,7 @@ import _t from '../Translations.js';
  * @param editHandler(user)               editing callback function
  * @param toggleHandler()                 function to call when closing the Dialog
  */
-class LeaderEditDialog extends Component {
+class RestrictedUserEditDialog extends Component {
   state = { name: "", mail: "", phone: "", tags: "" }
 
   /**
@@ -87,9 +87,6 @@ class LeaderEditDialog extends Component {
           onOverlayClick={() => this.props.toggleHandler()}
           title={ _t.translate("Edit user") }
           type="large">
-          <p>
-            Here you can edit the profile of TECH_LEADERs from your company.
-          </p>
           <Input type='text' label="Email" hint='Email of the user'  required  value={this.state.mail}
             onChange={(value) => this.handleChange("mail", value)} />
           <Input type='text' label={ _t.translate("Name") } hint='Name of the user' required  value={this.state.name}
@@ -104,4 +101,4 @@ class LeaderEditDialog extends Component {
   }
 }
 
-export default LeaderEditDialog;
+export default RestrictedUserEditDialog;

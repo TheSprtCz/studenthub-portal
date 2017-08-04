@@ -24,6 +24,11 @@
         </addColumn>
         <addForeignKeyConstraint baseColumnNames="plan_name" baseTableCatalogName="studenthub" baseTableName="companies" baseTableSchemaName="public" constraintName="fkh0lcq5n9spp872lv9lwrc0016" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="name" referencedTableCatalogName="studenthub" referencedTableName="plans" referencedTableSchemaName="public"/>
     </changeSet>
+    <changeSet author="phala" id="activationType">
+        <addColumn catalogName="studenthub" schemaName="public" tableName="activations">
+            <column name="type" type="VARCHAR(255)" defaultValue="REGISTER"/>
+        </addColumn>
+    </changeSet>
 	<changeSet author="phala (generated)" id="projects">
         <createTable catalogName="studenthub" schemaName="public" tableName="projects">
             <column autoIncrement="true" name="id" type="BIGSERIAL">
@@ -88,5 +93,33 @@
         <modifyDataType catalogName="studenthub" columnName="logourl" newDataType="VARCHAR(2047)" schemaName="public" tableName="companies"/>
         <modifyDataType catalogName="studenthub" columnName="url" newDataType="VARCHAR(2047)" schemaName="public" tableName="universities"/>
         <modifyDataType catalogName="studenthub" columnName="logourl" newDataType="VARCHAR(2047)" schemaName="public" tableName="universities"/>
+    </changeSet>
+    <changeSet author="phala" id="externalLink">
+        <addColumn catalogName="studenthub" schemaName="public" tableName="topicapplications">
+            <column name="link" type="VARCHAR(2047)"/>
+        </addColumn>
+    </changeSet>
+    <changeSet author="phala" id="topicDegrees">
+        <renameTable catalogName="studenthub" newTableName="topics_degrees" oldTableName="topic_degrees" schemaName="public"/>
+        <createTable catalogName="studenthub" schemaName="public" tableName="degrees">
+          <column name="name" type="VARCHAR(255)">
+              <constraints nullable="false"/>
+          </column>
+          <column name="description" type="VARCHAR(255)"/>
+        </createTable>
+        <addPrimaryKey catalogName="studenthub" columnNames="name" constraintName="degrees_pkey" schemaName="public" tableName="degrees"/>
+        <dropColumn columnName="degree" catalogName="studenthub" schemaName="public" tableName="topicapplications"/>
+        <dropColumn columnName="degrees" catalogName="studenthub" schemaName="public" tableName="topics_degrees"/>
+        <addColumn catalogName="studenthub" schemaName="public" tableName="topicapplications">
+            <column name="degree_name" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+        <addColumn catalogName="studenthub" schemaName="public" tableName="topics_degrees">
+            <column name="degrees_name" type="VARCHAR(255)"/>
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="degrees_name" baseTableCatalogName="studenthub" baseTableName="topics_degrees" baseTableSchemaName="public" constraintName="fknox6ohaj5fh8wegt6m8ofywwh" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="name" referencedTableCatalogName="studenthub" referencedTableName="degrees" referencedTableSchemaName="public"/>
+        <addForeignKeyConstraint baseColumnNames="degree_name" baseTableCatalogName="studenthub" baseTableName="topicapplications" baseTableSchemaName="public" constraintName="fkadt3h8k0h0shd20a87y4i8n9e" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="name" referencedTableCatalogName="studenthub" referencedTableName="degrees" referencedTableSchemaName="public"/>
+        <addPrimaryKey catalogName="studenthub" columnNames="topic_id, degrees_name" constraintName="topics_degrees_pkey" schemaName="public" tableName="topics_degrees"/>
     </changeSet>
 </databaseChangeLog>

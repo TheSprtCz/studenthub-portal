@@ -48,7 +48,6 @@ import com.codahale.metrics.annotation.Timed;
 import cz.studenthub.core.Task;
 import cz.studenthub.core.TopicApplication;
 import cz.studenthub.core.User;
-import cz.studenthub.core.UserRole;
 import cz.studenthub.db.TaskDAO;
 import cz.studenthub.db.TopicApplicationDAO;
 import cz.studenthub.util.PagingUtil;
@@ -107,6 +106,7 @@ public class TopicApplicationResource {
   @ExceptionMetered
   @Path("/{id}")
   @UnitOfWork
+  @RolesAllowed({ "ADMIN", "AC_SUPERVISOR", "STUDENT", "TECH_LEADER" })
   public Response update(@PathParam("id") LongParam idParam, @NotNull @Valid @Validated(CreateUpdateChecks.class) TopicApplication app, @Auth User user) {
     
     long id = idParam.get();
@@ -118,7 +118,7 @@ public class TopicApplicationResource {
     if ((oldApp.getTechLeader() != null && oldApp.getTechLeader().equals(user)) 
         || oldApp.getStudent().equals(user)
         || (oldApp.getAcademicSupervisor() != null && oldApp.getAcademicSupervisor().equals(user)) 
-        || user.getRoles().contains(UserRole.ADMIN)) {
+        || user.isAdmin()) {
       app.setId(id);
       appDao.update(app);
       return Response.ok(app).build();
@@ -154,6 +154,7 @@ public class TopicApplicationResource {
   @Timed
   @Path("/{id}/tasks")
   @UnitOfWork
+  @RolesAllowed({ "ADMIN", "AC_SUPERVISOR", "STUDENT", "TECH_LEADER" })
   public List<Task> getTasksByApplication(@PathParam("id") LongParam id, @Auth User user,
           @Min(0) @DefaultValue("0") @QueryParam("start") IntParam startParam,
           @Min(0) @DefaultValue("0") @QueryParam("size") IntParam sizeParam,

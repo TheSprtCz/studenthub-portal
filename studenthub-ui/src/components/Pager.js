@@ -2,8 +2,6 @@ import React, { Component } from 'react';
 import ReactPaginate from 'react-paginate';
 import './pager.css';
 
-import _t from '../Translations.js';
-
 class Pager extends Component {
   render() {
     return(

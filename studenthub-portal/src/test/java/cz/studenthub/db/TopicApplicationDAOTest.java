@@ -20,11 +20,13 @@ import io.dropwizard.testing.junit.DAOTestRule;
 
 public class TopicApplicationDAOTest {
 
+  public static final int COUNT = 7;
   private static final DAOTestRule DATABASE = DAOTestSuite.database;
   private static FacultyDAO facDAO;
   private static UserDAO userDAO;
   private static TopicDAO topicDAO;
   private static TopicApplicationDAO appDAO;
+  private static TopicDegreeDAO tdDAO;
 
   @BeforeClass
   public static void setUp() {
@@ -32,6 +34,7 @@ public class TopicApplicationDAOTest {
     facDAO = new FacultyDAO(DATABASE.getSessionFactory());
     userDAO = new UserDAO(DATABASE.getSessionFactory());
     appDAO = new TopicApplicationDAO(DATABASE.getSessionFactory());
+    tdDAO = new TopicDegreeDAO(DATABASE.getSessionFactory());
   }
 
   @Test
@@ -40,14 +43,15 @@ public class TopicApplicationDAOTest {
       User user = userDAO.findById((long) 10);
       Topic topic = topicDAO.findById((long) 2);
       Faculty faculty = facDAO.findById((long) 5);
+      TopicDegree highSchool = tdDAO.findByName("HIGH_SCHOOL");
 
-      TopicApplication app = new TopicApplication(topic, "test", TopicGrade.A, TopicDegree.HIGH_SCHOOL, new Date(),
-          new Date(), faculty, user, user, user);
+      TopicApplication app = new TopicApplication(topic, "test", TopicGrade.A, highSchool, new Date(),
+          new Date(), faculty, user, user, user, null);
       TopicApplication created = appDAO.create(app);
 
       assertNotNull(created.getId());
       assertEquals(app, created);
-      assertEquals(8, appDAO.findAll().size());
+      assertEquals(COUNT + 1, appDAO.findAll().size());
     });
   }
 
@@ -58,7 +62,6 @@ public class TopicApplicationDAOTest {
     });
 
     assertNotNull(app);
-    assertEquals(TopicDegree.MASTER, app.getDegree());
     assertEquals(TopicGrade.F, app.getGrade());
   }
 
@@ -69,7 +72,7 @@ public class TopicApplicationDAOTest {
     });
 
     assertNotNull(apps);
-    assertEquals(7, apps.size());
+    assertEquals(COUNT, apps.size());
   }
 
   @Test
@@ -149,7 +152,7 @@ public class TopicApplicationDAOTest {
       appDAO.delete(app);
       List<TopicApplication> apps = appDAO.findAll();
 
-      assertEquals(6, apps.size());
+      assertEquals(COUNT - 1, apps.size());
       assertFalse(apps.contains(app));
     });
   }

@@ -7,13 +7,16 @@ import TopicSearch from './views/TopicSearch.js';
 import SignIn from './views/SignIn.js';
 import SignUp from './views/SignUp.js';
 import Activation from './views/Activation.js';
+import ResetConfirmation from './views/ResetConfirmation.js';
 import ForgotPassword from './views/ForgotPassword.js';
+import UpdatePassword from './views/UpdatePassword.js';
 import Users from './views/Users.js';
 import Universities from './views/Universities.js';
 import Companies from './views/Companies.js';
 import CompanyPlans from './views/CompanyPlans.js';
 import MyTopics from './views/MyTopics.js';
 import Topic from './views/Topic.js';
+import TopicDegrees from './views/TopicDegrees.js';
 import MyApplications from './views/MyApplications.js';
 import Application from './views/Application.js';
 import Profile from './views/Profile.js';
@@ -25,6 +28,8 @@ import Button from 'react-toolbox/lib/button/Button.js';
 import AppBar from 'react-toolbox/lib/app_bar/AppBar.js';
 import Navigation from 'react-toolbox/lib/navigation/Navigation.js';
 import FontIcon from 'react-toolbox/lib/font_icon/FontIcon.js';
+import { NotificationContainer } from 'react-notifications';
+import 'react-notifications/lib/notifications.css';
 
 // Auth controller
 import Auth from './Auth.js';
@@ -57,6 +62,7 @@ const NavBarLinks = withRouter(() => (
     { Auth.hasRole(Util.userRoles.admin) ? <Link to="/company-plans"><Button label={ _t.translate("Company Plans") } flat /></Link> : '' }
     { Auth.isAuthenticated() ? <Link to="/my-apps"><Button label={ _t.translate("My Applications") } flat /></Link> : '' }
     { Auth.hasRole(Util.userRoles.techLeader) || Auth.hasRole(Util.userRoles.superviser) ? <Link to="/my-topics"><Button label={ _t.translate("My Topics") } flat /></Link> : '' }
+    { Auth.hasRole(Util.userRoles.admin) ? <Link to="/degrees"><Button label={ _t.translate("Degrees") } flat /></Link> : '' }
     {
       Auth.isAuthenticated() ?
         <Link to="/profile">
@@ -97,6 +103,7 @@ class App extends Component {
     return (
       <Router>
         <div>
+          <NotificationContainer/>
           <AppBar title={ Util.PORTAL_NAME } leftIcon='menu' onLeftIconClick={() => this.setState({ drawerActive: true })}>
             <Navigation type='horizontal'>
               <NavBarLinks />
@@ -110,9 +117,11 @@ class App extends Component {
               <Route exact path="/" component={TopicSearch}/>
               <Route exact path="/signin" component={SignIn}/>
               <Route exact path="/signup" component={SignUp}/>
-              <Route exact path="/forgot" component={ForgotPassword}/>
+              <Route exact path="/forgotPwd" component={ForgotPassword}/>
               <Route exact path="/activation/:id/:secret" component={Activation}/>
+              <Route exact path="/confirmReset/:id/:secret" component={ResetConfirmation}/>
               <Route exact path="/topics/:id" component={Topic}/>
+              <Route exact path="/degrees" component={TopicDegrees}/>
               <PrivateRoute exact path="/users" component={Users}/>
               <PrivateRoute exact path="/unis" component={Universities}/>
               <PrivateRoute exact path="/companies" component={Companies}/>
@@ -120,6 +129,7 @@ class App extends Component {
               <PrivateRoute exact path="/my-apps" component={MyApplications}/>
               <PrivateRoute exact path="/my-topics" component={MyTopics}/>
               <PrivateRoute exact path="/profile" component={Profile}/>
+              <PrivateRoute exact path="/updatePwd" component={UpdatePassword}/>
               <PrivateRoute path="/applications/:id" component={Application}/>
               <Route exact path="/company-reg" component={CompanyReg}/>
               <Route component={NoMatch}/>

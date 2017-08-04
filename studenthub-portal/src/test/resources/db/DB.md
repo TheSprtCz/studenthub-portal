@@ -95,6 +95,7 @@ Password field is not present because it is encoded and irrelevant when testing 
 | 18  | rep3               | rep3@example.com            | Rep Three          | 234 156 774  | 27.1.2017      | 7       | ------- | [COMPANY_REP]                | ------------------------ | 
 | 19  | superadmin         | superadmin@example.com      | Super Admin        | 463 147 891  | 5.11.2016      | 1       | 1       | [ALL]                        | ------------------------ |
 | 20  | project            | project@example.com         | Project Leader     | 205 709 548  | 10.6.2017      | ------- | ------- | [PROJECT_LEADER]             | ------------------------ |
+| 21  | ambassador         | ambassador@example.com      | Ambassador One     | 890 473 058  | 20.6.2017      | ------- | 2       | [UNIVERSITY_AMB]             | ------------------------ |
 
 ## Activations
 
@@ -104,7 +105,17 @@ Codes were manually assigned to ease testing
 | --- | ----- | ---------- |
 | 1   | 18    | rep3       |
 | 2   | 15    | student4   |
-        
+
+## TopicDegrees
+
+| name        | description      |
+| ----------- | ---------------- |
+| BACHELOR    | Undergraduate    |
+| MASTER      | Graduate         |
+| PhD         | Simply PHD       |
+| HIGH_SCHOOL | High school      |
+| DELETABLE   | Useless          |
+
 ## Topics
 
 | id  | title               | secondaryTitle  | enabled | shortAbstract                       | description                | secondaryDescription    | creator | supervisors      | degrees                  | tags                      |
@@ -113,7 +124,7 @@ Codes were manually assigned to ease testing
 | 2   | Dropwizard          | --------------- | true    | Simple app using Dropwizard stack   | REST endpoints             | RESTové endpointy       | 11      | [7,5,2]          | [BACHELOR, HIGH_SCHOOL]  | [Java, REST, Web]         |
 | 3   | Eclipse plugin      | --------------- | true    | Create custom eclipse plugin        | Eclipse                    | Eclipse                 | 10      | [5,7,4]          | [MASTER, BACHELOR]       | [Java, C, Maven]          |
 | 4   | React UI            | --------------- | true    | Create nice and functional UI       | JavaScript & React         | ----------------------- | 9       | [6,3,2]          | [HIGH_SCHOOL,PhD]        | [JavaScript, Web]         |
-| 5   | Thesis management   | Správa diplomek | false   | Create new TMS                      | Web                        | ----------------------- | 10      | [7]              | [PHD]                    | [Web]                     |
+| 5   | Thesis management   | Správa diplomek | false   | Create new TMS                      | Web                        | ----------------------- | 10      | [7]              | [PhD]                    | [Web]                     |
                 
 ## Projects
 
@@ -126,15 +137,15 @@ Codes were manually assigned to ease testing
 
 (Status is not actually field in DB and is decided by state of other fields)
 
-| id  | topic | officialAssignment                                  | grade | degree     | status      | thesisFinish | thesisStarted | faculty | techLeader | student | supervisor |
-| --- | ----- | --------------------------------------------------- | ----- | ---------- | ----------- | ------------ | ------------- | ------- | ---------- | ------- | ---------- |
-| 1   | 1     | Melon cutter suitable for household use             | ----- | PhD        | IN_PROGRESS | ------------ | 17.9.2016     | 2       | 8          | 12      | 6          |
-| 2   | 1     | Melon cutter for industrial use                     | F     | MASTER     | FINISHED    | 18.2.2017    | 15.9.2016     | 5       | 9          | 13      | 3          |
-| 3   | 1     | Laser melon cutter using 20 W laser                 | ----- | PhD        | WAITING     | ------------ | ------------- | 8       | 8          | 13      | 4          |
-| 4   | 2     | Static HTML page generator, powered by markdown     | A     | BACHELOR   | FINISHED    | 17.3.2017    | 2.10.2016     | 1       | 11         | 14      | 2          |
-| 5   | 2     | Infinite Pi digits generator                        | ----- | HIGH_SCHOOL| WAITING     | ------------ | ------------- | 6       | 11         | 15      | 7          |
-| 6   | 3     | .JSX editor plugin                                  | ----- | MASTER     | IN_PROGRESS | ------------ | 5.3.2017      | 2       | 10         | 14      | 5          |
-| 7   | 4     | UI for thesis management system                     | B     | HIGH_SCHOOL| FINISHED    | 10.4.2017    | 18.12.2016    | 1       | 9          | 13      | 2          |
+| id  | topic | officialAssignment                                  | grade | degree     | status      | thesisFinish | thesisStarted | faculty | techLeader | student | supervisor | link                                                             |
+| --- | ----- | --------------------------------------------------- | ----- | ---------- | ----------- | ------------ | ------------- | ------- | ---------- | ------- | ---------- | ---------------------------------------------------------------- |
+| 1   | 1     | Melon cutter suitable for household use             | ----- | PhD        | IN_PROGRESS | ------------ | 17.9.2016     | 2       | 8          | 12      | 6          | https://www.github.com                                           |
+| 2   | 1     | Melon cutter for industrial use                     | F     | MASTER     | FINISHED    | 18.2.2017    | 15.9.2016     | 5       | 9          | 13      | 3          | ---------------------------------------------------------------- |
+| 3   | 1     | Laser melon cutter using 20 W laser                 | ----- | PhD        | WAITING     | ------------ | ------------- | 8       | 8          | 13      | 4          | ---------------------------------------------------------------- |
+| 4   | 2     | Static HTML page generator, powered by markdown     | A     | BACHELOR   | FINISHED    | 17.3.2017    | 2.10.2016     | 1       | 11         | 14      | 2          | https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet |
+| 5   | 2     | Infinite Pi digits generator                        | ----- | HIGH_SCHOOL| WAITING     | ------------ | ------------- | 6       | 11         | 15      | 7          | ---------------------------------------------------------------- |
+| 6   | 3     | .JSX editor plugin                                  | ----- | MASTER     | IN_PROGRESS | ------------ | 5.3.2017      | 2       | 10         | 14      | 5          | ---------------------------------------------------------------- |
+| 7   | 4     | UI for thesis management system                     | B     | HIGH_SCHOOL| FINISHED    | 10.4.2017    | 18.12.2016    | 1       | 9          | 13      | 2          | https://github.com/StudentHubCZ/studenthub-portal                |
 
 ## Tasks
 

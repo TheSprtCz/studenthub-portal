@@ -1,5 +1,27 @@
 <?xml version="1.1" encoding="UTF-8" standalone="no"?>
 <databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+    <changeSet author="phala (generated)" id="1496646751908-34">
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="DEGREES">
+            <column name="NAME" value="BACHELOR"/>
+            <column name="DESCRIPTION" value="Undergraduate"/>
+        </insert>
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="DEGREES">
+            <column name="NAME" value="MASTER"/>
+            <column name="DESCRIPTION" value="Graduate"/>
+        </insert>
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="DEGREES">
+            <column name="NAME" value="PhD"/>
+            <column name="DESCRIPTION" value="Simply PHD"/>
+        </insert>
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="DEGREES">
+            <column name="NAME" value="HIGH_SCHOOL"/>
+            <column name="DESCRIPTION" value="High school"/>
+        </insert>
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="DEGREES">
+            <column name="NAME" value="DELETABLE"/>
+            <column name="DESCRIPTION" value="Useless"/>
+        </insert>
+    </changeSet> 
     <changeSet author="phala (generated)" id="1489653927422-29" objectQuotingStrategy="QUOTE_ALL_OBJECTS">
         <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="PLANS">
             <column name="NAME" value="TIER_1"/>
@@ -433,6 +455,17 @@
             <column name="COMPANY_ID"/>
             <column name="FACULTY_ID"/>
         </insert>
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="USERS">
+            <column name="ID" valueNumeric="21"/>
+            <column name="EMAIL" value="ambassador@example.com"/>
+            <column name="LASTLOGIN" valueDate="2017-06-20 01:00:00.0"/>
+            <column name="NAME" value="Ambassador One"/>
+            <column name="PASSWORD" value="$6$UMtqjjBp$6t7ZYd9I.itX5HCv5xbVftBpAS248VHe241lj8cw6Yfj3JfWbTXNcXwXdGkShO.00UHWqrTXcFCUDAx.xh6FA."/>
+            <column name="PHONE" value="890 473 058"/>
+            <column name="USERNAME" value="ambassador"/>
+            <column name="COMPANY_ID"/>
+            <column name="FACULTY_ID" valueNumeric="1"/>
+        </insert>
     </changeSet>
     <changeSet author="phala (generated)" id="1489653927422-26" objectQuotingStrategy="QUOTE_ALL_OBJECTS">
         <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="USER_ROLES">
@@ -532,9 +565,17 @@
             <column name="ROLES" value="PROJECT_LEADER"/>
         </insert>
         <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="USER_ROLES">
+            <column name="USER_ID" valueNumeric="19"/>
+            <column name="ROLES" value="UNIVERSITY_AMB"/>
+        </insert>
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="USER_ROLES">
             <column name="USER_ID" valueNumeric="20"/>
             <column name="ROLES" value="PROJECT_LEADER"/>
         </insert>
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="USER_ROLES">
+            <column name="USER_ID" valueNumeric="21"/>
+            <column name="ROLES" value="UNIVERSITY_AMB"/>
+        </insert>        
     </changeSet>
     <changeSet author="phala (generated)" id="1489653927422-27" objectQuotingStrategy="QUOTE_ALL_OBJECTS">
         <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="USER_TAGS">
@@ -730,41 +771,41 @@
         </insert>
     </changeSet>
     <changeSet author="phala (generated)" id="1489653927422-20" objectQuotingStrategy="QUOTE_ALL_OBJECTS">
-        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="TOPIC_DEGREES">
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="TOPICS_DEGREES">
             <column name="TOPIC_ID" valueNumeric="2"/>
-            <column name="DEGREES" valueNumeric="0"/>
+            <column name="DEGREES_NAME" value="BACHELOR"/>
         </insert>
-        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="TOPIC_DEGREES">
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="TOPICS_DEGREES">
             <column name="TOPIC_ID" valueNumeric="2"/>
-            <column name="DEGREES" valueNumeric="1"/>
+            <column name="DEGREES_NAME" value="HIGH_SCHOOL"/>
         </insert>
-        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="TOPIC_DEGREES">
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="TOPICS_DEGREES">
             <column name="TOPIC_ID" valueNumeric="3"/>
-            <column name="DEGREES" valueNumeric="2"/>
+            <column name="DEGREES_NAME" value="MASTER"/>
         </insert>
-        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="TOPIC_DEGREES">
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="TOPICS_DEGREES">
             <column name="TOPIC_ID" valueNumeric="3"/>
-            <column name="DEGREES" valueNumeric="1"/>
+            <column name="DEGREES_NAME" value="BACHELOR"/>
         </insert>
-        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="TOPIC_DEGREES">
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="TOPICS_DEGREES">
             <column name="TOPIC_ID" valueNumeric="4"/>
-            <column name="DEGREES" valueNumeric="0"/>
+            <column name="DEGREES_NAME" value="HIGH_SCHOOL"/>
         </insert>
-        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="TOPIC_DEGREES">
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="TOPICS_DEGREES">
             <column name="TOPIC_ID" valueNumeric="4"/>
-            <column name="DEGREES" valueNumeric="3"/>
+            <column name="DEGREES_NAME" value="PhD"/>
         </insert>
-        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="TOPIC_DEGREES">
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="TOPICS_DEGREES">
             <column name="TOPIC_ID" valueNumeric="1"/>
-            <column name="DEGREES" valueNumeric="2"/>
+            <column name="DEGREES_NAME" value="PhD"/>
         </insert>
-        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="TOPIC_DEGREES">
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="TOPICS_DEGREES">
             <column name="TOPIC_ID" valueNumeric="1"/>
-            <column name="DEGREES" valueNumeric="3"/>
+            <column name="DEGREES_NAME" value="MASTER"/>
         </insert>
-        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="TOPIC_DEGREES">
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="TOPICS_DEGREES">
             <column name="TOPIC_ID" valueNumeric="5"/>
-            <column name="DEGREES" valueNumeric="3"/>
+            <column name="DEGREES_NAME" value="PhD"/>
         </insert>
     </changeSet>
     <changeSet author="phala (generated)" id="1489653927422-21" objectQuotingStrategy="QUOTE_ALL_OBJECTS">
@@ -874,7 +915,7 @@
     <changeSet author="phala (generated)" id="1489653927422-22" objectQuotingStrategy="QUOTE_ALL_OBJECTS">
         <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="TOPICAPPLICATIONS">
             <column name="ID" valueNumeric="1"/>
-            <column name="DEGREE" value="PhD"/>
+            <column name="DEGREE_NAME" value="PhD"/>
             <column name="GRADE"/>
             <column name="OFFICIALASSIGNMENT" value="Melon cutter suitable for household use"/>
             <column name="THESISFINISH"/>
@@ -884,10 +925,11 @@
             <column name="TECHLEADER_ID" valueNumeric="8"/>
             <column name="TOPIC_ID" valueNumeric="1"/>
             <column name="THESISSTART" valueDate="2016-09-17 02:00:00.0"/>
+            <column name="LINK" value="https://www.github.com"/>
         </insert>
         <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="TOPICAPPLICATIONS">
             <column name="ID" valueNumeric="2"/>
-            <column name="DEGREE" value="MASTER"/>
+            <column name="DEGREE_NAME" value="MASTER"/>
             <column name="GRADE" value="F"/>
             <column name="OFFICIALASSIGNMENT" value="Melon cutter for industrial use"/>
             <column name="THESISFINISH" valueDate="2017-02-18 01:00:00.0"/>
@@ -897,10 +939,11 @@
             <column name="TECHLEADER_ID" valueNumeric="9"/>
             <column name="TOPIC_ID" valueNumeric="1"/>
             <column name="THESISSTART" valueDate="2016-09-15 02:00:00.0"/>
+            <column name="LINK"/>
         </insert>
         <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="TOPICAPPLICATIONS">
             <column name="ID" valueNumeric="3"/>
-            <column name="DEGREE" value="PhD"/>
+            <column name="DEGREE_NAME" value="PhD"/>
             <column name="GRADE"/>
             <column name="OFFICIALASSIGNMENT" value="Laser melon cutter using 20 W laser"/>
             <column name="THESISFINISH"/>
@@ -910,10 +953,11 @@
             <column name="TECHLEADER_ID" valueNumeric="8"/>
             <column name="TOPIC_ID" valueNumeric="1"/>
             <column name="THESISSTART"/>
+            <column name="LINK"/>
         </insert>
         <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="TOPICAPPLICATIONS">
             <column name="ID" valueNumeric="4"/>
-            <column name="DEGREE" value="BACHELOR"/>
+            <column name="DEGREE_NAME" value="BACHELOR"/>
             <column name="GRADE" value="A"/>
             <column name="OFFICIALASSIGNMENT" value="Static HTML page generator, powered by markdown"/>
             <column name="THESISFINISH" valueDate="2017-03-17 01:00:00.0"/>
@@ -923,10 +967,11 @@
             <column name="TECHLEADER_ID" valueNumeric="11"/>
             <column name="TOPIC_ID" valueNumeric="2"/>
             <column name="THESISSTART" valueDate="2016-10-02 02:00:00.0"/>
+            <column name="LINK" value="https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet"/>
         </insert>
         <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="TOPICAPPLICATIONS">
             <column name="ID" valueNumeric="5"/>
-            <column name="DEGREE" value="HIGH_SCHOOL"/>
+            <column name="DEGREE_NAME" value="HIGH_SCHOOL"/>
             <column name="GRADE"/>
             <column name="OFFICIALASSIGNMENT" value="Infinite Pi digits generator"/>
             <column name="THESISFINISH"/>
@@ -936,10 +981,11 @@
             <column name="TECHLEADER_ID" valueNumeric="11"/>
             <column name="TOPIC_ID" valueNumeric="2"/>
             <column name="THESISSTART"/>
+            <column name="LINK"/>
         </insert>
         <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="TOPICAPPLICATIONS">
             <column name="ID" valueNumeric="6"/>
-            <column name="DEGREE" value="MASTER"/>
+            <column name="DEGREE_NAME" value="MASTER"/>
             <column name="GRADE"/>
             <column name="OFFICIALASSIGNMENT" value=".JSX editor plugin"/>
             <column name="THESISFINISH"/>
@@ -949,10 +995,11 @@
             <column name="TECHLEADER_ID" valueNumeric="10"/>
             <column name="TOPIC_ID" valueNumeric="3"/>
             <column name="THESISSTART" valueDate="2017-03-05 01:00:00.0"/>
+            <column name="LINK"/>
         </insert>
         <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="TOPICAPPLICATIONS">
             <column name="ID" valueNumeric="7"/>
-            <column name="DEGREE" value="HIGH_SCHOOL"/>
+            <column name="DEGREE_NAME" value="HIGH_SCHOOL"/>
             <column name="GRADE"/>
             <column name="OFFICIALASSIGNMENT" value="UI for thesis management system "/>
             <column name="THESISFINISH"/>
@@ -962,6 +1009,7 @@
             <column name="TECHLEADER_ID" valueNumeric="9"/>
             <column name="TOPIC_ID" valueNumeric="4"/>
             <column name="THESISSTART" valueDate="2017-04-10 02:00:00.0"/>
+            <column name="LINK" value="https://github.com/StudentHubCZ/studenthub-portal"/>
         </insert>
     </changeSet>
     <changeSet author="phala (generated)" id="1492005380103-22" objectQuotingStrategy="QUOTE_ALL_OBJECTS">
@@ -1012,12 +1060,20 @@
         <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="ACTIVATIONS">
             <column name="ID" valueNumeric="1"/>
             <column name="ACTIVATIONCODE" value="rep3"/>
+            <column name="TYPE" value="REGISTER"/>
             <column name="USER_ID" valueNumeric="18"/>
         </insert>
         <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="ACTIVATIONS">
             <column name="ID" valueNumeric="2"/>
             <column name="ACTIVATIONCODE" value="student4"/>
+            <column name="TYPE" value="REGISTER"/>
             <column name="USER_ID" valueNumeric="15"/>
+        </insert>
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="ACTIVATIONS">
+            <column name="ID" valueNumeric="3"/>
+            <column name="ACTIVATIONCODE" value="leader2"/>
+            <column name="TYPE" value="PASSWORD_RESET"/>
+            <column name="USER_ID" valueNumeric="9"/>
         </insert>
     </changeSet>
     <changeSet author="phala (generated)" id="1496737117875-30">

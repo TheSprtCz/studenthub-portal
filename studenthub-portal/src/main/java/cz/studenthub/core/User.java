@@ -52,6 +52,7 @@ import io.dropwizard.validation.ValidationMethod;
     @NamedQuery(name = "User.findByRole", query = "SELECT user FROM User user join user.roles role WHERE role = :role"),
     @NamedQuery(name = "User.findByCompany", query = "SELECT user FROM User user WHERE user.company = :company"),
     @NamedQuery(name = "User.findByRoleAndFaculty", query = "SELECT user FROM User user join user.roles role WHERE user.faculty = :faculty and role = :role"),
+    @NamedQuery(name = "User.findByRoleAndUniversity", query = "SELECT user FROM User user join user.roles role WHERE user.faculty.university = :university and role = :role"),
     @NamedQuery(name = "User.findByRoleAndCompany", query = "SELECT user FROM User user join user.roles role WHERE user.company = :company and role = :role"),
     @NamedQuery(name = "User.findByTag", query = "SELECT user FROM User user join user.tags tag WHERE tag = :tag"),
     @NamedQuery(name = "User.findByEmail", query = "SELECT user FROM User user WHERE user.email = :email"),
@@ -230,20 +231,54 @@ public class User implements Principal {
     return String.format("User[id=%s, name=%s, email=%s]", id, name, email);
   }
 
+  // Helper methods
+  @JsonIgnore
+  public boolean hasRole(UserRole role) {
+    return roles.contains(role);
+  }
+
+  @JsonIgnore
+  public boolean isAdmin() {
+    return hasRole(UserRole.ADMIN);
+  }
+
+  @JsonIgnore
+  public boolean hasOneOfRoles(UserRole... roles) {
+    for (UserRole role : roles) {
+      if (hasRole(role))
+        return true;
+    }
+    return false;
+  }
+
+  @JsonIgnore
+  public boolean hasOnlyRole(UserRole role) {
+    return (roles.size() == 1 && roles.contains(role));
+  }
+
+  @JsonIgnore
+  public boolean hasOnlyOneOfRoles(UserRole... roles) {
+    for (UserRole role : roles) {
+      if (hasOnlyRole(role))
+        return true;
+    }
+    return false;
+  }
+
   //Validation methods
   @ValidationMethod(message="User with COMPANY_REP or TECH_LEADER role must have specified company", groups = ValidationMethodChecks.class)
   @JsonIgnore
-  public boolean isCompanyRoleCorrect() {
-    if (roles.contains(UserRole.COMPANY_REP) || roles.contains(UserRole.TECH_LEADER))
+  public boolean isCompanyFilled() {
+    if (hasOneOfRoles(UserRole.COMPANY_REP, UserRole.TECH_LEADER))
       return company != null;
 
     return true;
   }
 
-  @ValidationMethod(message="User with STUDENT or AC_SUPERVISOR role must have specified faculty", groups = ValidationMethodChecks.class)
+  @ValidationMethod(message="User with STUDENT, AC_SUPERVISOR or UNIVERSITY_AMB role must have specified faculty", groups = ValidationMethodChecks.class)
   @JsonIgnore
   public boolean isFacultyRoleCorrect() {
-    if (roles.contains(UserRole.STUDENT) || roles.contains(UserRole.AC_SUPERVISOR))
+    if (hasOneOfRoles(UserRole.STUDENT, UserRole.AC_SUPERVISOR, UserRole.UNIVERSITY_AMB))
       return faculty != null;
 
     return true;

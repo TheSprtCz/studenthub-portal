@@ -35,13 +35,13 @@ public class CompanyPlanDAO extends AbstractDAO<CompanyPlan> {
     super(sessionFactory);
   }
 
-  public CompanyPlan update(CompanyPlan company) {
+  public CompanyPlan update(CompanyPlan companyPlan) {
     currentSession().clear();
-    return persist(company);
+    return persist(companyPlan);
   }
   
-  public CompanyPlan create(CompanyPlan company) {
-    return persist(company);
+  public CompanyPlan create(CompanyPlan companyPlan) {
+    return persist(companyPlan);
   }
   
   public CompanyPlan findByName(String name) {
@@ -52,8 +52,8 @@ public class CompanyPlanDAO extends AbstractDAO<CompanyPlan> {
     return list(namedQuery("CompanyPlan.findAll"));
   }
   
-  public void delete(CompanyPlan company) {
-    currentSession().delete(company);
+  public void delete(CompanyPlan companyPlan) {
+    currentSession().delete(companyPlan);
   }
 
 }

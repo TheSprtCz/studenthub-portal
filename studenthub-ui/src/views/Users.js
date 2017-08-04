@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
 
 import AdminUsersView from '../components/AdminUsersView.js';
-import CompanyRepUsersView from '../components/CompanyRepUsersView.js';
-import SiteSnackbar from '../components/SiteSnackbar.js';
+import UsersTable from '../components/UsersTable.js';
 import Pager from '../components/Pager.js';
 
 import Auth from '../Auth.js';
@@ -11,14 +10,17 @@ import Util from '../Util.js';
 import _t from '../Translations.js';
 
 class Users extends Component {
-  state = {users: [], companyId: -1, snackbarActive: false,
-    snackbarLabel: "", page: 0, pages: 1}
+
+  state = {users: [], companyId: -1, facultyId: -1 , page: 0, pages: 1}
 
   componentDidMount() {
     if (Auth.hasRole(Util.userRoles.admin))
       this.getUsers();
     else if (Auth.hasRole(Util.userRoles.companyRep))
       this.getCompanyUsers();
+    else if (Auth.hasRole(Util.userRoles.ambassador))
+      this.getUniversityUsers();
+    this.changePage(1);
   }
 
   /**
@@ -76,6 +78,54 @@ class Users extends Component {
   }
 
   /**
+  * Gets the list of only university users.
+  */
+  getUniversityUsers = () => {
+    var page = (this.state.offsetWentDown) ? this.state.page : (this.state.page+1);
+    fetch('/api/users/' + Auth.getUserInfo().sub, {
+        method: 'get',
+        credentials: 'same-origin'
+      }).then(function(response) {
+        if(response.ok) {
+          return response.json();
+        } else throw new Error('There was a problem with network connection.');
+      }).then(function(json) {
+        this.setState({
+          facultyId: json.faculty.id
+        });
+        fetch('/api/universities/' + json.faculty.university.id + "/supervisors?size=" + Util.USERS_PER_PAGE + "&start=" +
+          (page * Util.USERS_PER_PAGE), {
+            method: 'get',
+            credentials: 'same-origin'
+          }).then(function(response) {
+              if(response.ok) {
+                return response.json();
+            } else if (response.status === 404) {
+              this.setState({
+                users: (this.state.nextUsers === null || typeof this.state.nextUsers === 'undefined') ? this.state.users : this.state.nextUsers,
+                nextUsers: null
+              });
+            } else {
+              throw new Error("There was a problem with network connection. The GET request couldn't be processed!");
+            }
+          }.bind(this)).then(function(json) {
+            if (this.state.offsetWentDown) {
+              this.setState({
+                users: json,
+                nextUsers: this.state.users
+              });
+            }
+            else {
+              this.setState({
+                users: (this.state.nextUsers === null || typeof this.state.nextUsers === 'undefined') ? this.state.users : this.state.nextUsers,
+                nextUsers: json
+              });
+            };
+      }.bind(this));
+    }.bind(this));
+  }
+
+  /**
    * Handles all nonGET server requests. Updates using getting methods afterwards.
    * @param  method     method to call
    * @param  id         item id
@@ -104,37 +154,18 @@ class Users extends Component {
               label = "Wrong method input!";
               return;
           }
-          this.setState({
-            snackbarLabel: label,
-            snackbarActive: true
-          });
+          Util.notify("success", "", label);
           if(Auth.hasRole(Util.userRoles.admin))
             this.getUsers();
           else if(Auth.hasRole(Util.userRoles.companyRep))
             this.getCompanyUsers();
+          else if (Auth.hasRole(Util.userRoles.ambassador))
+            this.getUniversityUsers();
       } else {
-        this.setState({
-          snackbarLabel: "An error occured! Your request couldn't be processed. It's possible that you have a problem with your internet connection or that the server is not responding.",
-          snackbarActive: true
-        });
-        throw new Error('There was a problem with network connection. ' + method.toUpperCase() +
-                         ' could not be processed!');
+        Util.notify("error", "There was a problem with network connection.", "Your request hasn't been processed.");
+        throw new Error('There was a problem with network connection. '+method.toUpperCase()+' could not be processed!');
       }
     }.bind(this));
-  }
-
-  /**
-   * Toggles the visiblity of the Snackbar.
-   */
-  toggleSnackbar = () => {
-    this.setState({ snackbarActive: !this.state.snackbarActive });
-  }
-
-  /**
-   * Makes the Snackbar visible and gives it a new label.
-   */
-  setSnackbarResponse = (label) => {
-    this.setState({ snackbarActive: true, snackbarLabel: label });
   }
 
   /**
@@ -142,13 +173,12 @@ class Users extends Component {
    * @return the desired component
    */
   generateView = () => {
-    if (Auth.hasRole(Util.userRoles.admin))
+    if (Auth.hasRole(Util.userRoles.ambassador))
       return (<AdminUsersView users={this.state.users}
         dataHandler={(method, id, data) => this.manageData(method, id, data)} />);
-    else if (Auth.hasRole(Util.userRoles.companyRep))
-      return (<CompanyRepUsersView users={this.state.users} companyId={this.state.companyId}
-        dataHandler={(method, id, data) => this.manageData(method, id, data)}
-        snackbarSetter={(label) => this.setSnackbarResponse(label)} />);
+    else if (Auth.hasRole(Util.userRoles.companyRep) || Auth.hasRole(Util.userRoles.ambassador))
+      return (<UsersTable users={this.state.users} company={{ id: this.state.companyId }} faculty={{ id: this.state.facultyId }}
+        dataHandler={(method, id, data) => this.manageData(method, id, data)} />);
   }
 
   changePage = (page) => {
@@ -159,6 +189,8 @@ class Users extends Component {
         this.getUsers();
       else if (Auth.hasRole(Util.userRoles.companyRep))
         this.getCompanyUsers();
+      else if (Auth.hasRole(Util.userRoles.ambassador))
+        this.getUniversityUsers();
     }.bind(this), 2);
   }
 
@@ -168,7 +200,6 @@ class Users extends Component {
         <h1>{ _t.translate('Users') }</h1>
         {this.generateView()}
         <Pager pages={this.state.pages} pageChanger={(page) => this.changePage(page)} />
-        <SiteSnackbar active={this.state.snackbarActive} toggleHandler={this.toggleSnackbar} label={this.state.snackbarLabel} />
       </div>
     );
   }

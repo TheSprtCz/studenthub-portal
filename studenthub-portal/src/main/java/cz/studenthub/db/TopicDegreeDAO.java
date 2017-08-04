@@ -20,50 +20,40 @@ import java.util.List;
 
 import org.hibernate.SessionFactory;
 
-import cz.studenthub.core.Activation;
-import cz.studenthub.core.ActivationType;
-import cz.studenthub.core.User;
+import cz.studenthub.core.TopicDegree;
 import io.dropwizard.hibernate.AbstractDAO;
 
 /**
- * Data(base) Access Object for Activation objects.
+ * Data(base) Access Object for TopicDegree objects.
  * 
  * @author phala
- * @since 1.0
+ * @since 1.1
  */
-public class ActivationDAO extends AbstractDAO<Activation> {
+public class TopicDegreeDAO extends AbstractDAO<TopicDegree> {
 
-  public ActivationDAO(SessionFactory sessionFactory) {
+  public TopicDegreeDAO(SessionFactory sessionFactory) {
     super(sessionFactory);
   }
 
-  public Activation update(Activation activation) {
+  public TopicDegree update(TopicDegree degree) {
     currentSession().clear();
-    return persist(activation);
+    return persist(degree);
   }
   
-  public Activation create(Activation activation) {
-    return persist(activation);
+  public TopicDegree create(TopicDegree degree) {
+    return persist(degree);
   }
-
-  public Activation findById(long id) {
-    return get(id);
+  
+  public TopicDegree findByName(String name) {
+    return get(name);
   }
-
-  public Activation findByUser(User user) {
-    return uniqueResult(namedQuery("Activation.findByUser").setParameter("user", user));
+  
+  public List<TopicDegree> findAll() {
+    return list(namedQuery("TopicDegree.findAll"));
   }
-
-  public Activation findByUserAndType(User user, ActivationType type) {
-    return uniqueResult(namedQuery("Activation.findByUserAndType").setParameter("user", user).setParameter("type", type));
-  }
-
-  public List<Activation> findAll() {
-    return list(namedQuery("Activation.findAll"));
-  }
-
-  public void delete(Activation activation) {
-    currentSession().delete(activation);
+  
+  public void delete(TopicDegree degree) {
+    currentSession().delete(degree);
   }
 
 }

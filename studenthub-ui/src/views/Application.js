@@ -8,7 +8,6 @@ import Tabs from 'react-toolbox/lib/tabs/Tabs.js';
 import ListCheckbox from 'react-toolbox/lib/list/ListCheckbox.js';
 import ReactMarkdown from 'react-markdown';
 
-import SiteSnackbar from '../components/SiteSnackbar.js';
 import AddButton from '../components/AddButton.js';
 import EditButton from '../components/EditButton.js';
 import DeleteButton from '../components/DeleteButton.js';
@@ -227,21 +226,85 @@ class SupervisorSelect extends React.Component {
   }
 }
 
+class DegreeSelect extends React.Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      value: (Util.isEmpty(this.props.currentDegree)) ? 0: this.props.currentDegree.name,
+      labels: []
+    };
+
+    this.getDegreeLabels();
+  }
+
+  /**
+   * Sets default input values on props change.
+   */
+  componentWillReceiveProps(nextProps) {
+    if (this.props === nextProps) return;
+
+    this.setState({
+      value: (Util.isEmpty(nextProps.currentDegree)) ? 0 : nextProps.currentDegree.name
+    });
+  }
+
+  handleChange = (value) => {
+    this.setState({value: value});
+    this.props.changeHandler({name: value});
+  };
+
+  getDegreeLabels() {
+    fetch('/api/degrees', {
+      credentials: 'same-origin',
+      method: 'get'
+    }).then(function(response) {
+      if (response.ok) {
+        return response.json();
+      } else {
+        throw new Error('There was a problem with network connection.');
+      }
+    }).then(function(json) {
+      var newData = [];
+
+      for(let i in json) {
+        newData.push({
+          value: json[i].name,
+          label: json[i].description
+        });
+      }
+      this.setState({
+        labels: newData
+      });
+    }.bind(this));
+  }
+
+  render () {
+    return (
+      <Dropdown
+        auto
+        label={ _t.translate('Degree') }
+        onChange={this.handleChange}
+        source={this.state.labels}
+        value={this.state.value}
+        icon='account_balance' />
+    );
+  }
+}
+
 class ApplicationForm extends Component {
   state = {
-    techLeader: { },
-    academicSupervisor: { },
-    student: { },
+    techLeader: {},
+    academicSupervisor: {},
+    student: {},
     officialAssignment: "",
     grade: "",
-    degree: "",
+    degree: {},
     thesisFinish: "",
     thesisStarted: "",
-    topic: { },
+    link: "",
+    topic: {},
     faculty: "",
-    snackbarLabel: "",
-    snackbarActive: false,
-    editId: -1,
     index: 0
   };
 
@@ -274,7 +337,8 @@ class ApplicationForm extends Component {
         thesisFinish: new Date(json.thesisFinish),
         thesisStarted: new Date(json.thesisStarted),
         topic: json.topic,
-        faculty: json.faculty
+        faculty: json.faculty,
+        link: json.link
       });
     }.bind(this));
   }
@@ -294,14 +358,12 @@ class ApplicationForm extends Component {
         thesisFinish: this.state.thesisFinish,
         thesisStarted: this.state.thesisStarted,
         topic: this.state.topic,
-        faculty: this.state.faculty
+        faculty: this.state.faculty,
+        link: this.state.link
       })
     }).then(function(response) {
       if (response.ok) {
-        this.setState({
-          snackbarActive: true,
-          snackbarLabel: "Your application has been successfully updated!"
-        });
+        Util.notify("success", "", "Your application has been successfully updated!");
         this.getData();
       } else {
         throw new Error('There was a problem with network connection.');
@@ -317,12 +379,12 @@ class ApplicationForm extends Component {
     this.setState({ academicSupervisor: supervisor });
   };
 
-  handleChange = (name, value) => {
-    this.setState({...this.state, [name]: value});
+  changeDegree = (degree) => {
+    this.setState({ degree: degree });
   };
 
-  toggleSnackbar = () => {
-    this.setState({ snackbarActive: !this.state.snackbarActive });
+  handleChange = (name, value) => {
+    this.setState({...this.state, [name]: value});
   };
 
   render() {
@@ -346,13 +408,13 @@ class ApplicationForm extends Component {
             icon='date_range'
             onChange={this.handleChange.bind(this, 'thesisFinish')}
             value={(Util.isEmpty(this.state.thesisFinish)) ? new Date() : this.state.thesisFinish} />
-          <Dropdown
-            name='degree'
-            label={ _t.translate('Degree') }
-            icon='account_balance'
-            onChange={this.handleChange.bind(this, 'degree')}
-            source={Util.degreesSource}
-            value={this.state.degree} />
+          <DegreeSelect currentDegree={this.state.degree} changeHandler={(degree) => this.changeDegree(degree)} />
+          <Input
+            type='url'
+            label={ _t.translate('External link') }
+            icon='link'
+            onChange={this.handleChange.bind(this, 'link')}
+            value={this.state.link} />
         </div>
         <div className="col-md-6">
           <h3>{ _t.translate('Administration') }</h3>
@@ -398,14 +460,13 @@ class ApplicationForm extends Component {
           </Tabs>
         </div>
         <Button icon='save' label={ _t.translate('Save changes') } raised primary className='pull-right' onClick={this.handleSubmit} />
-        <SiteSnackbar active={this.state.snackbarActive} label={this.state.snackbarLabel} toggleHandler={() => this.toggleSnackbar()} />
       </div>
     )
   }
 }
 
 class TaskList extends React.Component {
-  state = { tasks: [], app: { }, snackbarLabel: "", snackbarActive: false, dialogActive: false };
+  state = { tasks: [], app: { }, dialogActive: false };
 
   componentDidMount() {
     this.getApp();
@@ -471,10 +532,7 @@ class TaskList extends React.Component {
       })
     }).then(function(response) {
       if (response.ok) {
-        this.setState({
-          snackbarLabel: "Task status changed successfully!",
-          snackbarActive: true
-        });
+        Util.notify("success", "", "Task status changed successfully!");
         this.getTasks();
       } else {
         throw new Error('There was a problem with network connection.');
@@ -488,10 +546,7 @@ class TaskList extends React.Component {
       credentials: 'same-origin'
       }).then(function(response) {
       if (response.ok) {
-        this.setState({
-          snackbarLabel: "The task has been deleted  successfully!",
-          snackbarActive: true
-        });
+        Util.notify("success", "", "The task has been deleted successfully!");
         this.getTasks();
       } else {
         throw new Error('There was a problem with network connection.');
@@ -502,7 +557,7 @@ class TaskList extends React.Component {
   /**
    * Toggles the visiblity of the Dialog.
    * @param id     the id of the task to edit
-   * @param label  new snackbarLabel
+   * @param label  new notification label
    */
   toggleDialog = (id, label) => {
     this.setState({
@@ -511,16 +566,9 @@ class TaskList extends React.Component {
     })
     if(label === "") return;
     else {
-      this.setState({
-        snackbarLabel: label,
-        snackbarActive: true
-      })
+      Util.notify("info", "", label);
       this.getTasks();
     }
-  }
-
-  toggleSnackbar = () => {
-    this.setState({ snackbarActive: !this.state.snackbarActive });
   }
 
   render () {
@@ -553,7 +601,6 @@ class TaskList extends React.Component {
             ))}
           </tbody>
         </table>
-        <SiteSnackbar active={this.state.snackbarActive} label={this.state.snackbarLabel} toggleHandler={() => this.toggleSnackbar()} />
         <TaskDialog active={this.state.dialogActive} task={(this.state.editId === -1) ? null : this.state.tasks[this.state.editId]}
           toggleHandler={(label) => this.toggleDialog(this.state.editId, label)} app={this.state.app} />
       </div>

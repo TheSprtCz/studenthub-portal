@@ -2,6 +2,7 @@ package cz.studenthub.integration;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertTrue;
 
 import java.util.List;
 
@@ -18,6 +19,9 @@ import cz.studenthub.IntegrationTestSuite;
 import cz.studenthub.StudentHubConfiguration;
 import cz.studenthub.core.Faculty;
 import cz.studenthub.core.University;
+import cz.studenthub.core.User;
+import cz.studenthub.core.UserRole;
+import cz.studenthub.db.UniversityDAOTest;
 import io.dropwizard.testing.DropwizardTestSupport;
 import net.minidev.json.JSONObject;
 
@@ -41,7 +45,7 @@ public class UniversityResourceTest {
     List<University> list = fetchUniversities();
 
     assertNotNull(list);
-    assertEquals(list.size(), 5);
+    assertEquals(list.size(), UniversityDAOTest.COUNT);
   }
 
   @Test(dependsOnGroups = "login")
@@ -65,7 +69,7 @@ public class UniversityResourceTest {
 
     assertNotNull(response);
     assertEquals(response.getStatus(), 201);
-    assertEquals(fetchUniversities().size(), 6);
+    assertEquals(fetchUniversities().size(), UniversityDAOTest.COUNT + 1);
   }
 
   @Test(dependsOnMethods = "createUniversity")
@@ -88,7 +92,7 @@ public class UniversityResourceTest {
 
     assertNotNull(response);
     assertEquals(response.getStatus(), 204);
-    assertEquals(fetchUniversities().size(), 5);
+    assertEquals(fetchUniversities().size(), UniversityDAOTest.COUNT);
   }
 
   @Test(dependsOnGroups = "login")
@@ -98,5 +102,17 @@ public class UniversityResourceTest {
 
     assertNotNull(faculties);
     assertEquals(faculties.size(), 4);
+  }
+
+  @Test(dependsOnGroups = "login")
+  public void fetchSupervisors() {
+    List<User> users = IntegrationTestSuite.authorizedRequest(client.target(String.format("http://localhost:%d/api/universities/1/supervisors", dropwizard.getLocalPort())).request(), client)
+        .get(new GenericType<List<User>>(){}); 
+
+    assertNotNull(users);
+    assertEquals(users.size(), 4);
+    for (User supervisor : users) {
+      assertTrue(supervisor.hasRole(UserRole.AC_SUPERVISOR));
+    }
   }
 }

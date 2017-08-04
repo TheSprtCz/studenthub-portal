@@ -21,7 +21,9 @@ import cz.studenthub.core.Project;
 import cz.studenthub.core.Topic;
 import cz.studenthub.core.TopicApplication;
 import cz.studenthub.core.User;
+import cz.studenthub.db.TopicDAOTest;
 import io.dropwizard.testing.DropwizardTestSupport;
+import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
 
 public class TopicResourceTest {
@@ -49,7 +51,7 @@ public class TopicResourceTest {
     List<Topic> list = fetchTopics();
 
     assertNotNull(list);
-    assertEquals(list.size(), 5);
+    assertEquals(list.size(), TopicDAOTest.COUNT);
   }
 
   @Test(dependsOnGroups = "migrate", groups = "fetchTopic")
@@ -64,12 +66,19 @@ public class TopicResourceTest {
 
   @Test(dependsOnMethods = "listTopics")
   public void createTopic() {
+    JSONObject degree = new JSONObject();
+    degree.put("name", "HIGH_SCHOOL");
+
+    JSONArray degrees = new JSONArray();
+    degrees.add(degree);
+    
     JSONObject creator = new JSONObject();
     creator.put("id", 11);
 
     JSONObject topic = new JSONObject();
     topic.put("title", "New Topic");
     topic.put("creator", creator);
+    topic.put("degrees", degrees);
 
     Response response = IntegrationTestSuite.authorizedRequest(client.target(String.format("http://localhost:%d/api/topics", dropwizard.getLocalPort()))
       .request(MediaType.APPLICATION_JSON), client).post(Entity.json(topic.toJSONString()));
@@ -77,17 +86,24 @@ public class TopicResourceTest {
     assertNotNull(response);
     assertEquals(response.getStatus(), 201);
     assertEquals(fetchTopics().size(), 6);
-    assertEquals((long) response.readEntity(Topic.class).getId(), 6);
+    assertEquals((long) response.readEntity(Topic.class).getId(), TopicDAOTest.COUNT + 1);
   }
 
   @Test(dependsOnMethods = "createTopic")
   public void updateTopic() {
+    JSONObject degree = new JSONObject();
+    degree.put("name", "HIGH_SCHOOL");
+
+    JSONArray degrees = new JSONArray();
+    degrees.add(degree);
+
     JSONObject creator = new JSONObject();
     creator.put("id", 11);
 
     JSONObject topic = new JSONObject();
     topic.put("title", "Another Topic");
     topic.put("creator", creator);
+    topic.put("degrees", degrees);
 
     Response response = IntegrationTestSuite.authorizedRequest(client.target(String.format("http://localhost:%d/api/topics/6", dropwizard.getLocalPort()))
       .request(MediaType.APPLICATION_JSON), client).put(Entity.json(topic.toJSONString()));
@@ -104,7 +120,7 @@ public class TopicResourceTest {
 
     assertNotNull(response);
     assertEquals(response.getStatus(), 204);
-    assertEquals(fetchTopics().size(), 5);
+    assertEquals(fetchTopics().size(), TopicDAOTest.COUNT);
   }
 
   @Test(dependsOnGroups = "login")
