@@ -21,6 +21,7 @@ import java.util.List;
 import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
@@ -35,6 +36,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
@@ -81,8 +83,9 @@ public class CompanyResource {
   @Timed
   @UnitOfWork
   public List<Company> fetch(@Min(0) @DefaultValue("0") @QueryParam("start") IntParam startParam,
-          @Min(0) @DefaultValue("0") @QueryParam("size") IntParam sizeParam) {
-    return PagingUtil.paging(companyDao.findAll(), startParam.get(), sizeParam.get());
+          @Min(0) @DefaultValue("0") @QueryParam("size") IntParam sizeParam,
+          @Context HttpServletResponse response) {
+    return PagingUtil.paging(companyDao.findAll(), startParam.get(), sizeParam.get(), response);
   }
 
   @GET
@@ -149,13 +152,14 @@ public class CompanyResource {
   @PermitAll
   public List<User> fetchLeaders(@PathParam("id") LongParam id,
 		  @Min(0) @DefaultValue("0") @QueryParam("start") IntParam startParam,
-		  @Min(0) @DefaultValue("0") @QueryParam("size") IntParam sizeParam) {
+		  @Min(0) @DefaultValue("0") @QueryParam("size") IntParam sizeParam,
+      @Context HttpServletResponse response) {
 
     Company company = companyDao.findById(id.get());
     if (company == null)
       throw new WebApplicationException(Status.NOT_FOUND);
 
-    return PagingUtil.paging(userDao.findByRoleAndCompany(UserRole.TECH_LEADER, company), startParam.get(), sizeParam.get());
+    return PagingUtil.paging(userDao.findByRoleAndCompany(UserRole.TECH_LEADER, company), startParam.get(), sizeParam.get(), response);
   }
 
   @GET
@@ -164,13 +168,14 @@ public class CompanyResource {
   @UnitOfWork
   public List<Topic> fetchTopics(@PathParam("id") LongParam id,
           @Min(0) @DefaultValue("0") @QueryParam("start") IntParam startParam,
-          @Min(0) @DefaultValue("0") @QueryParam("size") IntParam sizeParam) {
+          @Min(0) @DefaultValue("0") @QueryParam("size") IntParam sizeParam,
+          @Context HttpServletResponse response) {
 
     Company company = companyDao.findById(id.get());
     if (company == null)
       throw new WebApplicationException(Status.NOT_FOUND);
 
-    return PagingUtil.paging(topicDao.findByCompany(company), startParam.get(), sizeParam.get());
+    return PagingUtil.paging(topicDao.findByCompany(company), startParam.get(), sizeParam.get(), response);
   }
 
   @GET
@@ -198,12 +203,13 @@ public class CompanyResource {
   @UnitOfWork
   public List<Project> fetchProjects(@PathParam("id") LongParam id,
           @Min(0) @DefaultValue("0") @QueryParam("start") IntParam startParam,
-          @Min(0) @DefaultValue("0") @QueryParam("size") IntParam sizeParam) {
+          @Min(0) @DefaultValue("0") @QueryParam("size") IntParam sizeParam,
+          @Context HttpServletResponse response) {
 
     Company company = companyDao.findById(id.get());
     if (company == null)
       throw new WebApplicationException(Status.NOT_FOUND);
 
-    return PagingUtil.paging(projectDao.findByCompany(company), startParam.get(), sizeParam.get());
+    return PagingUtil.paging(projectDao.findByCompany(company), startParam.get(), sizeParam.get(), response);
   }
 }

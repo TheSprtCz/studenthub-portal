@@ -21,6 +21,7 @@ import java.util.List;
 import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
@@ -34,6 +35,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
@@ -80,8 +82,9 @@ public class UserResource {
   @UnitOfWork
   @RolesAllowed("ADMIN")
   public List<User> fetch(@Min(0) @DefaultValue("0") @QueryParam("start") IntParam startParam,
-      @Min(0) @DefaultValue("0") @QueryParam("size") IntParam sizeParam) {
-    return PagingUtil.paging(userDao.findAll(), startParam.get(), sizeParam.get());
+      @Min(0) @DefaultValue("0") @QueryParam("size") IntParam sizeParam,
+      @Context HttpServletResponse response) {
+    return PagingUtil.paging(userDao.findAll(), startParam.get(), sizeParam.get(), response);
   }
 
   @GET
@@ -142,11 +145,12 @@ public class UserResource {
   @RolesAllowed({"ADMIN", "STUDENT"})
   public List<TopicApplication> fetchApplications(@Auth User user, @PathParam("id") LongParam id,
       @Min(0) @DefaultValue("0") @QueryParam("start") IntParam startParam,
-      @Min(0) @DefaultValue("0") @QueryParam("size") IntParam sizeParam) {
+      @Min(0) @DefaultValue("0") @QueryParam("size") IntParam sizeParam,
+      @Context HttpServletResponse response) {
 
     if (id.get().equals(user.getId()) || user.isAdmin()) {
       User student = userDao.findById(id.get());
-      return PagingUtil.paging(appDao.findByStudent(student), startParam.get(), sizeParam.get());
+      return PagingUtil.paging(appDao.findByStudent(student), startParam.get(), sizeParam.get(), response);
     } else {
       throw new WebApplicationException(Status.FORBIDDEN);
     }
@@ -159,11 +163,12 @@ public class UserResource {
   @RolesAllowed({"ADMIN", "TECH_LEADER"})
   public List<TopicApplication> fetchLedApps(@Auth User user, @PathParam("id") LongParam id,
       @Min(0) @DefaultValue("0") @QueryParam("start") IntParam startParam,
-      @Min(0) @DefaultValue("0") @QueryParam("size") IntParam sizeParam) {
+      @Min(0) @DefaultValue("0") @QueryParam("size") IntParam sizeParam,
+      @Context HttpServletResponse response) {
 
     if (id.get().equals(user.getId()) || user.isAdmin()) {
       User leader = userDao.findById(id.get());
-      return PagingUtil.paging(appDao.findByLeader(leader), startParam.get(), sizeParam.get());
+      return PagingUtil.paging(appDao.findByLeader(leader), startParam.get(), sizeParam.get(), response);
     } else {
       throw new WebApplicationException(Status.FORBIDDEN);
     }
@@ -176,11 +181,12 @@ public class UserResource {
   @RolesAllowed({"ADMIN", "TECH_LEADER"})
   public List<Topic> fetchOwnedTopics(@Auth User user, @PathParam("id") LongParam id,
       @Min(0) @DefaultValue("0") @QueryParam("start") IntParam startParam,
-      @Min(0) @DefaultValue("0") @QueryParam("size") IntParam sizeParam) {
+      @Min(0) @DefaultValue("0") @QueryParam("size") IntParam sizeParam,
+      @Context HttpServletResponse response) {
 
     if (id.get().equals(user.getId()) || user.isAdmin()) {
       User creator = userDao.findById(id.get());
-      return PagingUtil.paging(topicDao.findByCreator(creator), startParam.get(), sizeParam.get());
+      return PagingUtil.paging(topicDao.findByCreator(creator), startParam.get(), sizeParam.get(), response);
     } else {
       throw new WebApplicationException(Status.FORBIDDEN);
     }
@@ -193,11 +199,12 @@ public class UserResource {
   @RolesAllowed({"ADMIN", "AC_SUPERVISOR"})
   public List<Topic> fetchSupervisedTopics(@Auth User user, @PathParam("id") LongParam id,
       @Min(0) @DefaultValue("0") @QueryParam("start") IntParam startParam,
-      @Min(0) @DefaultValue("0") @QueryParam("size") IntParam sizeParam) {
+      @Min(0) @DefaultValue("0") @QueryParam("size") IntParam sizeParam,
+      @Context HttpServletResponse response) {
 
     if (id.get().equals(user.getId()) || user.isAdmin()) {
       User supervisor = userDao.findById(id.get());
-      return PagingUtil.paging(topicDao.findBySupervisor(supervisor), startParam.get(), sizeParam.get());
+      return PagingUtil.paging(topicDao.findBySupervisor(supervisor), startParam.get(), sizeParam.get(), response);
     } else {
       throw new WebApplicationException(Status.FORBIDDEN);
     }
@@ -210,11 +217,12 @@ public class UserResource {
   @RolesAllowed({"ADMIN", "AC_SUPERVISOR"})
   public List<TopicApplication> fetchSupervisedApplications(@Auth User user, @PathParam("id") LongParam id,
       @Min(0) @DefaultValue("0") @QueryParam("start") IntParam startParam,
-      @Min(0) @DefaultValue("0") @QueryParam("size") IntParam sizeParam) {
+      @Min(0) @DefaultValue("0") @QueryParam("size") IntParam sizeParam,
+      @Context HttpServletResponse response) {
 
     if (id.get().equals(user.getId()) || user.isAdmin()) {
       User supervisor = userDao.findById(id.get());
-      return PagingUtil.paging(appDao.findBySupervisor(supervisor), startParam.get(), sizeParam.get());
+      return PagingUtil.paging(appDao.findBySupervisor(supervisor), startParam.get(), sizeParam.get(), response);
     } else {
       throw new WebApplicationException(Status.FORBIDDEN);
     }
@@ -227,11 +235,12 @@ public class UserResource {
   @RolesAllowed({"ADMIN", "PROJECT_LEADER"})
   public List<Project> fetchProjects(@Auth User user, @PathParam("id") LongParam id,
       @Min(0) @DefaultValue("0") @QueryParam("start") IntParam startParam,
-      @Min(0) @DefaultValue("0") @QueryParam("size") IntParam sizeParam) {
+      @Min(0) @DefaultValue("0") @QueryParam("size") IntParam sizeParam,
+      @Context HttpServletResponse response) {
 
     if (id.get().equals(user.getId()) || user.isAdmin()) {
       User creator = userDao.findById(id.get());
-      return PagingUtil.paging(projectDao.findByCreator(creator), startParam.get(), sizeParam.get());
+      return PagingUtil.paging(projectDao.findByCreator(creator), startParam.get(), sizeParam.get(), response);
     } else {
       throw new WebApplicationException(Status.FORBIDDEN);
     }

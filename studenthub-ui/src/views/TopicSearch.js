@@ -178,29 +178,16 @@ class TopicCards extends React.Component {
 }
 
 class TopicSearch extends React.Component {
-  state = { query: '', topics: [], nextTopics: [], applications: [], supervisedTopics: [],
-    page: -1, typing: false, fetched: false };
+  state = { query: '', topics: [], applications: [], supervisedTopics: [],
+    page: 0, pages: 1, typing: false, fetched: false };
 
   componentDidMount() {
     this.getTopics();
     if (Auth.hasRole(Util.userRoles.student)) this.getApplications();
-    this.changePage(1);
     setInterval(function() {
-      if(!this.state.typing && !this.state.fetched)
-        this.resetPages();
+      if (!this.state.typing && !this.state.fetched)
+        this.getTopics();
     }.bind(this), 300);
-  }
-
-  resetPages() {
-    this.setState({
-      page: -1,
-      topics: [],
-      nextTopics: []
-    });
-    setTimeout(function(){
-      this.getTopics();
-      this.changePage(1);
-    }.bind(this), 2);
   }
 
   handleChange = (name, value) => {
@@ -211,25 +198,18 @@ class TopicSearch extends React.Component {
   };
 
   getTopics = () => {
-    fetch("/api/topics/search?size=" + Util.TOPICS_PER_PAGE + "&start=" + ((this.state.page+1) * Util.TOPICS_PER_PAGE) +
-      "&text="+this.state.query, {
+    fetch("/api/topics/search?size=" + Util.TOPICS_PER_PAGE + "&start=" +
+          (this.state.page * Util.TOPICS_PER_PAGE) + "&text="+this.state.query, {
       credentials: 'same-origin',
       method: 'get' }).then(function(response) {
       if(response.ok) {
+        this.setState({pages: parseInt(response.headers.get("Pages"), 10)});
         return response.json();
-      } else if (response.status === 404) {
-        this.setState({
-          topics: (this.state.nextTopics === null || typeof this.state.nextTopics === 'undefined') ? this.state.topics : this.state.nextTopics,
-          nextTopics: null
-        });
       } else {
         throw new Error('There was a problem with network connection.');
       }
     }.bind(this)).then(function(json) {
-      this.setState({
-        topics: (this.state.nextTopics === null || typeof this.state.nextTopics === 'undefined') ? this.state.topics : this.state.nextTopics,
-        nextTopics: json
-      });
+      this.setState({topics: json});
     }.bind(this));
     this.setState({fetched: true});
   }
@@ -256,8 +236,8 @@ class TopicSearch extends React.Component {
     this.setState({fetched: true});
   }
 
-  changePage = (offset) => {
-    this.setState({ page: this.state.page + offset });
+  changePage = (page) => {
+    this.setState({page: page.selected});
 
     setTimeout(function() {
       this.getTopics();
@@ -272,8 +252,7 @@ class TopicSearch extends React.Component {
           required value={this.state.query} onChange={this.handleChange.bind(this, 'query')} />
         <br />
         <TopicCards topics={this.state.topics} applications={this.state.applications} />
-        <Pager currentPage={this.state.page} nextData={this.state.nextTopics}
-          pageChanger={(offset) => this.changePage(offset)} />
+        <Pager pages={this.state.pages} pageChanger={(page) => this.changePage(page)} />
       </section>
     );
   }

@@ -20,6 +20,7 @@ import java.util.List;
 
 import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
@@ -34,6 +35,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
@@ -60,8 +62,9 @@ public class TopicDegreeResource {
   @Timed
   @UnitOfWork
   public List<TopicDegree> fetch(@Min(0) @DefaultValue("0") @QueryParam("start") IntParam startParam,
-          @Min(0) @DefaultValue("0") @QueryParam("size") IntParam sizeParam) {
-    return PagingUtil.paging(tdDao.findAll(), startParam.get(), sizeParam.get());
+          @Min(0) @DefaultValue("0") @QueryParam("size") IntParam sizeParam,
+          @Context HttpServletResponse response) {
+    return PagingUtil.paging(tdDao.findAll(), startParam.get(), sizeParam.get(), response);
   }
 
   @GET
@@ -88,7 +91,7 @@ public class TopicDegreeResource {
   @UnitOfWork
   @RolesAllowed("ADMIN")
   public Response update(@PathParam("name") String name, @NotNull @Valid TopicDegree topicDegree) {
-    if (tdDao.findByName(name) == null) 
+    if (tdDao.findByName(name) == null)
       throw new WebApplicationException(Status.NOT_FOUND);
 
     topicDegree.setName(name);
@@ -103,7 +106,7 @@ public class TopicDegreeResource {
   @RolesAllowed("ADMIN")
   public Response delete(@PathParam("name") String name) {
     TopicDegree topicDegree = tdDao.findByName(name);
-    if (topicDegree == null) 
+    if (topicDegree == null)
       throw new WebApplicationException(Status.NOT_FOUND);
 
     tdDao.delete(topicDegree);

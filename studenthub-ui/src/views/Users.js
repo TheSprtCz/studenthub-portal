@@ -10,7 +10,8 @@ import Util from '../Util.js';
 import _t from '../Translations.js';
 
 class Users extends Component {
-  state = { users: [], nextUsers: [], companyId: -1, page: -1, facultyId: -1, offsetWentDown: false }
+
+  state = {users: [], companyId: -1, facultyId: -1 , page: 0, pages: 1}
 
   componentDidMount() {
     if (Auth.hasRole(Util.userRoles.admin))
@@ -26,32 +27,19 @@ class Users extends Component {
    * Gets the list of all users.
    */
   getUsers = () => {
-    let page = (this.state.offsetWentDown) ? this.state.page : (this.state.page+1);
-    fetch("/api/users?size=" + Util.USERS_PER_PAGE + "&start=" + (page * Util.USERS_PER_PAGE), {
+    fetch("/api/users?size=" + Util.USERS_PER_PAGE + "&start=" +
+           (this.state.page * Util.USERS_PER_PAGE), {
         method: 'get',
         credentials: 'same-origin'
       }).then(function(response) {
           if(response.ok) {
+            this.setState({pages: parseInt(response.headers.get("Pages"), 10)});
             return response.json();
-          } else if (response.status === 404) {
-          this.setState({
-            users: (this.state.nextUsers === null || typeof this.state.nextUsers === 'undefined') ? this.state.users : this.state.nextUsers,
-            nextUsers: null
-          });
-        } else throw new Error('There was a problem with network connection.');
+          } else {
+            throw new Error('There was a problem with network connection.');
+          }
       }.bind(this)).then(function(json) {
-        if (this.state.offsetWentDown) {
-          this.setState({
-            users: json,
-            nextUsers: this.state.users
-          });
-        }
-        else {
-          this.setState({
-            users: (this.state.nextUsers === null || typeof this.state.nextUsers === 'undefined') ? this.state.users : this.state.nextUsers,
-            nextUsers: json
-          });
-        }
+        this.setState({users: json});
       }.bind(this));
   }
 
@@ -59,46 +47,32 @@ class Users extends Component {
   * Gets the list of only company users.
   */
   getCompanyUsers = () => {
-    var page = (this.state.offsetWentDown) ? this.state.page : (this.state.page+1);
     fetch('/api/users/' + Auth.getUserInfo().sub, {
         method: 'get',
         credentials: 'same-origin'
       }).then(function(response) {
         if(response.ok) {
           return response.json();
-        } else throw new Error('There was a problem with network connection.');
+        } else {
+          throw new Error('There was a problem with network connection.');
+        }
       }).then(function(json) {
         this.setState({
           companyId: json.company.id
         });
-        fetch('/api/companies/' + json.company.id + "/leaders?size=" + Util.USERS_PER_PAGE + "&start=" +
-          (page * Util.USERS_PER_PAGE), {
+        fetch('/api/companies/' + json.company.id + "/leaders?size=" + Util.USERS_PER_PAGE +
+               "&start=" + (this.state.page * Util.USERS_PER_PAGE), {
             method: 'get',
             credentials: 'same-origin'
           }).then(function(response) {
               if(response.ok) {
+                this.setState({pages: parseInt(response.headers.get("Pages"), 10)});
                 return response.json();
-            } else if (response.status === 404) {
-              this.setState({
-                users: (this.state.nextUsers === null || typeof this.state.nextUsers === 'undefined') ? this.state.users : this.state.nextUsers,
-                nextUsers: null
-              });
             } else {
               throw new Error("There was a problem with network connection. The GET request couldn't be processed!");
             }
           }.bind(this)).then(function(json) {
-            if (this.state.offsetWentDown) {
-              this.setState({
-                users: json,
-                nextUsers: this.state.users
-              });
-            }
-            else {
-              this.setState({
-                users: (this.state.nextUsers === null || typeof this.state.nextUsers === 'undefined') ? this.state.users : this.state.nextUsers,
-                nextUsers: json
-              });
-            };
+            this.setState({users: json});
       }.bind(this));
     }.bind(this));
   }
@@ -207,8 +181,8 @@ class Users extends Component {
         dataHandler={(method, id, data) => this.manageData(method, id, data)} />);
   }
 
-  changePage = (offset) => {
-    this.setState({ page: this.state.page + offset, offsetWentDown: (offset < 0) ? true : false });
+  changePage = (page) => {
+    this.setState({page: page.selected});
 
     setTimeout(function() {
       if (Auth.hasRole(Util.userRoles.admin))
@@ -225,8 +199,7 @@ class Users extends Component {
       <div>
         <h1>{ _t.translate('Users') }</h1>
         {this.generateView()}
-        <Pager currentPage={this.state.page} nextData={this.state.nextUsers}
-          pageChanger={(offset) => this.changePage(offset)} />
+        <Pager pages={this.state.pages} pageChanger={(page) => this.changePage(page)} />
       </div>
     );
   }

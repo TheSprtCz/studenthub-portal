@@ -22,11 +22,11 @@ const ApplicationTableHint = () => (
 )
 
 class ApplicationTable extends Component {
-  state = { applications: [], nextAppllications: [], redirect: -1, page: -1, offsetWentDown: false };
+  state = {applications: [], nextAppllications: [], redirect: -1,
+           page: 0, pages: 1};
 
   componentDidMount() {
     this.getApplications();
-    this.changePage(1);
   }
 
   /**
@@ -34,50 +34,32 @@ class ApplicationTable extends Component {
    */
   getApplications = () => {
     var url = "";
-    let page = (this.state.offsetWentDown) ? this.state.page : (this.state.page+1);
-
     if (Auth.hasRole(Util.userRoles.admin))
       url = "/api/applications?size=" + Util.APPLICATIONS_PER_PAGE + "&start=" +
-      (page * Util.APPLICATIONS_PER_PAGE);
+             (this.state.page * Util.APPLICATIONS_PER_PAGE);
     else if (Auth.hasRole(Util.userRoles.techLeader))
-      url = '/api/users/'+ Auth.getUserInfo().sub + "/ledApplications?size=" + Util.APPLICATIONS_PER_PAGE + "&start=" +
-      (page * Util.APPLICATIONS_PER_PAGE);
+      url = '/api/users/'+ Auth.getUserInfo().sub + "/ledApplications?size=" + Util.APPLICATIONS_PER_PAGE +
+             "&start=" + (this.state.page * Util.APPLICATIONS_PER_PAGE);
     else if (Auth.hasRole(Util.userRoles.superviser))
       url = '/api/users/'+ Auth.getUserInfo().sub + "/supervisedApplications?size=" +
-      Util.APPLICATIONS_PER_PAGE + "&start=" + (page * Util.APPLICATIONS_PER_PAGE);
+             Util.APPLICATIONS_PER_PAGE + "&start=" +
+             (this.state.page * Util.APPLICATIONS_PER_PAGE);
     else if (Auth.hasRole(Util.userRoles.student))
       url = '/api/users/'+ Auth.getUserInfo().sub + "/applications?size=" + Util.APPLICATIONS_PER_PAGE +
-      "&start=" + (page * Util.APPLICATIONS_PER_PAGE);
+             "&start=" + (this.state.page * Util.APPLICATIONS_PER_PAGE);
 
     fetch(url, {
       credentials: 'same-origin',
       method: 'get'
     }).then(function(response) {
       if (response.ok) {
+        this.setState({pages: parseInt(response.headers.get("Pages"), 10)});
         return response.json();
-      } else if (response.status === 400) {
-        this.setState({
-          applications: (this.state.nextAppllications === null || typeof this.state.nextAppllications === 'undefined') ?
-            this.state.appllications : this.state.nextAppllications,
-          nextAppllications: null
-        });
       } else {
         throw new Error('There was a problem with network connection.');
       }
     }.bind(this)).then(function(json) {
-      if (this.state.offsetWentDown) {
-        this.setState({
-          applications: json,
-          nextAppllications: this.state.applications
-        });
-      }
-      else {
-        this.setState({
-          applications: (this.state.nextAppllications === null || typeof this.state.nextAppllications === 'undefined') ?
-            this.state.appllications : this.state.nextAppllications,
-          nextAppllications: json
-        });
-      };
+      this.setState({applications: json});
     }.bind(this));
   }
 
@@ -95,8 +77,8 @@ class ApplicationTable extends Component {
     }.bind(this), 100);
   }
 
-  changePage = (offset) => {
-    this.setState({ page: this.state.page + offset, offsetWentDown: (offset < 0) ? true : false });
+  changePage = (page) => {
+    this.setState({page: page.selected});
 
     setTimeout(function() {
       this.getApplications();
@@ -138,8 +120,7 @@ class ApplicationTable extends Component {
             </TableRow>
           ))}
         </Table>
-        <Pager currentPage={this.state.page} nextData={this.state.nextAppllications}
-          pageChanger={(offset) => this.changePage(offset)} />
+        <Pager pages={this.state.pages} pageChanger={(page) => this.changePage(page)} />
         {this.generateRedirect()}
       </div>
     );

@@ -1,20 +1,24 @@
 import React, { Component } from 'react';
-
-import _t from '../Translations.js';
+import ReactPaginate from 'react-paginate';
+import './pager.css';
 
 class Pager extends Component {
   render() {
     return(
-    <div className="col-md-12">
-      <nav>
-        <ul className="pager">
-          { (this.props.currentPage === 0) ? "" :
-            <li><a onClick={() => this.props.pageChanger(-1)}>{ _t.translate("Previous") }</a></li> }
-          { (typeof this.props.nextData === "undefined" || this.props.nextData === null) ? "" :
-            <li><a onClick={() => this.props.pageChanger(1)}>{ _t.translate("Next") }</a></li> }
-        </ul>
-      </nav>
-    </div>
+      <div className="paginate text-center">
+        <ReactPaginate previousLabel="<"
+                       nextLabel=">"
+                       breakLabel="…"
+                       pageCount={this.props.pages}
+                       marginPagesDisplayed={2}
+                       pageRangeDisplayed={5}
+                       onPageChange={this.props.pageChanger}
+                       previousLinkClassName="btn btn-link btn-lg"
+                       nextLinkClassName="btn btn-link btn-lg"
+                       pageLinkClassName="btn btn-link btn-lg"
+                       activeClassName="apage"
+                       disabledClassName="transparent" />
+      </div>
     );
   }
 }
