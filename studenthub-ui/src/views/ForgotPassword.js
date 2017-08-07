@@ -1,12 +1,11 @@
 import React from 'react';
 import Input from 'react-toolbox/lib/input/Input.js';
 import Button from 'react-toolbox/lib/button/Button.js';
-
-import SiteSnackbar from '../components/SiteSnackbar.js';
 import _t from '../Translations.js';
+import Util from '../Util.js';
 
 class ForgotPasswordView extends React.Component {
-  state = { email: '', snackbarActive: false, snackbarLabel: '' };
+  state = { email: '' };
 
   handleChange = (name, value) => {
     this.setState({...this.state, [name]: value});
@@ -22,29 +21,15 @@ class ForgotPasswordView extends React.Component {
       body: data
     }).then(function(response) {
       if (response.ok) {
-        this.setState({
-          snackbarLabel: "A confirmation email has now been sent. To reset your password follow its instructions.",
-          snackbarActive: true
-        });
-      }
-      else if (response.status === 404) {
-        this.setState({
-          snackbarLabel: "No such email adress has been found!",
-          snackbarActive: true
-        });
-      }
-      else {
-        this.setState({
-          snackbarLabel: "An error occured! Your request couldn't be processed. It's possible that you have a problem with your internet connection or that the server is not responding.",
-          snackbarActive: true
-        });
+        Util.notify("info", "", "Your password has now been reset. A new activation link has been sent to your email.");
+        setTimeout(function(){
+          this.setState({ redirect: true });
+        }.bind(this), 2000);
+      } else {
+        Util.notify("error", "", "An error occured! Your request couldn't be processed. It's possible that you have a problem with your internet connection or that the server is not responding.");
         throw new Error('There was a problem with network connection. POST request could not be processed!');
       }
     }.bind(this));
-  };
-
-  handleToggle = () => {
-    this.setState({ snackbarActive: false });
   };
 
   render () {
@@ -55,7 +40,6 @@ class ForgotPasswordView extends React.Component {
           value={this.state.email} onChange={this.handleChange.bind(this, 'email')} />
         <br />
         <Button icon='send' label={ _t.translate('Retrieve') } raised primary onClick={this.handleSubmit}/>
-        <SiteSnackbar active={this.state.snackbarActive} toggleHandler={() => this.handleToggle()} label={this.state.snackbarLabel} />
       </section>
     );
   }

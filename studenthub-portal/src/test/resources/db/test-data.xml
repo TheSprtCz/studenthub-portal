@@ -469,6 +469,17 @@
             <column name="COMPANY_ID"/>
             <column name="FACULTY_ID"/>
         </insert>
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="USERS">
+            <column name="ID" valueNumeric="21"/>
+            <column name="EMAIL" value="ambassador@example.com"/>
+            <column name="LASTLOGIN" valueDate="2017-06-20 01:00:00.0"/>
+            <column name="NAME" value="Ambassador One"/>
+            <column name="PASSWORD" value="$6$UMtqjjBp$6t7ZYd9I.itX5HCv5xbVftBpAS248VHe241lj8cw6Yfj3JfWbTXNcXwXdGkShO.00UHWqrTXcFCUDAx.xh6FA."/>
+            <column name="PHONE" value="890 473 058"/>
+            <column name="USERNAME" value="ambassador"/>
+            <column name="COMPANY_ID"/>
+            <column name="FACULTY_ID" valueNumeric="1"/>
+        </insert>
     </changeSet>
     <changeSet author="phala (generated)" id="1489653927422-26" objectQuotingStrategy="QUOTE_ALL_OBJECTS">
         <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="USER_ROLES">
@@ -568,9 +579,17 @@
             <column name="ROLES" value="PROJECT_LEADER"/>
         </insert>
         <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="USER_ROLES">
+            <column name="USER_ID" valueNumeric="19"/>
+            <column name="ROLES" value="UNIVERSITY_AMB"/>
+        </insert>
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="USER_ROLES">
             <column name="USER_ID" valueNumeric="20"/>
             <column name="ROLES" value="PROJECT_LEADER"/>
         </insert>
+        <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="USER_ROLES">
+            <column name="USER_ID" valueNumeric="21"/>
+            <column name="ROLES" value="UNIVERSITY_AMB"/>
+        </insert>        
     </changeSet>
     <changeSet author="phala (generated)" id="1489653927422-27" objectQuotingStrategy="QUOTE_ALL_OBJECTS">
         <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="USER_TAGS">

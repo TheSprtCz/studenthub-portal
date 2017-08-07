@@ -10,7 +10,10 @@ import Tabs from 'react-toolbox/lib/tabs/Tabs.js';
 import Chip from 'react-toolbox/lib/chip/Chip.js';
 
 import CountrySelect from '../components/CountrySelect.js';
-import SiteSnackbar from '../components/SiteSnackbar.js';
+
+import AddButton from '../components/AddButton';
+import FacultyDialog from '../components/FacultyDialog.js';
+import { FacultyTable, FacultyRow, FacultyHead} from '../components/FacultyTable.js';
 
 import Auth from '../Auth.js';
 import Util from '../Util.js';
@@ -25,8 +28,7 @@ const LogoutButton = withRouter(({ history }) => (
 ))
 
 class ProfileEditView extends React.Component {
-  state = { email: '', avatarUrl: '', name: '', phone: '', roles: [],  tags: '',
-  lastLogin: [], snackbarActive: false, snackbarLabel: '', redirect: false };
+  state = { email: '', avatarUrl: '', name: '', phone: '', roles: [],  tags: '', lastLogin: [], redirect: false };
 
   componentDidMount() {
     this.getUser();
@@ -85,16 +87,10 @@ class ProfileEditView extends React.Component {
       })
     }).then(function(response) {
         if(response.ok) {
-          this.setState({
-            snackbarLabel: "Your account has been succesfully changed!",
-            snackbarActive: true
-          });
+          Util.notify("success", "", "Your account has been succesfully changed!");
           this.getUser();
       } else {
-        this.setState({
-          snackbarLabel: "An error occured! Your request couldn't be processed. It's possible that you have a problem with your internet connection or that the server is not responding.",
-          snackbarActive: true
-        });
+        Util.notify("error", "There was a problem with network connection.", "Your request hasn't been processed.");
         throw new Error('There was a problem with network connection. PUT request could not be processed!');
       }
     }.bind(this));
@@ -120,13 +116,6 @@ class ProfileEditView extends React.Component {
     return tags;
   }
 
-  /**
-   * Toggles the visiblity of the Snackbar.
-   */
-  toggleSnackbar = () => {
-    this.setState({ snackbarActive: !this.state.snackbarActive })
-  }
-
   render () {
     return (
       <div className="row">
@@ -140,13 +129,13 @@ class ProfileEditView extends React.Component {
           <Input type='email' icon='email' label='Email'  hint="Change your email" required value={this.state.email} onChange={this.handleChange.bind(this, 'email')} />
           <Input type='text' name='name' label={ _t.translate('Name') } hint="Change your name" icon='person' required value={this.state.name} onChange={this.handleChange.bind(this, 'name')} />
           <Input type='tel' name='phone' label={ _t.translate('Phone') } icon='phone' hint="Change your phone number" required value={this.state.phone} onChange={this.handleChange.bind(this, 'phone')} maxLength={9} />
-          <Input type='text' name='faculty' label={ _t.translate('Faculty') } icon='business' disabled value={Util.isEmpty(this.state.faculty) ? "None" : this.state.faculty.name} />
-          <Input type='text' name='company' label={ _t.translate('Company') } icon='business' disabled value={Util.isEmpty(this.state.company) ? "None" : this.state.company.name} />
+          <Input type='text' name='university' label={ _t.translate('University') } icon='school' disabled value={Util.isEmpty(this.state.faculty) ? "N/A" : this.state.faculty.university.name} />
+          <Input type='text' name='faculty' label={ _t.translate('Faculty') } icon='school' disabled value={Util.isEmpty(this.state.faculty) ? "N/A" : this.state.faculty.name} />
+          <Input type='text' name='company' label={ _t.translate('Company') } icon='business' disabled value={Util.isEmpty(this.state.company) ? "N/A" : this.state.company.name} />
           <Input type='hidden' name='roles' label={ _t.translate('Role') } icon='person' disabled value={this.state.roles.toString()} />
           <Input type='text' name='tags' label={ _t.translate('Tags') } icon='flag' hint="Divide tags using ;" value={this.state.tags} onChange={this.handleChange.bind(this, 'tags')} />
           <Button icon='edit' label={ _t.translate('Change password') } raised primary className='pull-left' onClick={this.handleRedirect}/>
           <Button icon='edit' label={ _t.translate('Save changes') } raised primary className='pull-right' onClick={this.handleSubmit}/>
-          <SiteSnackbar active={this.state.snackbarActive} label={this.state.snackbarLabel} toggleHandler={() => this.toggleSnackbar()} />
         </div>
       </div>
     );
@@ -154,8 +143,9 @@ class ProfileEditView extends React.Component {
 }
 
 class CompanyEditView extends React.Component {
+
   state = { id: 0, name: '', city: '', country: {},  url: '', logoUrl: '', size: '',
-    plan: { }, snackbarActive: false, snackbarLabel: '' };
+    plan: { } };
 
   componentDidMount() {
     this.getCompany();
@@ -173,10 +163,7 @@ class CompanyEditView extends React.Component {
       }
     }).then(function(json) {
       if (Util.isEmpty(json.company)) {
-        this.setState({
-          snackbarActive: true,
-          snackbarLabel: "Couldn't find any companies associated with your account!"
-        });
+        Util.notify("error", "", "Couldn't find any companies associated with your account!");
         return;
       }
       this.setState({
@@ -214,35 +201,21 @@ class CompanyEditView extends React.Component {
         })
     }).then(function(response) {
         if (response.ok) {
-          this.setState({
-            snackbarLabel: "Your company has been succesfully changed!",
-            snackbarActive: true
-          });
+          Util.notify("success", "", "Your company has been succesfully changed!");
           this.getCompany();
       } else {
-        this.setState({
-          snackbarLabel: "An error occured! Your request couldn't be processed. It's possible that you have a problem with your internet connection or that the server is not responding.",
-          snackbarActive: true
-        });
+        Util.notify("error", "There was a problem with network connection.", "Your request hasn't been processed.");
         throw new Error('There was a problem with network connection. PUT request could not be processed!');
       }
     }.bind(this));
   }
 
-  /**
-   * Toggles the visiblity of the Snackbar.
-   */
-  toggleSnackbar = () => {
-    this.setState({
-      snackbarActive: !this.state.snackbarActive
-    })
-  }
-
   render () {
     return (
       <div className="row">
-        <div className="col-md-2">
-          <img style={{maxWidth: '100%'}} src={this.state.logoUrl} alt={ _t.translate('Your logo')}/>
+        <div className="col-md-2 text-center">
+          <Avatar style={{width: '6em', height: '6em', marginBottom: '1em'}}
+            image={this.state.logoUrl} title={ _t.translate('Your logo') } />
         </div>
         <div className="col-md-10">
           <Input type='name' label={ _t.translate('Name') } icon='textsms'  hint="Change company name" required value={this.state.name} onChange={this.handleChange.bind(this, 'name')} />
@@ -260,8 +233,165 @@ class CompanyEditView extends React.Component {
             label={ _t.translate('Size') } />
             <Input type='name' label={ _t.translate('Plan') } icon='assignment' disabled value={(Util.isEmpty(this.state.plan)) ? "N/A" : this.state.plan.name} />
           <Button icon='edit' label={ _t.translate('Save changes') } raised primary className='pull-right' onClick={this.handleSubmit}/>
-          <SiteSnackbar active={this.state.snackbarActive} label={this.state.snackbarLabel} toggleHandler={() => this.toggleSnackbar()} />
         </div>
+      </div>
+    );
+  }
+}
+
+class UniversityEditView extends React.Component {
+  state = {id: -1, name: '', city: '', country: '',  url: '', logoUrl: '',
+           faculties: [], dialogActive: false, editId: -1, index: 0};
+
+  componentDidMount() {
+    this.getData();
+  }
+
+  getData = () => {
+    fetch('/api/users/' + Auth.getUserInfo().sub, {
+      method: 'get',
+      credentials: 'same-origin'
+    }).then(function(response) {
+      if (response.ok) {
+        return response.json();
+      } else {
+        throw new Error('There was a problem with network connection.');
+      }
+    }).then(function(json) {
+      if (Util.isEmpty(json.faculty)) {
+        Util.notify("error", "", "Couldn't find any universities associated with your account!");
+        return;
+      }
+      this.setState({
+        id: json.faculty.university.id,
+        name: json.faculty.university.name,
+        city:	json.faculty.university.city,
+        country:	json.faculty.university.country,
+        url:	json.faculty.university.url,
+        logoUrl:	json.faculty.university.logoUrl
+      });
+
+      fetch('/api/universities/' + json.faculty.university.id + '/faculties', {
+        method: 'get',
+        credentials: 'same-origin'
+      }).then(function(response) {
+        if (response.ok) {
+          return response.json();
+        } else {
+          throw new Error('There was a problem with network connection.');
+        }
+      }).then(function(json2) {
+        this.setState({faculties: json2});
+      }.bind(this));
+
+    }.bind(this));
+  }
+
+  handleChange = (name, value) => {
+    this.setState({...this.state, [name]: value});
+  };
+
+  handleSubmit = () => {
+    fetch('/api/universities/' + this.state.id, {
+      method: 'put',
+      credentials: 'same-origin',
+      headers: {"Content-Type" : "application/json"},
+      body: JSON.stringify({
+          name: this.state.name,
+          city:	this.state.city,
+          country:	this.state.country,
+          url:	this.state.url,
+          logoUrl:	this.state.logoUrl
+        })
+    }).then(function(response) {
+        if (response.ok) {
+          Util.notify("info", '', 'Your university has been succesfully changed!')
+          this.getData();
+      } else {
+        Util.notify('error', '', "An error occured! Your request couldn't be processed. It's possible that you have a problem with your internet connection or that the server is not responding.");
+        throw new Error('There was a problem with network connection. PUT request could not be processed!');
+      }
+    }.bind(this));
+  };
+
+  /**
+   * Toggles the visiblity of the faculty Dialog.
+   * @param id  the id of the faculty to edit
+   */
+  toggleDialog = (id) => {
+    this.setState({
+      dialogActive: !this.state.dialogActive,
+      editId: id
+    })
+    // this.getData();
+  }
+
+  deleteFaculty = (id) => {
+    fetch('/api/faculties/' + id, {
+        method: 'delete',
+        credentials: 'same-origin',
+        headers: {"Content-Type" : "application/json"}
+      }).then(function(response) {
+        if (response.ok) {
+          Util.notify('info', '', 'The faculty has been succesfully removed.')
+          this.getData();
+        } else throw new Error('There was a problem with network connection.');
+      }.bind(this));
+  }
+
+  handleTabChange = (index) => {
+    this.setState({index});
+  };
+
+  render () {
+    return (
+      <div>
+        {this.state.index === 0 ? '' :
+        <span>
+          <AddButton toggleHandler={() => this.toggleDialog(-1, "")} />
+        </span>}
+        <Tabs index={this.state.index} onChange={this.handleTabChange}>
+          <Tab label={ this.state.name }>
+            <div className="row">
+              <div className="col-md-2 text-center">
+                <Avatar style={{width: '6em', height: '6em', marginBottom: '1em'}}
+                  image={this.state.logoUrl} title={ _t.translate('Your logo') } />
+              </div>
+              <div className="col-md-10">
+                <Input type='name' label={ _t.translate('Name') } icon='textsms'  hint="Change university name"
+                  required value={this.state.name} onChange={this.handleChange.bind(this, 'name')} />
+                <Input type='text' label={ _t.translate('City') } icon='location_city' hint="Change university city headquarters"
+                  value={this.state.city} onChange={this.handleChange.bind(this, 'city')} />
+                <Dropdown
+                  auto required
+                  onChange={this.handleChange.bind(this, 'country')}
+                  source={Util.countriesSource}
+                  name='country'
+                  value={this.state.country}
+                  icon='public'
+                  label={ _t.translate('Country') } />
+                <Input type='url' label={ _t.translate('Web page') } icon='web'
+                  hint="Change website url" value={this.state.url} onChange={this.handleChange.bind(this, 'url')} />
+                <Input type='url' label='Logo' icon='photo'  hint="Change logo" value={this.state.logoUrl}
+                  onChange={this.handleChange.bind(this, 'logoUrl')} />
+                <Button icon='edit' label={ _t.translate('Save changes') } raised primary
+                  className='pull-right' onClick={this.handleSubmit}/>
+              </div>
+            </div>
+          </Tab>
+          <Tab label={ this.state.name + ' ' + _t.translate('faculties') }>
+            <FacultyTable multiSelectable={false} selectable={false} theme={{}} width="100%" >
+              <FacultyHead />
+              {this.state.faculties.map( (fac, index) => <FacultyRow key={index} fac={fac}
+                toggleHandler={() => this.toggleDialog(index, "")} deleteHandler={() => this.deleteFaculty(fac.id)} /> )}
+            </FacultyTable>
+            <FacultyDialog
+              active={this.state.dialogActive}
+              data={(this.state.editId === -1) ? null : this.state.faculties[this.state.editId]}
+              selectedUniversity={{id: this.state.id}}
+              toggleHandler={(label) => this.toggleDialog(this.state.editId, label)} />
+          </Tab>
+        </Tabs>
       </div>
     );
   }
@@ -279,7 +409,9 @@ class ProfileViewWithTabs extends React.Component {
       <section>
         <Tabs index={this.state.index} onChange={this.handleTabChange}>
           <Tab label={ _t.translate('User profile') }><ProfileEditView /></Tab>
-          <Tab label={ _t.translate('Company profile') }><CompanyEditView /></Tab>
+          {Auth.hasRole(Util.userRoles.companyRep) ?
+            <Tab label={ _t.translate('Company profile') }><CompanyEditView /></Tab> :
+            <Tab label={ _t.translate('University profile') }><UniversityEditView /></Tab>}
         </Tabs>
       </section>
     );
@@ -291,7 +423,9 @@ const ProfileView = () => (
     <h1>
       { _t.translate('Profile') }
     </h1>
-    {(Auth.hasRole("COMPANY_REP")) ? <ProfileViewWithTabs /> : <ProfileEditView />}
+    {((Auth.hasRole(Util.userRoles.companyRep) || Auth.hasRole(Util.userRoles.ambassador))
+      && !Auth.hasRole(Util.userRoles.admin)) ?
+      <ProfileViewWithTabs /> : <ProfileEditView />}
   </div>
 );
 

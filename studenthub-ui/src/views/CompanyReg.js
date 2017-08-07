@@ -8,7 +8,6 @@ import IconButton from 'react-toolbox/lib/button/IconButton.js';
 import Dropdown from 'react-toolbox/lib/dropdown/Dropdown.js';
 
 import CountrySelect from '../components/CountrySelect.js';
-import SiteSnackbar from '../components/SiteSnackbar.js';
 
 import Util from '../Util.js';
 import _t from '../Translations';
@@ -16,7 +15,7 @@ import _t from '../Translations';
 class CompanyRegForm extends Component {
 
   state = { company_name: '', rep_name: '', city:'', url: '', logo: '', country: {}, size: '', phone: '', email: '', password: '',
-    planName: '', planDescription: '', planTopicLimit: 10, plans: [], index: 0, planIndex: 0, snackbarActive: false, snackbarLabel: '',  redirect: false };
+    planName: '', planDescription: '', planTopicLimit: 10, plans: [], index: 0, planIndex: 0, redirect: false };
 
   componentDidMount() {
     this.getPlans();
@@ -72,10 +71,7 @@ class CompanyRegForm extends Component {
             })
           }).then(function(response) {
               if(response.ok) {
-                this.setState({
-                  snackbarLabel: "Your company and it's company representative have both been successfully created!",
-                  snackbarActive: true
-                });
+                Util.notify("success", "", "Your company and it's company representative have both been successfully created!");
                 setTimeout(function(){
                   this.setState({ redirect: true })
                 }.bind(this), 1000);
@@ -104,10 +100,6 @@ class CompanyRegForm extends Component {
   generateRedirect = () => {
     if(this.state.redirect === false) return;
     else return (<Redirect to="/signin" />);
-  }
-
-  handleToggle = () => {
-    this.setState({ snackbarActive: !this.state.snackbarActive });
   }
 
   render() {
@@ -185,7 +177,6 @@ class CompanyRegForm extends Component {
             </section>
           </Tab>
         </Tabs>
-        <SiteSnackbar active={this.state.snackbarActive} label={this.state.snackbarLabel} toggleHandler={() => this.handleToggle()} />
         {this.generateRedirect()}
       </div>
     )

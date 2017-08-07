@@ -20,6 +20,7 @@ import java.util.List;
 
 import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
@@ -34,6 +35,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
@@ -78,8 +80,9 @@ public class ProjectResource {
   @Timed
   @UnitOfWork
   public List<Project> fetch(@Min(0) @DefaultValue("0") @QueryParam("start") IntParam startParam,
-          @Min(0) @DefaultValue("0") @QueryParam("size") IntParam sizeParam) {
-    return PagingUtil.paging(projectDao.findAll(), startParam.get(), sizeParam.get());
+          @Min(0) @DefaultValue("0") @QueryParam("size") IntParam sizeParam,
+          @Context HttpServletResponse response) {
+    return PagingUtil.paging(projectDao.findAll(), startParam.get(), sizeParam.get(), response);
   }
 
   @GET
@@ -96,7 +99,7 @@ public class ProjectResource {
   public Response create(@NotNull @Valid @Validated(CreateUpdateChecks.class) Project project, @Auth User user) {
 
     // If user is creator or admin
-    if (project.getCreators().contains(user) || user.getRoles().contains(UserRole.ADMIN)) {
+    if (project.getCreators().contains(user) || user.isAdmin()) {
       Project returned = projectDao.create(project);
       if (returned.getId() == null)
         throw new WebApplicationException(Status.INTERNAL_SERVER_ERROR);
@@ -121,7 +124,7 @@ public class ProjectResource {
       throw new WebApplicationException(Status.NOT_FOUND);
 
     // If user is creator or admin
-    if (oldProject.getCreators().contains(user) || user.getRoles().contains(UserRole.ADMIN)) {
+    if (oldProject.getCreators().contains(user) || user.isAdmin()) {
       project.setId(id);
       Project updated = projectDao.update(project);
       return Response.ok(updated).build();
@@ -142,7 +145,7 @@ public class ProjectResource {
     if (project == null) 
       throw new WebApplicationException(Status.NOT_FOUND);
 
-    if (project.getCreators().contains(user) || user.getRoles().contains(UserRole.ADMIN)) {
+    if (project.getCreators().contains(user) || user.isAdmin()) {
       projectDao.delete(project);
       return Response.noContent().build();
     }
@@ -157,7 +160,8 @@ public class ProjectResource {
   @UnitOfWork
   public List<Topic> fetchTopics(@PathParam("id") LongParam id,
 		  @Min(0) @DefaultValue("0") @QueryParam("start") IntParam startParam,
-		  @Min(0) @DefaultValue("0") @QueryParam("size") IntParam sizeParam) {
+		  @Min(0) @DefaultValue("0") @QueryParam("size") IntParam sizeParam,
+      @Context HttpServletResponse response) {
 
     Project project = projectDao.findById(id.get());
     if (project == null)
@@ -166,7 +170,7 @@ public class ProjectResource {
     // Remove all topics that are not enabled
     project.getTopics().removeIf(topic -> !topic.isEnabled());
 
-    return PagingUtil.paging(project.getTopics(), startParam.get(), sizeParam.get());
+    return PagingUtil.paging(project.getTopics(), startParam.get(), sizeParam.get(), response);
   }
 
   @GET
@@ -175,13 +179,14 @@ public class ProjectResource {
   @UnitOfWork
   public List<TopicApplication> fetchApplications(@PathParam("id") LongParam id,
       @Min(0) @DefaultValue("0") @QueryParam("start") IntParam startParam,
-      @Min(0) @DefaultValue("0") @QueryParam("size") IntParam sizeParam) {
+      @Min(0) @DefaultValue("0") @QueryParam("size") IntParam sizeParam,
+      @Context HttpServletResponse response) {
 
     Project project = projectDao.findById(id.get());
     if (project == null)
       throw new WebApplicationException(Status.NOT_FOUND);
 
-    return PagingUtil.paging(appDao.findByTopics(project.getTopics()), startParam.get(), sizeParam.get());
+    return PagingUtil.paging(appDao.findByTopics(project.getTopics()), startParam.get(), sizeParam.get(), response);
   }
 
   @GET
@@ -190,13 +195,14 @@ public class ProjectResource {
   @UnitOfWork
   public List<Company> fetchCompanies(@PathParam("id") LongParam id,
           @Min(0) @DefaultValue("0") @QueryParam("start") IntParam startParam,
-          @Min(0) @DefaultValue("0") @QueryParam("size") IntParam sizeParam) {
+          @Min(0) @DefaultValue("0") @QueryParam("size") IntParam sizeParam,
+          @Context HttpServletResponse response) {
 
     Project project = projectDao.findById(id.get());
     if (project == null)
       throw new WebApplicationException(Status.NOT_FOUND);
 
-    return PagingUtil.paging(project.getCompanies(), startParam.get(), sizeParam.get());
+    return PagingUtil.paging(project.getCompanies(), startParam.get(), sizeParam.get(), response);
   }
 
   @GET
@@ -205,13 +211,14 @@ public class ProjectResource {
   @UnitOfWork
   public List<Faculty> fetchFaculties(@PathParam("id") LongParam id,
           @Min(0) @DefaultValue("0") @QueryParam("start") IntParam startParam,
-          @Min(0) @DefaultValue("0") @QueryParam("size") IntParam sizeParam) {
+          @Min(0) @DefaultValue("0") @QueryParam("size") IntParam sizeParam,
+          @Context HttpServletResponse response) {
 
     Project project = projectDao.findById(id.get());
     if (project == null)
       throw new WebApplicationException(Status.NOT_FOUND);
 
-    return PagingUtil.paging(project.getFaculties(), startParam.get(), sizeParam.get());
+    return PagingUtil.paging(project.getFaculties(), startParam.get(), sizeParam.get(), response);
   }
 
   @GET
@@ -220,13 +227,14 @@ public class ProjectResource {
   @UnitOfWork
   public List<User> fetchCreators(@PathParam("id") LongParam id,
           @Min(0) @DefaultValue("0") @QueryParam("start") IntParam startParam,
-          @Min(0) @DefaultValue("0") @QueryParam("size") IntParam sizeParam) {
+          @Min(0) @DefaultValue("0") @QueryParam("size") IntParam sizeParam,
+          @Context HttpServletResponse response) {
 
     Project project = projectDao.findById(id.get());
     if (project == null)
       throw new WebApplicationException(Status.NOT_FOUND);
 
-    return PagingUtil.paging(project.getCreators(), startParam.get(), sizeParam.get());
+    return PagingUtil.paging(project.getCreators(), startParam.get(), sizeParam.get(), response);
   }
 
   @PUT
@@ -243,8 +251,8 @@ public class ProjectResource {
       throw new WebApplicationException(Status.NOT_FOUND);
 
     // If user is creator or he is company rep of associated company and topic or admin
-    if (project.getCreators().contains(user) || (user.getRoles().contains(UserRole.COMPANY_REP) && project.getCompanies().contains(user.getCompany())
-        && topic.getCreator().getCompany().equals(user.getCompany())) || user.getRoles().contains(UserRole.ADMIN)) {
+    if (project.getCreators().contains(user) || (user.hasRole(UserRole.COMPANY_REP) && project.getCompanies().contains(user.getCompany())
+        && topic.getCreator().getCompany().equals(user.getCompany())) || user.isAdmin()) {
 
       if (project.getTopics().contains(topic))
         throw new WebApplicationException("Topic is already assigned to this project", Status.CONFLICT);

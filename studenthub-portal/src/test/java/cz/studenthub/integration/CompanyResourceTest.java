@@ -22,6 +22,7 @@ import cz.studenthub.core.CompanyPlan;
 import cz.studenthub.core.Project;
 import cz.studenthub.core.Topic;
 import cz.studenthub.core.User;
+import cz.studenthub.db.CompanyDAOTest;
 import io.dropwizard.testing.DropwizardTestSupport;
 import net.minidev.json.JSONObject;
 
@@ -45,7 +46,7 @@ public class CompanyResourceTest {
     List<Company> list = fetchCompanies();
 
     assertNotNull(list);
-    assertEquals(list.size(), 8);
+    assertEquals(list.size(), CompanyDAOTest.COUNT);
   }
 
   @Test(dependsOnGroups = "login")
@@ -72,7 +73,7 @@ public class CompanyResourceTest {
     assertNotNull(response);
     assertEquals(response.getStatus(), 201);
     assertNull(response.readEntity(Company.class).getPlan());
-    assertEquals(fetchCompanies().size(), 9);
+    assertEquals(fetchCompanies().size(), CompanyDAOTest.COUNT + 1);
   }
 
   @Test(dependsOnMethods = "createCompany")
@@ -101,7 +102,7 @@ public class CompanyResourceTest {
 
     assertNotNull(response);
     assertEquals(response.getStatus(), 204);
-    assertEquals(list.size(), 8);
+    assertEquals(list.size(), CompanyDAOTest.COUNT);
   }
 
   @Test(dependsOnGroups = "login")

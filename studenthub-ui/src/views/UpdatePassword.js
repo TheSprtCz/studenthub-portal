@@ -1,15 +1,13 @@
 import React from 'react';
-import { Redirect } from 'react-router';
 import Input from 'react-toolbox/lib/input/Input.js';
 import Button from 'react-toolbox/lib/button/Button.js';
 
-import SiteSnackbar from '../components/SiteSnackbar.js';
-
 import Auth from '../Auth.js';
 import _t from '../Translations.js';
+import Util from '../Util.js';
 
 class UpdatePasswordView extends React.Component {
-  state = { oldPwd: '', newPwd: '', snackbarActive: false, snackbarLabel: '', redirect: false };
+  state = { oldPwd: '', newPwd: '' };
 
   handleChange = (name, value) => {
     this.setState({...this.state, [name]: value});
@@ -25,38 +23,20 @@ class UpdatePasswordView extends React.Component {
         oldPwd: this.state.oldPwd
       })
     }).then(function(response) {
-        if(response.ok) {
-          this.setState({
-            snackbarLabel: "Your password has been succesfully changed!",
-            snackbarActive: true
-          });
+        if (response.ok) {
+          Util.notify("info", "", "Your password has been succesfully changed!");
           setTimeout(function(){
             this.setState({ redirect: true });
           }.bind(this), 2000);
       }
       else if (response.status === 404) {
-        this.setState({
-          snackbarLabel: "You have written your old password incorrectly!",
-          snackbarActive: true
-        });
+        Util.notify("error", "", "You have written your old password incorrectly!");
       }
       else {
-        this.setState({
-          snackbarLabel: "An error occured! Your request couldn't be processed. It's possible that you have a problem with your internet connection or that the server is not responding.",
-          snackbarActive: true
-        });
+        Util.notify("error", "", "An error occured! Your request couldn't be processed. It's possible that you have a problem with your internet connection or that the server is not responding.");
         throw new Error('There was a problem with network connection. PUT request could not be processed!');
       }
     }.bind(this));
-  }
-
-  handleToggle = () => {
-    this.setState({ snackbarActive: false });
-  }
-
-  generateRedirect = () => {
-    if(this.state.redirect === false) return;
-    else return (<Redirect to="/profile" />);
   }
 
   render () {
@@ -69,8 +49,6 @@ class UpdatePasswordView extends React.Component {
           value={this.state.newPwd} onChange={this.handleChange.bind(this, 'newPwd')} />
         <br />
         <Button icon='send' label={ _t.translate('Change') } raised primary onClick={this.handleSubmit}/>
-        {this.generateRedirect()}
-        <SiteSnackbar active={this.state.snackbarActive} toggleHandler={() => this.handleToggle()} label={this.state.snackbarLabel} />
       </section>
     );
   }

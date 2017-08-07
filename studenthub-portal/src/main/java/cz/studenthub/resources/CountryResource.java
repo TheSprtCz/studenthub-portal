@@ -20,6 +20,7 @@ import java.util.List;
 
 import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
@@ -34,6 +35,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
@@ -60,8 +62,9 @@ public class CountryResource {
   @Timed
   @UnitOfWork
   public List<Country> fetch(@Min(0) @DefaultValue("0") @QueryParam("start") IntParam startParam,
-          @Min(0) @DefaultValue("0") @QueryParam("size") IntParam sizeParam) {
-    return PagingUtil.paging(countryDao.findAll(), startParam.get(), sizeParam.get());
+          @Min(0) @DefaultValue("0") @QueryParam("size") IntParam sizeParam,
+          @Context HttpServletResponse response) {
+    return PagingUtil.paging(countryDao.findAll(), startParam.get(), sizeParam.get(), response);
   }
 
   @GET
@@ -88,7 +91,7 @@ public class CountryResource {
   @UnitOfWork
   @RolesAllowed("ADMIN")
   public Response update(@PathParam("tag") String tag, @NotNull @Valid Country country) {
-    if (countryDao.findByTag(tag) == null) 
+    if (countryDao.findByTag(tag) == null)
       throw new WebApplicationException(Status.NOT_FOUND);
 
     country.setTag(tag);
@@ -103,7 +106,7 @@ public class CountryResource {
   @RolesAllowed("ADMIN")
   public Response delete(@PathParam("tag") String tag) {
     Country country = countryDao.findByTag(tag);
-    if (country == null) 
+    if (country == null)
       throw new WebApplicationException(Status.NOT_FOUND);
 
     countryDao.delete(country);

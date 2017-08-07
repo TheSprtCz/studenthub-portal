@@ -17,6 +17,7 @@ import io.dropwizard.testing.junit.DAOTestRule;
 
 public class ProjectDAOTest {
 
+  public static final int COUNT = 2;
   private static final DAOTestRule DATABASE = DAOTestSuite.database;
   private static CompanyDAO companyDAO;
   private static FacultyDAO facultyDAO;
@@ -48,9 +49,9 @@ public class ProjectDAOTest {
       Project created = projectDAO.create(project);
       assertNotNull(created.getId());
       assertEquals(project, created);
-      assertEquals(3, projectDAO.findAll().size());
+      assertEquals(COUNT + 1, projectDAO.findAll().size());
       projectDAO.delete(created);
-      assertEquals(2, projectDAO.findAll().size());
+      assertEquals(COUNT, projectDAO.findAll().size());
     });
   }
 
@@ -70,7 +71,7 @@ public class ProjectDAOTest {
       return projectDAO.findAll();
     });
     assertNotNull(topics);
-    assertEquals(2, topics.size());
+    assertEquals(COUNT, topics.size());
   }
 
   @Test

@@ -6,11 +6,12 @@ import TableCell from 'react-toolbox/lib/table/TableCell.js';
 import Dialog from 'react-toolbox/lib/dialog/Dialog.js';
 import Input from 'react-toolbox/lib/input/Input.js';
 import Button from 'react-toolbox/lib/button/Button.js';
+import Pager from '../components/Pager.js';
 
 import DeleteButton from '../components/DeleteButton.js';
 import EditButton from '../components/EditButton.js';
-import SiteSnackbar from '../components/SiteSnackbar.js';
 
+import Util from '../Util.js';
 import _t from '../Translations.js';
 
 class PlansTable extends Component {
@@ -18,8 +19,8 @@ class PlansTable extends Component {
     plans: [],
     dialogActive: false,
     editId: -1,
-    snackbarLabel: "",
-    snackbarActive: false
+    page: 0,
+    pages: 1,
   }
 
   componentDidMount() {
@@ -27,19 +28,19 @@ class PlansTable extends Component {
   }
 
   getPlans() {
-    fetch('/api/plans', {
+    fetch("/api/plans?size=" + Util.PLANS_PER_PAGE + "&start=" +
+          (this.state.page * Util.PLANS_PER_PAGE), {
       credentials: 'same-origin',
       method: 'get'
     }).then(function(response) {
       if (response.ok) {
+        this.setState({pages: parseInt(response.headers.get("Pages"), 10)});
         return response.json();
       } else {
         throw new Error('There was a problem with network connection.');
       }
-    }).then(function(json) {
-      this.setState({
-        plans: json
-      });
+    }.bind(this)).then(function(json) {
+      this.setState({plans: json});
     }.bind(this));
   }
 
@@ -54,10 +55,7 @@ class PlansTable extends Component {
         throw new Error('There was a problem with network connection.');
       }
     }).then(function(json) {
-      this.setState({
-        snackbarLabel: "The company plan has been succesfully removed.",
-        snackbarActive: true
-      });
+      Util.notify("success", "", "The company plan has been succesfully removed!");
       this.getPlans();
     }.bind(this));
   }
@@ -66,14 +64,12 @@ class PlansTable extends Component {
     this.setState({dialogActive: !this.state.dialogActive, editId: id});
   }
 
-  toggleSnackbar = (message, isError) => {
-    if (message === this.state.snackbarLabel)
-      this.setState({snackbarActive: !this.state.snackbarActive});
-    else {
-      this.setState({snackbarActive: !this.state.snackbarActive, snackbarLabel: message});
-      if (!isError)
-        this.getPlans();
-    }
+  changePage = (page) => {
+    this.setState({page: page.selected});
+
+    setTimeout(function() {
+      this.getPlans();
+    }.bind(this), 2);
   }
 
   render () {
@@ -83,7 +79,7 @@ class PlansTable extends Component {
           { _t.translate('Company Plans') }
         </h1>
         <PlanDialog active={this.state.dialogActive} plan={(this.state.editId === -1) ? -1 : this.state.plans[this.state.editId]}
-          toggleHandler={() => this.toggleDialog(-1)} snackbarHandler={(message, isError) => this.toggleSnackbar(message, isError)} />
+          toggleHandler={() => this.toggleDialog(-1)} />
         <Table selectable={false}>
           <TableHead>
             <TableCell numeric>{ _t.translate('Topic limit') }</TableCell>
@@ -103,7 +99,7 @@ class PlansTable extends Component {
             </TableRow>
           ))}
         </Table>
-        <SiteSnackbar active={this.state.snackbarActive} label={this.state.snackbarLabel} toggleHandler={() => this.toggleSnackbar(this.state.snackbarLabel, false)} />
+        <Pager pages={this.state.pages} pageChanger={(page) => this.changePage(page)} />
       </div>
     );
   }
@@ -162,10 +158,10 @@ class PlanDialog extends Component {
       })
     }).then(function(response) {
       if (response.ok) {
-        this.props.snackbarHandler("The company plan has been succesfully created!");
+        Util.notify("success", "", "The company plan has been succesfully created!");
         this.handleToggle();
       } else {
-        this.props.snackbarHandler("There was a problem with network connection. Your request hasn't been processed.");
+        Util.notify("error", "There was a problem with network connection.", "Your request hasn't been processed.");
         throw new Error('There was a problem with network connection.');
       }
     }.bind(this));
@@ -186,10 +182,10 @@ class PlanDialog extends Component {
       })
     }).then(function(response) {
       if (response.ok) {
-        this.props.snackbarHandler("The company plan has been succesfully edited!");
+        Util.notify("success", "", "The company plan has been succesfully edited!");
         this.handleToggle();
       } else {
-        this.props.snackbarHandler("There was a problem with network connection. Your request hasn't been processed.");
+        Util.notify("error", "There was a problem with network connection.", "Your request hasn't been processed.");
         throw new Error('There was a problem with network connection.');
       }
     }.bind(this));

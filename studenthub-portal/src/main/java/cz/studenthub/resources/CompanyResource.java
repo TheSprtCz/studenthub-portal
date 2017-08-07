@@ -21,6 +21,7 @@ import java.util.List;
 import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
@@ -35,6 +36,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
@@ -81,8 +83,9 @@ public class CompanyResource {
   @Timed
   @UnitOfWork
   public List<Company> fetch(@Min(0) @DefaultValue("0") @QueryParam("start") IntParam startParam,
-          @Min(0) @DefaultValue("0") @QueryParam("size") IntParam sizeParam) {
-    return PagingUtil.paging(companyDao.findAll(), startParam.get(), sizeParam.get());
+          @Min(0) @DefaultValue("0") @QueryParam("size") IntParam sizeParam,
+          @Context HttpServletResponse response) {
+    return PagingUtil.paging(companyDao.findAll(), startParam.get(), sizeParam.get(), response);
   }
 
   @GET
@@ -97,8 +100,8 @@ public class CompanyResource {
   @UnitOfWork
   @RolesAllowed("ADMIN")
   public Response create(@NotNull @Valid Company company) {
-    Company returned = companyDao.create(company);
-    if (returned.getId() == null)
+    companyDao.create(company);
+    if (company.getId() == null)
       throw new WebApplicationException(Status.INTERNAL_SERVER_ERROR);
 
     return Response.created(UriBuilder.fromResource(CompanyResource.class).path("/{id}").build(company.getId()))
@@ -109,15 +112,22 @@ public class CompanyResource {
   @ExceptionMetered
   @Path("/{id}")
   @UnitOfWork
-  @RolesAllowed("ADMIN")
-  public Response update(@PathParam("id") LongParam idParam, @NotNull @Valid Company company) {
+  @RolesAllowed({ "ADMIN", "COMPANY_REP" })
+  public Response update(@PathParam("id") LongParam idParam, @NotNull @Valid Company company, @Auth User user) {
     Long id = idParam.get();
-    if (companyDao.findById(id) == null) 
+    Company oldCompany = companyDao.findById(id);
+    if (oldCompany == null) 
       throw new WebApplicationException(Status.NOT_FOUND);
 
-    company.setId(id);
-    companyDao.update(company);
-    return Response.ok(company).build();
+    // Only admin can change companyPlan
+    if ((id.equals(user.getCompany().getId()) && oldCompany.getPlan().getName().equals(company.getPlan().getName())) || user.isAdmin()) {
+      company.setId(id);
+      companyDao.update(company);
+      return Response.ok(company).build();
+    }
+    else {
+      throw new WebApplicationException(Status.FORBIDDEN);
+    }
   }
 
   @DELETE
@@ -142,13 +152,14 @@ public class CompanyResource {
   @PermitAll
   public List<User> fetchLeaders(@PathParam("id") LongParam id,
 		  @Min(0) @DefaultValue("0") @QueryParam("start") IntParam startParam,
-		  @Min(0) @DefaultValue("0") @QueryParam("size") IntParam sizeParam) {
+		  @Min(0) @DefaultValue("0") @QueryParam("size") IntParam sizeParam,
+      @Context HttpServletResponse response) {
 
     Company company = companyDao.findById(id.get());
     if (company == null)
       throw new WebApplicationException(Status.NOT_FOUND);
 
-    return PagingUtil.paging(userDao.findByRoleAndCompany(UserRole.TECH_LEADER, company), startParam.get(), sizeParam.get());
+    return PagingUtil.paging(userDao.findByRoleAndCompany(UserRole.TECH_LEADER, company), startParam.get(), sizeParam.get(), response);
   }
 
   @GET
@@ -157,19 +168,20 @@ public class CompanyResource {
   @UnitOfWork
   public List<Topic> fetchTopics(@PathParam("id") LongParam id,
           @Min(0) @DefaultValue("0") @QueryParam("start") IntParam startParam,
-          @Min(0) @DefaultValue("0") @QueryParam("size") IntParam sizeParam) {
+          @Min(0) @DefaultValue("0") @QueryParam("size") IntParam sizeParam,
+          @Context HttpServletResponse response) {
 
     Company company = companyDao.findById(id.get());
     if (company == null)
       throw new WebApplicationException(Status.NOT_FOUND);
 
-    return PagingUtil.paging(topicDao.findByCompany(company), startParam.get(), sizeParam.get());
+    return PagingUtil.paging(topicDao.findByCompany(company), startParam.get(), sizeParam.get(), response);
   }
 
   @GET
   @Path("/{id}/plan")
   @UnitOfWork
-  @RolesAllowed({"COMPANY_REP", "ADMIN"})
+  @RolesAllowed({ "COMPANY_REP", "ADMIN" })
   public CompanyPlan fetchPlan(@PathParam("id") LongParam id, @Auth User user) {
     Company company = companyDao.findById(id.get());
     if (company == null)
@@ -177,7 +189,7 @@ public class CompanyResource {
 
     Company userCompany = user.getCompany();
     // If user's company is the same as the company he want to view or he is admin
-    if ((userCompany != null && userCompany.getId().equals(company.getId())) || user.getRoles().contains(UserRole.ADMIN)) {
+    if ((userCompany != null && userCompany.getId().equals(company.getId())) || user.isAdmin()) {
       return company.getPlan();
     }
     else {
@@ -191,12 +203,13 @@ public class CompanyResource {
   @UnitOfWork
   public List<Project> fetchProjects(@PathParam("id") LongParam id,
           @Min(0) @DefaultValue("0") @QueryParam("start") IntParam startParam,
-          @Min(0) @DefaultValue("0") @QueryParam("size") IntParam sizeParam) {
+          @Min(0) @DefaultValue("0") @QueryParam("size") IntParam sizeParam,
+          @Context HttpServletResponse response) {
 
     Company company = companyDao.findById(id.get());
     if (company == null)
       throw new WebApplicationException(Status.NOT_FOUND);
 
-    return PagingUtil.paging(projectDao.findByCompany(company), startParam.get(), sizeParam.get());
+    return PagingUtil.paging(projectDao.findByCompany(company), startParam.get(), sizeParam.get(), response);
   }
 }

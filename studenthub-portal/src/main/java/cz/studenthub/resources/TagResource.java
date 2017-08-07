@@ -20,6 +20,7 @@ import java.util.List;
 
 import javax.annotation.security.PermitAll;
 import javax.inject.Inject;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.Min;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
@@ -27,6 +28,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
 import com.codahale.metrics.annotation.Timed;
@@ -56,8 +58,9 @@ public class TagResource {
   @PermitAll
   public List<User> fetchUsers(@PathParam("tag") String tag,
           @Min(0) @DefaultValue("0") @QueryParam("start") IntParam startParam,
-          @Min(0) @DefaultValue("0") @QueryParam("size") IntParam sizeParam) {
-    return PagingUtil.paging(userDao.findByTag(tag), startParam.get(), sizeParam.get());
+          @Min(0) @DefaultValue("0") @QueryParam("size") IntParam sizeParam,
+          @Context HttpServletResponse response) {
+    return PagingUtil.paging(userDao.findByTag(tag), startParam.get(), sizeParam.get(), response);
   }
 
   @GET
@@ -66,7 +69,8 @@ public class TagResource {
   @UnitOfWork
   public List<Topic> fetchTopics(@PathParam("tag") String tag,
           @Min(0) @DefaultValue("0") @QueryParam("start") IntParam startParam,
-          @Min(0) @DefaultValue("0") @QueryParam("size") IntParam sizeParam) {
-    return PagingUtil.paging(topicDao.findByTag(tag), startParam.get(), sizeParam.get());
+          @Min(0) @DefaultValue("0") @QueryParam("size") IntParam sizeParam,
+          @Context HttpServletResponse response) {
+    return PagingUtil.paging(topicDao.findByTag(tag), startParam.get(), sizeParam.get(), response);
   }
 }

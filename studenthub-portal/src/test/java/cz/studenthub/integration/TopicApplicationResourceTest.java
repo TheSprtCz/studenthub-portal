@@ -18,6 +18,7 @@ import cz.studenthub.IntegrationTestSuite;
 import cz.studenthub.StudentHubConfiguration;
 import cz.studenthub.core.Task;
 import cz.studenthub.core.TopicApplication;
+import cz.studenthub.db.TopicApplicationDAOTest;
 import io.dropwizard.testing.DropwizardTestSupport;
 import net.minidev.json.JSONObject;
 
@@ -46,7 +47,7 @@ public class TopicApplicationResourceTest {
     List<TopicApplication> list = fetchApplications();
 
     assertNotNull(list);
-    assertEquals(list.size(), 7);
+    assertEquals(list.size(), TopicApplicationDAOTest.COUNT);
   }
 
   @Test(dependsOnGroups = "login")
@@ -80,7 +81,7 @@ public class TopicApplicationResourceTest {
 
     assertNotNull(response);
     assertEquals(response.getStatus(), 201);
-    assertEquals(fetchApplications().size(), 8);
+    assertEquals(fetchApplications().size(), TopicApplicationDAOTest.COUNT + 1);
   }
 
   @Test(dependsOnMethods = "createApplication")
@@ -117,7 +118,7 @@ public class TopicApplicationResourceTest {
 
     assertNotNull(response);
     assertEquals(response.getStatus(), 204);
-    assertEquals(fetchApplications().size(), 7);
+    assertEquals(fetchApplications().size(), TopicApplicationDAOTest.COUNT);
   }
 
   /*

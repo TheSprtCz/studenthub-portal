@@ -14,6 +14,7 @@ import io.dropwizard.testing.junit.DAOTestRule;
 
 public class UniversityDAOTest {
 
+  public static final int COUNT = 5;
   private static final DAOTestRule DATABASE = DAOTestSuite.database;
   private static UniversityDAO uniDAO;
   private static CountryDAO countryDAO;
@@ -33,7 +34,7 @@ public class UniversityDAOTest {
       List<University> universities = uniDAO.findAll();
       assertNotNull(created.getId());
       assertEquals(uni, created);
-      assertEquals(6, universities.size());
+      assertEquals(COUNT + 1, universities.size());
     });
   }
 
@@ -55,7 +56,7 @@ public class UniversityDAOTest {
       return uniDAO.findAll();
     });
     assertNotNull(universities);
-    assertEquals(universities.size(), 5);
+    assertEquals(COUNT, universities.size());
   }
 
   @Test
@@ -65,7 +66,7 @@ public class UniversityDAOTest {
       uniDAO.delete(university);
       List<University> universities = uniDAO.findAll();
 
-      assertEquals(4, universities.size());
+      assertEquals(COUNT - 1, universities.size());
       assertFalse(universities.contains(university));
     });
   }

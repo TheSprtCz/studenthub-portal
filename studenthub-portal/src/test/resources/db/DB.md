@@ -103,6 +103,7 @@ Password field is not present because it is encoded and irrelevant when testing 
 | 18  | rep3               | rep3@example.com            | Rep Three          | 234 156 774  | 27.1.2017      | 7       | ------- | [COMPANY_REP]                | ------------------------ | 
 | 19  | superadmin         | superadmin@example.com      | Super Admin        | 463 147 891  | 5.11.2016      | 1       | 1       | [ALL]                        | ------------------------ |
 | 20  | project            | project@example.com         | Project Leader     | 205 709 548  | 10.6.2017      | ------- | ------- | [PROJECT_LEADER]             | ------------------------ |
+| 21  | ambassador         | ambassador@example.com      | Ambassador One     | 890 473 058  | 20.6.2017      | ------- | 2       | [UNIVERSITY_AMB]             | ------------------------ |
 
 ## Activations
 

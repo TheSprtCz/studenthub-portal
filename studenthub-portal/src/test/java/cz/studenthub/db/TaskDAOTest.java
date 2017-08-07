@@ -17,6 +17,7 @@ import io.dropwizard.testing.junit.DAOTestRule;
 
 public class TaskDAOTest {
 
+  public static final int COUNT = 3;  
   private static final DAOTestRule DATABASE = DAOTestSuite.database;
   private static TaskDAO taskDao;
   private static TopicApplicationDAO appDao;
@@ -35,7 +36,7 @@ public class TaskDAOTest {
       Task created = taskDao.create(task);
       assertNotNull(task.getId());
       assertEquals(task, created);
-      assertEquals(4, taskDao.findByTopicApplication(app).size());
+      assertEquals(COUNT + 1, taskDao.findByTopicApplication(app).size());
     });
   }
 
@@ -44,7 +45,7 @@ public class TaskDAOTest {
     DATABASE.inTransaction(() -> {
       TopicApplication app = appDao.findById((long) 1);
       List<Task> tasks = taskDao.findByTopicApplication(app);
-      assertEquals(3, tasks.size());
+      assertEquals(COUNT, tasks.size());
     });
   }
 
@@ -64,7 +65,7 @@ public class TaskDAOTest {
       taskDao.delete(task);
 
       List<Task> tasks = taskDao.findByTopicApplication(task.getApplication());
-      assertEquals(2, tasks.size());
+      assertEquals(COUNT - 1, tasks.size());
       assertFalse(tasks.contains(task));
     });
   }

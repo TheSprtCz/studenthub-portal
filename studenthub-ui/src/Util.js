@@ -1,6 +1,7 @@
 import _t from './Translations';
+import { NotificationManager } from 'react-notifications';
 
-var config = require('../config/config.json');
+var config = require('./config.json');
 
 var Util = function() { };
 
@@ -44,7 +45,32 @@ Util.checkData = function(data, errorMessage) {
 }
 
 /**
+ * Creates a new notification.
+ * @param type            notification type
+ * @param message         notification message
+ * @param title           notification title
+ */
+Util.notify = (type, message, title) => {
+  switch (type) {
+    case 'info':
+      NotificationManager.info(message, title, 2000);
+      break;
+    case 'success':
+      NotificationManager.success(message, title, 2000, null, true);
+      break;
+    case 'warning':
+      NotificationManager.warning(message, title, 2000);
+      break;
+    case 'error':
+      NotificationManager.error(message, title, 2000, null, true);
+      break;
+    default:
+      NotificationManager.info(message, title, 2000);
+      break;
+  };
+};
 
+/**
  * Holds state codes
  * @type {Enum}
  */
@@ -70,12 +96,18 @@ Util.userRoles = {
   superviser: "AC_SUPERVISOR",
   admin: "ADMIN",
   companyRep: "COMPANY_REP",
+  ambassador: "UNIVERSITY_AMB",
   student: "STUDENT",
   techLeader: "TECH_LEADER"
 }
 
-Util.rolesSource = [
-  { value: 'STUDENT', label: _t.translate('Student') },
+Util.rolesSourceCompany = [
+  { value: 'TECH_LEADER', label: _t.translate('Technical leader')},
+  { value: 'COMPANY_REP', label: _t.translate('Company Representative') }
+]
+
+Util.rolesSourceUniversity = [
+  { value: 'UNIVERSITY_AMB', label: _t.translate('University ambassador')},
   { value: 'AC_SUPERVISOR', label: _t.translate('Academic supervisor')}
 ]
 
@@ -120,10 +152,12 @@ Util.degreesSource = [
 
 Util.TOPICS_PER_PAGE = 5;
 Util.TOPICS_PER_PAGE_TABLE = 15;
-Util.APPLICATIONS_PER_PAGE = 12;
+Util.APPLICATIONS_PER_PAGE = 8;
 Util.USERS_PER_PAGE = 8;
 Util.UNIVERSITIES_PER_PAGE = 15;
 Util.FACULTIES_PER_PAGE = 20;
+Util.COMPANIES_PER_PAGE = 15;
+Util.PLANS_PER_PAGE = 15;
 Util.TERMS_OF_USE = config.termsOfUse;
 Util.PERSONAL_DATA_PROCESSING = config.personalDataProc;
 Util.PORTAL_VERSION = config.version;

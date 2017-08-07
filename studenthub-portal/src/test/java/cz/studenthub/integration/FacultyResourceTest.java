@@ -19,6 +19,7 @@ import cz.studenthub.StudentHubConfiguration;
 import cz.studenthub.core.Faculty;
 import cz.studenthub.core.Project;
 import cz.studenthub.core.User;
+import cz.studenthub.db.FacultyDAOTest;
 import io.dropwizard.testing.DropwizardTestSupport;
 import net.minidev.json.JSONObject;
 
@@ -42,7 +43,7 @@ public class FacultyResourceTest {
     List<Faculty> list = fetchFaculties();
 
     assertNotNull(list);
-    assertEquals(list.size(), 13);
+    assertEquals(list.size(), FacultyDAOTest.COUNT);
   }
 
   @Test(dependsOnGroups = "login")
@@ -68,7 +69,7 @@ public class FacultyResourceTest {
 
     assertNotNull(response);
     assertEquals(response.getStatus(), 201);
-    assertEquals(fetchFaculties().size(), 14);
+    assertEquals(fetchFaculties().size(), FacultyDAOTest.COUNT + 1);
   }
 
   @Test(dependsOnMethods = "createFaculty")
@@ -95,7 +96,7 @@ public class FacultyResourceTest {
 
     assertNotNull(response);
     assertEquals(response.getStatus(), 204);
-    assertEquals(fetchFaculties().size(), 13);
+    assertEquals(fetchFaculties().size(), FacultyDAOTest.COUNT);
   }
 
   @Test(dependsOnGroups = "login")

@@ -8,7 +8,6 @@ import Card from 'react-toolbox/lib/card/Card.js';
 import CardTitle from 'react-toolbox/lib/card/CardTitle.js';
 import CardText from 'react-toolbox/lib/card/CardText.js';
 import CardActions from 'react-toolbox/lib/card/CardActions.js';
-import Snackbar from 'react-toolbox/lib/snackbar/Snackbar.js';
 
 import TopicDetailsDialog from '../components/TopicDetailsDialog.js';
 import Pager from '../components/Pager.js';
@@ -19,8 +18,8 @@ import Util from '../Util.js';
 import _t from '../Translations.js';
 
 class TopicCard extends React.Component {
-  state = {snackbarActive: false, snackbarLabel: '', confirmActive: false, confirmText: "",
-    confirmActions: [], redirect: -1};
+  state = { confirmActive: false, confirmText: "",
+    confirmActions: [], redirect: -1 };
 
   handleConfirmToggle = (apply) => {
     if (apply === -1) {
@@ -37,10 +36,6 @@ class TopicCard extends React.Component {
     }
   }
 
-  handleToggle = () => {
-    this.setState({snackbarActive: !this.state.snackbarActive});
-  }
-
   handleSupervise = () => {
     fetch('/api/topics/' + this.props.id + '/supervise', {
       method: 'put',
@@ -51,9 +46,8 @@ class TopicCard extends React.Component {
       body: JSON.stringify({ id: this.props.id })
     }).then(function(response) {
       if(response.ok) {
+        Util.notify("info", "", "Your are now supervising topic ID " + this.props.id);
         this.setState({
-          snackbarLabel: "Your are now supervising topic ID " + this.props.id,
-          snackbarActive: true,
           confirmActive: false
         });
       } else {
@@ -76,9 +70,8 @@ class TopicCard extends React.Component {
     })
     .then(function(json) {
       if (Util.isEmpty(json.faculty)) {
+        Util.notify("error", "There was a problem with network connection.", "Your request hasn't been processed.");
         this.setState({
-          snackbarLabel: "Your request couldn't be processed as don't have a faculty! Please choose a faculty in profile view!",
-          snackbarActive: true,
           confirmActive: false
         });
         return;
@@ -104,9 +97,8 @@ class TopicCard extends React.Component {
           throw new Error('There was a problem with network connection.');
         }
       }).then(function(json2) {
+        Util.notify("success", "", "Your are now applied to topic ID "+this.props.id);
         this.setState({
-          snackbarLabel: "Your are now applied to topic ID "+this.props.id,
-          snackbarActive: true,
           confirmActive: false
         });
 
@@ -146,14 +138,6 @@ class TopicCard extends React.Component {
           title={ _t.translate("Please confirm your action") } >
           <p>{this.state.confirmText}</p>
         </Dialog>
-        <Snackbar
-          action='Dismiss'
-          active={this.state.snackbarActive}
-          label={this.state.snackbarLabel}
-          timeout={2000}
-          onClick={this.handleToggle}
-          onTimeout={this.handleToggle}
-          type='warning' />
       </Card>
     )
   }
@@ -194,29 +178,16 @@ class TopicCards extends React.Component {
 }
 
 class TopicSearch extends React.Component {
-  state = { query: '', topics: [], nextTopics: [], applications: [], supervisedTopics: [],
-    page: -1, typing: false, fetched: false };
+  state = { query: '', topics: [], applications: [], supervisedTopics: [],
+    page: 0, pages: 1, typing: false, fetched: false };
 
   componentDidMount() {
     this.getTopics();
     if (Auth.hasRole(Util.userRoles.student)) this.getApplications();
-    this.changePage(1);
     setInterval(function() {
-      if(!this.state.typing && !this.state.fetched)
-        this.resetPages();
+      if (!this.state.typing && !this.state.fetched)
+        this.getTopics();
     }.bind(this), 300);
-  }
-
-  resetPages() {
-    this.setState({
-      page: -1,
-      topics: [],
-      nextTopics: []
-    });
-    setTimeout(function(){
-      this.getTopics();
-      this.changePage(1);
-    }.bind(this), 2);
   }
 
   handleChange = (name, value) => {
@@ -227,25 +198,18 @@ class TopicSearch extends React.Component {
   };
 
   getTopics = () => {
-    fetch("/api/topics/search?size=" + Util.TOPICS_PER_PAGE + "&start=" + ((this.state.page+1) * Util.TOPICS_PER_PAGE) +
-      "&text="+this.state.query, {
+    fetch("/api/topics/search?size=" + Util.TOPICS_PER_PAGE + "&start=" +
+          (this.state.page * Util.TOPICS_PER_PAGE) + "&text="+this.state.query, {
       credentials: 'same-origin',
       method: 'get' }).then(function(response) {
       if(response.ok) {
+        this.setState({pages: parseInt(response.headers.get("Pages"), 10)});
         return response.json();
-      } else if (response.status === 404) {
-        this.setState({
-          topics: (this.state.nextTopics === null || typeof this.state.nextTopics === 'undefined') ? this.state.topics : this.state.nextTopics,
-          nextTopics: null
-        });
       } else {
         throw new Error('There was a problem with network connection.');
       }
     }.bind(this)).then(function(json) {
-      this.setState({
-        topics: (this.state.nextTopics === null || typeof this.state.nextTopics === 'undefined') ? this.state.topics : this.state.nextTopics,
-        nextTopics: json
-      });
+      this.setState({topics: json});
     }.bind(this));
     this.setState({fetched: true});
   }
@@ -272,8 +236,8 @@ class TopicSearch extends React.Component {
     this.setState({fetched: true});
   }
 
-  changePage = (offset) => {
-    this.setState({ page: this.state.page + offset });
+  changePage = (page) => {
+    this.setState({page: page.selected});
 
     setTimeout(function() {
       this.getTopics();
@@ -288,8 +252,7 @@ class TopicSearch extends React.Component {
           required value={this.state.query} onChange={this.handleChange.bind(this, 'query')} />
         <br />
         <TopicCards topics={this.state.topics} applications={this.state.applications} />
-        <Pager currentPage={this.state.page} nextData={this.state.nextTopics}
-          pageChanger={(offset) => this.changePage(offset)} />
+        <Pager pages={this.state.pages} pageChanger={(page) => this.changePage(page)} />
       </section>
     );
   }

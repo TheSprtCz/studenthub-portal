@@ -21,6 +21,7 @@ import java.util.List;
 import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
@@ -35,6 +36,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
@@ -51,6 +53,7 @@ import cz.studenthub.db.FacultyDAO;
 import cz.studenthub.db.ProjectDAO;
 import cz.studenthub.db.UserDAO;
 import cz.studenthub.util.PagingUtil;
+import io.dropwizard.auth.Auth;
 import io.dropwizard.hibernate.UnitOfWork;
 import io.dropwizard.jersey.params.IntParam;
 import io.dropwizard.jersey.params.LongParam;
@@ -73,8 +76,9 @@ public class FacultyResource {
   @UnitOfWork
   @Timed
   public List<Faculty> fetch(@Min(0) @DefaultValue("0") @QueryParam("start") IntParam startParam,
-          @Min(0) @DefaultValue("0") @QueryParam("size") IntParam sizeParam) {
-      return PagingUtil.paging(facDao.findAll(), startParam.get(), sizeParam.get());
+          @Min(0) @DefaultValue("0") @QueryParam("size") IntParam sizeParam,
+          @Context HttpServletResponse response) {
+      return PagingUtil.paging(facDao.findAll(), startParam.get(), sizeParam.get(), response);
   }
 
   @GET
@@ -88,43 +92,63 @@ public class FacultyResource {
   @ExceptionMetered
   @Path("/{id}")
   @UnitOfWork
-  @RolesAllowed("ADMIN")
-  public Response delete(@PathParam("id") LongParam idParam) {
+  @RolesAllowed({ "ADMIN", "UNIVERSITY_AMB" })
+  public Response delete(@PathParam("id") LongParam idParam, @Auth User user) {
     Long id = idParam.get();
     Faculty faculty = facDao.findById(id);
     if (faculty == null)
       throw new WebApplicationException(Status.NOT_FOUND);
 
-    facDao.delete(faculty);
-    return Response.noContent().build();
+    // User can delete only faculties belonging to his university
+    if (faculty.getUniversity().getId().equals(user.getFaculty().getUniversity().getId()) || user.isAdmin()) {
+      facDao.delete(faculty);
+      return Response.noContent().build();
+    } else {
+      throw new WebApplicationException(Status.FORBIDDEN);
+    }
   }
 
   @PUT
   @ExceptionMetered
   @Path("/{id}")
   @UnitOfWork
-  @RolesAllowed("ADMIN")
-  public Response update(@PathParam("id") LongParam idParam, @NotNull @Valid Faculty faculty) {
+  @RolesAllowed({ "ADMIN", "UNIVERSITY_AMB" })
+  public Response update(@PathParam("id") LongParam idParam, @NotNull @Valid Faculty faculty, @Auth User user) {
     Long id = idParam.get();
-    if (facDao.findById(id) == null)
+    Faculty oldFaculty = facDao.findById(id);
+    if (oldFaculty == null)
       throw new WebApplicationException(Status.NOT_FOUND);
 
-    faculty.setId(id);
-    facDao.update(faculty);
-    return Response.ok(faculty).build();
+    Long uniId = user.getFaculty().getUniversity().getId();
+    // User must not change university and have the same university as the old one or be Admin
+    if ((faculty.getUniversity().getId().equals(uniId) && oldFaculty.getUniversity().equals(uniId))
+        || user.isAdmin()) {
+
+      faculty.setId(id);
+      facDao.update(faculty);
+      return Response.ok(faculty).build();
+    } else {
+      throw new WebApplicationException(Status.FORBIDDEN);
+    }
   }
 
   @POST
   @ExceptionMetered
   @UnitOfWork
-  @RolesAllowed("ADMIN")
-  public Response create(@NotNull @Valid Faculty faculty) {
-    facDao.create(faculty);
-    if (faculty.getId() == null)
-      throw new WebApplicationException(Status.INTERNAL_SERVER_ERROR);
-
-    return Response.created(UriBuilder.fromResource(FacultyResource.class).path("/{id}").build(faculty.getId()))
-        .entity(faculty).build();
+  @RolesAllowed({ "ADMIN", "UNIVERSITY_AMB" })
+  public Response create(@NotNull @Valid Faculty faculty, @Auth User user) {
+    // User can create only faculties for his university
+    if (faculty.getUniversity().getId().equals(user.getFaculty().getUniversity().getId()) || user.isAdmin()) {
+      facDao.create(faculty);
+      if (faculty.getId() == null)
+        throw new WebApplicationException(Status.INTERNAL_SERVER_ERROR);
+  
+      return Response.created(UriBuilder.fromResource(FacultyResource.class).path("/{id}").build(faculty.getId()))
+          .entity(faculty).build();
+    }
+    else {
+      throw new WebApplicationException(Status.FORBIDDEN);
+    }
   }
 
   @GET
@@ -134,13 +158,14 @@ public class FacultyResource {
   @PermitAll
   public List<User> fetchStudents(@PathParam("id") LongParam id,
           @Min(0) @DefaultValue("0") @QueryParam("start") IntParam startParam,
-          @Min(0) @DefaultValue("0") @QueryParam("size") IntParam sizeParam) {
+          @Min(0) @DefaultValue("0") @QueryParam("size") IntParam sizeParam,
+          @Context HttpServletResponse response) {
 
     Faculty faculty = facDao.findById(id.get());
     if (faculty == null)
       throw new WebApplicationException(Status.NOT_FOUND);
 
-    return PagingUtil.paging(userDao.findByRoleAndFaculty(UserRole.STUDENT, faculty), startParam.get(), sizeParam.get());
+    return PagingUtil.paging(userDao.findByRoleAndFaculty(UserRole.STUDENT, faculty), startParam.get(), sizeParam.get(), response);
   }
 
   @GET
@@ -149,13 +174,14 @@ public class FacultyResource {
   @PermitAll
   public List<User> fetchSupervisors(@PathParam("id") LongParam id,
           @Min(0) @DefaultValue("0") @QueryParam("start") IntParam startParam,
-          @Min(0) @DefaultValue("0") @QueryParam("size") IntParam sizeParam) {
+          @Min(0) @DefaultValue("0") @QueryParam("size") IntParam sizeParam,
+          @Context HttpServletResponse response) {
 
     Faculty faculty = facDao.findById(id.get());
     if (faculty == null)
       throw new WebApplicationException(Status.NOT_FOUND);
 
-    return PagingUtil.paging(userDao.findByRoleAndFaculty(UserRole.AC_SUPERVISOR, faculty), startParam.get(), sizeParam.get());
+    return PagingUtil.paging(userDao.findByRoleAndFaculty(UserRole.AC_SUPERVISOR, faculty), startParam.get(), sizeParam.get(), response);
   }
 
   @GET
@@ -164,12 +190,13 @@ public class FacultyResource {
   @PermitAll
   public List<Project> fetchProjects(@PathParam("id") LongParam id,
           @Min(0) @DefaultValue("0") @QueryParam("start") IntParam startParam,
-          @Min(0) @DefaultValue("0") @QueryParam("size") IntParam sizeParam) {
+          @Min(0) @DefaultValue("0") @QueryParam("size") IntParam sizeParam,
+          @Context HttpServletResponse response) {
 
     Faculty faculty = facDao.findById(id.get());
     if (faculty == null)
       throw new WebApplicationException(Status.NOT_FOUND);
 
-    return PagingUtil.paging(projectDao.findByFaculty(faculty), startParam.get(), sizeParam.get());
+    return PagingUtil.paging(projectDao.findByFaculty(faculty), startParam.get(), sizeParam.get(), response);
   }
 }

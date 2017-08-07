@@ -30,7 +30,7 @@ public class RoleValidator implements ConstraintValidator<Role, User> {
       if (user == null)
         return false;
 
-      return user.getRoles().contains(check.role());
+      return user.hasRole(check.role());
     }
     return true;
   }

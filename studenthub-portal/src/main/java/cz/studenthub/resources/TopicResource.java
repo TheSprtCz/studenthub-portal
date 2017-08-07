@@ -21,6 +21,7 @@ import java.util.Optional;
 import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
@@ -35,6 +36,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
@@ -48,7 +50,6 @@ import cz.studenthub.core.Project;
 import cz.studenthub.core.Topic;
 import cz.studenthub.core.TopicApplication;
 import cz.studenthub.core.User;
-import cz.studenthub.core.UserRole;
 import cz.studenthub.db.ProjectDAO;
 import cz.studenthub.db.TopicApplicationDAO;
 import cz.studenthub.db.TopicDAO;
@@ -83,8 +84,9 @@ public class TopicResource {
   @UnitOfWork
   @RolesAllowed("ADMIN")
   public List<Topic> fetch(@Min(0) @DefaultValue("0") @QueryParam("start") IntParam startParam,
-      @Min(0) @DefaultValue("0") @QueryParam("size") IntParam sizeParam) {
-    return PagingUtil.paging(topicDao.findAll(), startParam.get(), sizeParam.get());
+      @Min(0) @DefaultValue("0") @QueryParam("size") IntParam sizeParam,
+      @Context HttpServletResponse response) {
+    return PagingUtil.paging(topicDao.findAll(), startParam.get(), sizeParam.get(), response);
   }
 
   @GET
@@ -95,7 +97,7 @@ public class TopicResource {
 
     // If topic is enabled, or user is creator or admin, return topic 
     if (topic != null && (topic.isEnabled() || (user.isPresent() && (topic.getCreator().getId().equals(user.get().getId())
-       || user.get().getRoles().contains(UserRole.ADMIN))))) {
+       || user.get().isAdmin())))) {
       return topic;
     }
     throw new WebApplicationException(Status.NOT_FOUND);   
@@ -132,7 +134,7 @@ public class TopicResource {
     Long newCreatorId = topic.getCreator().getId();
     // if user is topic creator and creator stays the same, or is an admin
     if ((oldCreatorId.equals(user.getId()) && oldCreatorId.equals(newCreatorId))
-        || user.getRoles().contains(UserRole.ADMIN)) {
+        || user.isAdmin()) {
 
       // If topic went from disabled to enabled state
       if (topic.isEnabled() && !oldTopic.isEnabled()) {
@@ -160,7 +162,7 @@ public class TopicResource {
   public Response create(@NotNull @Valid @Validated(CreateUpdateChecks.class) Topic topic, @Auth User user) {
 
     // If user is topic creator or is an admin
-    if (topic.getCreator().getId().equals(user.getId()) || user.getRoles().contains(UserRole.ADMIN)) {
+    if (topic.getCreator().getId().equals(user.getId()) || user.isAdmin()) {
 
       // Because creator info is available only after persisting it to DB, I
       // have to fetch him manually
@@ -201,13 +203,14 @@ public class TopicResource {
   @PermitAll
   public List<TopicApplication> fetchSupervisedTopics(@PathParam("id") LongParam id,
       @Min(0) @DefaultValue("0") @QueryParam("start") IntParam startParam,
-      @Min(0) @DefaultValue("0") @QueryParam("size") IntParam sizeParam) {
+      @Min(0) @DefaultValue("0") @QueryParam("size") IntParam sizeParam,
+      @Context HttpServletResponse response) {
 
     Topic topic = topicDao.findById(id.get());
     if (topic == null)
       throw new WebApplicationException(Status.NOT_FOUND);
 
-    return PagingUtil.paging(appDao.findByTopic(topic), startParam.get(), sizeParam.get());
+    return PagingUtil.paging(appDao.findByTopic(topic), startParam.get(), sizeParam.get(), response);
   }
 
   @GET
@@ -216,10 +219,11 @@ public class TopicResource {
   @PermitAll
   public List<User> fetchTopicSupervisors(@PathParam("id") LongParam id,
       @Min(0) @DefaultValue("0") @QueryParam("start") IntParam startParam,
-      @Min(0) @DefaultValue("0") @QueryParam("size") IntParam sizeParam) {
+      @Min(0) @DefaultValue("0") @QueryParam("size") IntParam sizeParam,
+      @Context HttpServletResponse response) {
 
     Topic topic = topicDao.findById(id.get());
-    return PagingUtil.paging(topic.getAcademicSupervisors(), startParam.get(), sizeParam.get());
+    return PagingUtil.paging(topic.getAcademicSupervisors(), startParam.get(), sizeParam.get(), response);
   }
 
   @GET
@@ -227,10 +231,11 @@ public class TopicResource {
   @UnitOfWork
   public List<Project> fetchProjects(@PathParam("id") LongParam id,
       @Min(0) @DefaultValue("0") @QueryParam("start") IntParam startParam,
-      @Min(0) @DefaultValue("0") @QueryParam("size") IntParam sizeParam) {
+      @Min(0) @DefaultValue("0") @QueryParam("size") IntParam sizeParam,
+      @Context HttpServletResponse response) {
 
     Topic topic = topicDao.findById(id.get());
-    return PagingUtil.paging(projectDao.findByTopic(topic), startParam.get(), sizeParam.get());
+    return PagingUtil.paging(projectDao.findByTopic(topic), startParam.get(), sizeParam.get(), response);
   }
 
   @GET
@@ -248,8 +253,9 @@ public class TopicResource {
   @UnitOfWork
   public List<Topic> search(@NotNull @QueryParam("text") String text,
       @Min(0) @DefaultValue("0") @QueryParam("start") IntParam startParam,
-      @Min(0) @DefaultValue("0") @QueryParam("size") IntParam sizeParam) {
-    return PagingUtil.paging(topicDao.search(text), startParam.get(), sizeParam.get());
+      @Min(0) @DefaultValue("0") @QueryParam("size") IntParam sizeParam,
+      @Context HttpServletResponse response) {
+    return PagingUtil.paging(topicDao.search(text), startParam.get(), sizeParam.get(), response);
   }
 
 }

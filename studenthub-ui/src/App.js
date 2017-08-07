@@ -29,6 +29,8 @@ import Button from 'react-toolbox/lib/button/Button.js';
 import AppBar from 'react-toolbox/lib/app_bar/AppBar.js';
 import Navigation from 'react-toolbox/lib/navigation/Navigation.js';
 import FontIcon from 'react-toolbox/lib/font_icon/FontIcon.js';
+import { NotificationContainer } from 'react-notifications';
+import 'react-notifications/lib/notifications.css';
 
 // Auth controller
 import Auth from './Auth.js';
@@ -103,6 +105,7 @@ class App extends Component {
     return (
       <Router>
         <div>
+          <NotificationContainer/>
           <AppBar title={ Util.PORTAL_NAME } leftIcon='menu' onLeftIconClick={() => this.setState({ drawerActive: true })}>
             <Navigation type='horizontal'>
               <NavBarLinks />
