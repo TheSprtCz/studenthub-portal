@@ -418,6 +418,18 @@ const myLocalize = new Localize({
     'UNIVERSITY_AMB': {
       'cs': 'Ambasador univerzity'
     },
+    'Countries': {
+      'cs': 'Země'
+    },
+    'New Country': {
+      'cs': 'Nová země'
+    },
+    'Edit Country': {
+      'cs': 'Uprav zemi'
+    },
+    'Tag': {
+      'cs': 'Tag'
+    },
     'University profile': {
       'cs': 'Profil univerzity'
     },

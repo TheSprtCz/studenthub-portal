@@ -17,16 +17,19 @@ public class UniversityDAOTest {
   public static final int COUNT = 5;
   private static final DAOTestRule DATABASE = DAOTestSuite.database;
   private static UniversityDAO uniDAO;
+  private static CountryDAO countryDAO;
 
   @BeforeClass
   public static void setUp() {
     uniDAO = new UniversityDAO(DATABASE.getSessionFactory());
+    countryDAO = new CountryDAO(DATABASE.getSessionFactory());
   }
 
   @Test
   public void createUniversity() {
-    University uni = new University("BUT", "http://www.nothing.com", "Brno", Country.CZ, "http://nothing.com/img.jpg");
     DAOTestSuite.inRollbackTransaction(() -> {
+      Country country = countryDAO.findByTag("CZ");
+      University uni = new University("BUT", "http://www.nothing.com", "Brno", country, "http://nothing.com/img.jpg");
       University created = uniDAO.create(uni);
       List<University> universities = uniDAO.findAll();
       assertNotNull(created.getId());

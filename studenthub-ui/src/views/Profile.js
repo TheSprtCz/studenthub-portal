@@ -8,9 +8,13 @@ import Dropdown from 'react-toolbox/lib/dropdown/Dropdown.js';
 import Tab from 'react-toolbox/lib/tabs/Tab.js';
 import Tabs from 'react-toolbox/lib/tabs/Tabs.js';
 import Chip from 'react-toolbox/lib/chip/Chip.js';
+
+import CountrySelect from '../components/CountrySelect.js';
+
 import AddButton from '../components/AddButton';
 import FacultyDialog from '../components/FacultyDialog.js';
 import { FacultyTable, FacultyRow, FacultyHead} from '../components/FacultyTable.js';
+
 import Auth from '../Auth.js';
 import Util from '../Util.js';
 import _t from '../Translations.js'
@@ -139,7 +143,8 @@ class ProfileEditView extends React.Component {
 }
 
 class CompanyEditView extends React.Component {
-  state = { id: 0, name: '', city: '', country: '',  url: '', logoUrl: '', size: '',
+
+  state = { id: 0, name: '', city: '', country: {},  url: '', logoUrl: '', size: '',
     plan: { } };
 
   componentDidMount() {
@@ -215,14 +220,7 @@ class CompanyEditView extends React.Component {
         <div className="col-md-10">
           <Input type='name' label={ _t.translate('Name') } icon='textsms'  hint="Change company name" required value={this.state.name} onChange={this.handleChange.bind(this, 'name')} />
           <Input type='text' label={ _t.translate('City') } icon='location_city'  hint="Change company city headquarters" value={this.state.city} onChange={this.handleChange.bind(this, 'city')} />
-          <Dropdown
-            auto required
-            onChange={this.handleChange.bind(this, 'country')}
-            source={Util.countriesSource}
-            name='country'
-            value={this.state.country}
-            icon='public'
-            label={ _t.translate('Country') } />
+          <CountrySelect currentCountry={this.state.country} changeHandler={this.handleChange.bind(this, 'country')} />
           <Input type='url' label={ _t.translate('Web page') } icon='web'  hint="Change website url" value={this.state.url} onChange={this.handleChange.bind(this, 'url')} />
           <Input type='url' label='Logo' icon='photo'  hint="Change logo" value={this.state.logoUrl} onChange={this.handleChange.bind(this, 'logoUrl')} />
           <Dropdown

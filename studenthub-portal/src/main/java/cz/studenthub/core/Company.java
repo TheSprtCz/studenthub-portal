@@ -52,7 +52,7 @@ public class Company {
   private String url;
   private String city;
 
-  @Enumerated(EnumType.STRING)
+  @ManyToOne
   private Country country;
 
   @URL

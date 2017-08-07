@@ -6,6 +6,7 @@ import org.hibernate.SessionFactory;
 import cz.studenthub.db.ActivationDAO;
 import cz.studenthub.db.CompanyDAO;
 import cz.studenthub.db.CompanyPlanDAO;
+import cz.studenthub.db.CountryDAO;
 import cz.studenthub.db.FacultyDAO;
 import cz.studenthub.db.ProjectDAO;
 import cz.studenthub.db.TaskDAO;
@@ -36,6 +37,7 @@ public class DAOBinder extends AbstractBinder {
     bind(new ActivationDAO(factory)).to(ActivationDAO.class);
     bind(new ProjectDAO(factory)).to(ProjectDAO.class);
     bind(new TopicDegreeDAO(factory)).to(TopicDegreeDAO.class);
+    bind(new CountryDAO(factory)).to(CountryDAO.class);
   }
   
 }

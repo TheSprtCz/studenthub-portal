@@ -20,42 +20,40 @@ import java.util.List;
 
 import org.hibernate.SessionFactory;
 
-import cz.studenthub.core.CompanyPlan;
 import cz.studenthub.core.Country;
 import io.dropwizard.hibernate.AbstractDAO;
 
 /**
- * Data(base) Access Object for CompanyPlan objects.
+ * Data(base) Access Object for Country objects.
  * 
  * @author phala
  * @since 1.1
  */
-public class CompanyPlanDAO extends AbstractDAO<CompanyPlan> {
+public class CountryDAO extends AbstractDAO<Country> {
 
-  public CompanyPlanDAO(SessionFactory sessionFactory) {
+  public CountryDAO(SessionFactory sessionFactory) {
     super(sessionFactory);
   }
 
-  public CompanyPlan update(CompanyPlan companyPlan) {
+  public Country update(Country country) {
     currentSession().clear();
-    return persist(companyPlan);
+    return persist(country);
   }
   
-  public CompanyPlan create(CompanyPlan companyPlan) {
-    return persist(companyPlan);
+  public Country create(Country country) {
+    return persist(country);
   }
   
-  public CompanyPlan findByName(String name) {
-    return get(name);
+  public Country findByTag(String tag) {
+    return get(tag);
   }
   
-  public List<CompanyPlan> findAll() {
-    return list(namedQuery("CompanyPlan.findAll"));
+  public List<Country> findAll() {
+    return list(namedQuery("Country.findAll"));
   }
   
-  public void delete(CompanyPlan companyPlan) {
-    currentSession().delete(companyPlan);
+  public void delete(Country country) {
+    currentSession().delete(country);
   }
-
 
 }

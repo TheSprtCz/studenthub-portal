@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import Dialog from 'react-toolbox/lib/dialog/Dialog.js';
-import Dropdown from 'react-toolbox/lib/dropdown/Dropdown.js';
 import Input from 'react-toolbox/lib/input/Input.js';
+
+import CountrySelect from '../components/CountrySelect.js';
 
 import Util from '../Util.js';
 
@@ -18,7 +19,7 @@ class UniversityDialog extends Component {
     this.state = {
       name: "",
       city: "",
-      country: "CZ",
+      country: {},
       url: "",
       logo: "",
       titleLabel: "Add a new university",
@@ -133,13 +134,7 @@ class UniversityDialog extends Component {
                   <Input type='text' label="City" hint='City' value={this.state.city} onChange={(value) => this.handleInputChange("city", value)}  required maxLength={32} />
                 </td>
                 <td>
-                  <Dropdown
-                    auto
-                    source={Util.countriesSource}
-                    onChange={(value) => this.handleInputChange("country", value)}
-                    label='Country'
-                    value={this.state.country}
-                  />
+                  <CountrySelect currentCountry={this.state.country} changeHandler={this.handleInputChange.bind(this, 'country')} />
                 </td>
               </tr>
               <tr>
