@@ -156,6 +156,7 @@ class UserEditDialog extends Component {
       rep: false,
       student: false,
       tech: false,
+      project: false,
       amb: false
     }
   }
@@ -172,6 +173,7 @@ class UserEditDialog extends Component {
     var repState = false;
     var studentState = false;
     var techState = false;
+    var projectState = false;
     var ambState = false;
 
 
@@ -181,11 +183,12 @@ class UserEditDialog extends Component {
     }
 
     for (let i = 0; i < nextProps.user.roles.length; i++) {
-      if (nextProps.user.roles[i] === "AC_SUPERVISOR") supervisorState = true;
-      else if (nextProps.user.roles[i] === "ADMIN") adminState = true;
-      else if (nextProps.user.roles[i] === "COMPANY_REP") repState = true;
-      else if (nextProps.user.roles[i] === "STUDENT") studentState = true;
-      else if (nextProps.user.roles[i] === "TECH_LEADER") techState = true;
+      if (nextProps.user.roles[i] === Util.userRoles.superviser) supervisorState = true;
+      else if (nextProps.user.roles[i] === Util.userRoles.admin) adminState = true;
+      else if (nextProps.user.roles[i] === Util.userRoles.companyRep) repState = true;
+      else if (nextProps.user.roles[i] === Util.userRoles.student) studentState = true;
+      else if (nextProps.user.roles[i] === Util.userRoles.techLeader) techState = true;
+      else if (nextProps.user.roles[i] === Util.userRoles.proLeader) projectState = true;
       else if (nextProps.user.roles[i] === Util.userRoles.ambassador) ambState = true;
     }
 
@@ -201,6 +204,7 @@ class UserEditDialog extends Component {
       rep: repState,
       student: studentState,
       tech: techState,
+      project: projectState,
       amb: ambState
     });
   }
@@ -253,12 +257,13 @@ class UserEditDialog extends Component {
   getRoles = () => {
     var roles = [];
 
-    if (this.state.supervisor === true) roles.push("AC_SUPERVISOR");
-    if (this.state.admin === true) roles.push("ADMIN");
-    if (this.state.rep === true) roles.push("COMPANY_REP");
-    if (this.state.student === true) roles.push("STUDENT");
-    if (this.state.tech === true) roles.push("TECH_LEADER");
-    if (this.state.amb === true) roles.push("UNIVERSITY_AMB");
+    if (this.state.supervisor === true) roles.push(Util.userRoles.superviser);
+    if (this.state.admin === true) roles.push(Util.userRoles.admin);
+    if (this.state.rep === true) roles.push(Util.userRoles.companyRep);
+    if (this.state.student === true) roles.push(Util.userRoles.student);
+    if (this.state.tech === true) roles.push(Util.userRoles.techLeader);
+    if (this.state.project === true) roles.push(Util.userRoles.proLeader);
+    if (this.state.amb === true) roles.push(Util.userRoles.ambassador);
 
     return roles;
   }
@@ -290,10 +295,10 @@ class UserEditDialog extends Component {
               </tr>
               <tr>
                 <td width="50%">
-                  <FacultySelect changeHandler={(value) => this.handleChange("faculty", value)} baseValue={this.props.user.faculty} />
+                  <FacultySelect changeHandler={(value) => this.handleChange("faculty", value)} baseValue={this.state.faculty} />
                 </td>
                 <td width="50%">
-                  <CompanySelect changeHandler={(value) => this.handleChange("company", value)} baseValue={this.props.user.company} />
+                  <CompanySelect changeHandler={(value) => this.handleChange("company", value)} baseValue={this.state.company} />
                 </td>
               </tr>
               <tr>
@@ -333,6 +338,11 @@ class UserEditDialog extends Component {
             label={ _t.translate("TECH_LEADER") }
             name='roles'
             onChange={this.handleChange.bind(this, 'tech')} />
+          <Checkbox
+            checked={this.state.project}
+            label={ _t.translate("PROJECT_LEADER") }
+            name='roles'
+            onChange={this.handleChange.bind(this, 'project')} />
         </Dialog>
       </div>
     );

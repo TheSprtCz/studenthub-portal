@@ -16,6 +16,8 @@ import Companies from './views/Companies.js';
 import CompanyPlans from './views/CompanyPlans.js';
 import MyTopics from './views/MyTopics.js';
 import Topic from './views/Topic.js';
+import Projects from './views/Projects.js';
+import Project from './views/Project.js';
 import TopicDegrees from './views/TopicDegrees.js';
 import MyApplications from './views/MyApplications.js';
 import Application from './views/Application.js';
@@ -61,6 +63,7 @@ const NavBarLinks = withRouter(() => (
     { Auth.hasRole(Util.userRoles.admin) ? <Link to="/unis"><Button label={ _t.translate("Universities") } flat /></Link> : '' }
     { Auth.hasRole(Util.userRoles.admin) ? <Link to="/companies"><Button label={ _t.translate("Companies") } flat /></Link> : '' }
     { Auth.hasRole(Util.userRoles.admin) ? <Link to="/company-plans"><Button label={ _t.translate("Company Plans") } flat /></Link> : '' }
+    { (Auth.hasRole(Util.userRoles.admin) || Auth.hasRole(Util.userRoles.proLeader)) ? <Link to="/projects"><Button label={ _t.translate("Projects") } flat /></Link> : '' }
     { Auth.isAuthenticated() ? <Link to="/my-apps"><Button label={ _t.translate("My Applications") } flat /></Link> : '' }
     { Auth.hasRole(Util.userRoles.techLeader) || Auth.hasRole(Util.userRoles.superviser) ? <Link to="/my-topics"><Button label={ _t.translate("My Topics") } flat /></Link> : '' }
     { Auth.hasRole(Util.userRoles.admin) ? <Link to="/degrees"><Button label={ _t.translate("Degrees") } flat /></Link> : '' }
@@ -130,6 +133,8 @@ class App extends Component {
               <PrivateRoute exact path="/company-plans" component={CompanyPlans}/>
               <PrivateRoute exact path="/my-apps" component={MyApplications}/>
               <PrivateRoute exact path="/my-topics" component={MyTopics}/>
+              <PrivateRoute exact path="/projects" component={Projects}/>
+              <PrivateRoute exact path="/projects/:id" component={Project}/>
               <PrivateRoute exact path="/countries" component={Countries}/>
               <PrivateRoute exact path="/profile" component={Profile}/>
               <PrivateRoute exact path="/updatePwd" component={UpdatePassword}/>

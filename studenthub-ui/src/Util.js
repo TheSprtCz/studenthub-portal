@@ -98,7 +98,8 @@ Util.userRoles = {
   companyRep: "COMPANY_REP",
   ambassador: "UNIVERSITY_AMB",
   student: "STUDENT",
-  techLeader: "TECH_LEADER"
+  techLeader: "TECH_LEADER",
+  proLeader: "PROJECT_LEADER"
 }
 
 Util.rolesSourceCompany = [

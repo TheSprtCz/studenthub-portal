@@ -388,6 +388,30 @@ const myLocalize = new Localize({
     'PROJECT_LEADER': {
       'cs': 'Vedoucí projektu'
     },
+    'Projects': {
+      'cs': 'Projekty'
+    },
+    'Faculties': {
+      'cs': 'Fakulty'
+    },
+    'Leaders': {
+      'cs': 'Vedoucí'
+    },
+    'Topics': {
+      'cs': 'Témata'
+    },
+    'Project details': {
+      'cs': 'Detaily projektu'
+    },
+    'This company will be removed from the project.': {
+      'cs': 'Tato organizace bude odstraněna z projektu.'
+    },
+    'This faculty will be removed from the project.': {
+      'cs': 'Tato fakulta bude odstraněna z projektu.'
+    },
+    'This topic will be removed from the project.': {
+      'cs': 'Toto téma bude odstraněno z projektu.'
+    },
     'Save as PDF': {
       'cs': 'Ulož jako PDF'
     },
