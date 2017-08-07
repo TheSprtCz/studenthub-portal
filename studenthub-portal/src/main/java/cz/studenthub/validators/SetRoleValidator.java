@@ -12,7 +12,8 @@ import cz.studenthub.db.UserDAO;
 import cz.studenthub.validators.annotations.Role;
 
 /**
- * This validator checks if required Set of Users has required UserRole, will not be needed in Hibernate Validator 6
+ * This validator checks if required Set of Users has required UserRole, will
+ * not be needed in Hibernate Validator 6
  */
 public class SetRoleValidator implements ConstraintValidator<Role, Set<User>> {
 
@@ -23,12 +24,13 @@ public class SetRoleValidator implements ConstraintValidator<Role, Set<User>> {
 
   @Override
   public void initialize(Role check) {
-    this.check = check;    
+    this.check = check;
   }
 
   @Override
   public boolean isValid(@NotNull Set<User> users, ConstraintValidatorContext arg1) {
-    // Will not validate null, if field cannot be null it will be annotated with @NotNull
+    // Will not validate null, if field cannot be null it will be annotated with
+    // @NotNull
     if (users != null) {
       for (User user : users) {
         user = userDao.findById(user.getId());
@@ -40,6 +42,6 @@ public class SetRoleValidator implements ConstraintValidator<Role, Set<User>> {
       }
     }
     return true;
-  }  
+  }
 
 }

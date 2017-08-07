@@ -104,5 +104,4 @@ public class SmtpConfig {
   public void setAsync(boolean async) {
     this.async = async;
   }
-
 }

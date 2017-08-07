@@ -18,12 +18,8 @@ package cz.studenthub.db;
 
 import java.util.List;
 
-import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
-import org.hibernate.criterion.Restrictions;
-import org.hibernate.persister.collection.CollectionPropertyNames;
 
-import cz.studenthub.core.Activation;
 import cz.studenthub.core.Company;
 import cz.studenthub.core.Faculty;
 import cz.studenthub.core.Project;
@@ -79,5 +75,4 @@ public class ProjectDAO extends AbstractDAO<Project> {
   public void delete(Project activation) {
     currentSession().delete(activation);
   }
-
 }

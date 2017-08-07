@@ -20,7 +20,7 @@ import cz.studenthub.validators.SetRoleValidator;
 /**
  * Annotation for checking required roles
  */
-@Constraint(validatedBy = {RoleValidator.class, SetRoleValidator.class})
+@Constraint(validatedBy = { RoleValidator.class, SetRoleValidator.class })
 @Retention(RUNTIME)
 @Target({ FIELD, PARAMETER, TYPE_PARAMETER, TYPE, TYPE_USE })
 public @interface Role {

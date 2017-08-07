@@ -64,7 +64,8 @@ public class MailClient {
     String htmlContent = "";
     try {
       // load genericEmail
-      String genericTemplate = IOUtils.toString(MailClient.class.getResourceAsStream("/templates/genericEmail.html"), "UTF-8");
+      String genericTemplate = IOUtils.toString(MailClient.class.getResourceAsStream("/templates/genericEmail.html"),
+          "UTF-8");
 
       // inject arguments into specific template
       String template = IOUtils.toString(MailClient.class.getResourceAsStream("/templates/" + templateFile), "UTF-8");
@@ -78,7 +79,6 @@ public class MailClient {
 
       StrSubstitutor mainSub = new StrSubstitutor(arguments);
       htmlContent = mainSub.replace(genericTemplate);
-
     } catch (IOException e) {
       LOG.error("Error occured processing email template", e);
     }

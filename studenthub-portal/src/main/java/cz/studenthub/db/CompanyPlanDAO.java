@@ -21,7 +21,6 @@ import java.util.List;
 import org.hibernate.SessionFactory;
 
 import cz.studenthub.core.CompanyPlan;
-import cz.studenthub.core.Country;
 import io.dropwizard.hibernate.AbstractDAO;
 
 /**
@@ -40,22 +39,20 @@ public class CompanyPlanDAO extends AbstractDAO<CompanyPlan> {
     currentSession().clear();
     return persist(companyPlan);
   }
-  
+
   public CompanyPlan create(CompanyPlan companyPlan) {
     return persist(companyPlan);
   }
-  
+
   public CompanyPlan findByName(String name) {
     return get(name);
   }
-  
+
   public List<CompanyPlan> findAll() {
     return list(namedQuery("CompanyPlan.findAll"));
   }
-  
+
   public void delete(CompanyPlan companyPlan) {
     currentSession().delete(companyPlan);
   }
-
-
 }

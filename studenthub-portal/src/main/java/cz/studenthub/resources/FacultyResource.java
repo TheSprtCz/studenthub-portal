@@ -121,7 +121,7 @@ public class FacultyResource {
 
     Long uniId = user.getFaculty().getUniversity().getId();
     // User must not change university and have the same university as the old one or be Admin
-    if ((faculty.getUniversity().getId().equals(uniId) && oldFaculty.getUniversity().equals(uniId))
+    if ((faculty.getUniversity().getId().equals(uniId) && oldFaculty.getUniversity().getId().equals(uniId))
         || user.isAdmin()) {
 
       faculty.setId(id);

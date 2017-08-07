@@ -19,12 +19,13 @@ public class RoleValidator implements ConstraintValidator<Role, User> {
 
   @Override
   public void initialize(Role check) {
-    this.check = check;    
+    this.check = check;
   }
 
   @Override
   public boolean isValid(User user, ConstraintValidatorContext arg1) {
-    // Will not validate null, if field cannot be null it will be annotated with @NotNull
+    // Will not validate null, if field cannot be null it will be annotated with
+    // @NotNull
     if (user != null) {
       user = userDao.findById(user.getId());
       if (user == null)
