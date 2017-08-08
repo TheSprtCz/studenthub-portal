@@ -1,16 +1,16 @@
-# StudentHub
+# Thesis Hub
 
 ## CI
 
-[![Build Status](https://travis-ci.org/StudentHubCZ/studenthub-portal.svg?branch=master)](https://travis-ci.org/StudentHubCZ/studenthub-portal)
+[![Build Status](https://travis-ci.org/StudentHubCZ/thesishub.svg?branch=master)](https://travis-ci.org/StudentHubCZ/thesishub)
 
-## How to start the StudentHub application
+## How to start Thesis Hub
 
 1. Run `mvn clean package` to build your application
-1. Populate DB schema with `java -jar studenthub-portal/target/studenthub-portal-1.1-SNAPSHOT.jar db migrate config.yml`
-1. Seed DB with admin user `java -jar studenthub-portal/target/studenthub-portal-1.1-SNAPSHOT.jar db migrate config.yml --migrations studenthub-portal/initial-data.xml`
+1. Populate DB schema with `java -jar thesishub-application/target/thesishub-application-1.1-SNAPSHOT.jar db migrate config.yml`
+1. Seed DB with admin user `java -jar thesishub-application/target/thesishub-application-1.1-SNAPSHOT.jar db migrate config.yml --migrations thesishub-application/initial-data.xml`
 1. (Optional) configure SMTP client (see instructions below)
-1. Start application with `java -jar studenthub-portal/target/studenthub-portal-1.1-SNAPSHOT.jar server config.yml`
+1. Start application with `java -jar thesishub-application/target/thesishub-application-1.1-SNAPSHOT.jar server config.yml`
 1. To check that your application is running enter url `http://localhost:8080`
 
 ## Environment variables
@@ -66,7 +66,7 @@ There are several ways of contribution to our project, all of them are more than
 
 ### Code
 
-* Create a GitHub [issue](https://github.com/StudentHubCZ/studenthub-portal/issues/new) and/or send a [Pull-Request](https://github.com/StudentHubCZ/studenthub-portal/compare)
+* Create a GitHub [issue](https://github.com/StudentHubCZ/thesishub/issues/new) and/or send a [Pull-Request](https://github.com/StudentHubCZ/thesishub/compare)
 
 ### Other
 
@@ -78,4 +78,4 @@ However, we would appreciate also other forms of contribution, e.g. graphics, bl
 
 ## License
 
-This project is licensed under the terms of the GNU General Public License v 3.0. For more information see [LICENSE](https://github.com/StudentHubCZ/studenthub-portal/blob/master/LICENSE).
+This project is licensed under the terms of the GNU General Public License v 3.0. For more information see [LICENSE](https://github.com/StudentHubCZ/thesishub/blob/master/LICENSE).

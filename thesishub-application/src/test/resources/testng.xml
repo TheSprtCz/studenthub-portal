@@ -1,0 +1,23 @@
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
+ 
+<suite name="IntegrationTestSuite" verbose="1" >
+	<test name="Integration Tests">
+	    <classes>
+	        <class name="net.thesishub.IntegrationTestSuite"/>
+	        <class name="net.thesishub.integration.RegistrationResourceTest"/>
+	        <class name="net.thesishub.integration.LoginResourceTest"/>
+	        <class name="net.thesishub.integration.CountryResourceTest"/>
+	        <class name="net.thesishub.integration.CompanyPlanResourceTest"/>
+	        <class name="net.thesishub.integration.TopicDegreeResourceTest"/>
+	        <class name="net.thesishub.integration.CompanyResourceTest"/>
+	        <class name="net.thesishub.integration.UniversityResourceTest"/>
+	        <class name="net.thesishub.integration.FacultyResourceTest"/>
+	        <class name="net.thesishub.integration.TopicResourceTest"/>
+	        <class name="net.thesishub.integration.UserResourceTest"/>
+	        <class name="net.thesishub.integration.TopicApplicationResourceTest"/>
+	        <class name="net.thesishub.integration.TaskResourceTest"/>
+	        <class name="net.thesishub.integration.TagResourceTest"/>
+	        <class name="net.thesishub.integration.ProjectResourceTest"/>
+	    </classes>
+    </test>
+</suite>

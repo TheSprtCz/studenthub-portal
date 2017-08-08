@@ -1,0 +1,64 @@
+# logging
+logging:
+
+  # Permit DEBUG, INFO, WARN and ERROR messages to be logged by appenders.
+  level: INFO
+
+  # Override hibernate logs treshold
+  loggers:
+    org.hibernate:
+      level: WARN
+
+  appenders:
+    - type: console
+    - type: file
+      threshold: INFO
+      logFormat: "%-6level [%d{HH:mm:ss.SSS}] [%t] %logger{5} - %X{code} %msg %n"
+      currentLogFilename: /tmp/thesishub.log
+      archivedLogFilenamePattern: /tmp/thesishub-%d{yyyy-MM-dd}-%i.log.gz
+      archivedFileCount: 5
+      timeZone: UTC
+      maxFileSize: 10MB
+
+# server
+server:
+  rootPath: /api/
+  adminContextPath: /info
+
+# database
+database:
+  # the name of your JDBC driver
+  driverClass: org.postgresql.Driver
+
+  # the username
+  user: ${SH_DB_USERNAME:-postgres}
+
+  # the password
+  password: ${SH_DB_PASSWORD}
+
+  # the JDBC URL
+  url: ${SH_DB_URL:-jdbc:postgresql://localhost:5432/postgres}
+
+  # the SQL query to run when validating a connection's liveness
+  validationQuery: "SELECT 1"
+  
+  # validate schema
+  properties:
+    hibernate.hbm2ddl.auto: validate
+    charSet: UTF-8
+    hibernate.dialect: org.hibernate.dialect.PostgreSQLDialect
+
+# jwt secret
+jwtSecret: ${SH_JWT_SECRET:-superSecret12345}
+
+# basic auth
+enableBasicAuth: ${SH_BASIC_AUTH:-false}
+
+# smtp config
+smtp:
+  server: ${SMTP_SERVER:-localhost}
+  port: ${SMTP_PORT:-587}
+  username: ${SMTP_USERNAME}
+  password: ${SMTP_PASSWORD}
+  fromEmail: ${SMTP_FROM_EMAIL:-admin@example.com}
+  fromName: ${SMTP_FROM_NAME:-admin}

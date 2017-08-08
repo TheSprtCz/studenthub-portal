@@ -7,12 +7,12 @@
     <maven>3.0.0</maven>
   </prerequisites>
 
-  <groupId>cz.studenthub</groupId>
+  <groupId>net.thesishub</groupId>
   <artifactId>parent</artifactId>
   <version>1.1-SNAPSHOT</version>
   <packaging>pom</packaging>
 
-  <name>Student Hub</name>
+  <name>Thesis Hub</name>
 
   <licenses>
     <license>
@@ -23,10 +23,10 @@
     </license>
   </licenses>
 
-  <url>www.studenthub.cz</url>
+  <url>www.thesishub.net</url>
   <inceptionYear>2017</inceptionYear>
   <scm>
-    <url>https://github.com/StudentHubCZ/studenthub-portal.git</url>
+    <url>https://github.com/StudentHubCZ/thesishub.git</url>
   </scm>
 
   <repositories>
@@ -64,8 +64,8 @@
   </properties>
 
   <modules>
-    <module>studenthub-ui</module>
-    <module>studenthub-portal</module>
+    <module>thesishub-ui</module>
+    <module>thesishub-application</module>
   </modules>
 
   <dependencyManagement>
@@ -180,4 +180,7 @@
       </plugins>
     </pluginManagement>
   </build>
+  <issueManagement>
+    <url>https://github.com/StudentHubCZ/thesishub/issues</url>
+  </issueManagement>
 </project>
