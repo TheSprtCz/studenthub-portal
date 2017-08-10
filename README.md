@@ -19,10 +19,11 @@ Most changes to Student Hub Portal configuration can be done just by using envir
 
 ### General
 
-| ENV VAR          | PURPOSE                         | DEFAULT VALUE    |
-| ---------------- |-------------------------------- | ---------------- |
-| SH_BASIC_AUTH    | Enables/disables basic auth     | false            |
-| SH_SH_JWT_SECRET | Secret for JWT token generation | superSecret12345 |
+| ENV VAR          | PURPOSE                               | DEFAULT VALUE             |
+| ---------------- |-------------------------------------- | ------------------------- |
+| SH_BASIC_AUTH    | Enables/disables basic auth           | false                     |
+| SH_JWT_SECRET    | Secret for JWT token generation       | superSecret12345          |
+| SH_DOMAIN        | Domain on which Thesis Hub is running | http://localhost:8080/api |
 
 ### Database
 
