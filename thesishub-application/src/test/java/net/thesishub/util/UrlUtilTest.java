@@ -12,12 +12,12 @@ public class UrlUtilTest {
 
   @Test
   public void testBasicResource() {
-   assertEquals("http://localhost:8080/login", util.getUri("login").toString());
+   assertEquals("http://localhost:8080/login", util.getUriBuilder("login").toString());
   }
 
   @Test
   public void testResourceAction() {
-   assertEquals("http://localhost:8080/account/activate", util.getUri("account", "activate").toString());
+   assertEquals("http://localhost:8080/account/activate", util.getUriBuilder("account", "activate").toString());
   }
 
   @Test

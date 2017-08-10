@@ -1,3 +1,19 @@
+/*******************************************************************************
+ * Copyright (C) 2017  Stefan Bunciak
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *******************************************************************************/
 package net.thesishub.util;
 
 import java.util.HashMap;
@@ -5,6 +21,12 @@ import java.util.Map;
 
 import javax.ws.rs.core.UriBuilder;
 
+/**
+ * Utility class for constructing Uris based on domain Thesis Hub is running on.
+ * 
+ * @author phala
+ * @since 1.1
+ */
 public class UrlUtil {
 
   private String domain;
@@ -13,26 +35,45 @@ public class UrlUtil {
     this.domain = domain;
   }
 
-  // Gets URL of resource e.g localhost:8080/api/profile
-  public UriBuilder getUri(String controller) {
-    return UriBuilder.fromPath(domain).path(controller);
+  /**
+   * Constructs Uri based on Thesis Hub domain and giver path segments.
+   * 
+   * @param paths array of path segments
+   * @return UriBuilder
+   */
+  public UriBuilder getUriBuilder(String... paths) {
+    return UriBuilder.fromPath(domain).segment(paths);
   }
 
-  // Gets URL of resource and specified action e.g localhost:8080/api/account/confirmReset
-  public UriBuilder getUri(String controller, String action) {
-    return getUri(controller).path(action);
+  /**
+   * Constructs Uri based on Thesis Hub domain and giver path segments.
+   * 
+   * @param paths array of path segments
+   * @return String representation of constructed Uri
+   */
+  public String getUri(String... paths) {
+    return UriBuilder.fromPath(domain).segment(paths).toString();
   }
 
-  // Adds loginUrl to existing argument map
+  /**
+   * Adds loginUrl to existing argument map
+   * 
+   * @param map with properties
+   * @return supplied and modified Map
+   */
   public Map<String, Object> addLoginUrl(Map<String, Object> map) {
-    map.put("loginUrl", getUri("profile").toString());
+    map.put("loginUrl", getUriBuilder("profile").toString());
     return map;
   }
-
-  // Creates new argument map and insert loginUrl there
+ 
+  /**
+   * Creates new argument map and inserts loginUrl
+   * 
+   * @return Map with loginUrl
+   */
   public Map<String, Object> createLoginUrl() {
     HashMap<String, Object> map = new HashMap<String, Object>();
-    map.put("loginUrl", getUri("profile").toString());
+    map.put("loginUrl", getUri("profile"));
     return map;
   }
 }
