@@ -49,6 +49,14 @@ public class MailClient {
     mailer = new Mailer(config.getServer(), config.getPort(), config.getUsername(), config.getPassword(), TransportStrategy.SMTP_TLS);
   }
 
+  /**
+   * Sends email message according to supplied parameters.
+   * 
+   * @param recipient recipient of the message
+   * @param subject subject of the message
+   * @param templateFile template file to be used
+   * @param args - used for substitutions in template file
+   */
   public void sendMessage(String recipient, String subject, String templateFile, Map<String, ? extends Object> args) {
     // Inject arguments into subject
     StrSubstitutor sub = new StrSubstitutor(args);
