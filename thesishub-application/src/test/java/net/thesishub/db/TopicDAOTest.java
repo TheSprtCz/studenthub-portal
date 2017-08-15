@@ -139,4 +139,13 @@ public class TopicDAOTest {
     assertEquals(3, topics.size());
   }
 
+  @Test
+  public void listAllHighlighted() {
+    List<Topic> topics = DATABASE.inTransaction(() -> {
+      return topicDAO.findHighlighted();
+    });
+    assertNotNull(topics);
+    assertEquals(3, topics.size());
+  }
+
 }

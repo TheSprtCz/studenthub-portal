@@ -69,6 +69,10 @@ public class TopicDAO extends AbstractDAO<Topic> {
     return list(namedQuery("Topic.findByCompany").setParameter("company", company));
   }
 
+  public List<Topic> findHighlighted() {
+    return list(namedQuery("Topic.findHighlighted"));
+  }
+
   public int countByCompany(Company company) {
     return ((Number) namedQuery("Topic.countByCompany").setParameter("company", company).getSingleResult()).intValue();
   }

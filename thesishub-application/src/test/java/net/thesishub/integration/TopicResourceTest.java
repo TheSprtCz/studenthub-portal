@@ -197,4 +197,20 @@ public class TopicResourceTest {
     assertEquals(projects.size(), 1);
     assertEquals((long) projects.get(0).getId(), 1);
   }
+
+  @Test(dependsOnGroups = "migrate")
+  public void fetchHighlighted() {
+    List<Topic> topics = client.target(String.format("http://localhost:%d/api/topics/highlighted", dropwizard.getLocalPort())).request()
+        .get(new GenericType<List<Topic>>(){}); 
+
+    assertNotNull(topics);
+    assertEquals(topics.size(), 3);
+
+    // Test if queryParam is working
+    topics = client.target(String.format("http://localhost:%d/api/topics/highlighted?count=2", dropwizard.getLocalPort())).request()
+        .get(new GenericType<List<Topic>>(){}); 
+
+    assertNotNull(topics);
+    assertEquals(topics.size(), 2);
+  }
 }
