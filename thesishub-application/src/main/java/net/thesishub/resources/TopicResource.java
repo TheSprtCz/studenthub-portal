@@ -16,6 +16,7 @@
  *******************************************************************************/
 package net.thesishub.resources;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -260,4 +261,15 @@ public class TopicResource {
     return PagingUtil.paging(topicDao.search(text), startParam.get(), sizeParam.get(), response);
   }
 
+  @GET
+  @Timed
+  @Path("/highlighted")
+  @UnitOfWork
+  public List<Topic> fetchHighlighted(@Min(1) @DefaultValue("5") @QueryParam("count") IntParam countParam) {
+    List<Topic> highlighted = topicDao.findHighlighted();
+    Collections.shuffle(highlighted);
+    Integer count = countParam.get();
+    return highlighted.subList(0, Math.min(highlighted.size(), count));
+
+  }
 }

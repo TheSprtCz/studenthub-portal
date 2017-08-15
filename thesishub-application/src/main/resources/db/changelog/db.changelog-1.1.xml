@@ -143,4 +143,11 @@
         <addForeignKeyConstraint baseColumnNames="country_tag" baseTableCatalogName="studenthub" baseTableName="companies" baseTableSchemaName="public" constraintName="fk89odenvpwnaixqs7f2nis584t" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="tag" referencedTableCatalogName="studenthub" referencedTableName="countries" referencedTableSchemaName="public"/>
         <addForeignKeyConstraint baseColumnNames="country_tag" baseTableCatalogName="studenthub" baseTableName="universities" baseTableSchemaName="public" constraintName="fkqhdduw4j0hyqsggcpb6fikh8v" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="tag" referencedTableCatalogName="studenthub" referencedTableName="countries" referencedTableSchemaName="public"/>
     </changeSet>
+    <changeSet author="phala" id="topicHighlight">
+        <addColumn catalogName="studenthub" schemaName="public" tableName="topics">
+            <column name="highlighted" type="BOOLEAN">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
 </databaseChangeLog>

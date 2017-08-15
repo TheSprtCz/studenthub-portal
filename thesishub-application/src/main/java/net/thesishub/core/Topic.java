@@ -42,6 +42,7 @@ import net.thesishub.validators.groups.CreateUpdateChecks;
   @NamedQuery(name = "Topic.findBySupervisor", query = "SELECT topic FROM Topic topic join topic.academicSupervisors supervisor WHERE supervisor = :supervisor"),
   @NamedQuery(name = "Topic.findByTag", query = "SELECT topic FROM Topic topic join topic.tags tag WHERE tag = :tag AND enabled = TRUE"),
   @NamedQuery(name = "Topic.findByCompany", query = "SELECT topic FROM Topic topic WHERE topic.creator.company = :company AND enabled = TRUE"),
+  @NamedQuery(name = "Topic.findHighlighted", query = "SELECT topic FROM Topic topic WHERE topic.highlighted = TRUE AND enabled = TRUE"),
   @NamedQuery(name = "Topic.countByCompany", query = "SELECT COUNT(topic) FROM Topic topic WHERE topic.creator.company = :company AND enabled = TRUE") })
 public class Topic extends GenericEntity<Long> {
 
@@ -52,6 +53,7 @@ public class Topic extends GenericEntity<Long> {
   private String description;
   private String secondaryDescription;
   private boolean enabled = true;
+  private boolean highlighted = false;
 
   @NotNull
   @ManyToOne(fetch = FetchType.EAGER)
@@ -169,6 +171,14 @@ public class Topic extends GenericEntity<Long> {
   public void setEnabled(boolean enabled) {
     this.enabled = enabled;
   } 
+
+  public boolean isHighlighted() {
+    return highlighted;
+  }
+
+  public void setHighlighted(boolean highlighted) {
+    this.highlighted = highlighted;
+  }
 
   @Override
   public int hashCode() {
