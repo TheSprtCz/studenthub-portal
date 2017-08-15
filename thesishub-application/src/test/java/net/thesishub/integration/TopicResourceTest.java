@@ -213,4 +213,21 @@ public class TopicResourceTest {
     assertNotNull(topics);
     assertEquals(topics.size(), 2);
   }
+
+  @Test(dependsOnGroups = "migrate")
+  public void fetchRecent() {
+    List<Topic> topics = client.target(String.format("http://localhost:%d/api/topics/recent", dropwizard.getLocalPort())).request()
+        .get(new GenericType<List<Topic>>(){}); 
+
+    assertNotNull(topics);
+    assertEquals(topics.size(), 4);
+
+    // Test if queryParam is working
+    topics = client.target(String.format("http://localhost:%d/api/topics/recent?count=2", dropwizard.getLocalPort())).request()
+        .get(new GenericType<List<Topic>>(){}); 
+
+    assertNotNull(topics);
+    assertEquals(topics.size(), 2);
+  }
+
 }

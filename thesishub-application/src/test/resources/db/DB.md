@@ -126,13 +126,13 @@ Codes were manually assigned to ease testing
 
 ## Topics
 
-| id  | title               | secondaryTitle  | enabled | highlighted | shortAbstract                       | description                | secondaryDescription    | creator | supervisors      | degrees                  | tags                      |
-| --- | ------------------- | --------------- | ------- | ----------- | ----------------------------------- | -------------------------- | ----------------------- | ------- | ---------------- | ------------------------ | ------------------------- |
-| 1   | Melon cutter        | Kráječ melounů  | true    | true        | Create simple laser melon cutter    | Laser melon cutter         | Laserový kráječ melounů | 9       | [3,4,6]          | [PhD,MASTER]             | [Laser, Assembler, C]     |
-| 2   | Dropwizard          | --------------- | true    | true        | Simple app using Dropwizard stack   | REST endpoints             | RESTové endpointy       | 11      | [7,5,2]          | [BACHELOR, HIGH_SCHOOL]  | [Java, REST, Web]         |
-| 3   | Eclipse plugin      | --------------- | true    | false       | Create custom eclipse plugin        | Eclipse                    | Eclipse                 | 10      | [5,7,4]          | [MASTER, BACHELOR]       | [Java, C, Maven]          |
-| 4   | React UI            | --------------- | true    | true        | Create nice and functional UI       | JavaScript & React         | ----------------------- | 9       | [6,3,2]          | [HIGH_SCHOOL,PhD]        | [JavaScript, Web]         |
-| 5   | Thesis management   | Správa diplomek | false   | false       | Create new TMS                      | Web                        | ----------------------- | 10      | [7]              | [PhD]                    | [Web]                     |
+| id  | title               | secondaryTitle  | enabled | highlighted | created    | shortAbstract                       | description                | secondaryDescription    | creator | supervisors      | degrees                  | tags                      |
+| --- | ------------------- | --------------- | ------- | ----------- | ---------- | ----------------------------------- | -------------------------- | ----------------------- | ------- | ---------------- | ------------------------ | ------------------------- |
+| 1   | Melon cutter        | Kráječ melounů  | true    | true        | 12.9.2016  | Create simple laser melon cutter    | Laser melon cutter         | Laserový kráječ melounů | 9       | [3,4,6]          | [PhD,MASTER]             | [Laser, Assembler, C]     |
+| 2   | Dropwizard          | --------------- | true    | true        | 1.10.2016  | Simple app using Dropwizard stack   | REST endpoints             | RESTové endpointy       | 11      | [7,5,2]          | [BACHELOR, HIGH_SCHOOL]  | [Java, REST, Web]         |
+| 3   | Eclipse plugin      | --------------- | true    | false       | 12.9.2016  | Create custom eclipse plugin        | Eclipse                    | Eclipse                 | 10      | [5,7,4]          | [MASTER, BACHELOR]       | [Java, C, Maven]          |
+| 4   | React UI            | --------------- | true    | true        | 7.2.2017   | Create nice and functional UI       | JavaScript & React         | ----------------------- | 9       | [6,3,2]          | [HIGH_SCHOOL,PhD]        | [JavaScript, Web]         |
+| 5   | Thesis management   | Správa diplomek | false   | false       | 18.6.2017  | Create new TMS                      | Web                        | ----------------------- | 10      | [7]              | [PhD]                    | [Web]                     |
                 
 ## Projects
 
