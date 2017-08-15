@@ -49,10 +49,10 @@ All users have password "test".
 
 ## Topics
 
-| id  | title               | secondaryTitle | enabled | highlighted | shortAbstract                       | description                | secondaryDescription     | creator | supervisors      | degrees                  | tags                      |
-| --- | ------------------- | -------------- | ------- | ----------- |  ----------------------------------- | -------------------------- | -----------------------  | ------- | ---------------- | ------------------------ | ------------------------- |
-| 1   | Dropwizard          | -------------- | true    | false       | Simple app using Dropwizard stack   | REST endpoints             | RESTové endpointy        | 3       | [2]              | [BACHELOR, MASTER]       | [Java, REST, Web]         |
-| 2   | React UI            | Reactové UI    | false   | true        | Create nice and functional UI       | JavaScript & React         | ------------------------ | 3       | [2]              | [HIGH_SCHOOL,PhD]        | [JavaScript, Web]         |
+| id  | title               | secondaryTitle | enabled | highlighted | created    | shortAbstract                       | description                | secondaryDescription     | creator | supervisors      | degrees                  | tags                      |
+| --- | ------------------- | -------------- | ------- | ----------- | ---------- | ----------------------------------- | -------------------------- | -----------------------  | ------- | ---------------- | ------------------------ | ------------------------- |
+| 1   | Dropwizard          | -------------- | true    | false       | 1.10.2016  | Simple app using Dropwizard stack   | REST endpoints             | RESTové endpointy        | 3       | [2]              | [BACHELOR, MASTER]       | [Java, REST, Web]         |
+| 2   | React UI            | Reactové UI    | false   | true        | 1.12.2016  | Create nice and functional UI       | JavaScript & React         | ------------------------ | 3       | [2]              | [HIGH_SCHOOL,PhD]        | [JavaScript, Web]         |
 
 ## Projects
 

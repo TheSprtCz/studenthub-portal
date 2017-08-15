@@ -16,10 +16,12 @@
  *******************************************************************************/
 package net.thesishub.core;
 
+import java.util.Date;
 import java.util.Objects;
 import java.util.Set;
 
 import javax.annotation.Nullable;
+import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -30,7 +32,11 @@ import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
+import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.validator.constraints.NotEmpty;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonProperty.Access;
 
 import net.thesishub.validators.annotations.Role;
 import net.thesishub.validators.groups.CreateUpdateChecks;
@@ -38,6 +44,7 @@ import net.thesishub.validators.groups.CreateUpdateChecks;
 @Entity
 @Table(name = "Topics")
 @NamedQueries({ @NamedQuery(name = "Topic.findAll", query = "SELECT topic FROM Topic topic"),
+  @NamedQuery(name = "Topic.findAllOrdered", query = "SELECT topic FROM Topic topic WHERE enabled = TRUE ORDER BY topic.dateCreated asc"),
   @NamedQuery(name = "Topic.findByCreator", query = "SELECT topic FROM Topic topic WHERE topic.creator = :creator"),
   @NamedQuery(name = "Topic.findBySupervisor", query = "SELECT topic FROM Topic topic join topic.academicSupervisors supervisor WHERE supervisor = :supervisor"),
   @NamedQuery(name = "Topic.findByTag", query = "SELECT topic FROM Topic topic join topic.tags tag WHERE tag = :tag AND enabled = TRUE"),
@@ -71,6 +78,11 @@ public class Topic extends GenericEntity<Long> {
   @ManyToMany
   @NotEmpty
   private Set<TopicDegree> degrees;
+
+  @CreationTimestamp
+  @Column(name = "dateCreated", updatable = false)
+  @JsonProperty(access = Access.READ_ONLY)
+  private Date dateCreated;
 
   public Topic() {
   }
@@ -162,6 +174,14 @@ public class Topic extends GenericEntity<Long> {
 
   public void setDegrees(Set<TopicDegree> degrees) {
     this.degrees = degrees;
+  }
+
+  public Date getDateCreated() {
+    return dateCreated;
+  }
+
+  public void setDateCreated(Date created) {
+    this.dateCreated = created;
   }
 
   public boolean isEnabled() {

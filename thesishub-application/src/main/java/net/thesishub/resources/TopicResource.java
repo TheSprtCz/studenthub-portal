@@ -270,6 +270,13 @@ public class TopicResource {
     Collections.shuffle(highlighted);
     Integer count = countParam.get();
     return highlighted.subList(0, Math.min(highlighted.size(), count));
+  }
 
+  @GET
+  @Timed
+  @Path("/recent")
+  @UnitOfWork
+  public List<Topic> fetchRecent(@Min(1) @DefaultValue("5") @QueryParam("count") IntParam countParam) {
+    return topicDao.findAllOrdered(countParam.get());
   }
 }

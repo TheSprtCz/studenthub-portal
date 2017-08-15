@@ -215,6 +215,7 @@
             <column name="shortabstract" value="Simple app using Dropwizard stack"/>
             <column name="title" value="Dropwizard"/>
             <column name="creator_id" valueNumeric="3"/>
+            <column name="datecreated" valueDate="2016-10-01 00:00:00.0"/>
         </insert>
         <insert catalogName="studenthub" schemaName="public" tableName="topics">
             <column name="id" valueNumeric="2"/>
@@ -225,6 +226,7 @@
             <column name="title" value="React UI"/>
             <column name="secondarytitle" value="Reactové UI"/>
             <column name="creator_id" valueNumeric="3"/>
+            <column name="datecreated" valueDate="2016-12-01 00:00:00.0"/>
         </insert>
         <sql>SELECT setval('topics_id_seq', 2)</sql>
     </changeSet>

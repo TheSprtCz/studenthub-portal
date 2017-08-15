@@ -747,6 +747,7 @@
             <column name="SHORTABSTRACT" value="Simple app using Dropwizard stack"/>
             <column name="TITLE" value="Dropwizard"/>
             <column name="CREATOR_ID" valueNumeric="11"/>
+            <column name="DATECREATED" valueDate="2016-10-01 00:00:00.0"/>
         </insert>
         <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="TOPICS">
             <column name="ID" valueNumeric="3"/>
@@ -757,6 +758,7 @@
             <column name="SHORTABSTRACT" value="Create custom eclipse plugin"/>
             <column name="TITLE" value="Eclipse plugin"/>
             <column name="CREATOR_ID" valueNumeric="10"/>
+            <column name="DATECREATED" valueDate="2016-09-12 00:00:00.0"/>
         </insert>
         <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="TOPICS">
             <column name="ID" valueNumeric="4"/>
@@ -766,6 +768,7 @@
             <column name="SHORTABSTRACT" value="Create nice and functional UI"/>
             <column name="TITLE" value="React UI"/>
             <column name="CREATOR_ID" valueNumeric="9"/>
+            <column name="DATECREATED" valueDate="2017-02-07 00:00:00.0"/>            
         </insert>
         <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="TOPICS">
             <column name="ID" valueNumeric="1"/>
@@ -777,6 +780,7 @@
             <column name="TITLE" value="Melon cutter"/>
             <column name="SECONDARYTITLE" value="Kráječ melounů"/>
             <column name="CREATOR_ID" valueNumeric="9"/>
+            <column name="DATECREATED" valueDate="2016-12-19 00:00:00.0"/>
         </insert>
         <insert catalogName="STUDENTHUB" schemaName="PUBLIC" tableName="TOPICS">
             <column name="ID" valueNumeric="5"/>
@@ -787,6 +791,7 @@
             <column name="TITLE" value="Thesis management"/>
             <column name="SECONDARYTITLE" value="Správa diplomek"/>
             <column name="CREATOR_ID" valueNumeric="10"/>
+            <column name="DATECREATED" valueDate="2016-06-18 00:00:00.0"/>
         </insert>
     </changeSet>
     <changeSet author="phala (generated)" id="1489653927422-20" objectQuotingStrategy="QUOTE_ALL_OBJECTS">

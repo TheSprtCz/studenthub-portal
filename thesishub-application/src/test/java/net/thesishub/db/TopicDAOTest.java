@@ -2,6 +2,7 @@ package net.thesishub.db;
 
 import static org.junit.Assert.*;
 
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import org.junit.BeforeClass;
@@ -74,6 +75,22 @@ public class TopicDAOTest {
     });
     assertNotNull(topics);
     assertEquals(COUNT, topics.size());
+  }
+
+  @Test
+  public void listAllOrdered() {
+    List<Topic> topics = DATABASE.inTransaction(() -> {
+      return topicDAO.findAllOrdered(3);
+    });
+    assertNotNull(topics);
+    assertEquals(3, topics.size());
+
+    Date previousDate = topics.get(0).getDateCreated();
+    for (Topic topic : topics) {
+      Date currentDate = topic.getDateCreated();
+      assertTrue(currentDate.equals(previousDate) || currentDate.after(previousDate));
+      previousDate = currentDate;
+    }
   }
 
   @Test
