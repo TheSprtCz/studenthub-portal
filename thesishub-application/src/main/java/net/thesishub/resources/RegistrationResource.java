@@ -316,7 +316,7 @@ public class RegistrationResource {
     Map<String, String> args = new HashMap<String, String>();
 
     // Build activationURL
-    UriBuilder builder = urlUtil.getUriBuilder("account", "activate");
+    UriBuilder builder = urlUtil.getUriBuilder("activate");
     builder.queryParam("secret", secretKey);
     builder.queryParam("id", user.getId());
 
@@ -330,7 +330,7 @@ public class RegistrationResource {
     Map<String, String> args = new HashMap<String, String>();
     
     // Build activationURL
-    UriBuilder builder = urlUtil.getUriBuilder("account", "confirmReset");
+    UriBuilder builder = urlUtil.getUriBuilder("reset-password");
     builder.queryParam("secret", secretKey);
     builder.queryParam("id", user.getId());
     
@@ -344,7 +344,7 @@ public class RegistrationResource {
     Map<String, String> args = new HashMap<String, String>();
 
     // Build activationURL
-    UriBuilder builder = urlUtil.getUriBuilder("account", "activate");
+    UriBuilder builder = urlUtil.getUriBuilder("activate");
     builder.queryParam("secret", secretKey);
     builder.queryParam("id", user.getId());
 
