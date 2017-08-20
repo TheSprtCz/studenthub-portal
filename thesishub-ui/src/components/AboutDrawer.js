@@ -29,13 +29,13 @@ class AboutDrawer extends React.Component {
             <Button label={ _t.translate('View documentation') } icon="assignment" target="_blank" href="https://student-hub.gitbooks.io/user-guide/" />
           </p>
           <p>
-            <Button label={ _t.translate('Report a bug') } icon="bug_report" target="_blank" href="https://github.com/StudentHubCZ/studenthub-portal/issues/new" />
+            <Button label={ _t.translate('Report a bug') } icon="bug_report" target="_blank" href="https://github.com/StudentHubCZ/thesishub/issues/new" />
           </p>
           <p>
             <Button label={ localStorage.getItem("sh-locale") === 'en' ? 'Česky' : 'English' } icon="language" onClick={() => this.handleLangSwitch()} />
           </p>
           <hr className="m-y-2" />
-          <p>Student Hub &copy; 2017</p>
+          <p>{ Util.PORTAL_NAME } &copy; 2017</p>
         </div>
       </Drawer>
     );

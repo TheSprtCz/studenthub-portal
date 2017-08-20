@@ -41,7 +41,7 @@ database:
 
   # the SQL query to run when validating a connection's liveness
   validationQuery: "SELECT 1"
-  
+
   # validate schema
   properties:
     hibernate.hbm2ddl.auto: validate
@@ -55,11 +55,11 @@ jwtSecret: ${SH_JWT_SECRET:-superSecret12345}
 enableBasicAuth: ${SH_BASIC_AUTH:-false}
 
 # domain
-domain: ${SH_DOMAIN:-http://localhost:8080/api}
+domain: ${SH_DOMAIN:-http://localhost:8080}
 
 # smtp config
 smtp:
-  server: ${SMTP_SERVER:-smtp.emample.com}
+  server: ${SMTP_SERVER:-smtp.example.com}
   port: ${SMTP_PORT:-587}
   username: ${SMTP_USERNAME}
   password: ${SMTP_PASSWORD}

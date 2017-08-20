@@ -19,11 +19,11 @@ Most changes to Student Hub Portal configuration can be done just by using envir
 
 ### General
 
-| ENV VAR          | PURPOSE                               | DEFAULT VALUE             |
-| ---------------- |-------------------------------------- | ------------------------- |
-| SH_BASIC_AUTH    | Enables/disables basic auth           | false                     |
-| SH_JWT_SECRET    | Secret for JWT token generation       | superSecret12345          |
-| SH_DOMAIN        | Domain on which Thesis Hub is running | http://localhost:8080/api |
+| ENV VAR          | PURPOSE                               | DEFAULT VALUE         |
+| ---------------- |-------------------------------------- | --------------------- |
+| SH_BASIC_AUTH    | Enables/disables basic auth           | false                 |
+| SH_JWT_SECRET    | Secret for JWT token generation       | superSecret12345      |
+| SH_DOMAIN        | Domain on which Thesis Hub is running | http://localhost:8080 |
 
 ### Database
 
@@ -41,7 +41,7 @@ Student Hub Portal uses SMTP protocol for sending email notifications. You can c
 | --------------- |----------------| --------------------|
 | SMTP_FROM_EMAIL | Sender email   | admin@example.com   |
 | SMTP_FROM_NAME  | Sender name    | admin               |
-| SMTP_SERVER     | Server address | smtp.emample.com    |
+| SMTP_SERVER     | Server address | smtp.example.com    |
 | SMTP_PORT       | Server port    | 587                 |
 | SMTP_USERNAME   | Username       | -                   |
 | SMTP_PASSWORD   | Password       | -                   |
