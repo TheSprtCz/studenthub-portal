@@ -65,7 +65,7 @@ class ApplicationTable extends Component {
 
   generateRedirect = () => {
     if (this.state.redirect !== -1) {
-      return(<Redirect to={"/applications/"+this.state.redirect} />);
+      return(<Redirect to={"/application?id="+this.state.redirect} />);
     } else {
       return;
     }
@@ -109,8 +109,8 @@ class ApplicationTable extends Component {
               <TableCell>{item.faculty.name}</TableCell>
               <TableCell>{Util.isEmpty(item.techLeader) ? "" : item.techLeader.email}</TableCell>
               <TableCell>{Util.isEmpty(item.academicSupervisor) ? "" : item.academicSupervisor.email}</TableCell>
-              <TableCell>{Util.isEmpty(item.thesisStarted) ? "No date defined" :
-                new Date(item.thesisStarted).toString()}</TableCell>
+              <TableCell>{Util.isEmpty(item.thesisStart) ? "No date defined" :
+                new Date(item.thesisStart).toString()}</TableCell>
               <TableCell>{Util.isEmpty(item.thesisFinish) ? "No date defined" :
                 new Date(item.thesisFinish).toString()}</TableCell>
               <TableCell>{item.grade}</TableCell>

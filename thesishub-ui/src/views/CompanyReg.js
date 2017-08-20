@@ -56,7 +56,7 @@ class CompanyRegForm extends Component {
             return response.json();
         } else throw new Error('There was a problem with network connection.');
       }).then(function(json) {
-        fetch('/api/users/signUp', {
+        fetch('/api/account/invite', {
             method: 'post',
             credentials: 'same-origin',
             headers: { "Content-Type" : "application/json" },

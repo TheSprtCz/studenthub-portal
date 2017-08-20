@@ -46,11 +46,11 @@ class ActivationForm extends React.Component {
   }
 }
 
-const ActivationView = ({ match }) => (
+const Activation = ({ location }) => (
   <div className='text-center col-md-offset-3 col-md-6'>
     <h1>{ _t.translate('User activation') }</h1>
-    <ActivationForm id={match.params.id} secret={match.params.secret} />
+    <ActivationForm id={ new URLSearchParams(location.search).get('id') } secret={ new URLSearchParams(location.search).get('secret') } />
   </div>
 );
 
-export default ActivationView
+export default Activation

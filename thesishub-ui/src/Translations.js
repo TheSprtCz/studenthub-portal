@@ -127,11 +127,17 @@ const myLocalize = new Localize({
     "Short abstract": {
       "cs": "Krátky abstrakt"
     },
+    "Topic Degrees": {
+      "cs": "Stupně"
+    },
     "Degrees": {
       "cs": "Stupně"
     },
     "Degree": {
       "cs": "Stupeň"
+    },
+    "New Degree": {
+      "cs": "Nový stupeň"
     },
     "User profile": {
       "cs": "Profil uživatele"
@@ -462,6 +468,9 @@ const myLocalize = new Localize({
     },
     'University ambassador': {
       'cs': 'Ambasador univerzity'
+    },
+    'Interests': {
+      'cs': 'Zájmy'
     }
 });
 

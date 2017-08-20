@@ -60,7 +60,7 @@ const NavBarLinks = withRouter(() => (
   <div id="topNavBar">
     <Link to="/"><Button label={ _t.translate("Home") } flat /></Link>
     { Auth.hasRole(Util.userRoles.admin) ? <Link to="/users"><Button label={ _t.translate("Users") } flat /></Link> : '' }
-    { Auth.hasRole(Util.userRoles.admin) ? <Link to="/unis"><Button label={ _t.translate("Universities") } flat /></Link> : '' }
+    { Auth.hasRole(Util.userRoles.admin) ? <Link to="/universities"><Button label={ _t.translate("Universities") } flat /></Link> : '' }
     { Auth.hasRole(Util.userRoles.admin) ? <Link to="/companies"><Button label={ _t.translate("Companies") } flat /></Link> : '' }
     { Auth.hasRole(Util.userRoles.admin) ? <Link to="/company-plans"><Button label={ _t.translate("Company Plans") } flat /></Link> : '' }
     { (Auth.hasRole(Util.userRoles.admin) || Auth.hasRole(Util.userRoles.proLeader)) ? <Link to="/projects"><Button label={ _t.translate("Projects") } flat /></Link> : '' }
@@ -122,24 +122,24 @@ class App extends Component {
               <Route exact path="/" component={TopicSearch}/>
               <Route exact path="/signin" component={SignIn}/>
               <Route exact path="/signup" component={SignUp}/>
-              <Route exact path="/forgotPwd" component={ForgotPassword}/>
-              <Route exact path="/activation/:id/:secret" component={Activation}/>
-              <Route exact path="/confirmReset/:id/:secret" component={ResetConfirmation}/>
-              <Route exact path="/topics/:id" component={Topic}/>
+              <Route exact path="/forgot-password" component={ForgotPassword}/>
+              <Route exact path="/activate" component={Activation}/>
+              <Route exact path="/reset-password" component={ResetConfirmation}/>
+              <Route exact path="/topic" component={Topic}/>
               <Route exact path="/degrees" component={TopicDegrees}/>
               <PrivateRoute exact path="/users" component={Users}/>
-              <PrivateRoute exact path="/unis" component={Universities}/>
+              <PrivateRoute exact path="/universities" component={Universities}/>
               <PrivateRoute exact path="/companies" component={Companies}/>
               <PrivateRoute exact path="/company-plans" component={CompanyPlans}/>
               <PrivateRoute exact path="/my-apps" component={MyApplications}/>
               <PrivateRoute exact path="/my-topics" component={MyTopics}/>
               <PrivateRoute exact path="/projects" component={Projects}/>
-              <PrivateRoute exact path="/projects/:id" component={Project}/>
+              <PrivateRoute exact path="/project" component={Project}/>
               <PrivateRoute exact path="/countries" component={Countries}/>
               <PrivateRoute exact path="/profile" component={Profile}/>
-              <PrivateRoute exact path="/updatePwd" component={UpdatePassword}/>
-              <PrivateRoute path="/applications/:id" component={Application}/>
-              <Route exact path="/company-reg" component={CompanyReg}/>
+              <PrivateRoute exact path="/update-password" component={UpdatePassword}/>
+              <PrivateRoute path="/application" component={Application}/>
+              <PrivateRoute exact path="/company-reg" component={CompanyReg}/>
               <Route component={NoMatch}/>
             </Switch>
           </div>

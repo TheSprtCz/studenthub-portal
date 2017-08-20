@@ -425,10 +425,10 @@ class ProjectDetails extends Component {
   }
 }
 
-const Project = ({ match }) => (
+const Project = ({ location }) => (
   <div>
     <h1>{ _t.translate('Project details') }</h1>
-    <ProjectDetails id={match.params.id} />
+    <ProjectDetails id={ new URLSearchParams(location.search).get('id') } />
   </div>
 );
 

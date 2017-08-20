@@ -2,7 +2,7 @@ import React from 'react';
 import ReactMarkdown from 'react-markdown';
 import Chip from 'react-toolbox/lib/chip/Chip.js';
 import Button from 'react-toolbox/lib/button/Button.js';
-import { TwitterButton, FacebookLikeButton, GoogleButton } from 'react-social-buttons';
+import { TwitterButton, FacebookLikeButton } from 'react-social-buttons';
 
 import Util from '../Util.js';
 import _t from '../Translations.js';
@@ -90,16 +90,15 @@ class TopicDetails extends React.Component {
         <Button className="pull-right" label={ _t.translate('Save as PDF') } onClick={() => this.exportToPDF()} icon="picture_as_pdf" />
         <FacebookLikeButton url={window.location} />
         <TwitterButton url={window.location} text={this.state.topic.title + ": " + this.state.topic.shortAbstract + " #Study"}/>
-        <GoogleButton url={window.location} />
       </div>
     )
   }
 }
 
-const Topic = ({ match }) => (
+const Topic = ({ location }) => (
   <div>
     <h1>{ _t.translate('Topic overview') }</h1>
-    <TopicDetails id={match.params.id} />
+    <TopicDetails id={ new URLSearchParams(location.search).get('id') } />
   </div>
 );
 

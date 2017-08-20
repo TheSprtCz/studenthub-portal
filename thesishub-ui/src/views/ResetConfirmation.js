@@ -36,10 +36,10 @@ class ResetConfirmation extends React.Component {
   }
 }
 
-const ResetConfirmationView = ({ match }) => (
+const ResetConfirmationView = ({ location }) => (
   <div className='text-center col-md-offset-3 col-md-6'>
     <h1>{ _t.translate('Password reset confirmation') }</h1>
-    <ResetConfirmation id={match.params.id} secret={match.params.secret} />
+    <ResetConfirmation id={ new URLSearchParams(location.search).get('id') } secret={ new URLSearchParams(location.search).get('secret') } />
   </div>
 );
 

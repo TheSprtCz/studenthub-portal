@@ -11,6 +11,7 @@ import ReactMarkdown from 'react-markdown';
 import AddButton from '../components/AddButton.js';
 import EditButton from '../components/EditButton.js';
 import DeleteButton from '../components/DeleteButton.js';
+import DegreeSelect from '../components/DegreeSelect.js';
 import TaskDialog from '../components/TaskDialog.js';
 import TopicDetailsDialog from '../components/TopicDetailsDialog.js';
 
@@ -226,72 +227,6 @@ class SupervisorSelect extends React.Component {
   }
 }
 
-class DegreeSelect extends React.Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      value: (Util.isEmpty(this.props.currentDegree)) ? 0: this.props.currentDegree.name,
-      labels: []
-    };
-
-    this.getDegreeLabels();
-  }
-
-  /**
-   * Sets default input values on props change.
-   */
-  componentWillReceiveProps(nextProps) {
-    if (this.props === nextProps) return;
-
-    this.setState({
-      value: (Util.isEmpty(nextProps.currentDegree)) ? 0 : nextProps.currentDegree.name
-    });
-  }
-
-  handleChange = (value) => {
-    this.setState({value: value});
-    this.props.changeHandler({name: value});
-  };
-
-  getDegreeLabels() {
-    fetch('/api/degrees', {
-      credentials: 'same-origin',
-      method: 'get'
-    }).then(function(response) {
-      if (response.ok) {
-        return response.json();
-      } else {
-        throw new Error('There was a problem with network connection.');
-      }
-    }).then(function(json) {
-      var newData = [];
-
-      for(let i in json) {
-        newData.push({
-          value: json[i].name,
-          label: json[i].description
-        });
-      }
-      this.setState({
-        labels: newData
-      });
-    }.bind(this));
-  }
-
-  render () {
-    return (
-      <Dropdown
-        auto
-        label={ _t.translate('Degree') }
-        onChange={this.handleChange}
-        source={this.state.labels}
-        value={this.state.value}
-        icon='account_balance' />
-    );
-  }
-}
-
 class ApplicationForm extends Component {
   state = {
     techLeader: {},
@@ -301,7 +236,7 @@ class ApplicationForm extends Component {
     grade: "",
     degree: {},
     thesisFinish: "",
-    thesisStarted: "",
+    thesisStart: "",
     link: "",
     topic: {},
     faculty: "",
@@ -335,7 +270,7 @@ class ApplicationForm extends Component {
         grade: json.grade,
         degree: json.degree,
         thesisFinish: new Date(json.thesisFinish),
-        thesisStarted: new Date(json.thesisStarted),
+        thesisStart: new Date(json.thesisStart),
         topic: json.topic,
         faculty: json.faculty,
         link: json.link
@@ -356,7 +291,7 @@ class ApplicationForm extends Component {
         grade: this.state.grade,
         degree: this.state.degree,
         thesisFinish: this.state.thesisFinish,
-        thesisStarted: this.state.thesisStarted,
+        thesisStart: this.state.thesisStart,
         topic: this.state.topic,
         faculty: this.state.faculty,
         link: this.state.link
@@ -401,8 +336,8 @@ class ApplicationForm extends Component {
           <DatePicker
             label={ _t.translate('Start') }
             icon='date_range'
-            onChange={this.handleChange.bind(this, 'thesisStarted')}
-            value={(Util.isEmpty(this.state.thesisStarted)) ? new Date() : this.state.thesisStarted} />
+            onChange={this.handleChange.bind(this, 'thesisStart')}
+            value={(Util.isEmpty(this.state.thesisStart)) ? new Date() : this.state.thesisStart} />
           <DatePicker
             label={ _t.translate('Finish') }
             icon='date_range'
@@ -625,10 +560,10 @@ class TopicApplicationDetails extends Component {
   }
 }
 
-const Application = ({ match }) => (
+const Application = ({ location }) => (
   <div>
     <h1>{ _t.translate('Application details') }</h1>
-    <TopicApplicationDetails id={match.params.id} />
+    <TopicApplicationDetails id={ new URLSearchParams(location.search).get('id') } />
   </div>
 );
 

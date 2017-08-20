@@ -9,6 +9,7 @@ import CardTitle from 'react-toolbox/lib/card/CardTitle.js';
 import CardText from 'react-toolbox/lib/card/CardText.js';
 import CardActions from 'react-toolbox/lib/card/CardActions.js';
 
+import DegreeSelect from '../components/DegreeSelect.js';
 import TopicDetailsDialog from '../components/TopicDetailsDialog.js';
 import Pager from '../components/Pager.js';
 
@@ -18,22 +19,33 @@ import Util from '../Util.js';
 import _t from '../Translations.js';
 
 class TopicCard extends React.Component {
-  state = { confirmActive: false, confirmText: "",
-    confirmActions: [], redirect: -1 };
 
-  handleConfirmToggle = (apply) => {
-    if (apply === -1) {
-      this.setState({confirmActive: !this.state.confirmActive});
-    } else {
-      this.setState({
-        confirmActive: !this.state.confirmActive,
-        confirmText: (apply === 1) ? _t.translate("Are you sure you want to apply to this topic?") : _t.translate("Are you sure you want to supervise this topic?"),
-        confirmActions: [
-          (apply === 1) ? { label: _t.translate("Apply"), onClick: this.handleApply } : { label: _t.translate("Supervise"), onClick: this.handleSupervise },
-          { label: _t.translate("Cancel"), onClick: () => this.handleConfirmToggle(-1) }
-        ]
-      });
-    }
+  state = {
+    redirect: -1,
+    applicationDegree: {},
+    superviseDialogActive: false,
+    superviseDialogActions: [
+      { label: _t.translate("Supervise"), onClick: () => this.handleSupervise() },
+      { label: _t.translate("Cancel"), onClick: () => this.toggleSuperviseDialog() }
+    ],
+    applicationDialogActive: false,
+    applicationDialogActions: [
+      { label: _t.translate("Apply"), onClick: () => this.handleApply() },
+      { label: _t.translate("Cancel"), onClick: () => this.toggleApplicationDialog() }
+    ]
+  };
+
+  changeDegree = (degree) => {
+    this.setState({ applicationDegree: degree });
+    console.log('Changing degree to: ' + degree);
+  }
+
+  toggleSuperviseDialog = () => {
+    this.setState({ superviseDialogActive: !this.state.superviseDialogActive });
+  }
+
+  toggleApplicationDialog = () => {
+    this.setState({ applicationDialogActive: !this.state.applicationDialogActive });
   }
 
   handleSupervise = () => {
@@ -47,11 +59,9 @@ class TopicCard extends React.Component {
     }).then(function(response) {
       if(response.ok) {
         Util.notify("info", "", "Your are now supervising topic ID " + this.props.id);
-        this.setState({
-          confirmActive: false
-        });
+        this.setState({ superviseDialogActive: false });
       } else {
-        throw new Error('There was a problem with network connection.');
+        Util.notify('error', response.statusText, 'Oops! Something went wrong. Please contact administrator.');
       }
     }.bind(this));
   }
@@ -65,15 +75,13 @@ class TopicCard extends React.Component {
       if (response.ok) {
         return response.json();
       } else {
-        throw new Error('There was a problem with network connection.');
+        Util.notify('error', response.statusText, 'Oops! Something went wrong. Please contact administrator.');
       }
     })
     .then(function(json) {
       if (Util.isEmpty(json.faculty)) {
         Util.notify("error", "There was a problem with network connection.", "Your request hasn't been processed.");
-        this.setState({
-          confirmActive: false
-        });
+        this.setState({ applicationDialogActive: false });
         return;
       }
       fetch('/api/applications', {
@@ -87,8 +95,7 @@ class TopicCard extends React.Component {
           faculty: { id: json.faculty.id },
           techLeader: { id: this.props.topic.creator.id },
           student: {id: json.id},
-          thesisStarted: new Date(),
-          thesisFinish: new Date()
+          degree: this.state.applicationDegree
         })
       }).then(function(response) {
         if(response.ok) {
@@ -97,11 +104,8 @@ class TopicCard extends React.Component {
           throw new Error('There was a problem with network connection.');
         }
       }).then(function(json2) {
-        Util.notify("success", "", "Your are now applied to topic ID "+this.props.id);
-        this.setState({
-          confirmActive: false
-        });
-
+        Util.notify("success", "", "Your are now applied to topic ID " + this.props.id);
+        this.setState({ applicationDialogActive: false });
         this.props.redirectHandler(json2.id);
       }.bind(this));
     }.bind(this));
@@ -126,17 +130,32 @@ class TopicCard extends React.Component {
         <CardActions>
            <TopicDetailsDialog topic={this.props.topic} label={ _t.translate("Details") } />
           { (Auth.hasRole(Util.userRoles.student)) ? <Button label={ _t.translate("Apply") } primary icon='send'
-            disabled={this.props.isApplied} onClick={() => this.handleConfirmToggle(1)} /> : '' }
+            disabled={this.props.isApplied} onClick={ this.toggleApplicationDialog } /> : '' }
           { (Auth.hasRole(Util.userRoles.superviser)) ? <Button label={ _t.translate("Supervise") } primary icon='supervisor_account'
-            disabled={this.isSupervising()} onClick={() => this.handleConfirmToggle(0)} /> : '' }
+            disabled={this.isSupervising()} onClick={ this.toggleSuperviseDialog } /> : '' }
         </CardActions>
+        {/* Dialog for supervising for Topic */}
         <Dialog
-          actions={this.state.confirmActions}
-          active={this.state.confirmActive}
-          onEscKeyDown={() => this.handleConfirmToggle(-1)}
-          onOverlayClick={() => this.handleConfirmToggle(-1)}
+          actions={ this.state.superviseDialogActions }
+          active={ this.state.superviseDialogActive }
+          onEscKeyDown={ this.toggleSuperviseDialog }
+          onOverlayClick={ this.toggleSuperviseDialog }
           title={ _t.translate("Please confirm your action") } >
-          <p>{this.state.confirmText}</p>
+          <div>
+            <p>{ _t.translate("Are you sure you want to supervise this topic?") }</p>
+          </div>
+        </Dialog>
+        {/* Dialog for applying Topic */}
+        <Dialog
+          actions={ this.state.applicationDialogActions }
+          active={ this.state.applicationDialogActive }
+          onEscKeyDown={ this.toggleApplicationDialog }
+          onOverlayClick={ this.toggleApplicationDialog }
+          title={ _t.translate("Please confirm your action") } >
+          <div>
+            <p>{ _t.translate("Are you sure you want to apply to this topic?") }</p>
+            <DegreeSelect currentDegree={this.state.applicationDegree} changeHandler={(degree) => this.changeDegree(degree)} />
+          </div>
         </Dialog>
       </Card>
     )
@@ -148,7 +167,7 @@ class TopicCards extends React.Component {
 
   generateRedirect = () => {
     if (this.state.redirect !== -1) {
-      return(<Redirect to={"/applications/"+this.state.redirect} />);
+      return(<Redirect to={"/application?id="+this.state.redirect} />);
     } else {
       return;
     }
@@ -201,9 +220,11 @@ class TopicSearch extends React.Component {
     fetch("/api/topics/search?size=" + Util.TOPICS_PER_PAGE + "&start=" +
           (this.state.page * Util.TOPICS_PER_PAGE) + "&text="+this.state.query, {
       credentials: 'same-origin',
-      method: 'get' }).then(function(response) {
-      if(response.ok) {
+      method: 'get' })
+    .then(function(response) {
+      if (response.ok) {
         this.setState({pages: parseInt(response.headers.get("Pages"), 10)});
+        console.log(this.state.pages);
         return response.json();
       } else {
         throw new Error('There was a problem with network connection.');

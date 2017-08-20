@@ -50,7 +50,7 @@ class ProjectTable extends Component {
       credentials: 'same-origin'
     }).then(function(response) {
       if (response.ok) {
-        // Util.notify("success", "", "The project has been succesfully removed!");
+        Util.notify("success", "", "The project has been succesfully removed!");
         this.getProjects();
       } else {
         throw new Error('There was a problem with network connection.');
@@ -60,7 +60,7 @@ class ProjectTable extends Component {
 
   render () {
     if (this.state.redirect !== -1) {
-      return(<Redirect to={"/projects/"+this.state.redirect} />);
+      return(<Redirect to={"/projects?id="+this.state.redirect} />);
     }
 
     return (
