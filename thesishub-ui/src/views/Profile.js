@@ -3,14 +3,16 @@ import { withRouter } from 'react-router-dom';
 import { Redirect } from 'react-router-dom';
 import Avatar from 'react-toolbox/lib/avatar/Avatar.js';
 import Input from 'react-toolbox/lib/input/Input.js';
+import FontIcon from 'react-toolbox/lib/font_icon/FontIcon.js';
 import Button from 'react-toolbox/lib/button/Button.js';
 import Dropdown from 'react-toolbox/lib/dropdown/Dropdown.js';
 import Tab from 'react-toolbox/lib/tabs/Tab.js';
 import Tabs from 'react-toolbox/lib/tabs/Tabs.js';
 import Chip from 'react-toolbox/lib/chip/Chip.js';
+import Tags from 'react-tagging-input';
+import "react-tagging-input/dist/styles.css";
 
 import CountrySelect from '../components/CountrySelect.js';
-
 import AddButton from '../components/AddButton';
 import FacultyDialog from '../components/FacultyDialog.js';
 import { FacultyTable, FacultyRow, FacultyHead} from '../components/FacultyTable.js';
@@ -28,7 +30,7 @@ const LogoutButton = withRouter(({ history }) => (
 ))
 
 class ProfileEditView extends React.Component {
-  state = { email: '', avatarUrl: '', name: '', phone: '', roles: [],  tags: '', lastLogin: [], redirect: false };
+  state = { email: '', avatarUrl: '', name: '', phone: '', roles: [],  tags: [], lastLogin: [], redirect: false };
 
   componentDidMount() {
     this.getUser();
@@ -45,12 +47,6 @@ class ProfileEditView extends React.Component {
         throw new Error('There was a problem with network connection.');
       }
     }).then(function(json) {
-      var tagsState = "";
-      if(json.tags !== null)
-        for(let i = 0; i < json.tags.length; i++) {
-          tagsState += json.tags[i]+"; ";
-        }
-
       this.setState({
         faculty: json.faculty,
         company: json.company,
@@ -59,7 +55,7 @@ class ProfileEditView extends React.Component {
         avatarUrl: gravatar.url(json.email, {s: '300', protocol: 'https'}),
         phone: Util.isEmpty(json.phone) ? "" : json.phone,
         roles: json.roles,
-        tags: tagsState,
+        tags: json.tags,
         lastLogin: json.lastLogin
       });
     }.bind(this));
@@ -82,7 +78,7 @@ class ProfileEditView extends React.Component {
         company: this.state.company,
         email:	this.state.email,
         phone:	this.state.phone,
-        tags: this.getTags(),
+        tags: this.state.tags,
         username:	this.state.email
       })
     }).then(function(response) {
@@ -100,29 +96,24 @@ class ProfileEditView extends React.Component {
    this.setState({ redirect: true })
   }
 
-  getTags = () => {
-    var tags = [];
-    var stringTags = this.state.tags;
+  onTagAdded(tag) {
+    this.setState({ tags: [...this.state.tags, tag] });
+  }
 
-    if(stringTags.indexOf(";") === stringTags.length-1)
-      stringTags = stringTags.substring(0, stringTags.indexOf(";"));
-
-    while(stringTags.indexOf(";") !== -1) {
-      tags.push(stringTags.substring(0, stringTags.indexOf(";")));
-      stringTags = stringTags.substring(stringTags.indexOf(";")+1);
-    }
-    if(stringTags !== "") tags.push(stringTags);
-
-    return tags;
+  onTagRemoved(tag, index) {
+    this.setState({ tags: this.state.tags.filter((tag, i) => i !== index) });
   }
 
   render () {
     return (
       <div className="row">
-        { (this.state.redirect) ? <Redirect to="/updatePwd"/> : "" }
+        { (this.state.redirect) ? <Redirect to="/update-password"/> : "" }
         <div className="col-md-2 text-center">
           <Avatar style={{width: '6em', height: '6em', marginBottom: '1em'}} image={this.state.avatarUrl} title={ _t.translate('Your Gravatar') } />
+          <h5 className='text-left'>Roles</h5>
           {this.state.roles.map( (role) => <Chip key={role}> { _t.translate(role) } </Chip> )}
+          <h5 className='text-left'>Actions</h5>
+          <Button icon='edit' label={ _t.translate('Change password') } raised primary className='pull-left' onClick={this.handleRedirect}/>
           <LogoutButton className="pull-left" />
         </div>
         <div className="col-md-10">
@@ -133,8 +124,10 @@ class ProfileEditView extends React.Component {
           <Input type='text' name='faculty' label={ _t.translate('Faculty') } icon='school' disabled value={Util.isEmpty(this.state.faculty) ? "N/A" : this.state.faculty.name} />
           <Input type='text' name='company' label={ _t.translate('Company') } icon='business' disabled value={Util.isEmpty(this.state.company) ? "N/A" : this.state.company.name} />
           <Input type='hidden' name='roles' label={ _t.translate('Role') } icon='person' disabled value={this.state.roles.toString()} />
-          <Input type='text' name='tags' label={ _t.translate('Tags') } icon='flag' hint="Divide tags using ;" value={this.state.tags} onChange={this.handleChange.bind(this, 'tags')} />
-          <Button icon='edit' label={ _t.translate('Change password') } raised primary className='pull-left' onClick={this.handleRedirect}/>
+          <hr />
+          <h5><FontIcon value='bookmark' /> { _t.translate('Interests') }</h5>
+          <Tags tags={this.state.tags} placeholder={ _t.translate('Tags') } onAdded={this.onTagAdded.bind(this)} onRemoved={this.onTagRemoved.bind(this)} />
+          <hr />
           <Button icon='edit' label={ _t.translate('Save changes') } raised primary className='pull-right' onClick={this.handleSubmit}/>
         </div>
       </div>
