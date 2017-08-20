@@ -5,7 +5,7 @@ import Auth from '../Auth.js';
 import Input from 'react-toolbox/lib/input/Input.js';
 import Button from 'react-toolbox/lib/button/Button.js';
 
-import Util from '../Util.js';
+// import Util from '../Util.js';
 import _t from '../Translations.js';
 
 class LoginForm extends React.Component {
@@ -22,8 +22,6 @@ class LoginForm extends React.Component {
   handleSubmit = () => {
     Auth.authenticate(this.state.email, this.state.password, () => {
       this.setState({ redirectToReferrer: true })
-    }, () => {
-      Util.notify("error", "", "Your credentials doesn't match");
     });
   }
 

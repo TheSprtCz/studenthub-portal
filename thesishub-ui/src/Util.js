@@ -6,12 +6,13 @@ var config = require('./config.json');
 var Util = function() { };
 
 /**
- * Checks whether an object is null or undefined
+ * Checks whether an object is null or undefined or an empty array
  * @param  object to check
  * @return boolean
  */
 Util.isEmpty = function(object) {
   return (object === null) || (typeof object === 'undefined')
+    || (object instanceof Array && object.length <= 0)
 }
 
 /**
@@ -53,40 +54,22 @@ Util.checkData = function(data, errorMessage) {
 Util.notify = (type, message, title) => {
   switch (type) {
     case 'info':
-      NotificationManager.info(message, title, 2000);
+      NotificationManager.info(message, title, 5000);
       break;
     case 'success':
-      NotificationManager.success(message, title, 2000, null, true);
+      NotificationManager.success(message, title, 5000);
       break;
     case 'warning':
-      NotificationManager.warning(message, title, 2000);
+      NotificationManager.warning(message, title, 5000);
       break;
     case 'error':
-      NotificationManager.error(message, title, 2000, null, true);
+      NotificationManager.error(message, title, 5000);
       break;
     default:
-      NotificationManager.info(message, title, 2000);
+      NotificationManager.info(message, title, 5000);
       break;
   };
 };
-
-/**
- * Holds state codes
- * @type {Enum}
- */
-Util.countries = {
-  CZ: "CZ",
-  SK: "SK"
-};
-
-/**
- * Holds state codes for source use
- * @type {Enum}
- */
-Util.countriesSource = [
-  { value: 'CZ', label: 'Czechia' },
-  { value: 'SK', label: 'Slovakia'},
-]
 
 /**
  * Holds user role codes
@@ -142,13 +125,6 @@ Util.gradesSource = [
     { value: 'E', label: 'E'},
     { value: 'F', label: 'F'},
     { value: 'NOT_FINISHED', label: 'Not Finished'}
-]
-
-Util.degreesSource = [
-    { value: 'HIGH_SCHOOL', label: _t.translate('High school')},
-    { value: 'BACHELOR', label: _t.translate('Bachelor')},
-    { value: 'MASTER', label: _t.translate('Master')},
-    { value: 'PhD', label: _t.translate('PhD')}
 ]
 
 Util.TOPICS_PER_PAGE = 5;

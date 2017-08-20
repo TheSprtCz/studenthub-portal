@@ -14,7 +14,7 @@ class UpdatePasswordView extends React.Component {
   };
 
   handleSubmit = () => {
-    fetch('/api/users/' + Auth.getUserInfo().sub + '/password', {
+    fetch('/api/account/' + Auth.getUserInfo().sub + '/password', {
       method: 'put',
       credentials: 'same-origin',
       headers: { "Content-Type" : "application/json" },
@@ -29,8 +29,8 @@ class UpdatePasswordView extends React.Component {
             this.setState({ redirect: true });
           }.bind(this), 2000);
       }
-      else if (response.status === 404) {
-        Util.notify("error", "", "You have written your old password incorrectly!");
+      else if (response.status === 400) {
+        Util.notify("error", "", "Your password doesn't match our records.");
       }
       else {
         Util.notify("error", "", "An error occured! Your request couldn't be processed. It's possible that you have a problem with your internet connection or that the server is not responding.");

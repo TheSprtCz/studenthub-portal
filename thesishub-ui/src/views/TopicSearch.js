@@ -37,7 +37,6 @@ class TopicCard extends React.Component {
 
   changeDegree = (degree) => {
     this.setState({ applicationDegree: degree });
-    console.log('Changing degree to: ' + degree);
   }
 
   toggleSuperviseDialog = () => {
@@ -224,7 +223,6 @@ class TopicSearch extends React.Component {
     .then(function(response) {
       if (response.ok) {
         this.setState({pages: parseInt(response.headers.get("Pages"), 10)});
-        console.log(this.state.pages);
         return response.json();
       } else {
         throw new Error('There was a problem with network connection.');

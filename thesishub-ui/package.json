@@ -32,5 +32,6 @@
     "test": "react-scripts test --env=jsdom",
     "toolbox": "react-toolbox-themr",
     "eject": "react-scripts eject"
-  }
+  },
+  "proxy": "http://127.0.0.1:8080"
 }

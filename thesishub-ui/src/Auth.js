@@ -34,10 +34,21 @@ const Auth = {
 
     $.ajax(settings)
       .done(function() {
-        setTimeout(cb, 500);
-      })
+        if (!this.getToken()) {
+          // cookie was not set
+          Util.notify('error', 'You need to enable cookies in your browser for Thesis Hub to work.', 'Cookies required!');
+        } else {
+          // cookie was set
+          Util.notify('info', 'You are now succesfully logged in.', 'Succesfully logged in.')
+          // trigger succes callback
+          setTimeout(cb, 500);
+        }
+      }.bind(this))
       .fail(function() {
-        failCb();
+        // auth failed
+        Util.notify('error', 'You credentials does not match our record. Please try again.', 'Authentication failed.');
+        // trigger failure callback
+        setTimeout(failCb, 500);
       });
   },
 
@@ -54,10 +65,12 @@ const Auth = {
       }
     }
 
-    // console.log(settings);
-    $.ajax(settings).done(function (data, textStatus, jqXHR) {
-      console.log(textStatus);
-      // TODO: if cookie was not un-set
+    $.ajax(settings)
+      .done(function (data, textStatus, jqXHR) {
+      // console.log(textStatus);
+      Util.notify('info', 'You have been succesfully logged out.', 'Sign Out')
+      // if cookie was not un-set
+      Cookies.remove(Util.TOKEN_COOKIE_NAME);
     });
 
     setTimeout(cb, 500)
