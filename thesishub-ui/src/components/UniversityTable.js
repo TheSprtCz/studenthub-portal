@@ -19,7 +19,7 @@ class UniversityRow extends Component {
           {this.props.uni.id}
         </TableCell>
         <TableCell>
-          {this.props.uni.logoUrl}
+          <img src={this.props.uni.logoUrl} alt='Logo' height="100"/>
         </TableCell>
         <TableCell onClick={() => this.props.clickHandler()}>
           <span className="CellLink">

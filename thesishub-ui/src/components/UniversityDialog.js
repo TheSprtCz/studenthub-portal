@@ -40,7 +40,7 @@ class UniversityDialog extends Component {
     this.setState({
       name: Util.isEmpty(nextProps.university) ? "" : nextProps.university.name,
       city: Util.isEmpty(nextProps.university) ? "" : nextProps.university.city,
-      country: Util.isEmpty(nextProps.university) ? "CZ" : nextProps.university.country,
+      country: Util.isEmpty(nextProps.university) ? {} : nextProps.university.country,
       url: Util.isEmpty(nextProps.university) ? "" : nextProps.university.url,
       logo: Util.isEmpty(nextProps.university) ? "" : nextProps.university.logoUrl,
       titleLabel: Util.isEmpty(nextProps.university) ? "Add a new university" : "Edit university",

@@ -8,7 +8,7 @@ import Dropdown from 'react-toolbox/lib/dropdown/Dropdown.js';
 import Input from 'react-toolbox/lib/input/Input.js';
 import Button from 'react-toolbox/lib/button/Button.js';
 import Pager from '../components/Pager.js';
-
+import CountrySelect from '../components/CountrySelect.js';
 import DeleteButton from '../components/DeleteButton.js';
 import EditButton from '../components/EditButton.js';
 
@@ -145,11 +145,11 @@ class CompaniesTable extends Component {
           {this.state.companies.map((item, index) => (
             <TableRow key={item.id}>
               <TableCell>{item.id}</TableCell>
-              <TableCell><img src={"http://"+item.logoUrl} alt='Logo' /></TableCell>
+              <TableCell><img src={item.logoUrl} alt='Logo' height="100"/></TableCell>
               <TableCell>{item.name}</TableCell>
               <TableCell>{item.city}</TableCell>
-              <TableCell>{item.country}</TableCell>
-              <TableCell><a href={"http://"+item.url} target="_blank">{item.url}</a></TableCell>
+              <TableCell>{item.country.name}</TableCell>
+              <TableCell><a href={item.url} target="_blank">{item.url}</a></TableCell>
               <TableCell>{item.size}</TableCell>
               <TableCell>{(Util.isEmpty(item.plan)) ? "N/A" : item.plan.name}</TableCell>
               <TableCell>
@@ -167,7 +167,7 @@ class CompaniesTable extends Component {
 
 class CompanyDialog extends Component {
   state = {
-    name: '', city: '', country: 'CZ', url: '', logoUrl: '', size: '', dialogTitle:
+    name: '', city: '', country: {}, url: '', logoUrl: '', size: '', dialogTitle:
       _t.translate('New Company'), plan: [],
     actions : [
       { label: _t.translate('Add'), onClick: () => this.addCompany()},
@@ -184,7 +184,7 @@ class CompanyDialog extends Component {
     this.setState({
       name: (nextProps.company === -1) ? "" : nextProps.company.name,
       city: (nextProps.company === -1) ? "" : nextProps.company.city,
-      country: (nextProps.company === -1) ? "CZ" : nextProps.company.country,
+      country: (nextProps.company === -1) ? {} : nextProps.company.country,
       url: (nextProps.company === -1) ? "" : nextProps.company.url,
       logoUrl: (nextProps.company === -1) ? "" : nextProps.company.logoUrl,
       size: (nextProps.company === -1) ? "" : nextProps.company.size,
@@ -280,14 +280,7 @@ class CompanyDialog extends Component {
                 onChange={this.handleChange.bind(this, 'name')} />
               <Input type='text' label={ _t.translate('City') } icon='location_city'  hint="Change company city headquarters" value={this.state.city}
                 onChange={this.handleChange.bind(this, 'city')} />
-              <Dropdown
-                auto required
-                onChange={this.handleChange.bind(this, 'country')}
-                source={Util.countriesSource}
-                name='country'
-                value={this.state.country}
-                icon='public'
-                label={ _t.translate('Country') } />
+              <CountrySelect currentCountry={this.state.country} changeHandler={this.handleChange.bind(this, 'country')} />
               <Input type='url' label={ _t.translate('Web page') } icon='web'  hint="Change website url" value={this.state.url} onChange={this.handleChange.bind(this, 'url')} />
               <Input type='url' label='Logo' icon='photo'  hint="Change logo" value={this.state.logoUrl} onChange={this.handleChange.bind(this, 'logoUrl')} />
               <Dropdown
