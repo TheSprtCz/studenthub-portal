@@ -30,7 +30,7 @@
 # Needed variables
 SCRIPT_HEADSIZE=$(head -200 ${0} |grep -n "^# END_OF_HEADER" | cut -f1 -d:)
 SCRIPT_NAME="thesishub" # scriptname without path
-JAR_FILE="thesishub-application-1.1.0.jar"
+JAR_FILE="thesishub-application-1.2.0-SNAPSHOT.jar"
 CONFIG="config.yml"
 PASS=false
 

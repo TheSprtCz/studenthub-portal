@@ -7,10 +7,10 @@
 ## How to start Thesis Hub
 
 1. Run `mvn clean package` to build your application
-1. Populate DB schema with `java -jar thesishub-application/target/thesishub-application-1.1.0.jar db migrate config.yml`
-1. Seed DB with admin user `java -jar thesishub-application/target/thesishub-application-1.1.0.jar db migrate config.yml --migrations thesishub-application/initial-data.xml`
+1. Populate DB schema with `java -jar thesishub-application/target/thesishub-application-1.2.0-SNAPSHOT.jar db migrate config.yml`
+1. Seed DB with admin user `java -jar thesishub-application/target/thesishub-application-1.2.0-SNAPSHOT.jar db migrate config.yml --migrations thesishub-application/initial-data.xml`
 1. (Optional) configure SMTP client (see instructions below)
-1. Start application with `java -jar thesishub-application/target/thesishub-application-1.1.0.jar server config.yml`
+1. Start application with `java -jar thesishub-application/target/thesishub-application-1.2.0-SNAPSHOT.jar server config.yml`
 1. To check that your application is running enter url `http://localhost:8080`
 
 ## Environment variables
