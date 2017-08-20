@@ -2,7 +2,7 @@
 {
     "swagger":"2.0",
     "info":{
-        "version":"1.1-SNAPSHOT",
+        "version":"1.1.0",
         "title":"Thesis Hub Application"
     },
     "host":"localhost:8080",
@@ -2702,6 +2702,70 @@
                 }
             }
         },
+        "/topics/highlighted":{
+            "get":{
+                "consumes":[
+                    "application/json"
+                ],
+                "produces":[
+                    "application/json"
+                ],
+                "parameters":[
+                    {
+                        "type":"string",
+                        "name":"count",
+                        "in":"query",
+                        "required":false,
+                        "default":"5"
+                    }
+                ],
+                "responses":{
+                    "200":{
+                        "description":"OK",
+                        "headers":{
+                        },
+                        "schema":{
+                            "type":"array",
+                            "items":{
+                                "$ref":"#/definitions/Topic"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/topics/recent":{
+            "get":{
+                "consumes":[
+                    "application/json"
+                ],
+                "produces":[
+                    "application/json"
+                ],
+                "parameters":[
+                    {
+                        "type":"string",
+                        "name":"count",
+                        "in":"query",
+                        "required":false,
+                        "default":"5"
+                    }
+                ],
+                "responses":{
+                    "200":{
+                        "description":"OK",
+                        "headers":{
+                        },
+                        "schema":{
+                            "type":"array",
+                            "items":{
+                                "$ref":"#/definitions/Topic"
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/topics/search":{
             "get":{
                 "consumes":[
@@ -4032,7 +4096,7 @@
                     "$ref":"#/definitions/Country"
                 },
                 "id":{
-                    "type":"integer"
+                    "type":"object"
                 },
                 "logoUrl":{
                     "type":"string"
@@ -4083,7 +4147,7 @@
         "Faculty":{
             "properties":{
                 "id":{
-                    "type":"integer"
+                    "type":"object"
                 },
                 "name":{
                     "type":"string"
@@ -4117,7 +4181,7 @@
                     }
                 },
                 "id":{
-                    "type":"integer"
+                    "type":"object"
                 },
                 "name":{
                     "type":"string"
@@ -4142,7 +4206,7 @@
                     "type":"object"
                 },
                 "id":{
-                    "type":"integer"
+                    "type":"object"
                 },
                 "title":{
                     "type":"string"
@@ -4160,6 +4224,9 @@
                 "creator":{
                     "$ref":"#/definitions/User"
                 },
+                "dateCreated":{
+                    "type":"object"
+                },
                 "degrees":{
                     "type":"array",
                     "items":{
@@ -4172,8 +4239,11 @@
                 "enabled":{
                     "type":"boolean"
                 },
+                "highlighted":{
+                    "type":"boolean"
+                },
                 "id":{
-                    "type":"integer"
+                    "type":"object"
                 },
                 "secondaryDescription":{
                     "type":"string"
@@ -4219,7 +4289,7 @@
                     ]
                 },
                 "id":{
-                    "type":"integer"
+                    "type":"object"
                 },
                 "link":{
                     "type":"string"
@@ -4263,7 +4333,7 @@
                     "$ref":"#/definitions/Country"
                 },
                 "id":{
-                    "type":"integer"
+                    "type":"object"
                 },
                 "logoUrl":{
                     "type":"string"
@@ -4298,7 +4368,7 @@
                     "$ref":"#/definitions/Faculty"
                 },
                 "id":{
-                    "type":"integer"
+                    "type":"object"
                 },
                 "lastLogin":{
                     "type":"object"

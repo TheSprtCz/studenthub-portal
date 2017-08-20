@@ -7,8 +7,8 @@
 #+    ${SCRIPT_NAME} -b args
 #%
 #% DESCRIPTION
-#%    This script provides access to most used features on server 
-#%    without having to specify too many things 
+#%    This script provides access to most used features on server
+#%    without having to specify too many things
 #%
 #% COMMANDS
 #%    run                           Only runs server
@@ -30,14 +30,14 @@
 # Needed variables
 SCRIPT_HEADSIZE=$(head -200 ${0} |grep -n "^# END_OF_HEADER" | cut -f1 -d:)
 SCRIPT_NAME="thesishub" # scriptname without path
-JAR_FILE="thesishub-application-1.1-SNAPSHOT.jar"
+JAR_FILE="thesishub-application-1.1.0.jar"
 CONFIG="config.yml"
 PASS=false
 
 # Usage function
 usage() { head -${SCRIPT_HEADSIZE:-99} ${0} | grep -e "^#[%+-]" | sed -e "s/^#[%+-]//g" -e "s/\${SCRIPT_NAME}/${SCRIPT_NAME}/g" ; }
 
-# 
+#
 case $1 in
     -b|--bypass)
     PASS=true
@@ -47,15 +47,15 @@ case $1 in
 		if [ -z "$CMD" ]
     then
       CMD="start"
-		fi    
+		fi
 		shift
     ;;
     migrate)
 		if [ -z "$CMD" ]
     then
       CMD="migrate"
-		fi    
-    shift 
+		fi
+    shift
     ;;
     run)
 		if [ -z "$CMD" ]
