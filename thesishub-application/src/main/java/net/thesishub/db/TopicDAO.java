@@ -22,6 +22,7 @@ import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.persister.collection.CollectionPropertyNames;
+import org.hibernate.sql.JoinType;
 
 import io.dropwizard.hibernate.AbstractDAO;
 import net.thesishub.core.Company;
@@ -87,8 +88,11 @@ public class TopicDAO extends AbstractDAO<Topic> {
 
   public List<Topic> search(String text) {
     String pattern = "%" + text + "%";
-    Criteria criteria = criteria().createAlias("tags", "tag")
-        .add(Restrictions.or(Restrictions.ilike("title", pattern), Restrictions.ilike("shortAbstract", pattern),
+    Criteria criteria = criteria().createAlias("tags", "tag", JoinType.LEFT_OUTER_JOIN)
+        .add(Restrictions.or(Restrictions.ilike("title", pattern),
+            Restrictions.ilike("shortAbstract", pattern),
+            Restrictions.ilike("secondaryTitle", pattern),
+            Restrictions.ilike("secondaryDescription", pattern),
             Restrictions.ilike("description", pattern),
             Restrictions.eq("tag." + CollectionPropertyNames.COLLECTION_ELEMENTS, text).ignoreCase()))
         .add(Restrictions.eq("enabled", true))
