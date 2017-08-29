@@ -17,8 +17,10 @@
 package net.thesishub.resources;
 
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
@@ -255,10 +257,20 @@ public class TopicResource {
   @Path("/search")
   @UnitOfWork
   public List<Topic> search(@NotNull @QueryParam("text") String text,
+      @QueryParam("company") Set<String> companies, @QueryParam("degree") Set<String> degrees,
       @Min(0) @DefaultValue("0") @QueryParam("start") IntParam startParam,
       @Min(0) @DefaultValue("0") @QueryParam("size") IntParam sizeParam,
       @Context HttpServletResponse response) {
-    return PagingUtil.paging(topicDao.search(text), startParam.get(), sizeParam.get(), response);
+    // Convert company IDs to Long, throw exception when it is not long
+    Set<Long> ids = new HashSet<Long>(companies.size());
+    for (String id : companies) {
+      try {
+        ids.add(Long.parseLong(id));
+      } catch (Exception e) {
+        throw new WebApplicationException(Status.BAD_REQUEST);
+      }
+    }
+    return PagingUtil.paging(topicDao.search(text, ids, degrees), startParam.get(), sizeParam.get(), response);
   }
 
   @GET

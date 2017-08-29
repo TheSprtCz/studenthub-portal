@@ -17,9 +17,12 @@
 package net.thesishub.db;
 
 import java.util.List;
+import java.util.Set;
 
 import org.hibernate.Criteria;
+import org.hibernate.FetchMode;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Disjunction;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.persister.collection.CollectionPropertyNames;
 import org.hibernate.sql.JoinType;
@@ -86,17 +89,34 @@ public class TopicDAO extends AbstractDAO<Topic> {
     return list(namedQuery("Topic.findAll"));
   }
 
-  public List<Topic> search(String text) {
+  public List<Topic> search(String text, Set<Long> companies, Set<String> degrees) {
     String pattern = "%" + text + "%";
-    Criteria criteria = criteria().createAlias("tags", "tag", JoinType.LEFT_OUTER_JOIN)
+    Criteria criteria = criteria().createAlias("tags", "tag", JoinType.RIGHT_OUTER_JOIN)
         .add(Restrictions.or(Restrictions.ilike("title", pattern),
             Restrictions.ilike("shortAbstract", pattern),
             Restrictions.ilike("secondaryTitle", pattern),
             Restrictions.ilike("secondaryDescription", pattern),
             Restrictions.ilike("description", pattern),
             Restrictions.eq("tag." + CollectionPropertyNames.COLLECTION_ELEMENTS, text).ignoreCase()))
-        .add(Restrictions.eq("enabled", true))
-        .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+        .add(Restrictions.eq("enabled", true));
+
+    if (companies.size() > 0) {
+      Disjunction companyFilter = Restrictions.or();
+      for (Long id : companies) {
+        companyFilter.add(Restrictions.eq("cmp.id", id));
+      }
+      criteria.createAlias("creator.company", "cmp").add(companyFilter);
+    }
+
+    if (degrees.size() > 0) {
+      Disjunction degreeFilter = Restrictions.or();
+      for (String degree : degrees) {
+        degreeFilter.add(Restrictions.eq("degree.name", degree));
+      }
+      criteria.setFetchMode("degrees", FetchMode.JOIN).createAlias("degrees", "degree").add(degreeFilter);
+    }
+
+    criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
 
     return list(criteria);
   }

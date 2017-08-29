@@ -9,6 +9,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import io.dropwizard.testing.junit.DAOTestRule;
+import jersey.repackaged.com.google.common.collect.Sets;
 import net.thesishub.DAOTestSuite;
 import net.thesishub.core.Company;
 import net.thesishub.core.Topic;
@@ -150,10 +151,22 @@ public class TopicDAOTest {
   @Test
   public void search() {
     List<Topic> topics = DATABASE.inTransaction(() -> {
-      return topicDAO.search("Java");
+      return topicDAO.search("Java", new HashSet<Long>(), new HashSet<String>());
     });
     assertNotNull(topics);
     assertEquals(3, topics.size());
+
+    topics = DATABASE.inTransaction(() -> {
+      return topicDAO.search("", Sets.newHashSet((long) 1, (long) 3) , Sets.newHashSet("BACHELOR"));
+    });
+    assertNotNull(topics);
+    assertEquals(0, topics.size());
+
+    topics = DATABASE.inTransaction(() -> {
+      return topicDAO.search("", Sets.newHashSet((long) 5, (long) 6) , Sets.newHashSet("MASTER"));
+    });
+    assertNotNull(topics);
+    assertEquals(2, topics.size());
   }
 
   @Test
