@@ -2,7 +2,7 @@
 
 ## CI
 
-[![Build Status](https://travis-ci.org/StudentHubCZ/thesishub.svg?branch=master)](https://travis-ci.org/StudentHubCZ/thesishub)
+[![Build Status](https://travis-ci.org/ThesioCZ/thesishub.svg?branch=master)](https://travis-ci.org/ThesioCZ/thesishub)
 
 ## How to start Thesis Hub
 
