@@ -52,6 +52,10 @@ public class TopicApplicationDAO extends AbstractDAO<TopicApplication> {
     return get(id);
   }
 
+  public void refresh(TopicApplication ta) {
+    currentSession().refresh(ta);
+  }
+
   public List<TopicApplication> findAll() {
     return list(namedQuery("TopicApplication.findAll"));
   }

@@ -16,7 +16,9 @@
  *******************************************************************************/
 package net.thesishub.resources;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
@@ -57,6 +59,7 @@ import net.thesishub.db.TaskDAO;
 import net.thesishub.db.TopicApplicationDAO;
 import net.thesishub.util.PagingUtil;
 import net.thesishub.util.Equals;
+import net.thesishub.util.MailClient;
 import net.thesishub.validators.groups.CreateUpdateChecks;
 
 @Path("/applications")
@@ -69,6 +72,9 @@ public class TopicApplicationResource {
 
   @Inject
   private TaskDAO taskDao;
+
+  @Inject
+  private MailClient mailer;
 
   @GET
   @Timed
@@ -139,7 +145,20 @@ public class TopicApplicationResource {
       appDao.create(app);
       if (app.getId() == null)
         throw new WebApplicationException(Status.INTERNAL_SERVER_ERROR);
-  
+
+      // force to reload data from DB instead of cache
+      appDao.refresh(app);
+
+      // send notification email
+      // TODO: replace with more sophisticated notification system
+      Map<String, String> args = new HashMap<String, String>();
+      args.put("topic", app.getTopic().getTitle());
+      args.put("faculty", app.getFaculty().getName());
+      args.put("university", app.getFaculty().getUniversity().getName());
+      args.put("student", app.getStudent().getName());
+      args.put("degree", app.getDegree().getName());
+      mailer.sendMessage(app.getTechLeader().getEmail(), "Student has applied for a topic", "application.html", args);
+
       return Response.created(UriBuilder.fromResource(TopicApplicationResource.class).path("/{id}").build(app.getId()))
           .entity(app).build();
     } else {
