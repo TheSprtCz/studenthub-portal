@@ -195,7 +195,7 @@ public class RegistrationResource {
       user.setPassword(ThesisHubPasswordEncoder.encode(password));
       userDao.update(user);
       // send conf. mail
-      mailer.sendMessage(user.getEmail(), "User Activation", "activated.html", urlUtil.createLoginUrl());
+      mailer.sendMessage(user.getEmail(), "Your account has been activated", "activated.html", urlUtil.createLoginUrl());
       // remove user from "inactive" users
       actDao.delete(act);
       return Response.ok().build();
@@ -300,7 +300,7 @@ public class RegistrationResource {
         // set new password
         user.setPassword(ThesisHubPasswordEncoder.encode(updateBean.getNewPwd()));
         userDao.update(user);
-        mailer.sendMessage(user.getEmail(), "Password Updated", "pwdUpdated.html", urlUtil.createLoginUrl());
+        mailer.sendMessage(user.getEmail(), "Your password has been changed", "pwdUpdated.html", urlUtil.createLoginUrl());
         return Response.ok().build();
       } else {
         // passwords don't match
@@ -322,7 +322,7 @@ public class RegistrationResource {
 
     args.put("url", builder.toString());
     args.put("name", user.getName());
-    mailer.sendMessage(user.getEmail(), "Password Setup", "setPassword.html", args);
+    mailer.sendMessage(user.getEmail(), "Activate your account", "setPassword.html", args);
   }
 
   private void sendResetEmail(User user, String secretKey) {
@@ -336,7 +336,7 @@ public class RegistrationResource {
     
     args.put("url", builder.toString());
     args.put("name", user.getName());
-    mailer.sendMessage(user.getEmail(), "Password Reset", "resetPassword.html", args);
+    mailer.sendMessage(user.getEmail(), "Your password has been reset", "resetPassword.html", args);
   }
 
   private void sendInviteEmail(User user, String name, String secretKey) {

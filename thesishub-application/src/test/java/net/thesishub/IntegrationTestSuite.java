@@ -17,6 +17,9 @@ import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
 
+import com.icegreen.greenmail.util.GreenMail;
+import com.icegreen.greenmail.util.ServerSetupTest;
+
 import io.dropwizard.client.JerseyClientBuilder;
 import io.dropwizard.testing.DropwizardTestSupport;
 import liquibase.Contexts;
@@ -44,15 +47,19 @@ public class IntegrationTestSuite {
 
   private static String TOKEN;
 
+  public static final GreenMail GREENMAIL = new GreenMail(ServerSetupTest.SMTP);
+
   @BeforeSuite
   public void beforeClass() {
-      DROPWIZARD.before();
-      BUILDER = new JerseyClientBuilder(DROPWIZARD.getEnvironment()).withProperty(ClientProperties.READ_TIMEOUT, 0);
+    DROPWIZARD.before();
+    BUILDER = new JerseyClientBuilder(DROPWIZARD.getEnvironment()).withProperty(ClientProperties.READ_TIMEOUT, 0);
+    GREENMAIL.start();
   }
 
   @AfterSuite(alwaysRun = true)
   public void afterClass() {
-      DROPWIZARD.after();
+    DROPWIZARD.after();
+    GREENMAIL.stop();
   }
 
   // Migrates database

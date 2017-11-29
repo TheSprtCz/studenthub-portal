@@ -27,7 +27,6 @@ import org.testng.annotations.Test;
 
 import com.icegreen.greenmail.util.GreenMail;
 import com.icegreen.greenmail.util.GreenMailUtil;
-import com.icegreen.greenmail.util.ServerSetupTest;
 
 import io.dropwizard.testing.DropwizardTestSupport;
 import net.minidev.json.JSONArray;
@@ -45,7 +44,7 @@ public class RegistrationResourceTest {
   private static final int MAIL_TIMEOUT = 20000;
 
   private DropwizardTestSupport<ThesisHubConfiguration> dropwizard;
-  private GreenMail greenMail = new GreenMail(ServerSetupTest.SMTP);
+  private GreenMail greenMail;
   private ActivationDAO actDAO;
   private UserDAO userDAO;
   private Session session;
@@ -56,7 +55,7 @@ public class RegistrationResourceTest {
   public void setup() {
       dropwizard = IntegrationTestSuite.DROPWIZARD;
       client = IntegrationTestSuite.BUILDER.build("RegistrationTest");
-      greenMail.start();
+      greenMail = IntegrationTestSuite.GREENMAIL;
       session = IntegrationTestSuite.getSessionFactory().openSession();
       ManagedSessionContext.bind(session);
 
@@ -66,7 +65,6 @@ public class RegistrationResourceTest {
 
   @AfterClass
   public void tearDown() {
-    greenMail.stop();
     session.close();
     ManagedSessionContext.unbind(IntegrationTestSuite.getSessionFactory());
   }
@@ -116,7 +114,7 @@ public class RegistrationResourceTest {
 
     // Test that email has correct subject
     Message msg = messages[0];
-    assertEquals(msg.getSubject(), "Password Setup");
+    assertEquals(msg.getSubject(), "Activate your account");
 
     // Test that activation email contains activationCode
     String content = GreenMailUtil.getBody(msg);
@@ -137,7 +135,7 @@ public class RegistrationResourceTest {
     assertTrue(greenMail.waitForIncomingEmail(MAIL_TIMEOUT, 1));
     messages = greenMail.getReceivedMessages();
     assertEquals(messages.length, 2);
-    assertEquals(messages[1].getSubject(), "User Activation");
+    assertEquals(messages[1].getSubject(), "Your account has been activated");
     // Ensure that password is not present in body
     assertFalse(GreenMailUtil.getBody(messages[1]).contains(password));
 
@@ -203,7 +201,7 @@ public class RegistrationResourceTest {
     assertTrue(greenMail.waitForIncomingEmail(MAIL_TIMEOUT, 1));
     MimeMessage[] messages = greenMail.getReceivedMessages();
     assertEquals(messages.length, 1);
-    assertEquals(messages[0].getSubject(), "Password Setup");
+    assertEquals(messages[0].getSubject(), "Activate your account");
   }
 
   @Test(dependsOnGroups = { "migrate", "testMail" })
@@ -225,7 +223,7 @@ public class RegistrationResourceTest {
     assertTrue(greenMail.waitForIncomingEmail(MAIL_TIMEOUT, 1));
     MimeMessage[] messages = greenMail.getReceivedMessages();
     assertEquals(messages.length, 1);
-    assertEquals(messages[0].getSubject(), "Password Reset");
+    assertEquals(messages[0].getSubject(), "Your password has been reset");
 
     user = userDAO.findByEmail("rep2@example.com");
     assertNotNull(user);
@@ -248,7 +246,7 @@ public class RegistrationResourceTest {
     assertTrue(greenMail.waitForIncomingEmail(MAIL_TIMEOUT, 1));
     MimeMessage[] messages = greenMail.getReceivedMessages();
     assertEquals(messages.length, 1);
-    assertEquals(messages[0].getSubject(), "Password Setup");
+    assertEquals(messages[0].getSubject(), "Activate your account");
   }
 
   @Test(dependsOnGroups = {"migrate","testMail"})
@@ -268,7 +266,7 @@ public class RegistrationResourceTest {
     assertTrue(greenMail.waitForIncomingEmail(MAIL_TIMEOUT, 1));
     MimeMessage[] messages = greenMail.getReceivedMessages();
     assertEquals(messages.length, 1);
-    assertEquals(messages[0].getSubject(), "Password Updated");
+    assertEquals(messages[0].getSubject(), "Your password has been changed");
     // Ensure that password is not present in body
     assertFalse(GreenMailUtil.getBody(messages[0]).contains(password));
 

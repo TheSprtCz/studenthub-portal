@@ -11,8 +11,12 @@ import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
+
+import com.icegreen.greenmail.util.GreenMail;
 
 import io.dropwizard.testing.DropwizardTestSupport;
 import net.minidev.json.JSONObject;
@@ -25,13 +29,25 @@ import net.thesishub.db.TopicApplicationDAOTest;
 public class TopicApplicationResourceTest {
   private static DropwizardTestSupport<ThesisHubConfiguration> DROPWIZARD;
   private static Client CLIENT;
+  private GreenMail greenMail;
 
   @BeforeClass
-  public void setup() {
-      DROPWIZARD = IntegrationTestSuite.DROPWIZARD;
-      CLIENT = IntegrationTestSuite.BUILDER.build("TopicApplicationTest");
+  public void setup() throws InterruptedException {
+    DROPWIZARD = IntegrationTestSuite.DROPWIZARD;
+    CLIENT = IntegrationTestSuite.BUILDER.build("TopicApplicationTest");
+    greenMail = IntegrationTestSuite.GREENMAIL;
   }
-  
+
+  @AfterClass
+  public void tearDown() {
+    greenMail.stop();
+  }
+
+  @AfterMethod
+  public void reset() {
+    greenMail.reset();
+  }
+
   private List<TopicApplication> fetchApplications() {
     return IntegrationTestSuite.authorizedRequest(CLIENT.target(String.format("http://localhost:%d/api/applications", DROPWIZARD.getLocalPort()))
       .request(), CLIENT).get(new GenericType<List<TopicApplication>>(){});
@@ -69,16 +85,20 @@ public class TopicApplicationResourceTest {
     topic.put("id", 2);
     JSONObject student = new JSONObject();
     student.put("id", 19);
+    JSONObject techLeader = new JSONObject();
+    techLeader.put("id", 11);
 
     JSONObject app = new JSONObject();
     app.put("faculty", faculty);
     app.put("topic", topic);
     app.put("student", student);
     app.put("degree", degree);
+    app.put("techLeader", techLeader);
 
     Response response = IntegrationTestSuite.authorizedRequest(CLIENT.target(String.format("http://localhost:%d/api/applications", DROPWIZARD.getLocalPort()))
       .request(MediaType.APPLICATION_JSON), CLIENT).post(Entity.json(app.toJSONString()));
 
+    // TODO: check that email was sent
     assertNotNull(response);
     assertEquals(response.getStatus(), 201);
     assertEquals(fetchApplications().size(), TopicApplicationDAOTest.COUNT + 1);
