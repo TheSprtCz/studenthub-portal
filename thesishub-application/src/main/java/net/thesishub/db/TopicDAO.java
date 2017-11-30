@@ -57,26 +57,32 @@ public class TopicDAO extends AbstractDAO<Topic> {
     return get(id);
   }
 
+  @SuppressWarnings("unchecked")
   public List<Topic> findBySupervisor(User supervisor) {
     return list(namedQuery("Topic.findBySupervisor").setParameter("supervisor", supervisor));
   }
 
+  @SuppressWarnings("unchecked")
   public List<Topic> findByCreator(User creator) {
     return list(namedQuery("Topic.findByCreator").setParameter("creator", creator));
   }
 
+  @SuppressWarnings("unchecked")
   public List<Topic> findByTag(String tag) {
     return list(namedQuery("Topic.findByTag").setParameter("tag", tag));
   }
 
+  @SuppressWarnings("unchecked")
   public List<Topic> findByCompany(Company company) {
     return list(namedQuery("Topic.findByCompany").setParameter("company", company));
   }
 
+  @SuppressWarnings("unchecked")
   public List<Topic> findHighlighted() {
     return list(namedQuery("Topic.findHighlighted"));
   }
 
+  @SuppressWarnings("unchecked")
   public List<Topic> findAllOrdered(int maxResults) {
     return list(namedQuery("Topic.findAllOrdered").setMaxResults(maxResults));
   }
@@ -85,12 +91,15 @@ public class TopicDAO extends AbstractDAO<Topic> {
     return ((Number) namedQuery("Topic.countByCompany").setParameter("company", company).getSingleResult()).intValue();
   }
 
+  @SuppressWarnings("unchecked")
   public List<Topic> findAll() {
     return list(namedQuery("Topic.findAll"));
   }
 
   public List<Topic> search(String text, Set<Long> companies, Set<String> degrees) {
+    
     String pattern = "%" + text + "%";
+
     Criteria criteria = criteria().createAlias("tags", "tag", JoinType.RIGHT_OUTER_JOIN)
         .add(Restrictions.or(Restrictions.ilike("title", pattern),
             Restrictions.ilike("shortAbstract", pattern),

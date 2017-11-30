@@ -18,9 +18,7 @@ package net.thesishub.db;
 
 import java.util.List;
 
-import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
-import org.hibernate.criterion.Restrictions;
 
 import io.dropwizard.hibernate.AbstractDAO;
 import net.thesishub.core.Faculty;
@@ -42,7 +40,7 @@ public class FacultyDAO extends AbstractDAO<Faculty> {
     currentSession().clear();
     return persist(faculty);
   }
-  
+
   public Faculty create(Faculty faculty) {
     return persist(faculty);
   }
@@ -51,10 +49,12 @@ public class FacultyDAO extends AbstractDAO<Faculty> {
     return get(id);
   }
 
+  @SuppressWarnings("unchecked")
   public List<Faculty> findAll() {
     return list(namedQuery("Faculty.findAll"));
   }
 
+  @SuppressWarnings("unchecked")
   public List<Faculty> findAllByUniversity(University university) {
     return list(namedQuery("Faculty.findByUniversity").setParameter("university", university));
   }
@@ -64,11 +64,7 @@ public class FacultyDAO extends AbstractDAO<Faculty> {
   }
 
   public List<Faculty> search(University university, String text) {
-    String pattern = "%" + text + "%";
-    Criteria criteria = criteria().add(Restrictions.ilike("name", pattern))
-        .add(Restrictions.eq("university", university))
-        .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
-
-    return list(criteria);
+    return list(query("SELECT f FROM Faculty f WHERE lower(f.name) LIKE :pattern AND f.university = :university")
+        .setParameter("pattern", "%" + text.toLowerCase() + "%").setParameter("university", university));
   }
 }

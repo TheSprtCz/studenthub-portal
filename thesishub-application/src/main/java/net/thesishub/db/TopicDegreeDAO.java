@@ -48,6 +48,7 @@ public class TopicDegreeDAO extends AbstractDAO<TopicDegree> {
     return get(name);
   }
   
+  @SuppressWarnings("unchecked")
   public List<TopicDegree> findAll() {
     return list(namedQuery("TopicDegree.findAll"));
   }

@@ -172,6 +172,15 @@ public class TopicResourceTest {
 
     assertNotNull(topics);
     assertEquals(topics.size(), 3);
+    
+    topics = client.target(String.format("http://localhost:%d/api/topics/search", dropwizard.getLocalPort()))
+        .queryParam("text", "java")
+        .queryParam("company", "6")
+        .queryParam("company", "10")
+        .request().get(new GenericType<List<Topic>>(){});
+
+    assertNotNull(topics);
+    assertEquals(topics.size(), 1);
 
     topics = client.target(String.format("http://localhost:%d/api/topics/search", dropwizard.getLocalPort()))
         .queryParam("text", "Dropwizard")

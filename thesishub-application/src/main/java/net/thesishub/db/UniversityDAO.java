@@ -18,9 +18,7 @@ package net.thesishub.db;
 
 import java.util.List;
 
-import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
-import org.hibernate.criterion.Restrictions;
 
 import io.dropwizard.hibernate.AbstractDAO;
 import net.thesishub.core.University;
@@ -36,7 +34,7 @@ public class UniversityDAO extends AbstractDAO<University> {
   public UniversityDAO(SessionFactory sessionFactory) {
     super(sessionFactory);
   }
-  
+
   public University update(University university) {
     currentSession().clear();
     return persist(university);
@@ -50,6 +48,7 @@ public class UniversityDAO extends AbstractDAO<University> {
     return get(id);
   }
 
+  @SuppressWarnings("unchecked")
   public List<University> findAll() {
     return list(namedQuery("University.findAll"));
   }
@@ -59,13 +58,7 @@ public class UniversityDAO extends AbstractDAO<University> {
   }
 
   public List<University> search(String text) {
-     String pattern = "%" + text + "%";
-     Criteria criteria = criteria().add(Restrictions.or(Restrictions.ilike("name", pattern),
-                  Restrictions.ilike("city", pattern),
-                  Restrictions.ilike("url", pattern),
-                  Restrictions.eq("country", pattern).ignoreCase()))
-             .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
-
-     return list(criteria);
+    return list(query("SELECT u FROM University u WHERE lower(u.name) LIKE :pattern OR lower(u.city) LIKE :pattern")
+        .setParameter("pattern", "%" + text.toLowerCase() + "%"));
   }
 }

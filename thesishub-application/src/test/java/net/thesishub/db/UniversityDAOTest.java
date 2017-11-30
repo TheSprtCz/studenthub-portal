@@ -72,4 +72,14 @@ public class UniversityDAOTest {
       assertFalse(universities.contains(university));
     });
   }
+  
+  @Test
+  public void searchUniversity() {
+    List<University> universities = DATABASE.inTransaction(() -> {
+      return uniDAO.search("masaryk");
+    });
+
+    assertNotNull(universities);
+    assertEquals(1, universities.size());
+  }
 }

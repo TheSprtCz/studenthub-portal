@@ -27,7 +27,7 @@ database:
   password: sa
 
   # the JDBC URL
-  url: jdbc:h2:mem:thesishub
+  url: jdbc:h2:mem:thesishub;MODE=PostgreSQL;IGNORECASE=TRUE
 
   # the SQL query to run when validating a connection's liveness
   validationQuery: "SELECT 1"

@@ -70,6 +70,16 @@ public class FacultyDAOTest {
     assertNotNull(faculties);
     assertEquals(3, faculties.size());
   }
+  
+  @Test
+  public void searchFacultiesByUniversity() {
+    List<Faculty> faculties = DATABASE.inTransaction(() -> {
+      University university = uniDAO.findById((long) 2);
+      return facDAO.search(university, "chemistry");
+    });
+    assertNotNull(faculties);
+    assertEquals(1, faculties.size());
+  }
 
   @Test
   public void removeUniversity() {
