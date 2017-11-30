@@ -1,9 +1,10 @@
 # Thesis Hub UI
 
-This project was bootstrapped with [Create React App](https://github.com/facebookincubator/create-react-app).
+## NOTICE ##
 
-Below you will find some information on how to perform common tasks.<br>
-You can find the most recent version of the guide [here](https://github.com/facebookincubator/create-react-app/blob/master/packages/react-scripts/template/README.md).
+This UI module is not being actively developed and serves only as a placeholder
+for custom 3rd party UI (e.g. [https://github.com/ThesioCZ/thesio-ui](thesio-ui))
+which would replace this module during a build process.
 
 ## Available Scripts
 
