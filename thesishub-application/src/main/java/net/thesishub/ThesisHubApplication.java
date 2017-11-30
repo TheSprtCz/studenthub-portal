@@ -136,7 +136,7 @@ public class ThesisHubApplication extends Application<ThesisHubConfiguration> {
       }
     });
 
-    bootstrap.addBundle(new HK2Bundle(this));
+    bootstrap.addBundle(HK2Bundle.builder().build());
   }
 
   @Override

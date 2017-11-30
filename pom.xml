@@ -23,7 +23,7 @@
   <url>www.thesishub.net</url>
   <inceptionYear>2017</inceptionYear>
   <scm>
-    <url>https://github.com/StudentHubCZ/thesishub.git</url>
+    <url>https://github.com/ThesioCZ/thesishub.git</url>
   </scm>
 
   <repositories>
@@ -37,27 +37,28 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <!-- versions -->
-    <dropwizard.version>1.1.0</dropwizard.version>
-    <postgresql.version>42.0.0</postgresql.version>
-    <commons-codec.version>1.10</commons-codec.version>
-    <commons-io.version>2.5</commons-io.version>
+    <dropwizard.version>1.2.2</dropwizard.version>
+    <postgresql.version>42.1.4</postgresql.version>
+    <commons-codec.version>1.11</commons-codec.version>
+    <commons-io.version>2.6</commons-io.version>
     <java-jwt.version>3.2.0</java-jwt.version>
-    <simple-java-mail.version>4.2.1</simple-java-mail.version>
+    <simple-java-mail.version>4.4.5</simple-java-mail.version>
     <json-smart.version>2.3</json-smart.version>
-    <maven-shade-plugin.version>3.0.0</maven-shade-plugin.version>
+    <maven-shade-plugin.version>3.1.0</maven-shade-plugin.version>
     <maven-jar-plugin.version>3.0.2</maven-jar-plugin.version>
-    <maven-compiler-plugin.version>3.6.1</maven-compiler-plugin.version>
+    <maven-compiler-plugin.version>3.7.0</maven-compiler-plugin.version>
     <maven-source-plugin.version>3.0.1</maven-source-plugin.version>
-    <maven-surefire-plugin.version>2.20</maven-surefire-plugin.version>
+    <maven-surefire-plugin.version>2.20.1</maven-surefire-plugin.version>
     <maven-javadoc-plugin.version>2.10.4</maven-javadoc-plugin.version>
-    <maven-assembly-plugin.version>3.0.0</maven-assembly-plugin.version>
-    <frontend-maven-plugin.version>1.3</frontend-maven-plugin.version>
+    <maven-assembly-plugin.version>3.1.0</maven-assembly-plugin.version>
+    <frontend-maven-plugin.version>1.6</frontend-maven-plugin.version>
     <jaxrs-analyzer-maven-plugin.version>0.14</jaxrs-analyzer-maven-plugin.version>
     <dockerfile-maven-plugin.version>1.2.2</dockerfile-maven-plugin.version>
     <node.js.version>v6.10.0</node.js.version>
-    <greenmail.version>1.5.5</greenmail.version>
-    <testng.version>6.11</testng.version>
-    <mockito.version>2.8.47</mockito.version>
+    <greenmail.version>1.5.6</greenmail.version>
+    <testng.version>6.13.1</testng.version>
+    <mockito.version>2.12.0</mockito.version>
+    <hk2bundle.version>0.5.2</hk2bundle.version>
     <!-- /versions -->
   </properties>
 
@@ -126,7 +127,7 @@
       <dependency>
         <groupId>com.github.alex-shpak</groupId>
         <artifactId>dropwizard-hk2bundle</artifactId>
-        <version>0.4.1</version>
+        <version>${hk2bundle.version}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
