@@ -58,6 +58,7 @@ import net.thesishub.core.User;
 import net.thesishub.db.TaskDAO;
 import net.thesishub.db.TopicApplicationDAO;
 import net.thesishub.util.PagingUtil;
+import net.thesishub.util.UrlUtil;
 import net.thesishub.util.Equals;
 import net.thesishub.util.MailClient;
 import net.thesishub.validators.groups.CreateUpdateChecks;
@@ -72,6 +73,9 @@ public class TopicApplicationResource {
 
   @Inject
   private TaskDAO taskDao;
+
+  @Inject
+  private UrlUtil urlUtil;
 
   @Inject
   private MailClient mailer;
@@ -157,6 +161,7 @@ public class TopicApplicationResource {
       args.put("university", app.getFaculty().getUniversity().getName());
       args.put("student", app.getStudent().getName());
       args.put("degree", app.getDegree().getName());
+      args.put("appsUrl", urlUtil.getUri("my-applications"));
       mailer.sendMessage(app.getTechLeader().getEmail(), "Student has applied for a topic", "application.html", args);
 
       return Response.created(UriBuilder.fromResource(TopicApplicationResource.class).path("/{id}").build(app.getId()))
