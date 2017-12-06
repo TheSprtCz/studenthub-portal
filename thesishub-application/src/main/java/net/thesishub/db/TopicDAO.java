@@ -19,17 +19,19 @@ package net.thesishub.db;
 import java.util.List;
 import java.util.Set;
 
-import org.hibernate.Criteria;
-import org.hibernate.FetchMode;
-import org.hibernate.SessionFactory;
-import org.hibernate.criterion.Disjunction;
-import org.hibernate.criterion.Restrictions;
-import org.hibernate.persister.collection.CollectionPropertyNames;
-import org.hibernate.sql.JoinType;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Expression;
+import javax.persistence.criteria.Join;
+import javax.persistence.criteria.JoinType;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 
+import org.hibernate.SessionFactory;
 import io.dropwizard.hibernate.AbstractDAO;
 import net.thesishub.core.Company;
 import net.thesishub.core.Topic;
+import net.thesishub.core.TopicDegree;
 import net.thesishub.core.User;
 
 /**
@@ -96,38 +98,67 @@ public class TopicDAO extends AbstractDAO<Topic> {
     return list(namedQuery("Topic.findAll"));
   }
 
+  private Predicate ilike(CriteriaBuilder builder, Expression<String> expression, String pattern) {
+    return builder.like(builder.lower(expression), pattern);
+  }
+  
   public List<Topic> search(String text, Set<Long> companies, Set<String> degrees) {
     
+    // compare everything in lowercase
+    text = text.toLowerCase(); 
     String pattern = "%" + text + "%";
 
-    Criteria criteria = criteria().createAlias("tags", "tag", JoinType.RIGHT_OUTER_JOIN)
-        .add(Restrictions.or(Restrictions.ilike("title", pattern),
-            Restrictions.ilike("shortAbstract", pattern),
-            Restrictions.ilike("secondaryTitle", pattern),
-            Restrictions.ilike("secondaryDescription", pattern),
-            Restrictions.ilike("description", pattern),
-            Restrictions.eq("tag." + CollectionPropertyNames.COLLECTION_ELEMENTS, text).ignoreCase()))
-        .add(Restrictions.eq("enabled", true));
+    CriteriaBuilder builder = currentSession().getCriteriaBuilder();
+    CriteriaQuery<Topic> query = criteriaQuery().distinct(true);
+    Root<Topic> root = query.from(Topic.class);
 
+    Join<Topic, String> tag = root.join("tags", JoinType.INNER);
+
+    Predicate where = builder.conjunction();
+    
+    // Only enabled
+    where = builder.and(where, builder.isTrue(root.get("enabled")));
+
+    // Filtering based on attributes of Topic
+    where = builder.and(where, builder.or(
+        ilike(builder, root.get("shortAbstract"), pattern),
+        ilike(builder, root.get("secondaryTitle"), pattern),
+        ilike(builder, root.get("secondaryDescription"), pattern),
+        ilike(builder, root.get("description"), pattern),
+        builder.equal(builder.lower(tag), text)
+    ));
+    
+    // Filtering by companies
     if (companies.size() > 0) {
-      Disjunction companyFilter = Restrictions.or();
-      for (Long id : companies) {
-        companyFilter.add(Restrictions.eq("cmp.id", id));
-      }
-      criteria.createAlias("creator.company", "cmp").add(companyFilter);
-    }
+        Join<User, Company> company = root.join("creator").join("company");
 
+        Predicate companyFilter = builder.disjunction();
+        for (Long id : companies) {
+          companyFilter = builder.or(companyFilter, builder.equal(company.get("id"), id));
+        }
+
+        where = builder.and(where, companyFilter);
+    }
+    
+    // Filtering by degrees
     if (degrees.size() > 0) {
-      Disjunction degreeFilter = Restrictions.or();
-      for (String degree : degrees) {
-        degreeFilter.add(Restrictions.eq("degree.name", degree));
-      }
-      criteria.setFetchMode("degrees", FetchMode.JOIN).createAlias("degrees", "degree").add(degreeFilter);
+        Join<Topic, TopicDegree> degree = root.join("degrees");
+
+        Predicate degreeFilter = builder.disjunction();
+        for (String id : degrees) {
+          degreeFilter = builder.or(degreeFilter, builder.equal(degree.get("name"), id));
+        }
+
+        where = builder.and(where, degreeFilter);
     }
 
-    criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+    // Select all fields from Topic e.g Topic object
+    query.select(root);
 
-    return list(criteria);
+    // Filter based on the constructed query
+    query.where(where);
+
+    return list(query);
   }
 
   public void delete(Topic topic) {
